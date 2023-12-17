@@ -8,6 +8,14 @@ use Illuminate\Http\Request;
 
 class ProdiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_prodi', ['only' => ['index', 'data', 'show']]);
+        $this->middleware('permission:add_prodi', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_prodi', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_prodi', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('data_master.prodi.index');

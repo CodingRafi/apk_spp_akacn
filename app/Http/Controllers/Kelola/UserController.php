@@ -21,7 +21,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view_users', ['only' => ['index', 'store', 'exportPembayaran', 'printPembayaran']]);
+        $this->middleware('permission:view_users', ['only' => ['index', 'data', 'store', 'exportPembayaran', 'printPembayaran']]);
         $this->middleware('permission:add_users', ['only' => ['create', 'store', 'import', 'saveImport']]);
         $this->middleware('permission:edit_users', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete_users', ['only' => ['destroy']]);

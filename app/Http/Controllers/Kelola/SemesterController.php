@@ -12,6 +12,14 @@ use Illuminate\Http\Request;
 
 class SemesterController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_semester', ['only' => ['data', 'show']]);
+        $this->middleware('permission:add_semester', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_semester', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_semester', ['only' => ['destroy']]);
+    }
+
     public function data($prodi_id){
         $datas = Semester::where('prodi_id', $prodi_id)->get();
         
@@ -76,13 +84,6 @@ class SemesterController extends Controller
         return view('data_master.prodi.semester.form', compact('data', 'prodi_id'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Semester  $semester
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $prodi_id, $semester_id)
     {
         $request->validate(['nama' => 'required']);
@@ -94,12 +95,6 @@ class SemesterController extends Controller
         return redirect()->route('data-master.prodi.show', $prodi_id)->with('success', 'Berhasil diubah');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Semester  $semester
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($prodi_id, $semester_id)
     {
         $data = Semester::findOrFail($semester_id);
