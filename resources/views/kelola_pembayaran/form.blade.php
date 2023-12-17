@@ -83,11 +83,13 @@
                             <label for="ket_mhs" class="form-label">Revisi : </label>
                             {{ $data->revisi ? 'Ya' : 'Tidak' }}
                         </div>
+                        @if ($data->verify_id == Auth::user()->id)
                         <div class="d-flex" style="gap: 1rem;">
                             <a class="btn btn-revisi btn-warning"
                                 href="{{ route('kelola.pembayaran.revisi', $data->id) }}" type="button"
                                 onclick="return confirm('Apakah anda yakin ingin?')">Revisi</a>
                         </div>
+                        @endif
                         @endif
                     </div>
                 </div>

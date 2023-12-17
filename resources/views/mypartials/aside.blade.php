@@ -24,19 +24,19 @@
         @endcan
 
         @can('view_tahun_ajaran')
-        <li class="menu-item {{ Request::is('data-master*') ? 'active' : '' }}">
+        <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-archive"></i>
                 <div data-i18n="Layouts">Data Master</div>
             </a>
     
             <ul class="menu-sub">
-                <li class="menu-item">
+                <li class="menu-item {{ Request::is('data-master/tahun-ajaran*') ? 'active' : '' }}">
                     <a href="{{ route('data-master.tahun-ajaran.index') }}" class="menu-link">
                         <div data-i18n="Tahun Ajaran" class="text-capitalize">Tahun Ajaran</div>
                     </a>
                 </li>
-                <li class="menu-item">
+                <li class="menu-item {{ Request::is('data-master/prodi*') ? 'active' : '' }}">
                     <a href="{{ route('data-master.prodi.index') }}" class="menu-link">
                         <div data-i18n="Prodi" class="text-capitalize">Prodi</div>
                     </a>
@@ -46,7 +46,7 @@
         @endcan
 
         @can('view_users')
-        <li class="menu-item {{ Request::is('users*') ? 'active' : '' }}">
+        <li class="menu-item {{ Request::is('users*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-user"></i>
                 <div data-i18n="Layouts">Users</div>
@@ -54,7 +54,7 @@
     
             <ul class="menu-sub">
                 @foreach (getRoleWithout(['admin']) as $role)
-                    <li class="menu-item">
+                    <li class="menu-item {{ Request::is('users/'. $role['name'] .'*') ? 'active' : '' }}">
                         <a href="{{ route('users.index', $role['name']) }}" class="menu-link">
                             <div data-i18n="{{ $role['name'] }}" class="text-capitalize">{{ $role['name'] }}</div>
                         </a>

@@ -58,7 +58,7 @@ class UserController extends Controller
             $options = '';
 
             if ($role == 'mahasiswa') {
-                $options = $options ."<a href='". route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) ."' class='btn btn-info mx-2'>Report Pembayaran</a>";
+                $options = $options ."<a href='". route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) ."' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
             }
 
             if (auth()->user()->can('edit_users')) {

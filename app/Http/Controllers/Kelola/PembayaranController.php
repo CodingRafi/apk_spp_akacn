@@ -106,9 +106,12 @@ class PembayaranController extends Controller
 
     public function revisi($pembayaran_id){
         $data = Pembayaran::findOrFail($pembayaran_id);
-
-        if ($data->status == 'pengajuan') {
-            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');   
+        if ($data->status == 'pengajuan') { 
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
+        }
+        
+        if ($data->verify_id != Auth::user()->id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat merevisi pembayaran ini');
         }
 
         $data->update([
