@@ -8,6 +8,8 @@ use App\Models\Pembayaran;
 use DataTables, Auth, DB;
 use App\Exports\PembayaranExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Mail\PembayaranMail;
+use Illuminate\Support\Facades\Mail;
 
 class PembayaranController extends Controller
 {
@@ -76,17 +78,30 @@ class PembayaranController extends Controller
         $data = Pembayaran::findOrFail($pembayaran_id);
 
         if ($data->status != 'pengajuan') {
-            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');   
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
         }
-        
-        $data->update([
-            'ket_verify' => $request->ket_verify,
-            'status' => $request->status,
-            'verify_id' => Auth::user()->id,
-            'revisi' => $request->revisi == 'true' ? "1" : "0"
-        ]);
 
-        return redirect()->route('kelola.pembayaran.index')->with('success', 'Berhasil disimpan!');
+        if (!Auth::user()->petugas->ttd) {
+            return redirect()->back()->with('error', 'anda belum set tanda tangan');
+        }
+
+        DB::beginTransaction();
+        try {
+            $data->update([
+                'ket_verify' => $request->ket_verify,
+                'status' => $request->status,
+                'verify_id' => Auth::user()->id,
+                'revisi' => $request->revisi == 'true' ? "1" : "0"
+            ]);
+            
+            Mail::to($data->mahasiswa->email)->send((new PembayaranMail($data)));
+            DB::commit();
+            return redirect()->route('kelola.pembayaran.index')->with('success', 'Berhasil disimpan!');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
+        }
+
     }
 
     public function revisi($pembayaran_id){

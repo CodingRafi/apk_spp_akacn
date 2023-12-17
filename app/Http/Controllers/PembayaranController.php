@@ -6,11 +6,15 @@ use App\Models\{
     Pembayaran,
     Semester
 };
-use Illuminate\Support\Facades\Storage; 
+use PDF;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Auth, DB, DataTables;
 use App\Exports\PembayaranMhsExport;
 use Maatwebsite\Excel\Facades\Excel;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Mail\PembayaranMail;
+use Illuminate\Support\Facades\Mail;
 
 class PembayaranController extends Controller
 {
@@ -78,6 +82,10 @@ class PembayaranController extends Controller
             $options = '';
 
             $options = $options ."<a href='". route('pembayaran.showPembayaran', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) ."' class='btn btn-primary mx-2'>Detail</a>";
+            
+            if ($data->status == 'diterima') {
+                $options = $options ."<a href='". route('pembayaran.print', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) ."' class='btn btn-info mx-2'>Kwitansi</a>";
+            }
 
             if (auth()->user()->can('edit_pembayaran')) {
                 $options = $options ."<a href='". route('pembayaran.edit', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) ."' class='btn btn-warning mx-2'>Edit</a>";
@@ -125,34 +133,42 @@ class PembayaranController extends Controller
     {
         $semester = Semester::where('id', $semester_id)->first();
         $mhs = Auth::user()->mahasiswa;
-
+        
         //? validasi publish tahun ajaran
         $data = $semester->tahun_ajaran()->where('tahun_ajaran_id', $mhs->tahun_ajaran_id)->first();
         if (!$data || !$data->pivot->publish) {
             abort(404);
         }
-
+        
         $request->validate([
             'tgl_bayar' => 'required', 
             'nominal' => 'required|numeric',
             'bukti' => 'required|file|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $bukti = $request->file('bukti')->store('bukti');
-
-        Pembayaran::create([
-            'tgl_bayar' => $request->tgl_bayar,
-            'nominal' => $request->nominal,
-            'bukti' => $bukti,
-            'mhs_id' => Auth::user()->id,
-            'semester_id' => $semester_id,
-            'status' => 'pengajuan',
-            'ket_mhs' => $request->ket_mhs,
-            'prodi_id' => $data->pivot->prodi_id
-        ]);
-
-        return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
-                    ->with('success', 'Pembayaran berhasil disimpan');
+        DB::beginTransaction();
+        try {
+            $bukti = $request->file('bukti')->store('bukti');
+            
+            $pembayaran = Pembayaran::create([
+                'tgl_bayar' => $request->tgl_bayar,
+                'nominal' => $request->nominal,
+                'bukti' => $bukti,
+                'mhs_id' => Auth::user()->id,
+                'semester_id' => $semester_id,
+                'status' => 'pengajuan',
+                'ket_mhs' => $request->ket_mhs,
+                'prodi_id' => $data->pivot->prodi_id
+            ]);
+            
+            Mail::to(Auth::user()->email)->send((new PembayaranMail($pembayaran)));
+            DB::commit();
+            return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
+                        ->with('success', 'Pembayaran berhasil disimpan');
+        } catch (\Throwable $th) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
+        }
     }
 
     public function show($semester_id)
@@ -294,6 +310,23 @@ class PembayaranController extends Controller
     }
 
     public function export(){
-        return Excel::download(new PembayaranMhsExport, 'pembayaran.xlsx');
+        $mhs = Auth::user()->mahasiswa;
+        $semester = DB::table('semesters')
+                            ->where('prodi_id', $mhs->prodi_id)
+                            ->get();
+
+        if (count($semester) < 1) {
+            return redirect()->back()->with('error', 'Tidak ada semester');
+        }
+
+        return Excel::download(new PembayaranMhsExport($semester), 'pembayaran.xlsx');
+    }
+
+    public function print($semester_id, $pembayaran_id){
+        $data = Pembayaran::findOrFail($pembayaran_id);
+        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status != 'diterima') {
+            abort(404);
+        }
+        return PDF::loadView('pembayaran.print', compact('data'))->setPaper([0, 0, 600, 480])->stream('kwitansi.pdf');
     }
 }

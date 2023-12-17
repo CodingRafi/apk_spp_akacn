@@ -106,17 +106,30 @@
             $('.form-verify').submit();
         }else{
             Swal.fire({
-                title: 'Apakah mahasiswa boleh revisi?',
-                text: 'Klik "Ya" jika boleh, klik "Tidak" jika tidak boleh',
-                icon: 'warning',
+                title: 'Apakah anda yakin akan menolak pembayaran ini?',
+                text: 'Klik "Ya" jika setuju, klik "Tidak" jika tidak setuju',
+                icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya',
                 cancelButtonText: 'Tidak'
             }).then((result) => {
-                $('input[name=revisi]').val(result.isConfirmed);
-                $('.form-verify').submit();
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Apakah mahasiswa boleh revisi?',
+                        text: 'Klik "Ya" jika boleh, klik "Tidak" jika tidak boleh',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Ya',
+                        cancelButtonText: 'Tidak'
+                    }).then((result) => {
+                        $('input[name=revisi]').val(result.isConfirmed);
+                        $('.form-verify').submit();
+                    })
+                }
             })
         }
     })

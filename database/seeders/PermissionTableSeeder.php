@@ -22,9 +22,7 @@ class PermissionTableSeeder extends Seeder
             'delete_users',
 
             'view_roles',
-            'add_roles',
             'edit_roles',
-            'delete_roles',
 
             'view_tahun_ajaran',
             'add_tahun_ajaran',

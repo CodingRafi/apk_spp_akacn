@@ -41,13 +41,17 @@ Route::group(['middleware' => ['auth']], function() {
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
     });
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('index');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('roles', RoleController::class);
     Route::prefix('users')->name('users.')->middleware('user.role')->group(function () {
         Route::get('{role}', [UserController::class, 'index'])->name('index');
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::post('{role}', [UserController::class, 'store'])->name('store');
         Route::get('{role}/data', [UserController::class, 'data'])->name('data');
+        Route::get('{role}/import', [UserController::class, 'import'])->name('import');
+        Route::post('{role}/import', [UserController::class, 'saveImport'])->name('saveImport');
+        Route::get('{role}/export/pembayaran', [UserController::class, 'exportPembayaran'])->name('export.pembayaran');
+        Route::get('{role}/{user_id}/print', [UserController::class, 'printPembayaran'])->name('print.pembayaran');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         Route::patch('{role}/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('{role}/{id}', [UserController::class, 'destroy'])->name('destroy');
@@ -112,6 +116,7 @@ Route::group(['middleware' => ['auth']], function() {
                 Route::get('{semester_id}/create', [PembayaranController::class, 'create'])->name('create');
                 Route::post('{semester_id}', [PembayaranController::class, 'store'])->name('store');
                 Route::get('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'showPembayaran'])->name('showPembayaran');
+                Route::get('{semester_id}/{pembayaran_id}/print', [PembayaranController::class, 'print'])->name('print');
                 Route::get('{semester_id}/{pembayaran_id}/edit', [PembayaranController::class, 'edit'])->name('edit');
                 Route::patch('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'update'])->name('update');
                 Route::delete('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'destroy'])->name('destroy');

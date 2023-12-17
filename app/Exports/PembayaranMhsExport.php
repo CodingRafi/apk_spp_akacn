@@ -9,18 +9,19 @@ use DB, Auth;
 
 class PembayaranMhsExport implements WithMultipleSheets
 {
+    private $semester;
+
+    public function __construct($semester){
+        $this->semester = $semester;
+    }
+
     public function sheets(): array
     {
         $sheets = [];
-        $mhs = Auth::user()->mahasiswa;
-        $semester = DB::table('semesters')
-                            ->where('prodi_id', $mhs->prodi_id)
-                            ->get();
-        
-        foreach ($semester as $row) {
+
+        foreach ($this->semester as $row) {
             $sheets[] = new PembayaranMhsDetailExport($row);
         }
-
         return $sheets;
     }
 }

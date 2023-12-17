@@ -8,7 +8,7 @@
         <div class="row">
             <form
                 action="{{ isset($data) ? route('users.update', ['role' => request('role'), 'id' => $data->id]) : route('users.store', ['role' => request('role')]) }}"
-                method="POST">
+                method="POST" enctype="multipart/form-data">
                 @csrf
                 @if (isset($data))
                 @method('patch')
@@ -35,24 +35,28 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">{{ (request('role') ==
-                                    'petugas' ? 'NIP' : 'NIM') }}</label>
+                                <label for="email" class="form-label">Email</label>
                                 <input class="form-control @error('email') is-invalid @enderror" type="text"
                                     value="{{ isset($data) ? $data->email : old('email') }}" id="email"
-                                    placeholder="{{ (request('role') == 'petugas' ? 'NIP' : 'NIM') }}" name="email" />
+                                    placeholder="Email" name="email" />
                                 @error('email')
                                 <div class="invalid-feedback d-block">
                                     {{ $message }}
                                 </div>
                                 @enderror
                             </div>
-                            @if (!isset($data))
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Password</label>
-                                <input class="form-control" type="text" value="000000" name="number" disabled />
-                            </div>
-                            @endif
                             @if (request('role') == 'mahasiswa')
+                            <div class="mb-3">
+                                <label for="nim" class="form-label">NIM</label>
+                                <input class="form-control @error('nim') is-invalid @enderror" type="text"
+                                    value="{{ isset($data) ? $data->mahasiswa->nim : old('nim') }}" id="nim"
+                                    placeholder="nim" name="nim" />
+                                @error('nim')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
                             <div class="mb-3">
                                 <label for="tahun_ajaran_id" class="form-label">Tahun Ajaran</label>
                                 <select class="form-select @error('tahun_ajaran_id') is-invalid @enderror"
@@ -81,6 +85,38 @@
                                     {{ $message }}
                                 </div>
                                 @enderror
+                            </div>
+                            @else
+                            <div class="mb-3">
+                                <label for="nip" class="form-label">NIP</label>
+                                <input class="form-control @error('nip') is-invalid @enderror" type="text"
+                                    value="{{ isset($data) ? $data->petugas->nip : old('nip') }}" id="nip"
+                                    placeholder="nip" name="nip" />
+                                @error('nip')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="ttd" class="form-label">Tanda Tangan</label>
+                                <div class="d-flex" style="gap: 1rem;">
+                                    <input class="form-control @error('ttd') is-invalid @enderror" type="file" id="ttd" name="ttd" />
+                                    @if (isset($data))
+                                        <a href="{{ asset('storage/'.$data->petugas->ttd) }}" class="btn btn-primary" target="_blank">Lihat</a>
+                                    @endif
+                                </div>
+                                @error('ttd')
+                                <div class="invalid-feedback d-block">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                            @endif
+                            @if (!isset($data))
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Password</label>
+                                <input class="form-control" type="text" value="000000" name="number" disabled />
                             </div>
                             @endif
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start">

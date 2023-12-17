@@ -16,7 +16,11 @@
                 <div class="col-xl-12">
                     <!-- HTML5 Inputs -->
                     <div class="card mb-4">
-                        <h5 class="card-header text-capitalize">{{ isset($data) ? 'Edit' : 'Tambah' }} Semester</h5>
+                        <div class="card-header d-flex align-items-center">
+                            <a href="{{ route('data-master.prodi.show', $prodi_id) }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            <h5 class="text-capitalize mb-0">{{ isset($data) ? 'Edit' : 'Tambah' }} Semester</h5>
+                        </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama</label>

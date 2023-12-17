@@ -18,4 +18,8 @@ class Pembayaran extends Model
     public function verify(){
         return $this->belongsTo(User::class, 'verify_id');
     }
+
+    public function semester(){
+        return $this->belongsTo(Semester::class, 'semester_id');
+    }
 }

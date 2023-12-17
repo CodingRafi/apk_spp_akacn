@@ -36,14 +36,14 @@
                                             <input class="form-check-input" type="checkbox" value="{{ $permission->id }}"
                                                 id="{{ $permission->name }}" name="permission[]" checked/>
                                             <label class="form-check-label"
-                                                for="{{ $permission->name }}">{{ $permission->name }}</label>
+                                                for="{{ $permission->name }}">{{ str_replace('_', ' ', $permission->name) }}</label>
                                         </div>
                                     @else
                                         <div class="form-check mt-3">
                                             <input class="form-check-input" type="checkbox" value="{{ $permission->id }}"
                                                 id="{{ $permission->name }}" name="permission[]" />
                                             <label class="form-check-label"
-                                                for="{{ $permission->name }}">{{ $permission->name }}</label>
+                                                for="{{ $permission->name }}">{{ str_replace('_', ' ', $permission->name) }}</label>
                                         </div>
                                     @endif
                                 @endforeach
