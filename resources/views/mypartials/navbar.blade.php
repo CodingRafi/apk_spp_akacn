@@ -28,7 +28,7 @@
                                 <div class="flex-grow-1">
                                     <span class="fw-semibold d-block"
                                         style="text-transform: capitalize;">{{ auth()->user()->name }}</span>
-                                    <small class="text-muted">Admin</small>
+                                    <small class="text-muted text-capitalize">{{ Auth::user()->getRoleNames()[0] }}</small>
                                 </div>
                             </div>
                         </a>

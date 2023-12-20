@@ -34,7 +34,7 @@
                                                 <input type="hidden" name="prodi">
                                                 <input type="hidden" name="tahun_ajaran">
                                                 <button type="button"
-                                                    class="btn btn-primary d-block">Export Pembayaran</button>
+                                                    class="btn btn-primary w-100">Export Pembayaran</button>
                                             </form>
                                         </div>
                                         <div class="col-md-1 px-0">

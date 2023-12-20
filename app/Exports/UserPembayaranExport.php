@@ -57,6 +57,6 @@ class UserPembayaranExport implements FromView
             $data['pembayaran'] = $pembayaran;
         }
 
-        return view('kelola_pembayaran.export', compact('datas', 'semesters'));
+        return view('users.export', compact('datas', 'semesters'));
     }
 }
