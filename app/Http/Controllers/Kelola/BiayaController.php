@@ -177,7 +177,7 @@ class BiayaController extends Controller
 
     public function destroy($prodi_id, $semester_id, $tahun_ajaran_id){
         $data = DB::table('semester_tahun')
-                ->where('prodi_id', 100)
+                ->where('prodi_id', $prodi_id)
                 ->where('semester_id', $semester_id)
                 ->where('tahun_ajaran_id', $tahun_ajaran_id)
                 ->first();
@@ -194,7 +194,6 @@ class BiayaController extends Controller
                         ->where('c.semester_id', $semester_id)
                         ->where('b.tahun_ajaran_id', $tahun_ajaran_id)
                         ->count();
-        
         if ($data > 0) {
             return redirect()->back()->with('error', 'Maaf tidak bisa di hapus');
         }
