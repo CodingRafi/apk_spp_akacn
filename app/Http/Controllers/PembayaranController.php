@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Auth, DB, DataTables;
 use App\Exports\PembayaranMhsExport;
 use Maatwebsite\Excel\Facades\Excel;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Mail\PembayaranMail;
 use Illuminate\Support\Facades\Mail;
 
@@ -174,7 +173,9 @@ class PembayaranController extends Controller
                 'prodi_id' => $data->pivot->prodi_id
             ]);
 
-            Mail::to(Auth::user()->email)->send((new PembayaranMail($pembayaran)));
+            $admin = DB::table('users')->find(1);
+            Mail::to(Auth::user()->email)->send((new PembayaranMail($pembayaran, 'mhs')));
+            Mail::to($admin->email)->send((new PembayaranMail($pembayaran, 'admin')));
             DB::commit();
             return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
                 ->with('success', 'Pembayaran berhasil disimpan');

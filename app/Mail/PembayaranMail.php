@@ -14,14 +14,16 @@ class PembayaranMail extends Mailable
     use Queueable, SerializesModels;
 
     private $pembayaran;
+    private $to_custom;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($pembayaran)
+    public function __construct($pembayaran, $to_custom)
     {
         $this->pembayaran = $pembayaran;
+        $this->to_custom = $to_custom;
     }
 
     /**
@@ -47,6 +49,7 @@ class PembayaranMail extends Mailable
             view: 'pembayaran.mail',
             with: [
                 'pembayaran' => $this->pembayaran,
+                'to_custom' => $this->to_custom
             ]
         );
     }

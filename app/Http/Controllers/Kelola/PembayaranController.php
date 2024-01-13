@@ -49,7 +49,7 @@ class PembayaranController extends Controller
 
         return DataTables::of($datas)
                             ->addColumn('nim', function($datas){
-                                return $datas->mahasiswa->email;
+                                return $datas->mahasiswa->mahasiswa->nim;
                             })
                             ->addColumn('nama_mhs', function($datas){
                                 return $datas->mahasiswa->name;
@@ -94,7 +94,7 @@ class PembayaranController extends Controller
                 'revisi' => $request->revisi == 'true' ? "1" : "0"
             ]);
             
-            Mail::to($data->mahasiswa->email)->send((new PembayaranMail($data)));
+            Mail::to($data->mahasiswa->email)->send((new PembayaranMail($data, 'mhs')));
             DB::commit();
             return redirect()->route('kelola.pembayaran.index')->with('success', 'Berhasil disimpan!');
         } catch (\Throwable $th) {

@@ -46,8 +46,6 @@
                             </a>
                         </td>
                     </tr>
-
-
                     <!-- Email Body -->
                     <tr>
                         <td class="body" width="100%" cellpadding="0" cellspacing="0"
@@ -61,62 +59,74 @@
                                         style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; max-width: 100vw; padding: 32px;">
                                         <img src="{{ asset('image/logo.png') }}" alt=""
                                             style="box-sizing: border-box;width: 4rem; margin-bottom: 1rem;">
-                                        @if ($pembayaran->status == 'pengajuan')
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Pembayaran Anda telah berhasil disimpan dan sedang menunggu verifikasi
-                                                oleh admin. Kami akan memberi tahu Anda begitu proses verifikasi
-                                                selesai.
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Terima kasih atas pembayarannya.</p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Salam hormat,<br>Tim Admin</p>
-                                        @elseif($pembayaran->status == 'diterima')
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Pembayaran <strong>DITERIMA</strong>
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Anda dapat melihat rincian pembayaran dan mengunduh bukti pembayaran
-                                                dengan mengklik tautan berikut:
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                <a href="{{ route('pembayaran.print', ['semester_id' => $pembayaran->semester_id, 'pembayaran_id' => $pembayaran->id]) }}"
-                                                    target="_blank">Tautan PDF Pembayaran</a>
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Terima kasih atas pembayarannya!
-                                            </p>
+                                        @if ($to_custom === 'mhs')
+                                            @if ($pembayaran->status == 'pengajuan')
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Pembayaran Anda telah berhasil disimpan dan sedang menunggu
+                                                    verifikasi
+                                                    oleh admin. Kami akan memberi tahu Anda begitu proses verifikasi
+                                                    selesai.
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Terima kasih atas pembayarannya.</p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Salam hormat,<br>Tim Admin</p>
+                                            @elseif($pembayaran->status == 'diterima')
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Pembayaran <strong>DITERIMA</strong>
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Anda dapat melihat rincian pembayaran dan mengunduh bukti pembayaran
+                                                    dengan mengklik tautan berikut:
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    <a href="{{ route('pembayaran.print', ['semester_id' => $pembayaran->semester_id, 'pembayaran_id' => $pembayaran->id]) }}"
+                                                        target="_blank">Tautan PDF Pembayaran</a>
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Terima kasih atas pembayarannya!
+                                                </p>
+                                            @else
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Pembayaran <strong>DITOLAK</strong>
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    {{ $pembayaran->ket_verify }}
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Mohon periksa kembali informasi pembayaran Anda.
+                                                </p>
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    Terima kasih atas pengertian Anda.
+                                                </p>
+                                            @endif
+
+                                            @if ($pembayaran->status == 'diterima' || $pembayaran->status == 'ditolak')
+                                                <p
+                                                    style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
+                                                    <img src="{{ asset('storage/' . $pembayaran->verify->petugas->ttd) }}"
+                                                        alt="" style="width: 12rem;margin: 0.6rem 0;"> <br>
+                                                    Salam hormat,<br>{{ $pembayaran->verify->name }}
+                                                </p>
+                                            @endif
                                         @else
                                             <p
                                                 style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Pembayaran <strong>DITOLAK</strong>
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                {{ $pembayaran->ket_verify }}
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Mohon periksa kembali informasi pembayaran Anda.
-                                            </p>
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                Terima kasih atas pengertian Anda.
+                                                {{ $pembayaran->mahasiswa->name }} dengan NIM {{ $pembayaran->mahasiswa->mahasiswa->nim }} telah melakukan pembayaran sebesar {{ formatRupiah($pembayaran->nominal) }}. Klik <a href="{{ route('kelola.pembayaran.show', $pembayaran->id) }}">disini</a> untuk verifikasi.
                                             </p>
                                         @endif
 
-                                        @if ($pembayaran->status == 'diterima' || $pembayaran->status == 'ditolak')
-                                            <p
-                                                style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                <img src="{{ asset('storage/' . $pembayaran->verify->petugas->ttd) }}" alt="" style="width: 12rem;margin: 0.6rem 0;"> <br> Salam hormat,<br>{{ $pembayaran->verify->name }}</p>
-                                        @endif
                                     </td>
                                 </tr>
                             </table>

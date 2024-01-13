@@ -17,6 +17,7 @@
                                 <h5 class="mb-0">Ubah Role</h5>
                             </div>
                             <div class="card-body">
+                                @if (isset($data))
                                 <div class="mb-3 row">
                                     <label for="html5-text-input" class="col-md-2 col-form-label">Name Role</label>
                                     <div class="col-md-10">
@@ -30,6 +31,7 @@
                                         @enderror
                                     </div>
                                 </div>
+                                @endif
                                 @foreach ($permissions as $permission)
                                     @if (in_array($permission->id, $rolePermissions))
                                         <div class="form-check mt-3">

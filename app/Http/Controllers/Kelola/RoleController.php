@@ -34,7 +34,7 @@ class RoleController extends Controller
 
     public function edit($id)
     {
-        $role = Role::find($id);
+        $role = Role::findOrFail($id);
         $permissions = Permission::get();
         $rolePermissions = DB::table("role_has_permissions")->where("role_has_permissions.role_id", $id)
             ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
@@ -45,14 +45,7 @@ class RoleController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'name' => 'required',
-        ]);
-
-        $role = Role::find($id);
-        $role->name = strtolower(str_replace(" ", "_", $request->name));
-        $role->save();
-
+        $role = Role::findOrFail($id);
         $role->syncPermissions($request->permission);
 
         return redirect()->route('roles.index')
