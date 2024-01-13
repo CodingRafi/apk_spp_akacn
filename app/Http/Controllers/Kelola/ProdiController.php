@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
@@ -20,32 +21,32 @@ class ProdiController extends Controller
     {
         return view('data_master.prodi.index');
     }
-    
-    public function data(){
+
+    public function data()
+    {
         $datas = Prodi::all();
 
         foreach ($datas as $data) {
-                $options = '';
+            $options = '';
 
-                $options = $options ."<a href='". route('data-master.prodi.show', $data->id) ."' class='btn btn-info mx-2'>Set Semester</a>";
+            $options = $options . "<a href='" . route('data-master.prodi.show', $data->id) . "' class='btn btn-info mx-2'>Set Semester</a>";
 
-                if (auth()->user()->can('edit_prodi')) {
-                    $options = $options ."<a href='". route('data-master.prodi.edit', $data->id) ."' class='btn btn-warning mx-2'>Edit</a>";
-                }
-                
-                if (auth()->user()->can('delete_prodi')) {
-                    $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`". route('data-master.prodi.destroy', $data->id) ."`)'>
+            if (auth()->user()->can('edit_prodi')) {
+                $options = $options . "<a href='" . route('data-master.prodi.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
+            }
+
+            if (auth()->user()->can('delete_prodi')) {
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.destroy', $data->id) . "`)'>
                                         Hapus
                                     </button>";
-
-                                }
-                                $data->options = $options;
+            }
+            $data->options = $options;
         }
 
         return DataTables::of($datas)
-                            ->addIndexColumn()
-                            ->rawColumns(['options'])
-                            ->make(true);
+            ->addIndexColumn()
+            ->rawColumns(['options'])
+            ->make(true);
     }
 
     public function create()

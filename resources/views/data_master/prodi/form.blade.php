@@ -14,7 +14,6 @@
                 @method('patch')
                 @endif
                 <div class="col-xl-12">
-                    <!-- HTML5 Inputs -->
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
                             <a href="{{ route('data-master.prodi.index') }}"><i

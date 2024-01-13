@@ -6,37 +6,33 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <h5 class="text-capitalize">Pembayaran</h5>
                         </div>
-                        <div class="col-md-8">
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <select class="form-select" id="filter-status">
-                                        <option value="pengajuan" selected>pengajuan</option>
-                                        <option value="diterima">Diterima</option>
-                                        <option value="ditolak">Ditolak</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <select class="form-select" id="filter-prodi">
-                                        <option value="" selected>Pilih Prodi</option>
-                                        @foreach ($prodis as $prodi)
-                                            <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <select class="form-select" id="filter-tahun-ajaran">
-                                        <option value="" selected>Pilih Tahun Ajaran</option>
-                                        @foreach ($tahun_ajarans as $tahun_ajaran)
-                                            <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                        <div class="col-md-3 mb-3">
+                            <select class="form-select" id="filter-status">
+                                <option value="pengajuan" selected>pengajuan</option>
+                                <option value="diterima">Diterima</option>
+                                <option value="ditolak">Ditolak</option>
+                            </select>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-3 mb-3">
+                            <select class="form-select" id="filter-prodi">
+                                <option value="" selected>Pilih Prodi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <select class="form-select" id="filter-tahun-ajaran">
+                                <option value="" selected>Pilih Tahun Ajaran</option>
+                                @foreach ($tahun_ajarans as $tahun_ajaran)
+                                    <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-1 mb-3">
                             <form action="{{ route('kelola.pembayaran.export') }}" method="get" class="form-export">
                                 <input type="hidden" name="status">
                                 <input type="hidden" name="prodi">

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/assets/"
-    data-template="vertical-menu-template-free">
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="/assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
@@ -51,6 +51,7 @@
     <script src="{{ asset('assets/js/config.js') }}"></script>
     <link rel="stylesheet" href="//cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     @stack('css')
 
@@ -97,6 +98,10 @@
             .div-col-footer {
                 justify-content: center !important;
             }
+        }
+
+        .select2-container {
+            z-index: 9999;
         }
     </style>
 </head>
@@ -151,7 +156,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="http://keith-wood.name/js/jquery.signature.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css"
@@ -163,7 +167,7 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('js/fstdropdown.js') }}"></script>
     <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
@@ -186,118 +190,143 @@
                 });
             }
         }
-        @if (session()->has('success')) showAlert("{{ session('success') }}", 'success')
-        @elseif(session()->has('error')) showAlert("{{ session('error') }}", 'error')
+        @if (session()->has('success'))
+            showAlert("{{ session('success') }}", 'success')
+        @elseif (session()->has('error')) showAlert("{{ session('error') }}", 'error')
         @endif
     </script>
 
     <script>
-        function deleteData(url){
-        Swal.fire({
-            title: 'Apakah anda yakin ingin hapus data ini?',
-            text: "Data yang terhapus tidak dapat dikembalikan",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
+        function deleteData(url) {
+            Swal.fire({
+                title: 'Apakah anda yakin ingin hapus data ini?',
+                text: "Data yang terhapus tidak dapat dikembalikan",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
 
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('.form-delete').attr('action', url).submit();
-            } 
-        })
-    }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('.form-delete').attr('action', url).submit();
+                }
+            })
+        }
     </script>
     <script>
         const upload_file = (blobInfo, progress) => new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.withCredentials = false;
-        xhr.open('POST', '{{ route("upload_file") }}');
+            const xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.open('POST', '{{ route('upload_file') }}');
 
-        xhr.upload.onprogress = (e) => {
-            progress(e.loaded / e.total * 100);
-        };
+            xhr.upload.onprogress = (e) => {
+                progress(e.loaded / e.total * 100);
+            };
 
-        xhr.onload = () => {
-            if (xhr.status === 403) {
-                reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
-                return;
-            }
+            xhr.onload = () => {
+                if (xhr.status === 403) {
+                    reject({
+                        message: 'HTTP Error: ' + xhr.status,
+                        remove: true
+                    });
+                    return;
+                }
 
-            if (xhr.status < 200 || xhr.status >= 300) {
-                reject('HTTP Error: ' + xhr.status);
-                return;
-            }
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    reject('HTTP Error: ' + xhr.status);
+                    return;
+                }
 
-            const json = JSON.parse(xhr.responseText);
+                const json = JSON.parse(xhr.responseText);
 
-            if (!json || typeof json.location != 'string') {
-                reject('Invalid JSON: ' + xhr.responseText);
-                return;
-            }
+                if (!json || typeof json.location != 'string') {
+                    reject('Invalid JSON: ' + xhr.responseText);
+                    return;
+                }
 
-            resolve(json.location);
-        };
+                resolve(json.location);
+            };
 
-        xhr.onerror = () => {
-            reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
-        };
-        xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'))
+            xhr.onerror = () => {
+                reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+            };
+            xhr.setRequestHeader('X-CSRF-TOKEN', $('meta[name="csrf-token"]').attr('content'))
 
-        const formData = new FormData();
-        formData.append('file', blobInfo.blob(), blobInfo.filename());
+            const formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-        xhr.send(formData);
-    });
+            xhr.send(formData);
+        });
 
-   tinymce.init({
-     selector: 'textarea',
-     plugins: ` advlist anchor autosave image link lists media searchreplace table template visualblocks wordcount`,
-     toolbar: 'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck code',
-     a11ychecker_level: 'aaa',
-     convert_urls: false,
+        tinymce.init({
+            selector: 'textarea',
+            plugins: ` advlist anchor autosave image link lists media searchreplace table template visualblocks wordcount`,
+            toolbar: 'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck code',
+            a11ychecker_level: 'aaa',
+            convert_urls: false,
 
-     style_formats: [
-       {title: 'Heading 1', block: 'h1'},
-       {title: 'Heading 2', block: 'h2'},
-       {title: 'Paragraph', block: 'p'},
-       {title: 'Blockquote', block: 'blockquote'},
-       {title: 'Image formats'},
-       {title: 'Medium', selector: 'img', classes: 'medium'},
-     ],
-     object_resizing: false,
-     valid_classes: {
-       'img': 'medium',
-       'div': 'related-content'
-     },
-     image_caption: true,
-     images_upload_url: '{{ route("upload_file") }}',
-     images_upload_handler: upload_file,
-     templates: [
-       {
-         title: 'Related content',
-         description: 'This template inserts a related content block',
-         content: '<div class="related-content"><h3>Related content</h3><p><strong>{$rel_lede}</strong> {$rel_body}</p></div>'
-       }
-     ],
-     template_replace_values: {
-       rel_lede: 'Lorem ipsum',
-       rel_body: 'dolor sit amet...',
-     },
-     template_preview_replace_values: {
-       rel_lede: 'Lorem ipsum',
-       rel_body: 'dolor sit amet...',
-     },
-     noneditable_class: 'related-content',
-     content_langs: [
-       {title: 'English (US)', code: 'en_US'},
-       {title: 'French', code: 'fr'}
-     ],
-     branding: false,
-     height: 540,
-     promotion: false,
-     content_style: `
+            style_formats: [{
+                    title: 'Heading 1',
+                    block: 'h1'
+                },
+                {
+                    title: 'Heading 2',
+                    block: 'h2'
+                },
+                {
+                    title: 'Paragraph',
+                    block: 'p'
+                },
+                {
+                    title: 'Blockquote',
+                    block: 'blockquote'
+                },
+                {
+                    title: 'Image formats'
+                },
+                {
+                    title: 'Medium',
+                    selector: 'img',
+                    classes: 'medium'
+                },
+            ],
+            object_resizing: false,
+            valid_classes: {
+                'img': 'medium',
+                'div': 'related-content'
+            },
+            image_caption: true,
+            images_upload_url: '{{ route('upload_file') }}',
+            images_upload_handler: upload_file,
+            templates: [{
+                title: 'Related content',
+                description: 'This template inserts a related content block',
+                content: '<div class="related-content"><h3>Related content</h3><p><strong>{$rel_lede}</strong> {$rel_body}</p></div>'
+            }],
+            template_replace_values: {
+                rel_lede: 'Lorem ipsum',
+                rel_body: 'dolor sit amet...',
+            },
+            template_preview_replace_values: {
+                rel_lede: 'Lorem ipsum',
+                rel_body: 'dolor sit amet...',
+            },
+            noneditable_class: 'related-content',
+            content_langs: [{
+                    title: 'English (US)',
+                    code: 'en_US'
+                },
+                {
+                    title: 'French',
+                    code: 'fr'
+                }
+            ],
+            branding: false,
+            height: 540,
+            promotion: false,
+            content_style: `
        img {
          height: auto;
          margin: auto;
@@ -308,8 +337,13 @@
          max-width: 25%;
        }
      `
-     
-   });
+
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
     </script>
 
     @stack('js')

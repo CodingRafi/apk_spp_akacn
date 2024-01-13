@@ -34,25 +34,27 @@ class UserPembayaranExport implements FromView
                             
         foreach ($datas as $data) {
             $pembayaran = [];
+            $mhs = $data->mahasiswa;
+            $potongans = $mhs->potongan;
             foreach ($semesters as $semester) {
-                if ($semester->publish) {
-                    $total_pembayaran = DB::table('pembayarans')
-                                                ->select(DB::raw('sum(nominal) as total'))
-                                                ->where('status', 'diterima')
-                                                ->where('mhs_id', $data->id)
-                                                ->where('semester_id', $semester->id)
-                                                ->first();
-    
-                    $pembayaran[$semester->id] = [
-                        'bayar' => $total_pembayaran->total,
-                        'harus' => $semester->nominal,
-                        'publish' => $semester->publish
-                    ];
-                }else{
-                    $pembayaran[$semester->id] = [
-                        'publish' => $semester->publish
-                    ];
-                }
+                $total_pembayaran = DB::table('pembayarans')
+                                            ->select(DB::raw('sum(nominal) as total'))
+                                            ->where('status', 'diterima')
+                                            ->where('mhs_id', $data->id)
+                                            ->where('semester_id', $semester->id)
+                                            ->first();
+                
+                $potongan = $potongans->map(function($q) use ($semester){
+                    if($q->semester_id == $semester->id){
+                        return $q->nominal;
+                    }
+                });
+
+                $pembayaran[$semester->id] = [
+                    'bayar' => $total_pembayaran->total,
+                    'harus' => $semester->nominal,
+                    'potongan' => $potongan->sum()
+                ];
             }
             $data['pembayaran'] = $pembayaran;
         }

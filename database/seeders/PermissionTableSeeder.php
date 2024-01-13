@@ -51,6 +51,11 @@ class PermissionTableSeeder extends Seeder
             'add_pembayaran',
             'edit_pembayaran',
             'delete_pembayaran',
+
+            'view_potongan',
+            'add_potongan',
+            'edit_potongan',
+            'delete_potongan',
         ];
 
         foreach ($permissions as $permission) {

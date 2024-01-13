@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
@@ -27,7 +28,8 @@ class UserController extends Controller
         $this->middleware('permission:delete_users', ['only' => ['destroy']]);
     }
 
-    public function index($role){
+    public function index($role)
+    {
         $return = [];
         if ($role == 'mahasiswa') {
             $prodis = DB::table('prodi')->get();
@@ -40,47 +42,49 @@ class UserController extends Controller
         return view('users.index', $return);
     }
 
-    public function data($role){
+    public function data($role)
+    {
         $datas = User::select('users.*')
-                        ->when($role == 'mahasiswa', function($q) use($role){
-                            $q->join('mahasiswas as b', 'users.id', 'b.user_id')
-                                ->when(request('prodi'), function($q2){
-                                    $q2->where('b.prodi_id', request('prodi'));
-                                })
-                                ->when(request('tahun_ajaran'), function($q2){
-                                    $q2->where('b.tahun_ajaran_id', request('tahun_ajaran'));
-                                });
-                        })
-                        ->role($role)
-                        ->get();
+            ->when($role == 'mahasiswa', function ($q) use ($role) {
+                $q->join('mahasiswas as b', 'users.id', 'b.user_id')
+                    ->when(request('prodi'), function ($q2) {
+                        $q2->where('b.prodi_id', request('prodi'));
+                    })
+                    ->when(request('tahun_ajaran'), function ($q2) {
+                        $q2->where('b.tahun_ajaran_id', request('tahun_ajaran'));
+                    });
+            })
+            ->role($role)
+            ->get();
 
         foreach ($datas as $data) {
             $options = '';
 
             if ($role == 'mahasiswa') {
-                $options = $options ."<a href='". route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) ."' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
+                $options = $options . "<a href='" . route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
             }
 
             if (auth()->user()->can('edit_users')) {
-                $options = $options ."<a href='". route('users.edit', ['role' => $role, 'id' => $data->id]) ."' class='btn btn-warning mx-2'>Edit</a>";
+                $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
+                $options = $options . "<a href='" . route('users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
-            
+
             if (auth()->user()->can('delete_users')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`". route('users.destroy', ['role' => $role, 'id' => $data->id]) ."`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('users.destroy', ['role' => $role, 'id' => $data->id]) . "`)'>
                                     Hapus
                                 </button>";
-
             }
             $data->options = $options;
         }
 
         return DataTables::of($datas)
-                            ->addIndexColumn()
-                            ->rawColumns(['options'])
-                            ->make(true);
+            ->addIndexColumn()
+            ->rawColumns(['options'])
+            ->make(true);
     }
 
-    public function create($role){
+    public function create($role)
+    {
         $return = [];
 
         if ($role == 'mahasiswa') {
@@ -95,7 +99,8 @@ class UserController extends Controller
         return view('users.form', $return);
     }
 
-    public function store(Request $request, $role){
+    public function store(Request $request, $role)
+    {
         $validate = [
             'email' => 'required|email|unique:users,email',
             'name' => 'required',
@@ -106,7 +111,7 @@ class UserController extends Controller
                 'tahun_ajaran_id' => 'required',
                 'nim' => 'required|unique:mahasiswas,nim'
             ];
-        }else{
+        } else {
             $validate += [
                 'nip' => 'required|unique:petugas,nip',
                 'ttd' => 'required|file|max:1024|mimes:png,jpg,jpeg'
@@ -114,7 +119,7 @@ class UserController extends Controller
         }
 
         $request->validate($validate);
-        
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -130,7 +135,7 @@ class UserController extends Controller
                 'prodi_id' => $request->prodi_id,
                 'tahun_ajaran_id' => $request->tahun_ajaran_id
             ]);
-        }else{
+        } else {
             $ttd = $request->file('ttd')->store('ttd');
             Petugas::create([
                 'user_id' => $user->id,
@@ -142,7 +147,8 @@ class UserController extends Controller
         return redirect()->route('users.index', ['role' => $role])->with('success', 'Berhasil ditambahkan');
     }
 
-    public function edit($role, $id){
+    public function edit($role, $id)
+    {
         $data = User::findOrFail($id);
         $return = [
             'data' => $data
@@ -160,7 +166,8 @@ class UserController extends Controller
         return view('users.form', $return);
     }
 
-    public function update(Request $request, $role, $id){
+    public function update(Request $request, $role, $id)
+    {
         $validate = [
             'email' => 'required|unique:users,email,' . $id,
             'name' => 'required',
@@ -173,7 +180,7 @@ class UserController extends Controller
                 'tahun_ajaran_id' => 'required',
                 'nim' => 'required|unique:mahasiswas,nim,' . $user->mahasiswa->id
             ];
-        }else{
+        } else {
             $validate += [
                 'nip' => 'required|unique:petugas,nip,' . $user->petugas->nip,
                 'ttd' => 'file|max:1024|mimes:png,jpg,jpeg'
@@ -201,7 +208,7 @@ class UserController extends Controller
                 'prodi_id' => $request->prodi_id,
                 'tahun_ajaran_id' => $request->tahun_ajaran_id
             ]);
-        }else{
+        } else {
             $update = ['nip' => $request->nip];
             $pts = $user->petugas;
             if ($request->ttd) {
@@ -211,17 +218,18 @@ class UserController extends Controller
 
             $pts->update($update);
         }
-        
+
         return redirect()->route('users.index', ['role' => $role])->with('success', 'Berhasil diubah');
     }
 
-    public function destroy($role, $id){
+    public function destroy($role, $id)
+    {
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
             if ($role == 'mahasiswa') {
                 $user->mahasiswa->delete();
-            }else{
+            } else {
                 $user->petugas->delete();
             }
             $user->delete();
@@ -234,7 +242,8 @@ class UserController extends Controller
         }
     }
 
-    public function import($role){
+    public function import($role)
+    {
         if ($role != 'mahasiswa') {
             abort(404);
         }
@@ -245,7 +254,8 @@ class UserController extends Controller
         return view('users.import', compact('tahun_ajarans', 'prodis'));
     }
 
-    public function saveImport(Request $request, $role){
+    public function saveImport(Request $request, $role)
+    {
         $request->validate([
             'file' => 'required|file|mimes:xlsx',
             'tahun_ajaran_id' => 'required',
@@ -263,47 +273,52 @@ class UserController extends Controller
         return redirect()->route('users.index', ['role' => $role])->with('success', 'Berhasil diimport');
     }
 
-    public function exportPembayaran($role){
+    public function exportPembayaran($role)
+    {
         if ($role != 'mahasiswa') {
             abort(404);
         }
-        
-        if (!request('prodi') && !request('tahun_ajaran')) {
+
+        if (!request('prodi') || !request('tahun_ajaran')) {
             return redirect()->back()->with('error', 'Harap pilih filter prodi dan tahun ajaran');
         }
-        
         return Excel::download(new UserPembayaranExport($role), 'pembayaran.xlsx');
     }
 
-    public function printPembayaran($role, $user_id){
+    public function printPembayaran($role, $user_id)
+    {
         if ($role != 'mahasiswa') {
             abort(404);
         }
 
         $data = User::findOrFail($user_id);
+        $mhs = $data->mahasiswa;
         $semesters = DB::table('semesters as a')
-                            ->select('a.nama', 'b.nominal', 'b.publish', 'a.id')
-                            ->join('semester_tahun as b', 'a.id', 'b.semester_id')
-                            ->where('b.tahun_ajaran_id', $data->mahasiswa->tahun_ajaran_id)
-                            ->where('b.prodi_id', $data->mahasiswa->prodi_id)
-                            ->get();
-            
+            ->select('a.nama', 'b.nominal', 'b.publish', 'a.id')
+            ->join('semester_tahun as b', 'a.id', 'b.semester_id')
+            ->where('b.tahun_ajaran_id', $mhs->tahun_ajaran_id)
+            ->where('b.prodi_id', $mhs->prodi_id)
+            ->get();
+
         $pembayarans = [];
         foreach ($semesters as $semester) {
             $payments = DB::table('pembayarans')
-                            ->select('pembayarans.*', 'users.name as nama_verify')
-                            ->leftJoin('users', 'users.id', 'pembayarans.verify_id')
-                            ->where('pembayarans.status', 'diterima')
-                            ->where('pembayarans.mhs_id', $data->id)
-                            ->where('pembayarans.semester_id', $semester->id)
-                            ->get()
-                            ->toArray();
+                ->select('pembayarans.*', 'users.name as nama_verify')
+                ->leftJoin('users', 'users.id', 'pembayarans.verify_id')
+                ->where('pembayarans.status', 'diterima')
+                ->where('pembayarans.mhs_id', $data->id)
+                ->where('pembayarans.semester_id', $semester->id)
+                ->get()
+                ->toArray();
             $total = array_sum(array_column($payments, 'nominal'));
-            
+
+            $potongans = $mhs->potongan()->where('semester_id', $semester->id)->get();
+
             $pembayarans[$semester->id] = [
                 'total' => $total,
                 'payments' => $payments,
-                'semester' => $semester
+                'semester' => $semester,
+                'potongans' => $potongans
             ];
         }
 

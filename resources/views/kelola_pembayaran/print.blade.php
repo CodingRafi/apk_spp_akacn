@@ -129,7 +129,8 @@
             border-collapse: collapse;
         }
 
-        .table-bordered th, .table-bordered td {
+        .table-bordered th,
+        .table-bordered td {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
@@ -171,45 +172,79 @@
     <hr style="margin: .6rem 0;">
 
     @foreach ($pembayarans as $pembayaran)
-        <table style="font-size: 1rem;width: 100%">
-            <tr>
-                <td>{{ $pembayaran['semester']->nama }} {{ $pembayaran['semester']->publish ? ($pembayaran['total'] >= $pembayaran['semester']->nominal ? '(LUNAS)' : '(BELUM LUNAS)') : '(BELUM DI PUBLISH)' }}</td>
-            </tr>
-            <tr>
-                <td>Bayar: {{ formatRupiah(($pembayaran['semester']->publish ? $pembayaran['semester']->nominal : 0)) }}</td>
-            </tr>
-            <tr>
-                <td>Sudah dibayar: {{ formatRupiah($pembayaran['total']) }}</td>
-            </tr>
-            <tr>
-                <td>Kekurangan: {{ formatRupiah(((($pembayaran['semester']->nominal - $pembayaran['total']) < 0) || !$pembayaran['semester']->publish) ? 0 : $pembayaran['semester']->nominal - $pembayaran['total']) }}</td>
-            </tr>
-            <tr>
-                @if (count($pembayaran['payments']) > 0)
-                <table class="table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Tanggal Bayar</th>
-                            <th>Nominal</th>
-                            <th>Bukti</th>
-                            <th>Diverifikasi oleh</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($pembayaran['payments'] as $payment)
-                            <tr>
-                                <td>{{ date("d F Y", strtotime($payment->tgl_bayar)) }}</td>
-                                <td>{{ formatRupiah($payment->nominal) }}</td>
-                                <td><a href="{{ asset('storage/' . $payment->bukti) }}">Lihat</a></td>
-                                <td>{{ $payment->nama_verify }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-                @endif
-            </tr>
-        </table>
-        <hr style="margin: .6rem 0;">
+        @if ($pembayaran['semester']->publish)
+            @php
+                $potongan = $pembayaran['potongans']->sum('nominal');
+            @endphp
+            <table style="font-size: 1rem;width: 100%">
+                <tr>
+                    <td>{{ $pembayaran['semester']->nama }}
+                        {{ $pembayaran['semester']->publish ? ($pembayaran['total'] + $potongan >= $pembayaran['semester']->nominal ? '(LUNAS)' : '(BELUM LUNAS)') : '(BELUM DI PUBLISH)' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Bayar:
+                        {{ formatRupiah($pembayaran['semester']->publish ? $pembayaran['semester']->nominal : 0) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sudah dibayar: {{ formatRupiah($pembayaran['total']) }}</td>
+                </tr>
+                <tr>
+                    <td>Potongan: {{ formatRupiah($potongan) }}</td>
+                </tr>
+                <tr>
+                    <td>Kekurangan:
+                        {{ formatRupiah(max(0, $pembayaran['semester']->nominal - ($pembayaran['total'] + $potongan))) }}
+                    </td>
+                </tr>
+                <tr>
+                    @if (count($pembayaran['potongans']) > 0)
+                        <h5 style="font-size: 1rem;margin-top: 1rem;">Detail Potongan</h5>
+                        <table class="table-bordered" style="margin-top: .3rem;">
+                            <thead>
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pembayaran['potongans'] as $potongan)
+                                    <tr>
+                                        <td>{{ $potongan->nama }}</td>
+                                        <td>{{ formatRupiah($potongan->nominal) }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                    @if (count($pembayaran['payments']) > 0)
+                        <h5 style="font-size: 1rem;margin-top: 1rem;">Detail Pembayaran</h5>
+                        <table class="table-bordered" style="margin-top: .3rem;">
+                            <thead>
+                                <tr>
+                                    <th>Tanggal Bayar</th>
+                                    <th>Nominal</th>
+                                    <th>Bukti</th>
+                                    <th>Diverifikasi oleh</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pembayaran['payments'] as $payment)
+                                    <tr>
+                                        <td>{{ date('d F Y', strtotime($payment->tgl_bayar)) }}</td>
+                                        <td>{{ formatRupiah($payment->nominal) }}</td>
+                                        <td><a href="{{ asset('storage/' . $payment->bukti) }}">Lihat</a></td>
+                                        <td>{{ $payment->nama_verify }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </tr>
+            </table>
+            <hr style="margin: .6rem 0;">
+        @endif
     @endforeach
 </body>
 

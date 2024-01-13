@@ -15,8 +15,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Sudah dibayar</th>
                                 <th>Harus dibayar</th>
+                                <th>Sudah dibayar</th>
+                                <th>Potongan</th>
+                                <th>Kekurangan</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -40,8 +42,10 @@
             columns: [
                         { "data": "DT_RowIndex" },
                         { "data": "nama" },
-                        { "data": "sudah_dibayar" },
                         { "data": "harus_dibayar" },
+                        { "data": "sudah_dibayar" },
+                        { "data": "potongan" },
+                        { "data": "kekurangan" },
                         { "data": "status" },
                         { "data": "options" }
                     ],

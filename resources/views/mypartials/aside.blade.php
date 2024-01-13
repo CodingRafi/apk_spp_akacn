@@ -26,7 +26,7 @@
         </li>
         @endcan
 
-        @can('view_tahun_ajaran')
+        @can('view_tahun_ajaran', 'view_prodi', 'view_potongan')
         <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -34,16 +34,27 @@
             </a>
     
             <ul class="menu-sub">
+                @can('view_tahun_ajaran')
                 <li class="menu-item {{ Request::is('data-master/tahun-ajaran*') ? 'active' : '' }}">
                     <a href="{{ route('data-master.tahun-ajaran.index') }}" class="menu-link">
                         <div data-i18n="Tahun Ajaran" class="text-capitalize">Tahun Ajaran</div>
                     </a>
                 </li>
+                @endcan
+                @can('view_prodi')
                 <li class="menu-item {{ Request::is('data-master/prodi*') ? 'active' : '' }}">
                     <a href="{{ route('data-master.prodi.index') }}" class="menu-link">
                         <div data-i18n="Prodi" class="text-capitalize">Prodi</div>
                     </a>
                 </li>
+                @endcan
+                @can('view_potongan')
+                <li class="menu-item {{ Request::is('data-master/potongan*') ? 'active' : '' }}">
+                    <a href="{{ route('data-master.potongan.index') }}" class="menu-link">
+                        <div data-i18n="potongan" class="text-capitalize">Potongan Biaya</div>
+                    </a>
+                </li>
+                @endcan
             </ul>
         </li>
         @endcan

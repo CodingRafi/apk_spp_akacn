@@ -10,14 +10,16 @@ use App\Http\Controllers\Kelola\{
     TahunAjaranController,
     ProdiController,
     SemesterController,
-    BiayaController
+    BiayaController,
+    PotonganController
 };
 
 use App\Http\Controllers\{
     PembayaranController,
     HomeController,
     DashboardController,
-    ProfileController
+    ProfileController,
+    UserPotonganController
 };
 
 /*
@@ -35,7 +37,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('index');
 
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth']], function () {
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
@@ -55,15 +57,21 @@ Route::group(['middleware' => ['auth']], function() {
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         Route::patch('{role}/{id}', [UserController::class, 'update'])->name('update');
         Route::delete('{role}/{id}', [UserController::class, 'destroy'])->name('destroy');
+
+        Route::name('potongan.')->group(function () {
+            Route::get('{role}/{id}/potongan', [UserPotonganController::class, 'index'])->name('index');
+            Route::get('{role}/{id}/potongan/{semester_id}', [UserPotonganController::class, 'data'])->name('data');
+            Route::post('{role}/{id}/potongan/set', [UserPotonganController::class, 'store'])->name('store');
+        });
     });
-    
+
     Route::post('/upload-file', [HomeController::class, 'upload_file'])->name('upload_file');
 
     Route::prefix('data-master')->name('data-master.')->group(function () {
         //? Tahun ajaran
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
-        
+
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
         Route::resource('prodi', ProdiController::class);
@@ -92,8 +100,11 @@ Route::group(['middleware' => ['auth']], function() {
             });
         });
 
+        Route::get('potongan/{prodi_id}/getSemester', [PotonganController::class, 'getSemester'])->name('potongan.getSemester');
+        Route::get('potongan/data', [PotonganController::class, 'data'])->name('potongan.data');
+        Route::resource('potongan', PotonganController::class);
     });
-    
+
     Route::prefix('kelola')->name('kelola.')->group(function () {
         Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
             Route::get('/', [KelolaPembayaranController::class, 'index'])->name('index');
@@ -104,7 +115,7 @@ Route::group(['middleware' => ['auth']], function() {
             Route::get('/{pembayaran_id}/revisi', [KelolaPembayaranController::class, 'revisi'])->name('revisi');
         });
     });
-    
+
     Route::middleware(['role:mahasiswa'])->group(function () {
         Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
             Route::get('data', [PembayaranController::class, 'data'])->name('data');
@@ -127,4 +138,4 @@ Route::group(['middleware' => ['auth']], function() {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
