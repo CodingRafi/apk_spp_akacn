@@ -135,7 +135,7 @@
                 </td>
                 <td style="text-align: center;">
                     <h1 style="font-size: 2rem;font-weight:bold;">BUKTI PEMBAYARAN BIAYA KULIAH</h1>
-					<small style="font-size: 1.4rem;font-weight: 200;color:#363636">Akademi Kimia Caraka Nusantara</small>
+					<small style="font-size: 1.4rem;font-weight: 200;color:#363636">Akademi kimia analis caraka nusantara</small>
                 </td>
             </tr>
         </tbody>
@@ -147,7 +147,7 @@
         <table>
             <tr>
                 <td style="width: 29.5rem">
-                    <table class="table table-bordered" style="font-size: 1.25rem">
+                    <table class="table table-bordered" style="font-size: 1.2rem">
                         <tr>
                             <td style="padding-right: 2rem;">Nama</td>
                             <td style="padding-right: .5rem">:</td>
@@ -185,6 +185,10 @@
     </div>
 
     <hr class="mt-05" style="border: 1px solid #b7b7b7;">
+
+    <div class="mt-05">
+        <p style="font-size: 1.2rem;">Berkas cetak ini merupakan bukti resmi status pembayaran biaya kuliah mahasiswa.</p>
+    </div>
 
     <div class="mt-05">
         <table>

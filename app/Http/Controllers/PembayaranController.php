@@ -348,6 +348,6 @@ class PembayaranController extends Controller
         if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status != 'diterima') {
             abort(404);
         }
-        return PDF::loadView('pembayaran.print', compact('data'))->setPaper([0, 0, 600, 480])->stream('kwitansi.pdf');
+        return PDF::loadView('pembayaran.print', compact('data'))->setPaper([0, 0, 600, 550])->stream('kwitansi.pdf');
     }
 }
