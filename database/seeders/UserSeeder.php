@@ -16,6 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        $role_internal = ['admin', 'petugas', 'dosen', 'asdos'];
         // User Admin
         $admin = User::create([
             'name' => 'Admin',

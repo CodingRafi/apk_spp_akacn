@@ -72,7 +72,7 @@
                                 @else
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" role="switch" name="publish"
-                                        id="publish" {{ isset($data) ? ($data->publish ? 'checked' : '') : old('ket') }}>
+                                        id="publish" {{ isset($data) ? ($data->publish ? 'checked' : '') : old('publish') }}>
                                 </div>
                                 @error('ket')
                                 <div class="invalid-feedback d-block">

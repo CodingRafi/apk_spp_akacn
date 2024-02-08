@@ -15,6 +15,10 @@ return new class extends Migration
     {
         Schema::create('profile_mahasiswas', function (Blueprint $table) {
             $table->id();
+            $table->string('nisn');
+            $table->string('nik');
+            $table->string('tempat_lahir');
+            $table->date('tgl_lahir');
             $table->enum('jk', ['l', 'p']);
             $table->string('jalan');
             $table->string('rt');
@@ -22,10 +26,6 @@ return new class extends Migration
             $table->string('dusun');
             $table->string('kelurahan');
             $table->string('kode_pos');
-            $table->string('nisn');
-            $table->string('nik');
-            $table->string('tempat_lahir');
-            $table->date('tgl_lahir');
             $table->string('nama_ayah');
             $table->string('tgl_lahir_ayah');
             $table->string('nik_ayah');

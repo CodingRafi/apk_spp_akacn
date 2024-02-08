@@ -34,11 +34,6 @@ class PermissionTableSeeder extends Seeder
             'edit_prodi',
             'delete_prodi',
 
-            'view_semester',
-            'add_semester',
-            'edit_semester',
-            'delete_semester',
-
             'view_biaya',
             'add_biaya',
             'edit_biaya',

@@ -13,18 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('profile_internals', function (Blueprint $table) {
+        Schema::create('profile_petugas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('tempat_lahir');
-            $table->string('nip');
-            $table->date('tgl_lahir');
             $table->string('no_telp');
             $table->enum('jk', ['l', 'p']);
-            $table->string('riwayat_pendidikan');
-            $table->text('alamat');
             $table->string('status');
-            $table->string('nominal_tunjangan')->default('0');
             $table->timestamps();
         });
     }
@@ -36,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profile_internals');
+        Schema::dropIfExists('profile_petugas');
     }
 };

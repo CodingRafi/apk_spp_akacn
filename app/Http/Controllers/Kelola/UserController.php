@@ -12,10 +12,12 @@ use App\Models\{
     Mahasiswa,
     Petugas
 };
-use DB, PDF;
 use App\Exports\UserPembayaranExport;
+use App\Http\Requests\StoreRequestUser;
 use Illuminate\Http\Request;
 use App\Imports\MahasiswaImport;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
@@ -45,7 +47,7 @@ class UserController extends Controller
     public function data($role)
     {
         $datas = User::select('users.*')
-            ->when($role == 'mahasiswa', function ($q) use ($role) {
+            ->when($role == 'mahasiswa', function ($q) {
                 $q->join('mahasiswas as b', 'users.id', 'b.user_id')
                     ->when(request('prodi'), function ($q2) {
                         $q2->where('b.prodi_id', request('prodi'));
@@ -88,7 +90,7 @@ class UserController extends Controller
         $return = [];
 
         if ($role == 'mahasiswa') {
-            $tahun_ajarans = TahunAjaran::all();
+            $tahun_ajarans = TahunAjaran::where('semester', 1)->get();
             $prodis = Prodi::all();
             $return = [
                 'tahun_ajarans' => $tahun_ajarans,
@@ -99,26 +101,9 @@ class UserController extends Controller
         return view('users.form', $return);
     }
 
-    public function store(Request $request, $role)
+    public function store(StoreRequestUser $request, $role)
     {
-        $validate = [
-            'email' => 'required|email|unique:users,email',
-            'name' => 'required',
-        ];
-
-        if ($role == 'mahasiswa') {
-            $validate += [
-                'tahun_ajaran_id' => 'required',
-                'nim' => 'required|unique:mahasiswas,nim'
-            ];
-        } else {
-            $validate += [
-                'nip' => 'required|unique:petugas,nip',
-                'ttd' => 'required|file|max:1024|mimes:png,jpg,jpeg'
-            ];
-        }
-
-        $request->validate($validate);
+        dd($request);
 
         $user = User::create([
             'name' => $request->name,
@@ -322,6 +307,6 @@ class UserController extends Controller
             ];
         }
 
-        return PDF::loadView('kelola_pembayaran.print', compact('data', 'pembayarans'))->stream('pembayaran.pdf');
+        return Pdf::loadView('kelola_pembayaran.print', compact('data', 'pembayarans'))->stream('pembayaran.pdf');
     }
 }

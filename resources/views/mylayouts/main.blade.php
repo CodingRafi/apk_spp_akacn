@@ -59,6 +59,14 @@
         .swal2-container {
             z-index: 9999 !important;
         }
+
+        .nav-tabs:not(.nav-fill):not(.nav-justified) .nav-link, .nav-pills:not(.nav-fill):not(.nav-justified) .nav-link{
+            background-color: #fff;
+        }
+
+        .nav-tabs .nav-link.active, .nav-tabs .nav-link.active:hover, .nav-tabs .nav-link.active:focus{
+            background-color: #eceef1 !important;
+        }
     </style>
 
     <style>
@@ -343,6 +351,16 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2();
+        });
+    </script>
+    <script>
+        $("#tab-main .a-tab").on("click", function(e) {
+            e.preventDefault();
+            $(".nav-link-dropdown-main").parent().removeClass("active");
+            $("#tab-main a").removeClass("active");
+            $(".tab-pane").removeClass("active");
+            $(this).addClass("active");
+            $(`.tab-pane${$(this).attr("href")}`).addClass("active");
         });
     </script>
 

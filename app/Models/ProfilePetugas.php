@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProfileInternal extends Model
+class ProfilePetugas extends Model
 {
     use HasFactory;
 }
