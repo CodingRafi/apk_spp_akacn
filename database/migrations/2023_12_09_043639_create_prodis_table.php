@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('kode');
             $table->string('nama');
-            $table->string('akreditasi', 10);
+            $table->string('akreditas', 10);
             $table->uuid('jenjang_id');
             $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('cascade');
             $table->enum('status', [0,1])->default(1);
