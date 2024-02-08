@@ -30,8 +30,17 @@ class StoreRequestUser extends FormRequest
 
         if (request('role') == 'mahasiswa') {
             $validate += [
+                'nim' => 'required|unique:mahasiswas,nim',
+                'nisn' => 'required|unique:mahasiswas,nisn',
+                'nik' => 'required|unique:mahasiswas,nik',
+                'tempat_lahir' => 'required',
+                'tgl_lahir' => 'required',
+                'agama_id' => 'required',
+                'kewarganegaraan_id' => 'required',
+                'kelurahan' => 'required',
+                'wilayah_id' => 'required',
+                'penerima_kps' => 'required',
                 'tahun_ajaran_id' => 'required',
-                'nim' => 'required|unique:mahasiswas,nim'
             ];
         } else {
             $validate += [

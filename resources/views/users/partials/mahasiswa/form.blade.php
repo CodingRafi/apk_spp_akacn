@@ -23,7 +23,7 @@
                 <div class="mb-3">
                     <label for="nim" class="form-label">NIM</label>
                     <input class="form-control @error('nim') is-invalid @enderror" type="text"
-                        value="{{ isset($data) ? $data->mahasiswa->nim : old('nim') }}" id="nim" placeholder="nim"
+                        value="{{ isset($data) ? $data->mahasiswa->nim : old('nim') }}" id="nim" placeholder="NIM"
                         name="nim" />
                     @error('nim')
                         <div class="invalid-feedback d-block">
@@ -85,8 +85,7 @@
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="jk" value="p" id="jk-p"
-                                checked>
+                            <input class="form-check-input" type="radio" name="jk" value="p" id="jk-p">
                             <label class="form-check-label" for="jk-p">
                                 Perempuan
                             </label>
@@ -192,8 +191,8 @@
                 <div class="mb-3">
                     <label for="handphone" class="form-label">Handphone</label>
                     <input class="form-control @error('handphone') is-invalid @enderror" type="text"
-                        value="{{ isset($data) ? $data->mahasiswa->handphone : old('handphone') }}"
-                        id="handphone" placeholder="Kode Pos" name="Handphone" />
+                        value="{{ isset($data) ? $data->mahasiswa->handphone : old('handphone') }}" id="handphone"
+                        placeholder="Kode Pos" name="Handphone" />
                     @error('handphone')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -277,7 +276,7 @@
                         @foreach ($tahun_ajarans as $tahun_ajaran)
                             <option value="{{ $tahun_ajaran->id }}"
                                 {{ isset($data) ? ($data->mahasiswa->tahun_ajaran_id == $tahun_ajaran->id ? 'selected' : '') : '' }}>
-                                {{ $tahun_ajaran->nama }}</option>
+                                {{ $tahun_ajaran->tahun_mulai }}/{{ $tahun_ajaran->tahun_akhir }} {{ $tahun_ajaran->semester == 1 ? 'Ganjil' : 'Genap' }}</option>
                         @endforeach
                     </select>
                     @error('tahun_ajaran_id')

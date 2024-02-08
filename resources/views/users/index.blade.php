@@ -24,9 +24,9 @@
                                         <div class="col-md-3 px-0">
                                             <select class="form-select" id="filter-tahun-ajaran">
                                                 <option value="" selected>Pilih Tahun Ajaran</option>
-                                                @foreach ($tahun_ajarans as $tahun_ajaran)
+                                                {{-- @foreach ($tahun_ajarans as $tahun_ajaran)
                                                     <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                                @endforeach
+                                                @endforeach --}}
                                             </select>
                                         </div>
                                         <div class="col-md-2 px-0">
