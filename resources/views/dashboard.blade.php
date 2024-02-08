@@ -61,17 +61,17 @@
                         <div class="col-md-3 mb-3">
                             <select class="form-select" id="filter-prodi" name="prodi">
                                 <option value="" selected>Pilih Prodi</option>
-                                @foreach ($prodis as $prodi)
+                                {{-- @foreach ($prodis as $prodi)
                                 <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                @endforeach
+                                @endforeach --}}
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <select class="form-select" id="filter-tahun-ajaran" name="tahun_ajaran">
                                 <option value="" selected>Pilih Tahun Ajaran</option>
-                                @foreach ($tahun_ajarans as $tahun_ajaran)
+                                {{-- @foreach ($tahun_ajarans as $tahun_ajaran)
                                 <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                @endforeach
+                                @endforeach --}}
                             </select>
                         </div>
                         <div class="col-md-2 mb-3">
@@ -86,7 +86,7 @@
     </div>
 @endsection
 
-@push('js')
+{{-- @push('js')
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
@@ -122,4 +122,4 @@
     },
 });
 </script>
-@endpush
+@endpush --}}

@@ -17,8 +17,10 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
+                                <th>Semester</th>
+                                <th>Status</th>
                                 @can('edit_tahun_ajaran', 'delete_tahun_ajaran')
-                                <th>Actions</th>
+                                <th>Aksi</th>
                                 @endcan
                             </tr>
                         </thead>
@@ -41,6 +43,8 @@
             columns: [
                         { "data": "DT_RowIndex" },
                         { "data": "nama" },
+                        { "data": "semester" },
+                        { "data": "status" },
                         @can('edit_tahun_ajaran', 'hapus_tahun_ajaran')
                             { "data": "options" }
                         @endcan

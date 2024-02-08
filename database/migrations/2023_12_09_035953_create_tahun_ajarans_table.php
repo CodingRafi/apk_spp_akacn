@@ -15,10 +15,11 @@ return new class extends Migration
     {
         Schema::create('tahun_ajarans', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->string('kode');
             $table->string('tahun_mulai');
             $table->string('tahun_akhir');
             $table->enum('semester', [1,2]);
-            $table->enum('status', [0,1]);
+            $table->enum('status', [0,1])->default(0);
             $table->timestamps();
         });
     }

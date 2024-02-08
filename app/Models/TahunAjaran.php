@@ -9,5 +9,7 @@ class TahunAjaran extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    public $incrementing = false;
+    protected $keyType = 'string';
+    protected $guarded = [];
 }
