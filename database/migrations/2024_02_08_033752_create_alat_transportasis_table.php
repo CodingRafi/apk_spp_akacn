@@ -13,11 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('petugas', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->string('nip')->unique();
-            $table->string('ttd')->nullable();
+        Schema::create('alat_transportasis', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('nama');
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('petugas');
+        Schema::dropIfExists('alat_transportasis');
     }
 };

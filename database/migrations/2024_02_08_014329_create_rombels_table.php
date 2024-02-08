@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('prodi', function (Blueprint $table) {
+        Schema::create('rombels', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('kode');
+            $table->foreignId('dosen_pa_id')->constrained('users');
             $table->string('nama');
-            $table->string('akreditasi', 10);
-            $table->uuid('jenjang_id');
-            $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('cascade');
-            $table->enum('status', [0,1])->default(1);
-            $table->integer('jml_semester');
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+            $table->uuid('tahun_ajaran_id');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('prodi');
+        Schema::dropIfExists('rombels');
     }
 };

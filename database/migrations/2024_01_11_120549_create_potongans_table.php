@@ -16,18 +16,26 @@ return new class extends Migration
         Schema::create('potongans', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->foreignId('prodi_id')->constrained('prodi');
-            $table->foreignId('semester_id')->constrained('semesters');
-            $table->foreignId('tahun_ajaran_id')->constrained('tahun_ajarans');
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+            $table->integer('semester');
+            $table->timestamps();
+        });
+
+        Schema::create('potongan_tahun_ajaran', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('potongan_id')->constrained('potongans');
             $table->string('nominal');
-            $table->text('ket');
+            $table->string('ket');
+            $table->uuid('tahun_ajaran_id');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
             $table->timestamps();
         });
 
         Schema::create('potongan_mhs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('potongan_id')->constrained('potongans');
-            $table->foreignId('mhs_id')->constrained('mahasiswas');
+            $table->foreignId('mhs_id')->constrained('users');
             $table->timestamps();
         });
     }

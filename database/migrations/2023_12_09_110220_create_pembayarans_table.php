@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('mhs_id')->constrained('users');
             $table->foreignId('verify_id')->nullable()->constrained('users');
-            $table->foreignId('semester_id')->constrained('semesters');
+            $table->integer('semester');
             $table->date('tgl_bayar');
             $table->string('nominal');
             $table->string('bukti');

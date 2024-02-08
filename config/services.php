@@ -31,7 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'telegram-bot-api' => [
-        'token' => env('TELEGRAM_BOT_TOKEN', '6040985897:AAGzOhEpHUYOT5p8WvZNPJv2lFsQsjoGSSQ')
-    ],
+    'status_internal' => [
+        1 => 'Aktif',
+        2 => 'Tidak Aktif',
+        3 => 'Tugas Belajar',
+        4 => 'Almarhum',
+        5 => 'Keluar'
+    ]
 ];
