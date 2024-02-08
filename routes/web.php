@@ -19,7 +19,8 @@ use App\Http\Controllers\{
     HomeController,
     DashboardController,
     ProfileController,
-    UserPotonganController
+    UserPotonganController,
+    WhitelistIPController
 };
 
 /*
@@ -75,6 +76,11 @@ Route::group(['middleware' => ['auth']], function () {
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
         Route::resource('prodi', ProdiController::class);
+
+        //? Whitelist IP
+        Route::get('whitelist-ip/data', [WhitelistIPController::class, 'data'])->name('whitelist-ip.data');
+        Route::get('whitelist-ip/get', [WhitelistIPController::class, 'get_ip'])->name('whitelist-ip.get-ip');
+        Route::resource('whitelist-ip', WhitelistIPController::class);
 
         Route::get('potongan/{prodi_id}/getSemester', [PotonganController::class, 'getSemester'])->name('potongan.getSemester');
         Route::get('potongan/data', [PotonganController::class, 'data'])->name('potongan.data');

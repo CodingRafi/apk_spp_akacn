@@ -30,18 +30,6 @@ class UserSeeder extends Seeder
             'guard_name' => 'web'
         ]);
 
-        DB::table('profile_internals')->insert([
-            'nip' => '111',
-            'user_id' => $admin->id,
-            'tempat_lahir' => 'depok',
-            'tgl_lahir' => '2022-01-01',
-            'no_telp' => '0',
-            'jk' => 'l',
-            'riwayat_pendidikan' => '1',
-            'alamat' => '1',
-            'status' => '1'
-        ]);
-   
         $role->syncPermissions([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,29,30,31,32]);
 
         $admin->assignRole([$role->id]);

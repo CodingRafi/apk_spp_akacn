@@ -55,6 +55,13 @@
                     </a>
                 </li>
                 @endcan
+                @can('view_whitelist_ip')
+                <li class="menu-item {{ Request::is('data-master/whitelist-ip*') ? 'active' : '' }}">
+                    <a href="{{ route('data-master.whitelist-ip.index') }}" class="menu-link">
+                        <div data-i18n="whitelist-ip">Whitelist IP</div>
+                    </a>
+                </li>
+                @endcan
             </ul>
         </li>
         @endcan

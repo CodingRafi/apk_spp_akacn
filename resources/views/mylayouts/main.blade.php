@@ -179,6 +179,7 @@
     <script src="{{ asset('js/fstdropdown.js') }}"></script>
     <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
+    <script src="{{ asset('js/modal-crud.js') }}"></script>
     <script>
         setFstDropdown();
     </script>

@@ -91,7 +91,7 @@
                     {
                         "data": "semester"
                     },
-                    @can('edit_potongan', 'hapus_potongan')
+                    @can('edit_potongan', 'delete_potongan')
                         {
                             "data": "options"
                         }

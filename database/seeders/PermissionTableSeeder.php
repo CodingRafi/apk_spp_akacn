@@ -34,6 +34,10 @@ class PermissionTableSeeder extends Seeder
             'edit_prodi',
             'delete_prodi',
 
+            'view_whitelist_ip',
+            'add_whitelist_ip',
+            'delete_whitelist_ip',
+
             'view_biaya',
             'add_biaya',
             'edit_biaya',
