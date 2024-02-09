@@ -204,26 +204,6 @@
         @elseif (session()->has('error')) showAlert("{{ session('error') }}", 'error')
         @endif
     </script>
-
-    <script>
-        function deleteData(url) {
-            Swal.fire({
-                title: 'Apakah anda yakin ingin hapus data ini?',
-                text: "Data yang terhapus tidak dapat dikembalikan",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya',
-                cancelButtonText: 'Tidak'
-
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $('.form-delete').attr('action', url).submit();
-                }
-            })
-        }
-    </script>
     <script>
         const upload_file = (blobInfo, progress) => new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();

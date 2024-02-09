@@ -7,7 +7,7 @@
 
             <div class="row">
                 <form
-                    action="{{ isset($data) ? route('users.update', ['role' => request('role'), 'id' => $data->id]) : route('users.store', ['role' => request('role')]) }}"
+                    action="{{ isset($data) ? route('kelola-users.mahasiswa.update', ['role' => request('role'), 'id' => $data->id]) : route('kelola-users.mahasiswa.store', ['role' => request('role')]) }}"
                     method="POST" enctype="multipart/form-data">
                     @csrf
                     @if (isset($data))
@@ -15,7 +15,7 @@
                     @endif
                     <div class="card mb-4">
                         <div class="card-header d-flex align-items-center">
-                            <a href="{{ route('users.index', request('role')) }}"><i
+                            <a href="{{ route('kelola-users.mahasiswa.index', request('role')) }}"><i
                                     class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                             <h5 class="text-capitalize mb-0">{{ isset($data) ? 'Edit' : 'Tambah' }} {{ request('role') }}
                             </h5>
@@ -42,7 +42,7 @@
                                 <div class="tab-pane active" id="identitas" role="tabpanel">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            @include('users.partials.form_user')
+                                            @include('users.form_user')
                                             <div class="mb-3">
                                                 <label for="nim" class="form-label">NIM</label>
                                                 <input class="form-control @error('nim') is-invalid @enderror"
@@ -352,15 +352,15 @@
                                 </div>
 
                                 <div class="tab-pane" id="ayah" role="tabpanel">
-                                    @include('users.partials.mahasiswa.form_ortu', ['value' => 'ayah'])
+                                    @include('users.mahasiswa.form_ortu', ['value' => 'ayah'])
                                 </div>
 
                                 <div class="tab-pane" id="ibu" role="tabpanel">
-                                    @include('users.partials.mahasiswa.form_ortu', ['value' => 'ibu'])
+                                    @include('users.mahasiswa.form_ortu', ['value' => 'ibu'])
                                 </div>
 
                                 <div class="tab-pane" id="wali" role="tabpanel">
-                                    @include('users.partials.mahasiswa.form_ortu', ['value' => 'wali'])
+                                    @include('users.mahasiswa.form_ortu', ['value' => 'wali'])
                                 </div>
                             </div>
 

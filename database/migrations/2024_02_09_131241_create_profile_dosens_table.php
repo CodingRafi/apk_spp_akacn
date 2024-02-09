@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('profile_pengajars', function (Blueprint $table) {
+        Schema::create('profile_dosens', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('tempat_lahir');
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('no_telp');
             $table->uuid('agama_id');
             $table->foreign('agama_id')->references('id')->on('agamas')->onDelete('cascade');
-            $table->enum('status', [0,1]);
+            $table->enum('status', [0, 1]);
             $table->string('nidn');
             $table->string('nama_ibu');
             $table->string('nik');
@@ -45,6 +45,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profile_pengajars');
+        Schema::dropIfExists('profile_dosens');
     }
 };

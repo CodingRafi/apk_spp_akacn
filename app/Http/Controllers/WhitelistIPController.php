@@ -46,7 +46,7 @@ class WhitelistIPController extends Controller
             $options = '';
 
             if (auth()->user()->can('delete_whitelist_ip')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.whitelist-ip.destroy', $data->id) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-presensi.whitelist-ip.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";
             }

@@ -60,8 +60,7 @@ return new class extends Migration
             $table->string('npwp')->nullable();
             $table->uuid('agama_id');
             $table->foreign('agama_id')->references('id')->on('agamas')->onDelete('cascade');
-            $table->uuid('rombel_id');
-            $table->foreign('rombel_id')->references('id')->on('rombels')->onDelete('cascade');
+            $table->foreignId('rombel_id')->constrained('rombels');
             $table->foreignId('user_id')->constrained();
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');

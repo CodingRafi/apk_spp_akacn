@@ -14,13 +14,18 @@ return new class extends Migration
     public function up()
     {
         Schema::create('rombels', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignId('dosen_pa_id')->constrained('users');
+            $table->id();
             $table->string('nama');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
-            $table->uuid('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->timestamps();    
+        });
+        
+        Schema::create('rombel_tahun_ajarans', function (Blueprint $table) {
+            $table->id();
+            $table->uuid('tahun_masuk_id');
+            $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->foreignId('dosen_pa_id')->constrained('users');
             $table->timestamps();
         });
     }

@@ -2,7 +2,6 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use DB;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;

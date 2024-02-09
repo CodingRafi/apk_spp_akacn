@@ -5,10 +5,10 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize mb-0">Whitelist IP</h5>
-                    @can('add_whitelist_ip')
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIp">
-                            Tambah IP
+                    <h5 class="text-capitalize mb-0">Rombel</h5>
+                    @can('add_rombel')
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rombel">
+                            Tambah Rombel
                         </button>
                     @endcan
                 </div>
@@ -19,8 +19,8 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
-                                    <th>IP</th>
-                                    @can('add_whitelist_ip')
+                                    <th>Prodi</th>
+                                    @can('add_rombel')
                                         <th>Aksi</th>
                                     @endcan
                                 </tr>
@@ -31,26 +31,29 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="addIp" tabindex="-1" aria-labelledby="addIpLabel" aria-hidden="true">
+    <div class="modal fade" id="rombel" tabindex="-1" aria-labelledby="rombelLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('kelola-presensi.whitelist-ip.store') }}" method="get">
+                <form action="{{ route('data-master.rombel.store') }}" method="get">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="addIpLabel">Tambah IP</h1>
+                        <h1 class="modal-title fs-5" id="rombelLabel">Tambah Rombel</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        @method('post')
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
                             <input class="form-control @error('nama') is-invalid @enderror" type="text" id="nama"
                                 name="nama" />
                         </div>
-                        <label for="ip" class="form-label">ip</label>
-                        <div class="row gap-3 p-2">
-                            <input class="form-control @error('ip') is-invalid @enderror" type="text" id="ip"
-                                name="ip" readonly />
-                            <button class="btn btn-primary" type="button" onclick="get_ip()">Cek IP</button>
+                        <div class="mb-3">
+                            <label for="prodi" class="form-label">Prodi</label>
+                            <select class="form-select" name="prodi_id">
+                                <option value="">Pilih Prodi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
@@ -64,27 +67,12 @@
 
 @push('js')
     <script>
-        function get_ip() {
-            $.ajax({
-                type: "GET",
-                url: "{{ route('kelola-presensi.whitelist-ip.get-ip') }}",
-                success: function(res) {
-                    $('#ip').val(res.ip);
-                    showAlert('IP berhasil didapatkan!', 'success')
-                },
-                error: function(err) {
-                    showAlert('Gagal mendapatkan IP', 'error');
-                }
-            })
-        }
-    </script>
-    <script>
         $(document).ready(function() {
             let table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('kelola-presensi.whitelist-ip.data') }}',
+                ajax: '{{ route('data-master.rombel.data') }}',
                 columns: [{
                         "data": "DT_RowIndex"
                     },
@@ -92,9 +80,9 @@
                         "data": "nama"
                     },
                     {
-                        "data": "ip"
+                        "data": "prodi"
                     },
-                    @can('delete_whitelist_ip')
+                    @can('edit_rombel', 'delete_rombel')
                         {
                             "data": "options"
                         }
@@ -102,6 +90,10 @@
                 ],
                 pageLength: 25,
                 responsive: true,
+            });
+
+            $('#filter-semester, #filter-prodi, #filter-tahun-ajaran').on('change', function() {
+                table.ajax.reload();
             });
         });
     </script>

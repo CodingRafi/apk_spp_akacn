@@ -55,6 +55,11 @@ class PermissionTableSeeder extends Seeder
             'add_potongan',
             'edit_potongan',
             'delete_potongan',
+
+            'view_rombel',
+            'add_rombel',
+            'edit_rombel',
+            'delete_rombel',
         ];
 
         foreach ($permissions as $permission) {
