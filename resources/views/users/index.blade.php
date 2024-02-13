@@ -43,7 +43,7 @@
                                         </div>
                                     @endif
                                     <div class="col-md-2 px-0">
-                                        <a href="{{ route('users.create', request('role')) }}"
+                                        <a href="{{ route('kelola-users.'. request('role') .'.create') }}"
                                             class="btn btn-primary d-block text-capitalize">Tambah</a>
                                     </div>
                                 </div>
@@ -57,10 +57,18 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Name User</th>
+                                    <th>Nama</th>
+                                    @if (request('role') == 'mahasiswa')
+                                    <th>NIM</th>
+                                    @elseif(request('role') == 'dosen' || request('role') == 'petugas')
+                                    <th>NIP</th>
+                                    @elseif(request('role') == 'asdos')
+                                    <th>NIDN</th>
+                                    @else
                                     <th>Email</th>
+                                    @endif
                                     @can('edit_users', 'delete_users')
-                                        <th>Actions</th>
+                                        <th>Aksi</th>
                                     @endcan
                                 </tr>
                             </thead>
@@ -83,7 +91,7 @@
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('users.data', request('role')) }}',
+                    url: '{{ route('kelola-users.data', request('role')) }}',
                     @if (request('role') == 'mahasiswa')
                         data: function(p) {
                             p.prodi = $('#filter-prodi').val();
@@ -98,7 +106,7 @@
                         "data": "name"
                     },
                     {
-                        "data": "email"
+                        "data": "login_key"
                     },
                     @can('edit_users', 'hapus_users')
                         {

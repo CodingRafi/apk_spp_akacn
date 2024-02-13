@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nama');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
-            $table->timestamps();    
+            $table->timestamps();
         });
         
         Schema::create('rombel_tahun_ajarans', function (Blueprint $table) {

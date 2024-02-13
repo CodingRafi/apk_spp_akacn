@@ -40,11 +40,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function mahasiswa(){
-        return $this->hasOne(Mahasiswa::class, 'user_id');
+    public function dosen(){
+        return $this->hasOne(ProfileDosen::class, 'user_id', 'id');
     }
 
-    public function petugas(){
-        return $this->hasOne(Petugas::class, 'user_id');
+    public function mahasiswa(){
+        return $this->hasOne(ProfileMahasiswa::class, 'user_id', 'id');
     }
 }

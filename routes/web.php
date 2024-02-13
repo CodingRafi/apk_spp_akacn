@@ -20,8 +20,11 @@ use App\Http\Controllers\{
 };
 
 use App\Http\Controllers\Kelola\User\{
-    MahasiwaController
+    DosenController,
+    MahasiwaController,
 };
+
+use App\Http\Controllers\Kelola\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,15 +51,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
 
     Route::prefix('kelola-users')->name('kelola-users.')->group(function () {
-        // Mahasiswa
+        Route::get('{role}', [UserController::class, 'index'])->name('index');
+        Route::get('{role}/data', [UserController::class, 'data'])->name('data');
         Route::resource('mahasiswa', MahasiwaController::class);
-        Route::resource('dosen', MahasiwaController::class);
+        Route::resource('dosen', DosenController::class);
         Route::resource('asdos', MahasiwaController::class);
         Route::resource('petugas', MahasiwaController::class);
 
-        // Route::get('{role}', [UserController::class, 'index'])->name('index');
         // Route::get('{role}/create', [UserController::class, 'create'])->name('create');
-        // Route::get('{role}/data', [UserController::class, 'data'])->name('data');
         // Route::post('{role}', [UserController::class, 'store'])->name('store');
         // Route::get('{role}/import', [UserController::class, 'import'])->name('import');
         // Route::post('{role}/import', [UserController::class, 'saveImport'])->name('saveImport');

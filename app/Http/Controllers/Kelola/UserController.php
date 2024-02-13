@@ -47,15 +47,6 @@ class UserController extends Controller
     public function data($role)
     {
         $datas = User::select('users.*')
-            ->when($role == 'mahasiswa', function ($q) {
-                $q->join('mahasiswas as b', 'users.id', 'b.user_id')
-                    ->when(request('prodi'), function ($q2) {
-                        $q2->where('b.prodi_id', request('prodi'));
-                    })
-                    ->when(request('tahun_ajaran'), function ($q2) {
-                        $q2->where('b.tahun_ajaran_id', request('tahun_ajaran'));
-                    });
-            })
             ->role($role)
             ->get();
 
@@ -67,12 +58,14 @@ class UserController extends Controller
             }
 
             if (auth()->user()->can('edit_users')) {
-                $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
-                $options = $options . "<a href='" . route('users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
+                if ($role == 'mahasiswa') {
+                    $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
+                }
+                $options = $options . "<a href='" . route('kelola-users.'. $role .'.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
             if (auth()->user()->can('delete_users')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('users.destroy', ['role' => $role, 'id' => $data->id]) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.'. $role .'.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";
             }
