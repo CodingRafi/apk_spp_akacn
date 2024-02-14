@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('profile_mahasiswas', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('nisn');
             $table->string('nik');
             $table->string('tempat_lahir');
@@ -61,13 +62,16 @@ return new class extends Migration
             $table->uuid('agama_id');
             $table->foreign('agama_id')->references('id')->on('agamas')->onDelete('cascade');
             $table->foreignId('rombel_id')->constrained('rombels');
-            $table->foreignId('user_id')->constrained();
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
-            $table->uuid('kewarganegaraan_id');
+            $table->string('kewarganegaraan_id');
             $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
-            $table->uuid('wilayah_id');
+            $table->string('wilayah_id');
             $table->foreign('wilayah_id')->references('id')->on('wilayahs')->onDelete('cascade');
+            $table->string('jenis_tinggal_id')->nullable();
+            $table->foreign('jenis_tinggal_id')->references('id')->on('jenis_tinggals')->onDelete('cascade');
+            $table->string('alat_transportasi_id')->nullable();
+            $table->foreign('alat_transportasi_id')->references('id')->on('alat_transportasis')->onDelete('cascade');
             $table->enum('status', [0,1])->default(1);
             $table->enum('mhs_kebutuhan_khusus', [0,1])->default(0);
             $table->enum('ayah_kebutuhan_khusus', [0,1])->default(0);

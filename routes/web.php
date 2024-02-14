@@ -91,6 +91,7 @@ Route::group(['middleware' => ['auth']], function () {
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
         Route::get('rombel/get-tahun-ajaran', [RombelController::class, 'getTahunAjaran'])->name('rombel.getTahunAjaran');
+        Route::get('rombel/get-dosen-pa', [RombelController::class, 'getDosenPa'])->name('rombel.getDosenPa');
         Route::prefix('rombel/')->name('rombel.dosen-pa.')->group(function () {
             Route::get('{rombel_id}/dosen-pa', [RombelController::class, 'indexDosenPa'])->name('index');
             Route::post('{rombel_id}/dosen-pa', [RombelController::class, 'storeDosenPa'])->name('store');

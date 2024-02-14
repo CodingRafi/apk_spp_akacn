@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('jenis_tinggals', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->string('id')->primary();
             $table->string('nama');
             $table->timestamps();
         });

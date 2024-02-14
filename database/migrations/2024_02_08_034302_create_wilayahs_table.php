@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('wilayahs', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('negara_id');
+            $table->string('id')->primary();
+            $table->string('negara_id');
             $table->foreign('negara_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
             $table->string('nama');
             $table->timestamps();

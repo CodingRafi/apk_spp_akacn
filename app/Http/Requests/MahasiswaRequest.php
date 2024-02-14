@@ -24,18 +24,29 @@ class MahasiswaRequest extends FormRequest
     public function rules()
     {
         return [
-            'nim' => 'required|unique:mahasiswas,nim',
-            'nisn' => 'required|unique:mahasiswas,nisn',
-            'nik' => 'required|unique:mahasiswas,nik',
+            'login_key' => 'required|unique:users,login_key',
+            'nisn' => 'required|unique:profile_mahasiswas,nisn',
+            'nik' => 'required|unique:profile_mahasiswas,nik',
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
             'agama_id' => 'required',
             'kewarganegaraan_id' => 'required',
             'kelurahan' => 'required',
-            'wilayah_id' => 'required',
-            'rombel_id' => 'required',
             'penerima_kps' => 'required',
-            'tahun_ajaran_id' => 'required',
+            'tahun_masuk_id' => 'required',
+            'wilayah_id' => 'required',
+            'prodi_id' => 'required',
+            'rombel_id' => 'required',
+            'rt' => 'digits:3',
+            'rw' => 'digits:3',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'login_key.unique' => 'NIM sudah terdaftar',
+            'login_key.required' => 'NIM tidak boleh kosong',
         ];
     }
 }

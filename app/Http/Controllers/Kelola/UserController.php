@@ -7,10 +7,16 @@ use Illuminate\Support\Facades\Storage;
 use DataTables;
 use App\Models\{
     Agama,
+    AlatTransportasi,
+    JenisTinggal,
+    Jenjang,
+    Kewarganegaraan,
     User,
     TahunAjaran,
     Prodi,
     Mahasiswa,
+    Pekerjaan,
+    Penghasilan,
     Petugas,
     Wilayah
 };
@@ -55,14 +61,14 @@ class UserController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            if ($role == 'mahasiswa') {
-                $options = $options . "<a href='" . route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
-            }
+            // if ($role == 'mahasiswa') {
+            //     $options = $options . "<a href='" . route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
+            // }
 
             if (auth()->user()->can('edit_users')) {
-                if ($role == 'mahasiswa') {
-                    $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
-                }
+                // if ($role == 'mahasiswa') {
+                //     $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
+                // }
                 $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
@@ -90,11 +96,23 @@ class UserController extends Controller
         ];
 
         if ($role == 'mahasiswa') {
-            $tahun_ajarans = TahunAjaran::where('semester', 1)->get();
+            $tahun_ajarans = TahunAjaran::all();
             $prodis = Prodi::all();
-            $return = [
+            $kewarganegaraan = Kewarganegaraan::all();
+            $jenis_tinggal = JenisTinggal::all();
+            $alat_transportasi = AlatTransportasi::all();
+            $pekerjaans = Pekerjaan::all();
+            $jenjang = Jenjang::all();
+            $penghasilans = Penghasilan::all();
+            $return += [
                 'tahun_ajarans' => $tahun_ajarans,
-                'prodis' => $prodis
+                'prodis' => $prodis,
+                'kewarganegaraan' => $kewarganegaraan,
+                'jenis_tinggal' => $jenis_tinggal,
+                'alat_transportasi' => $alat_transportasi,
+                'pekerjaans' => $pekerjaans,
+                'jenjang' => $jenjang,
+                'penghasilans' => $penghasilans
             ];
         }
 

@@ -189,7 +189,9 @@ class RombelController extends Controller
         DB::table('rombel_tahun_ajarans')->insert([
             'rombel_id' => $rombel_id,
             'dosen_pa_id' => $request->dosen_pa_id,
-            'tahun_masuk_id' => $request->tahun_masuk_id
+            'tahun_masuk_id' => $request->tahun_masuk_id,
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         return response()->json([
@@ -197,7 +199,8 @@ class RombelController extends Controller
         ], 200);
     }
 
-    public function updateDosenPa(Request $request, $rombel_id, $dosen_pa_id){
+    public function updateDosenPa(Request $request, $rombel_id, $dosen_pa_id)
+    {
         $request->validate([
             'dosen_pa_id' => 'required'
         ]);
@@ -209,9 +212,9 @@ class RombelController extends Controller
                 'dosen_pa_id' => $request->dosen_pa_id
             ]);
 
-            return response()->json([
-                'message' => 'berhasil diubah'
-            ], 200);
+        return response()->json([
+            'message' => 'berhasil diubah'
+        ], 200);
     }
 
     public function getTahunAjaran()
@@ -228,6 +231,25 @@ class RombelController extends Controller
         return response()->json([
             'message' => 'success',
             'data' => $tahun_ajarans
+        ], 200);
+    }
+
+    public function getDosenPa()
+    {
+        $data = DB::table('rombels')
+            ->select('rombels.*', 'users.name as dosen_pa', 'users.login_key as nip_pa')
+            ->join('rombel_tahun_ajarans', 'rombel_tahun_ajarans.rombel_id', '=', 'rombels.id')
+            ->join('users', 'users.id', 'rombel_tahun_ajarans.dosen_pa_id')
+            ->when(request('tahun_ajaran_id'), function ($q) {
+                $q->where('rombel_tahun_ajarans.tahun_masuk_id', request('tahun_ajaran_id'));
+            })
+            ->when(request('prodi_id'), function ($q) {
+                $q->where('rombels.prodi_id', request('prodi_id'));
+            })
+            ->get();
+
+        return response()->json([
+            'data' => $data
         ], 200);
     }
 }
