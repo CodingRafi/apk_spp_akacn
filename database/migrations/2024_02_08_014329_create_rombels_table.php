@@ -23,6 +23,7 @@ return new class extends Migration
         
         Schema::create('rombel_tahun_ajarans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('rombel_id')->constrained('rombels');
             $table->uuid('tahun_masuk_id');
             $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
             $table->foreignId('dosen_pa_id')->constrained('users');

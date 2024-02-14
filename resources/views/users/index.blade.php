@@ -43,7 +43,7 @@
                                         </div> --}}
                                     @endif
                                     <div class="col-md-2 px-0">
-                                        <a href="{{ route('kelola-users.'. request('role') .'.create') }}"
+                                        <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
                                             class="btn btn-primary d-block text-capitalize">Tambah</a>
                                     </div>
                                 </div>
@@ -59,17 +59,17 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     @if (request('role') == 'mahasiswa')
-                                    <th>NIM</th>
+                                        <th>NIM</th>
                                     @elseif(request('role') == 'dosen' || request('role') == 'petugas')
-                                    <th>NIP</th>
+                                        <th>NIP</th>
                                     @elseif(request('role') == 'asdos')
-                                    <th>NIDN</th>
+                                        <th>NIDN</th>
                                     @else
-                                    <th>Email</th>
-                                    {{-- @endif
-                                    @can('edit_users', 'delete_users')
-                                        <th>Aksi</th> --}}
+                                        <th>Email</th>
                                     @endcan
+                                    @can('edit_users', 'delete_users')
+                                        <th>Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                         </table>

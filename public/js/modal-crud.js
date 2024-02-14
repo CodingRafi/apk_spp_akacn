@@ -4,6 +4,19 @@ $.ajaxSetup({
     },
 });
 
+function addForm(url, title = "Tambah", modal = "#modal-form", func) {
+    $(`${modal}`).modal("show");
+    $(`${modal} .modal-title`).text(title);
+    $(`${modal} form`).attr("action", url);
+    $(`${modal} [name=_method]`).val("post");
+
+    resetForm(`${modal} form`);
+
+    if (func != undefined) {
+        func();
+    }
+}
+
 function submitForm(originalForm, selector = "", func) {
     let oldValue = $(selector).html();
     $(selector)

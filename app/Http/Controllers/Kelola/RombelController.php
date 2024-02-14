@@ -26,7 +26,7 @@ class RombelController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='". route('data-master.rombel.setDosenPa', $data->id) ."' class='btn btn-primary'>Set Dosen PA</a>";
+            $options = $options . "<a href='" . route('data-master.rombel.dosen-pa.index', $data->id) . "' class='btn btn-primary'>Set Dosen PA</a>";
 
             if (auth()->user()->can('edit_rombel')) {
                 $options = $options . " <button class='btn btn-warning'
@@ -116,29 +116,115 @@ class RombelController extends Controller
         }
     }
 
-    public function setDosenPa($id)
+    public function dataDosenPa($id)
+    {
+        $datas = DB::table('rombel_tahun_ajarans')
+            ->select('rombel_tahun_ajarans.id', 'users.name as dosen_pa', 'users.login_key as nip_pa', 'tahun_ajarans.nama as tahun_masuk')
+            ->join('rombels', 'rombels.id', 'rombel_tahun_ajarans.rombel_id')
+            ->join('users', 'users.id', 'rombel_tahun_ajarans.dosen_pa_id')
+            ->join('tahun_ajarans', 'tahun_ajarans.id', 'rombel_tahun_ajarans.tahun_masuk_id')
+            ->where('rombel_tahun_ajarans.rombel_id', $id)
+            ->get();
+
+        foreach ($datas as $data) {
+            $options = '';
+
+            if (auth()->user()->can('edit_rombel')) {
+                $options = $options . " <button class='btn btn-warning'
+                        onclick='editForm(`" . route('data-master.rombel.dosen-pa.show', ['rombel_id' => $id, 'id' => $data->id]) . "`, `Set Dosen PA`, `#dosenPa`, getTahunAjaran)'>
+                        <i class='ti-pencil'></i>
+                        Edit
+                    </button>";
+            }
+
+            if (auth()->user()->can('delete_rombel')) {
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+                                        Hapus
+                                    </button>";
+            }
+            $data->options = $options;
+        }
+
+        return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('dosen_pa', function ($datas) {
+                return $datas->dosen_pa . ' (' . $datas->nip_pa . ')';
+            })
+            ->rawColumns(['options'])
+            ->make(true);
+    }
+
+    public function showDosenPa($rombel_id, $id)
+    {
+        $data = DB::table('rombel_tahun_ajarans')->where('id', $id)->first();
+
+        if ($data->rombel_id != $rombel_id) {
+            return response()->json([
+                'message' => 'Maaf telah terjadi kesalahan!'
+            ], 400);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil',
+            'data' => $data
+        ], 200);
+    }
+
+    public function indexDosenPa($id)
     {
         $dosen = User::select('users.*')
-                        ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-                        ->where('profile_dosens.status', 1)
-                        ->role('dosen')->get();
+            ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
+            ->where('profile_dosens.status', '1')
+            ->role('dosen')->get();
         return view('data_master.rombel.set-dosen-pa', compact('dosen'));
     }
 
-    public function storeDosenPa(Request $request){
-        dd($request);
+    public function storeDosenPa(Request $request, $rombel_id)
+    {
+        $request->validate([
+            'tahun_masuk_id' => 'required',
+            'dosen_pa_id' => 'required'
+        ]);
+
+        DB::table('rombel_tahun_ajarans')->insert([
+            'rombel_id' => $rombel_id,
+            'dosen_pa_id' => $request->dosen_pa_id,
+            'tahun_masuk_id' => $request->tahun_masuk_id
+        ]);
+
+        return response()->json([
+            'message' => 'berhasil disimpan'
+        ], 200);
     }
 
-    public function getTahunAjaran(){
+    public function updateDosenPa(Request $request, $rombel_id, $dosen_pa_id){
+        $request->validate([
+            'dosen_pa_id' => 'required'
+        ]);
+
+        DB::table('rombel_tahun_ajarans')
+            ->where('id', $dosen_pa_id)
+            ->where('rombel_id', $rombel_id)
+            ->update([
+                'dosen_pa_id' => $request->dosen_pa_id
+            ]);
+
+            return response()->json([
+                'message' => 'berhasil diubah'
+            ], 200);
+    }
+
+    public function getTahunAjaran()
+    {
         $tahun_ajarans = TahunAjaran::select('tahun_ajarans.*')
-                        ->leftJoin('rombel_tahun_ajarans', 'rombel_tahun_ajarans.tahun_masuk_id', '=', 'tahun_ajarans.id')
-                        ->when(request('id_pivot') && request('id_pivot') !== '', function ($query) {
-                            $oldData = DB::table('rombel_tahun_ajarans')->where('id', request('id'))->first();
-                            $query->orWhere('id', $oldData->tahun_ajaran_id);
-                        })
-                        ->whereNull('tahun_ajarans.id')
-                        ->get();
-        
+            ->leftJoin('rombel_tahun_ajarans', 'rombel_tahun_ajarans.tahun_masuk_id', '=', 'tahun_ajarans.id')
+            ->whereNull('rombel_tahun_ajarans.tahun_masuk_id')
+            ->when(request('dosen_pa_id') && request('dosen_pa_id') !== '', function ($query) {
+                $oldData = DB::table('rombel_tahun_ajarans')->where('id', request('dosen_pa_id'))->first();
+                $query->orWhere('tahun_ajarans.id', $oldData->tahun_masuk_id);
+            })
+            ->get();
+
         return response()->json([
             'message' => 'success',
             'data' => $tahun_ajarans

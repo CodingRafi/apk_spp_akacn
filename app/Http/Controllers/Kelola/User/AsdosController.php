@@ -29,7 +29,7 @@ class AsdosController extends Controller
             $user->asdos()->create($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.asdos.index')->with('success', 'Berhasil disimpan');
+            return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -53,7 +53,7 @@ class AsdosController extends Controller
             $user->asdos()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.asdos.index')->with('success', 'Berhasil diubah');
+            return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

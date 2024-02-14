@@ -30,7 +30,7 @@ class PetugasController extends Controller
             $user->petugas()->create($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.petugas.index')->with('success', 'Berhasil disimpan');
+            return redirect()->route('kelola-users.index', ['role' => 'petugas'])->with('success', 'Berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -54,7 +54,7 @@ class PetugasController extends Controller
             $user->petugas()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.petugas.index')->with('success', 'Berhasil diubah');
+            return redirect()->route('kelola-users.index', ['role' => 'petugas'])->with('success', 'Berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

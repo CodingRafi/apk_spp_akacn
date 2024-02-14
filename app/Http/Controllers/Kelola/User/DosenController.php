@@ -31,7 +31,7 @@ class DosenController extends Controller
             $user->dosen()->create($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.dosen.index')->with('success', 'Berhasil disimpan');
+            return redirect()->route('kelola-users.index', ['role' => 'dosen'])->with('success', 'Berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -55,7 +55,7 @@ class DosenController extends Controller
             $user->dosen()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.dosen.index')->with('success', 'Berhasil diubah');
+            return redirect()->route('kelola-users.index', ['role' => 'dosen'])->with('success', 'Berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

@@ -57,10 +57,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{role}/data', [UserController::class, 'data'])->name('data');
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
-        Route::resource('mahasiswa', MahasiwaController::class);
-        Route::resource('dosen', DosenController::class);
-        Route::resource('asdos', AsdosController::class);
-        Route::resource('petugas', PetugasController::class);
+        Route::resource('mahasiswa', MahasiwaController::class)->except('index', 'create', 'edit');
+        Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
+        Route::resource('asdos', AsdosController::class)->except('index', 'create', 'edit');
+        Route::resource('petugas', PetugasController::class)->except('index', 'create', 'edit');
 
         // Route::post('{role}', [UserController::class, 'store'])->name('store');
         // Route::get('{role}/import', [UserController::class, 'import'])->name('import');
@@ -90,9 +90,14 @@ Route::group(['middleware' => ['auth']], function () {
 
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
-        Route::get('rombel/{id}/set-dosen-pa', [RombelController::class, 'setDosenPa'])->name('rombel.setDosenPa');
-        Route::post('rombel/set-dosen-pa', [RombelController::class, 'storeDosenPa'])->name('rombel.storeDosenPa');
         Route::get('rombel/get-tahun-ajaran', [RombelController::class, 'getTahunAjaran'])->name('rombel.getTahunAjaran');
+        Route::prefix('rombel/')->name('rombel.dosen-pa.')->group(function () {
+            Route::get('{rombel_id}/dosen-pa', [RombelController::class, 'indexDosenPa'])->name('index');
+            Route::post('{rombel_id}/dosen-pa', [RombelController::class, 'storeDosenPa'])->name('store');
+            Route::get('{rombel_id}/dosen-pa/data', [RombelController::class, 'dataDosenPa'])->name('data');
+            Route::get('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'showDosenPa'])->name('show');
+            Route::put('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'updateDosenPa'])->name('update');
+        });
         Route::resource('rombel', RombelController::class);
     });
     

@@ -117,7 +117,7 @@
                 <ul class="menu-sub">
                     @foreach (getRoleWithout(['admin']) as $role)
                         <li class="menu-item {{ Request::is('kelola-users/' . $role['name'] . '*') ? 'active' : '' }}">
-                            <a href="{{ route("kelola-users.{$role['name']}.index") }}" class="menu-link">
+                            <a href="{{ route("kelola-users.index", ['role' => $role['name']]) }}" class="menu-link">
                                 <div data-i18n="{{ $role['name'] }}" class="text-capitalize">{{ $role['name'] }}</div>
                             </a>
                         </li>
