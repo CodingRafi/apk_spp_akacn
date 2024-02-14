@@ -96,6 +96,14 @@
                         </li>
                     @endcan
 
+                    @can('view_biaya_lainnya')
+                        <li class="menu-item {{ Request::is('kelola-pembayaran/potongan*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-pembayaran.potongan.index') }}" class="menu-link">
+                                <div data-i18n="potongan" class="text-capitalize">Potongan Biaya</div>
+                            </a>
+                        </li>
+                    @endcan
+
                     @can('view_kelola_pembayaran')
                         <li class="menu-item {{ Request::is('kelola-pembayaran/pembayaran*') ? 'active' : '' }}">
                             <a href="{{ route('kelola-pembayaran.potongan.index') }}" class="menu-link">

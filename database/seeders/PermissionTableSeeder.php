@@ -60,6 +60,11 @@ class PermissionTableSeeder extends Seeder
             'add_rombel',
             'edit_rombel',
             'delete_rombel',
+
+            'view_biaya_lainnya',
+            'add_biaya_lainnya',
+            'edit_biaya_lainnya',
+            'delete_biaya_lainnya',
         ];
 
         foreach ($permissions as $permission) {
