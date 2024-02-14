@@ -52,60 +52,7 @@
                                                     </div>
                                                 @enderror
                                             </div>
-                                            <div class="mb-3">
-                                                <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
-                                                <input class="form-control @error('tempat_lahir') is-invalid @enderror"
-                                                    type="text"
-                                                    value="{{ isset($data) ? $data->dosen->tempat_lahir : old('tempat_lahir') }}"
-                                                    id="tempat_lahir" placeholder="Tempat Lahir" name="tempat_lahir" />
-                                                @error('tempat_lahir')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-                                                <input class="form-control @error('tgl_lahir') is-invalid @enderror"
-                                                    type="date"
-                                                    value="{{ isset($data) ? $data->dosen->tgl_lahir : old('tgl_lahir') }}"
-                                                    id="tgl_lahir" placeholder="Tempat Lahir" name="tgl_lahir" />
-                                                @error('tgl_lahir')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="agama_id" class="form-label">Agama</label>
-                                                <select class="form-select @error('agama_id') is-invalid @enderror"
-                                                    name="agama_id">
-                                                    <option value="">Pilih Agama</option>
-                                                    @foreach ($agamas as $agama)
-                                                        <option value="{{ $agama->id }}"
-                                                            {{ isset($data) ? ($data->dosen->agama_id == $agama->id ? 'selected' : '') : (old('agama_id') == $agama->id ? 'selected' : '') }}>
-                                                            {{ $agama->nama }}</option>
-                                                    @endforeach
-                                                </select>
-                                                @error('agama_id')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="jk" class="form-label">Status</label>
-                                                <div class="form-check form-switch">
-                                                    <input class="form-check-input" type="checkbox" role="switch"
-                                                        name="status" id="publish"
-                                                        {{ isset($data) ? ($data->dosen->status ? 'checked' : '') : (old('status') ? 'checked' : '') }}>
-                                                </div>
-                                                @error('jk')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
+                                            @include('users.default.identitas')
                                             <div class="mb-3">
                                                 <label for="nidn" class="form-label">NIDN</label>
                                                 <input class="form-control @error('nidn') is-invalid @enderror"
@@ -130,6 +77,8 @@
                                                     </div>
                                                 @enderror
                                             </div>
+                                        </div>
+                                        <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="nik" class="form-label">NIK</label>
                                                 <input class="form-control @error('nik') is-invalid @enderror"
@@ -154,155 +103,15 @@
                                                     </div>
                                                 @enderror
                                             </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="jk" class="form-label">Jenis Kelamin</label>
-                                                <div class="d-flex gap-3">
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="jk"
-                                                            value="l" id="jk-l"
-                                                            {{ isset($data) ? ($data->dosen->jk == 'l' ? 'checked' : '') : (old('jk') == 'l' ? 'checked' : '') }}>
-                                                        <label class="form-check-label" for="jk-l">
-                                                            Laki-laki
-                                                        </label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="jk"
-                                                            value="p" id="jk-p"
-                                                            {{ isset($data) ? ($data->dosen->jk == 'p' ? 'checked' : '') : (old('jk') == 'p' ? 'checked' : '') }}>
-                                                        <label class="form-check-label" for="jk-p">
-                                                            Perempuan
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                @error('jk')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label for="rt" class="form-label">RT</label>
-                                                        <input class="form-control @error('rt') is-invalid @enderror"
-                                                            type="number"
-                                                            value="{{ isset($data) ? $data->dosen->rt : old('rt') }}"
-                                                            id="rt" placeholder="rt" name="rt" />
-                                                        @error('rt')
-                                                            <div class="invalid-feedback d-block">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label for="rw" class="form-label">RW</label>
-                                                        <input class="form-control @error('rw') is-invalid @enderror"
-                                                            type="number"
-                                                            value="{{ isset($data) ? $data->dosen->rw : old('rw') }}"
-                                                            id="rw" placeholder="rw" name="rw" />
-                                                        @error('rw')
-                                                            <div class="invalid-feedback d-block">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="jalan" class="form-label">Jalan</label>
-                                                <input class="form-control @error('jalan') is-invalid @enderror"
-                                                    type="text"
-                                                    value="{{ isset($data) ? $data->dosen->jalan : old('jalan') }}"
-                                                    id="jalan" placeholder="Jalan" name="jalan" />
-                                                @error('jalan')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label for="dusun" class="form-label">Dusun</label>
-                                                        <input class="form-control @error('dusun') is-invalid @enderror"
-                                                            type="text"
-                                                            value="{{ isset($data) ? $data->dosen->dusun : old('dusun') }}"
-                                                            id="dusun" placeholder="Dusun" name="dusun" />
-                                                        @error('dusun')
-                                                            <div class="invalid-feedback d-block">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="mb-3">
-                                                        <label for="wilayah_id" class="form-label">Wilayah</label>
-                                                        <select name="wilayah_id" id="wilayah_id" class="form-select">
-                                                            <option value="">Pilih wilayah</option>
-                                                            @foreach ($wilayah as $item)
-                                                                <option value="{{ $item->id }}"
-                                                                    {{ isset($data) ? ($data->dosen->wilayah_id == $item->id ? 'selected' : '') : old('wilayah_id') }}>
-                                                                    {{ $item->nama }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('wilayah_id')
-                                                            <div class="invalid-feedback d-block">
-                                                                {{ $message }}
-                                                            </div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="kode_pos" class="form-label">Kode Pos</label>
-                                                <input class="form-control @error('kode_pos') is-invalid @enderror"
-                                                    type="text"
-                                                    value="{{ isset($data) ? $data->dosen->kode_pos : old('kode_pos') }}"
-                                                    id="kode_pos" placeholder="Kode Pos" name="kode_pos" />
-                                                @error('kode_pos')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="telepon" class="form-label">Telepon</label>
-                                                <input class="form-control @error('telepon') is-invalid @enderror"
-                                                    type="text"
-                                                    value="{{ isset($data) ? $data->dosen->telepon : old('telepon') }}"
-                                                    id="telepon" placeholder="Kode Pos" name="telepon" />
-                                                @error('telepon')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="handphone" class="form-label">Handphone</label>
-                                                <input class="form-control @error('handphone') is-invalid @enderror"
-                                                    type="text"
-                                                    value="{{ isset($data) ? $data->dosen->handphone : old('handphone') }}"
-                                                    id="handphone" placeholder="Handphone" name="handphone" />
-                                                @error('handphone')
-                                                    <div class="invalid-feedback d-block">
-                                                        {{ $message }}
-                                                    </div>
-                                                @enderror
-                                            </div>
+                                            @include('users.default.alamat')
+                                            @include('users.default.telp')
                                             <div class="mb-3">
                                                 <label for="status_pernikahan" class="form-label">Status
                                                     Pernikahan</label>
                                                 <div class="d-flex gap-3">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="radio"
-                                                            name="status_pernikahan" value="1"
-                                                            id="status_pernikahan-1"
+                                                            name="status_pernikahan" value="1" id="status_pernikahan-1"
                                                             {{ isset($data) ? ($data->dosen->status_pernikahan == 1 ? 'checked' : '') : (old('status_pernikahan') == 1 ? 'checked' : '') }}>
                                                         <label class="form-check-label" for="status_pernikahan-1">
                                                             Sudah
@@ -411,98 +220,7 @@
                                 </div>
 
                                 <div class="tab-pane" id="lainnya" role="tabpanel">
-                                    <div class="mb-3">
-                                        <label for="mampu_handle_kebutuhan_khusus" class="form-label">Mampu handle
-                                            Kebutuhan
-                                            Khusus?</label>
-                                        <div class="d-flex gap-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_khusus" value="1"
-                                                    id="mampu_handle_kebutuhan_khusus-1"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_khusus == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_khusus') == 1 ? 'checked' : '') }}>
-                                                <label class="form-check-label" for="mampu_handle_kebutuhan_khusus-1">
-                                                    Ya
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_khusus" value="0"
-                                                    id="mampu_handle_kebutuhan_khusus-0"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_khusus == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_khusus') == 0 ? 'checked' : '') }}>
-                                                <label class="form-check-label" for="mampu_handle_kebutuhan_khusus-0">
-                                                    Tidak
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @error('mampu_handle_kebutuhan_khusus')
-                                            <div class="invalid-feedback d-block">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mampu_handle_kebutuhan_braille" class="form-label">Mampu
-                                            handleKebutuhan
-                                            braille?</label>
-                                        <div class="d-flex gap-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_braille" value="1"
-                                                    id="mampu_handle_kebutuhan_braille-1"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_braille == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_braille') == 1 ? 'checked' : '') }}>
-                                                <label class="form-check-label" for="mampu_handle_kebutuhan_braille-1">
-                                                    Ya
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_braille" value="0"
-                                                    id="mampu_handle_kebutuhan_braille-0"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_braille == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_braille') == 0 ? 'checked' : '') }}>
-                                                <label class="form-check-label" for="mampu_handle_kebutuhan_braille-0">
-                                                    Tidak
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @error('mampu_handle_kebutuhan_braille')
-                                            <div class="invalid-feedback d-block">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mampu_handle_kebutuhan_bahasa_isyarat" class="form-label">Mampu handle
-                                            Kebutuhan
-                                            bahasa isyarat?</label>
-                                        <div class="d-flex gap-3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_bahasa_isyarat" value="1"
-                                                    id="mampu_handle_kebutuhan_bahasa_isyarat-1"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_bahasa_isyarat == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_bahasa_isyarat') == 1 ? 'checked' : '') }}>
-                                                <label class="form-check-label"
-                                                    for="mampu_handle_kebutuhan_bahasa_isyarat-1">
-                                                    Ya
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="radio"
-                                                    name="mampu_handle_kebutuhan_bahasa_isyarat" value="0"
-                                                    id="mampu_handle_kebutuhan_bahasa_isyarat-0"
-                                                    {{ isset($data) ? ($data->dosen->mampu_handle_kebutuhan_bahasa_isyarat == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_bahasa_isyarat') == 0 ? 'checked' : '') }}>
-                                                <label class="form-check-label"
-                                                    for="mampu_handle_kebutuhan_bahasa_isyarat-0">
-                                                    Tidak
-                                                </label>
-                                            </div>
-                                        </div>
-                                        @error('mampu_handle_kebutuhan_bahasa_isyarat')
-                                            <div class="invalid-feedback d-block">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
+                                    @include('users.default.ngajar')
                                 </div>
                             </div>
 

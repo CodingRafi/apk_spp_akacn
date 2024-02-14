@@ -20,6 +20,7 @@ use App\Http\Controllers\{
 };
 
 use App\Http\Controllers\Kelola\User\{
+    AsdosController,
     DosenController,
     MahasiwaController,
 };
@@ -53,18 +54,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('kelola-users')->name('kelola-users.')->group(function () {
         Route::get('{role}', [UserController::class, 'index'])->name('index');
         Route::get('{role}/data', [UserController::class, 'data'])->name('data');
+        Route::get('{role}/create', [UserController::class, 'create'])->name('create');
+        Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         Route::resource('mahasiswa', MahasiwaController::class);
         Route::resource('dosen', DosenController::class);
-        Route::resource('asdos', MahasiwaController::class);
+        Route::resource('asdos', AsdosController::class);
         Route::resource('petugas', MahasiwaController::class);
 
-        // Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         // Route::post('{role}', [UserController::class, 'store'])->name('store');
         // Route::get('{role}/import', [UserController::class, 'import'])->name('import');
         // Route::post('{role}/import', [UserController::class, 'saveImport'])->name('saveImport');
         // Route::get('{role}/export/pembayaran', [UserController::class, 'exportPembayaran'])->name('export.pembayaran');
         // Route::get('{role}/{user_id}/print', [UserController::class, 'printPembayaran'])->name('print.pembayaran');
-        // Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         // Route::patch('{role}/{id}', [UserController::class, 'update'])->name('update');
         // Route::delete('{role}/{id}', [UserController::class, 'destroy'])->name('destroy');
 

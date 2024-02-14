@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\Kelola\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DosenRequest;
-use App\Models\Agama;
+use App\Http\Requests\AsdosRequest;
 use App\Models\User;
-use App\Models\Wilayah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class DosenController extends Controller
+class AsdosController extends Controller
 {
-    public function store(DosenRequest $request)
+    public function store(AsdosRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -23,22 +21,22 @@ class DosenController extends Controller
                 'password' => Hash::make('000000')
             ]);
 
-            $user->assignRole('dosen');
+            $user->assignRole('asdos');
 
             $dataRequest = $request->all();
             $dataRequest['user_id'] = $user->id;
             $dataRequest['status'] = $request->status ? "1" : "0";
-            $user->dosen()->create($dataRequest);
+            $user->asdos()->create($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.dosen.index')->with('success', 'Berhasil disimpan');
+            return redirect()->route('kelola-users.asdos.index')->with('success', 'Berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
-    public function update(DosenRequest $request, $id){
+    public function update(AsdosRequest $request, $id){
         DB::beginTransaction();
         try {
             $user = User::findOrFail($id);
@@ -52,10 +50,10 @@ class DosenController extends Controller
             $dataRequest = array_diff_key($dataRequest, array_flip(['_token', '_method', 'name', 'email', 'login_key']));
             $dataRequest['user_id'] = $user->id;
             $dataRequest['status'] = $request->status ? "1" : "0";
-            $user->dosen()->update($dataRequest);
+            $user->asdos()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.dosen.index')->with('success', 'Berhasil diubah');
+            return redirect()->route('kelola-users.asdos.index')->with('success', 'Berhasil diubah');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -67,7 +65,7 @@ class DosenController extends Controller
         DB::beginTransaction();
         try {
             $data = User::findOrFail($id);
-            $data->dosen()->delete();
+            $data->asdos()->delete();
             $data->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Berhasil dihapus');

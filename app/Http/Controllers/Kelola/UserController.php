@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use DataTables;
 use App\Models\{
+    Agama,
     User,
     TahunAjaran,
     Prodi,
     Mahasiswa,
-    Petugas
+    Petugas,
+    Wilayah
 };
 use App\Exports\UserPembayaranExport;
 use App\Http\Requests\StoreRequestUser;
@@ -61,11 +63,11 @@ class UserController extends Controller
                 if ($role == 'mahasiswa') {
                     $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
                 }
-                $options = $options . "<a href='" . route('kelola-users.'. $role .'.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
+                $options = $options . "<a href='" . route('kelola-users.' . $role . '.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
             if (auth()->user()->can('delete_users')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.'. $role .'.destroy', $data->id) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.' . $role . '.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";
             }
@@ -80,7 +82,12 @@ class UserController extends Controller
 
     public function create($role)
     {
-        $return = [];
+        $agamas = Agama::all();
+        $wilayah = Wilayah::all();
+        $return = [
+            'agamas' => $agamas,
+            'wilayah' => $wilayah
+        ];
 
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::where('semester', 1)->get();
@@ -94,41 +101,14 @@ class UserController extends Controller
         return view('users.form', $return);
     }
 
-    public function store(StoreRequestUser $request, $role)
-    {
-        dd($request);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt('000000')
-        ]);
-
-        $user->assignRole($role);
-
-        if ($role == 'mahasiswa') {
-            Mahasiswa::create([
-                'nim' => $request->nim,
-                'user_id' => $user->id,
-                'prodi_id' => $request->prodi_id,
-                'tahun_ajaran_id' => $request->tahun_ajaran_id
-            ]);
-        } else {
-            $ttd = $request->file('ttd')->store('ttd');
-            Petugas::create([
-                'user_id' => $user->id,
-                'nip' => $request->nip,
-                'ttd' => $ttd
-            ]);
-        }
-
-        return redirect()->route('users.index', ['role' => $role])->with('success', 'Berhasil ditambahkan');
-    }
-
     public function edit($role, $id)
     {
         $data = User::findOrFail($id);
+        $agamas = Agama::all();
+        $wilayah = Wilayah::all();
         $return = [
+            'agamas' => $agamas,
+            'wilayah' => $wilayah,
             'data' => $data
         ];
 
@@ -142,82 +122,6 @@ class UserController extends Controller
         }
 
         return view('users.form', $return);
-    }
-
-    public function update(Request $request, $role, $id)
-    {
-        $validate = [
-            'email' => 'required|unique:users,email,' . $id,
-            'name' => 'required',
-        ];
-
-        $user = User::findOrFail($id);
-
-        if ($role == 'mahasiswa') {
-            $validate += [
-                'tahun_ajaran_id' => 'required',
-                'nim' => 'required|unique:mahasiswas,nim,' . $user->mahasiswa->id
-            ];
-        } else {
-            $validate += [
-                'nip' => 'required|unique:petugas,nip,' . $user->petugas->nip,
-                'ttd' => 'file|max:1024|mimes:png,jpg,jpeg'
-            ];
-        }
-
-        if ($role == 'mahasiswa') {
-            $mhs = $user->mahasiswa;
-            if ($mhs->prodi_id != $request->prodi_id || $mhs->tahun_ajaran_id != $request->tahun_ajaran_id) {
-                $pembayarans = DB::table('pembayarans')->where('mhs_id', $id)->count();
-                if ($pembayarans > 0) {
-                    return redirect()->back()->with('error', 'Maaf tidak bisa diubah karena sudah ada pembayaran');
-                }
-            }
-        }
-
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-        ]);
-
-        if ($role == 'mahasiswa') {
-            $mhs->update([
-                'nim' => $request->nim,
-                'prodi_id' => $request->prodi_id,
-                'tahun_ajaran_id' => $request->tahun_ajaran_id
-            ]);
-        } else {
-            $update = ['nip' => $request->nip];
-            $pts = $user->petugas;
-            if ($request->ttd) {
-                Storage::delete($pts->ttd);
-                $update['ttd'] = $request->file('ttd')->store('ttd');
-            }
-
-            $pts->update($update);
-        }
-
-        return redirect()->route('users.index', ['role' => $role])->with('success', 'Berhasil diubah');
-    }
-
-    public function destroy($role, $id)
-    {
-        DB::beginTransaction();
-        try {
-            $user = User::findOrFail($id);
-            if ($role == 'mahasiswa') {
-                $user->mahasiswa->delete();
-            } else {
-                $user->petugas->delete();
-            }
-            $user->delete();
-
-            DB::commit();
-            return redirect()->back()->with('success', 'Berhasil disimpan');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal dihapus');
-        }
     }
 
     public function import($role)

@@ -47,4 +47,8 @@ class User extends Authenticatable
     public function mahasiswa(){
         return $this->hasOne(ProfileMahasiswa::class, 'user_id', 'id');
     }
+
+    public function asdos(){
+        return $this->hasOne(ProfileAsdos::class, 'user_id', 'id');
+    }
 }
