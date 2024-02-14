@@ -23,6 +23,7 @@ use App\Http\Controllers\Kelola\User\{
     AsdosController,
     DosenController,
     MahasiwaController,
+    PetugasController,
 };
 
 use App\Http\Controllers\Kelola\UserController;
@@ -59,7 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('mahasiswa', MahasiwaController::class);
         Route::resource('dosen', DosenController::class);
         Route::resource('asdos', AsdosController::class);
-        Route::resource('petugas', MahasiwaController::class);
+        Route::resource('petugas', PetugasController::class);
 
         // Route::post('{role}', [UserController::class, 'store'])->name('store');
         // Route::get('{role}/import', [UserController::class, 'import'])->name('import');

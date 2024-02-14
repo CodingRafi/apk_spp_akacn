@@ -51,4 +51,8 @@ class User extends Authenticatable
     public function asdos(){
         return $this->hasOne(ProfileAsdos::class, 'user_id', 'id');
     }
+
+    public function petugas(){
+        return $this->hasOne(ProfilePetugas::class, 'user_id', 'id');
+    }
 }
