@@ -16,9 +16,9 @@
                                         <div class="col-md-3 px-0">
                                             <select class="form-select" id="filter-prodi">
                                                 <option value="" selected>Pilih Prodi</option>
-                                                @foreach ($prodis as $prodi)
+                                                {{-- @foreach ($prodis as $prodi)
                                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                                @endforeach
+                                                @endforeach --}}
                                             </select>
                                         </div>
                                         <div class="col-md-3 px-0">
@@ -29,7 +29,7 @@
                                                 @endforeach --}}
                                             </select>
                                         </div>
-                                        <div class="col-md-2 px-0">
+                                        {{-- <div class="col-md-2 px-0">
                                             <form action="{{ route('users.export.pembayaran', request('role')) }}" class="form-export">
                                                 <input type="hidden" name="prodi">
                                                 <input type="hidden" name="tahun_ajaran">
@@ -40,7 +40,7 @@
                                         <div class="col-md-1 px-0">
                                             <a href="{{ route('users.import', request('role')) }}"
                                                 class="btn btn-primary d-block">Import</a>
-                                        </div>
+                                        </div> --}}
                                     @endif
                                     <div class="col-md-2 px-0">
                                         <a href="{{ route('kelola-users.'. request('role') .'.create') }}"
@@ -66,9 +66,9 @@
                                     <th>NIDN</th>
                                     @else
                                     <th>Email</th>
-                                    @endif
+                                    {{-- @endif
                                     @can('edit_users', 'delete_users')
-                                        <th>Aksi</th>
+                                        <th>Aksi</th> --}}
                                     @endcan
                                 </tr>
                             </thead>

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use DataTables, DB;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class TahunAjaranController extends Controller
 {
@@ -43,12 +44,6 @@ class TahunAjaranController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->addColumn('nama', function ($datas) {
-                return "{$datas->tahun_mulai}/{$datas->tahun_akhir}";
-            })
-            ->editColumn('semester', function ($datas) {
-                return $datas->semester == 1 ? 'Ganjil' : 'Genap';
-            })
             ->editCOlumn('status', function ($datas) {
                 return $datas->status ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
             })
@@ -64,28 +59,41 @@ class TahunAjaranController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode' => 'required',
-            'tahun_mulai' => 'required|digits:4',
-            'tahun_akhir' => 'required|digits:4',
-            'semester' => 'required|digits:1'
+            'tgl_mulai' => 'required|unique:tahun_ajarans,id',
+            'tgl_akhir' => 'required|after:tgl_mulai',
+            'nama' => 'required'
+        ], [
+            'tahun_mulai' => 'Tahun mulai sudah digunakan',
         ]);
 
+        //? Validasi tanggal mulai
+        $cek = DB::table('tahun_ajarans')
+                    ->where('id', explode('-', $request->tgl_mulai)[0])
+                    ->count();
+
+        if ($cek > 0) {
+            return response()->json([
+                'message' => 'Tahun Ajaran ini sudah ada'
+            ], 400);
+        }
+        
         if (getTahunAjaranActive()) {
-            return redirect()->back()
-                ->with(['error' => 'ada tahun ajaran yang sedang aktif'])
-                ->withInput();
+            return response()->json([
+                'message' => 'ada tahun ajaran yang sedang aktif'
+            ], 400);
         }
 
         TahunAjaran::create([
-            'kode' => $request->kode,
-            'tahun_mulai' => $request->tahun_mulai,
-            'tahun_akhir' => $request->tahun_akhir,
-            'semester' => $request->semester,
+            'id' => explode('-', $request->tgl_mulai)[0],
+            'nama' => $request->nama,
+            'tgl_mulai' => $request->tgl_mulai,
+            'tgl_akhir' => $request->tgl_akhir,
             'status' => $request->status ? "1" : "0",
-            'id' => generateUuid()
         ]);
 
-        return redirect()->route('data-master.tahun-ajaran.index')->with('success', 'Berhasil ditambahkan');
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 
     public function edit($id)

@@ -17,7 +17,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Semester</th>
+                                <th>Tanggal Mulai</th>
+                                <th>Tanggal Selesai</th>
                                 <th>Status</th>
                                 @can('edit_tahun_ajaran', 'delete_tahun_ajaran')
                                 <th>Aksi</th>
@@ -43,7 +44,8 @@
             columns: [
                         { "data": "DT_RowIndex" },
                         { "data": "nama" },
-                        { "data": "semester" },
+                        { "data": "tgl_mulai" },
+                        { "data": "tgl_selesai" },
                         { "data": "status" },
                         @can('edit_tahun_ajaran', 'hapus_tahun_ajaran')
                             { "data": "options" }

@@ -118,7 +118,10 @@ class RombelController extends Controller
 
     public function setDosenPa($id)
     {
-        $dosen = User::role('dosen')->get();
+        $dosen = User::select('users.*')
+                        ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
+                        ->where('profile_dosens.status', 1)
+                        ->role('dosen')->get();
         return view('data_master.rombel.set-dosen-pa', compact('dosen'));
     }
 
