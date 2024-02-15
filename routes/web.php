@@ -18,7 +18,7 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
-
+use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\User\{
     AsdosController,
     DosenController,
@@ -86,7 +86,15 @@ Route::group(['middleware' => ['auth']], function () {
 
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
+        Route::get('prodi/{prodi_id}/angkatan', [ProdiController::class, 'angkatan'])->name('prodi.angkatan');
+        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}', [ProdiController::class, 'angkatanDetail'])->name('prodi.angkatan.detail');
         Route::resource('prodi', ProdiController::class);
+
+        //? Prodi - Semester
+        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}/semester', [SemesterController::class, 'get'])->name('prodi.semesters');
+        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}/semester/data', [SemesterController::class, 'data'])->name('prodi.semesters.data');
+        Route::post('prodi/semester', [SemesterController::class, 'store'])->name('prodi.semesters.store');
+        Route::delete('prodi/semester/{tahun_semester_id}', [SemesterController::class, 'destroy'])->name('prodi.semesters.destroy');
 
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');

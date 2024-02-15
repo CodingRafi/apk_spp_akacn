@@ -10,18 +10,15 @@
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-3">
-                    <h5>Semester</h5>
-                    <a href="{{ route('data-master.prodi.semester.create', $prodi->id) }}" class="btn btn-primary">Tambah Semester</a>
+                    <h5>Angkatan</h5>
                 </div>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                @can('edit_semester', 'delete_semester')
+                                <th>Angkatan</th>
                                 <th>Actions</th>
-                                @endcan
                             </tr>
                         </thead>
                     </table>
@@ -39,13 +36,11 @@
             processing: true,
             serverSide: true,
             responsive: true,
-            ajax: '{{ route("data-master.prodi.semester.data", request("prodi")) }}',
+            ajax: '{{ route("data-master.prodi.angkatan", request("prodi")) }}',
             columns: [
                         { "data": "DT_RowIndex" },
                         { "data": "nama" },
-                        @can('edit_semester', 'hapus_semester')
-                            { "data": "options" }
-                        @endcan
+                        { "data": "options" }
                     ],
             pageLength: 25,
             responsive: true,

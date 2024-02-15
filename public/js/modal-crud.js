@@ -39,8 +39,6 @@ function submitForm(originalForm, selector = "", func) {
 
             if (typeof table !== "undefined") {
                 table.ajax.reload();
-            } else {
-                location.reload();
             }
 
             if (func != undefined) {

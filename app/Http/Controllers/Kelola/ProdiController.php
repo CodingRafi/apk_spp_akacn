@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use DataTables, DB;
 use App\Models\Prodi;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProdiController extends Controller
 {
@@ -28,6 +30,8 @@ class ProdiController extends Controller
 
         foreach ($datas as $data) {
             $options = '';
+
+            $options = $options . "<a href='" . route('data-master.prodi.show', $data->id) . "' class='btn btn-info mx-2'>Detail</a>";
 
             if (auth()->user()->can('edit_prodi')) {
                 $options = $options . "<a href='" . route('data-master.prodi.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
@@ -62,6 +66,32 @@ class ProdiController extends Controller
     public function show(Prodi $prodi)
     {
         return view('data_master.prodi.show', compact('prodi'));
+    }
+
+    public function angkatan($prodi_id)
+    {
+        $datas = TahunAjaran::all();
+        foreach ($datas as $data) {
+            $options = '';
+            $options = $options . "<a href='" . route('data-master.prodi.angkatan.detail', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $data->options = $options;
+        }
+
+        return DataTables::of($datas)
+            ->addIndexColumn()
+            ->rawColumns(['options'])
+            ->make(true);
+    }
+
+    public function angkatanDetail($prodi_id, $tahun_ajaran_id){
+        $prodi = Prodi::where('id', $prodi_id)->count();
+        $tahun_ajaran = TahunAjaran::where('id', $tahun_ajaran_id)->count();
+
+        if ($prodi < 1 || $tahun_ajaran < 1) {
+            abort(404);
+        }
+
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id'));
     }
 
     public function edit($id)
