@@ -65,6 +65,11 @@ class PermissionTableSeeder extends Seeder
             'add_biaya_lainnya',
             'edit_biaya_lainnya',
             'delete_biaya_lainnya',
+
+            'view_kurikulum',
+            'add_kurikulum',
+            'edit_kurikulum',
+            'delete_kurikulum',
         ];
 
         foreach ($permissions as $permission) {
