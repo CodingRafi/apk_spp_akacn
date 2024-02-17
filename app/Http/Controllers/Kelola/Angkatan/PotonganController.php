@@ -7,32 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
-class PembayaranSemesterController extends Controller
+class PotonganController extends Controller
 {
-    public function getSemester($prodi_id, $tahun_ajaran_id)
-    {
-        $data = DB::table('semesters')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
-            ->leftJoin('tahun_pembayaran', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
-            ->where('tahun_semester.prodi_id', $prodi_id)
-            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-            ->whereNull('tahun_pembayaran.tahun_semester_id')
-            ->when(request('tahun_semester_id') && request('tahun_semester_id') != '', function($q){
-                $q->orWhere('tahun_semester.id', request('tahun_semester_id'));
-            })
-            ->get();
-
-        return response()->json([
-            'data' => $data
-        ], 200);
-    }
-
     public function data($prodi_id, $tahun_ajaran_id)
     {
-        $datas = DB::table('tahun_pembayaran')
-            ->select('tahun_pembayaran.*', 'semesters.nama as semester')
-            ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
+        $datas = DB::table('potongan_tahun_ajaran')
+            ->select('potongan_tahun_ajaran.*', 'potongans.nama as potongan', 'semesters.nama as semester')
+            ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
+            ->join('tahun_semester', 'tahun_semester.id', 'potongan_tahun_ajaran.tahun_semester_id')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
@@ -42,7 +24,7 @@ class PembayaranSemesterController extends Controller
             $options = '';
 
             $options = $options . " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.prodi.pembayaran.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, `Edit Pembayaran`, `#PembayaranSemester`, getSemesterPembayaran)'>
+                        onclick='editForm(`" . route('data-master.prodi.potongan.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, `Edit Potongan`, `#Potongan`)'>
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
@@ -56,7 +38,7 @@ class PembayaranSemesterController extends Controller
         return DataTables::of($datas)
             ->addIndexColumn()
             ->editColumn('publish', function ($data) {
-                return ($data->publish ? 'Ya' : 'Tidak');
+                return $data->publish ? 'Ya' : 'Tidak';
             })
             ->editColumn('nominal', function ($datas) {
                 return formatRupiah($datas->nominal);
@@ -65,18 +47,20 @@ class PembayaranSemesterController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $prodi_id, $tahun_ajaran_id)
     {
         $request->validate([
-            'semester_id' => 'required',
+            'potongan_id' => 'required',
+            'tahun_semester_id' => 'required',
             'nominal' => 'required',
             'ket' => 'required',
         ]);
 
         DB::beginTransaction();
         try {
-            DB::table('tahun_pembayaran')->insert([
-                'tahun_semester_id' => $request->semester_id,
+            DB::table('potongan_tahun_ajaran')->insert([
+                'potongan_id' => $request->potongan_id,
+                'tahun_semester_id' => $request->tahun_semester_id,
                 'nominal' => $request->nominal,
                 'ket' => $request->ket,
                 'publish' => $request->publish ?? '0',
@@ -94,14 +78,11 @@ class PembayaranSemesterController extends Controller
         }
     }
 
-    public function show($prodi_id, $tahun_ajaran_id, $id){
-        $data = DB::table('tahun_pembayaran')
-                        ->select('tahun_pembayaran.*')
-                        ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
-                        ->where('tahun_semester.prodi_id', $prodi_id)
-                        ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-                        ->where('tahun_pembayaran.id', $id)
-                        ->first();
+    public function show($prodi_id, $tahun_ajaran_id, $id)
+    {
+        $data = DB::table('potongan_tahun_ajaran')
+            ->where('id', $id)
+            ->first();
 
         return response()->json([
             'data' => $data
@@ -111,15 +92,19 @@ class PembayaranSemesterController extends Controller
     public function update(Request $request, $prodi_id, $tahun_ajaran_id, $id)
     {
         $request->validate([
+            'potongan_id' => 'required',
+            'tahun_semester_id' => 'required',
             'nominal' => 'required',
             'ket' => 'required',
         ]);
 
         DB::beginTransaction();
         try {
-            DB::table('tahun_pembayaran')
+            DB::table('potongan_tahun_ajaran')
                 ->where('id', $id)
                 ->update([
+                    'potongan_id' => $request->potongan_id,
+                    'tahun_semester_id' => $request->tahun_semester_id,
                     'nominal' => $request->nominal,
                     'ket' => $request->ket,
                     'publish' => $request->publish ?? '0',

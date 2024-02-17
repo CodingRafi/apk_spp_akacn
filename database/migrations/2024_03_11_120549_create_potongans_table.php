@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('nominal');
             $table->string('ket');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->enum('publish', [0,1]);
             $table->timestamps();
         });
 

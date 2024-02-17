@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
             $table->string('semester_id');
             $table->foreign('semester_id')->references('id')->on('semesters');
+            $table->timestamps();
         });
 
         Schema::create('tahun_pembayaran', function (Blueprint $table) {
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->string('nominal');
             $table->text('ket');
             $table->enum('publish', [0,1]);
+            $table->timestamps();
         });
         
         Schema::create('tahun_pembayaran_lain', function (Blueprint $table) {
@@ -41,6 +43,7 @@ return new class extends Migration
             $table->string('nominal');
             $table->text('ket');
             $table->enum('publish', [0,1]);
+            $table->timestamps();
         });
     }
 

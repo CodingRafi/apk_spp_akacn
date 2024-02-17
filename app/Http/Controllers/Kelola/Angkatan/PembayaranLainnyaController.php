@@ -77,7 +77,9 @@ class PembayaranLainnyaController extends Controller
                 'tahun_ajaran_id' => $tahun_ajaran_id,
                 'nominal' => $request->nominal,
                 'ket' => $request->ket,
-                'publish' => $request->publish ?? '0'
+                'publish' => $request->publish ?? '0',
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
             DB::commit();
             return response()->json([
@@ -119,7 +121,8 @@ class PembayaranLainnyaController extends Controller
                 ->update([
                     'nominal' => $request->nominal,
                     'ket' => $request->ket,
-                    'publish' => $request->publish ?? '0'
+                    'publish' => $request->publish ?? '0',
+                    'updated_at' => now()
                 ]);
 
             DB::commit();

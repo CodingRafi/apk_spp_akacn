@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\Potongan;
 use App\Models\Prodi;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
@@ -86,12 +87,20 @@ class ProdiController extends Controller
     public function angkatanDetail($prodi_id, $tahun_ajaran_id){
         $prodi = Prodi::where('id', $prodi_id)->count();
         $tahun_ajaran = TahunAjaran::where('id', $tahun_ajaran_id)->count();
-
+        
         if ($prodi < 1 || $tahun_ajaran < 1) {
             abort(404);
         }
+        
+        $potongan = Potongan::all();
+        $semesterPotongan = DB::table('semesters')
+                ->select('tahun_semester.id', 'semesters.nama')
+                ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
+                ->where('tahun_semester.prodi_id', $prodi_id)
+                ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+                ->get();
 
-        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id'));
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'potongan', 'semesterPotongan'));
     }
 
     public function edit($id)

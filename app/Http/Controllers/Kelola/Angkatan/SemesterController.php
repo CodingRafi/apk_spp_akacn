@@ -60,7 +60,9 @@ class SemesterController extends Controller
             DB::table('tahun_semester')->insert([
                 'prodi_id' => $prodi_id,
                 'tahun_ajaran_id' => $tahun_ajaran_id,
-                'semester_id' => $request->semester_id
+                'semester_id' => $request->semester_id,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
             DB::commit();
             return response()->json([
