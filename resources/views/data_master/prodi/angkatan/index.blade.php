@@ -45,25 +45,37 @@
                         </div>
 
                         <div class="tab-pane active" id="pembayaran" role="tabpanel">
-                            <div class="d-flex justify-content-between mb-3">
-                                <h5>Pembayaran Semester</h5>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('data-master.prodi.pembayaran.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Semester', '#PembayaranSemester', getSemesterPembayaran)">
-                                    Tambah Biaya
-                                </button>
+                            <div class="pembayaran-semester mb-5">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5>Pembayaran Semester</h5>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="addForm('{{ route('data-master.prodi.pembayaran.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Semester', '#PembayaranSemester', getSemesterPembayaran)">
+                                        Tambah Biaya
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-pembayaran-semester">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Semester</th>
+                                                <th>Nominal</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
                             </div>
-                            <div class="table-responsive">
-                                <table class="table table-pembayaran-semester">
-                                    <thead>
-                                        <tr>
-                                            <th>No</th>
-                                            <th>Semester</th>
-                                            <th>Nominal</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+
+                            <div class="pembayaran-lainnya mb-5">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5>Pembayaran Lainnya</h5>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="addForm('{{ route('data-master.prodi.pembayaran.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Semester', '#PembayaranSemester', getSemesterPembayaran)">
+                                        Tambah Biaya
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>

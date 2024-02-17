@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
     PembayaranController as KelolaPembayaranController,
+    PembayaranLainnyaController as KelolaPembayaranLainnyaController,
     RoleController,
     TahunAjaranController,
     ProdiController,
@@ -99,7 +100,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('/', [SemesterController::class, 'store'])->name('store');
                 Route::delete('/{tahun_semester_id}', [SemesterController::class, 'destroy'])->name('destroy');
             });
-            
+
             //? Prodi - Pembayaran Semester
             Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
                 Route::get('/semester', [PembayaranSemesterController::class, 'getSemester'])->name('getSemester');
@@ -109,8 +110,6 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::put('/{id}', [PembayaranSemesterController::class, 'update'])->name('update');
             });
         });
-
-
 
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
@@ -146,6 +145,9 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/{pembayaran_id}', [KelolaPembayaranController::class, 'store'])->name('store');
             Route::get('/{pembayaran_id}/revisi', [KelolaPembayaranController::class, 'revisi'])->name('revisi');
         });
+
+        Route::get('pembayaran-lainnya/data', [KelolaPembayaranLainnyaController::class, 'data'])->name('pembayaran-lainnya.data');
+        Route::resource('pembayaran-lainnya', KelolaPembayaranLainnyaController::class);
     });
 
     Route::middleware(['role:mahasiswa'])->group(function () {

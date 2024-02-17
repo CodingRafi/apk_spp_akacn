@@ -61,10 +61,10 @@ class PermissionTableSeeder extends Seeder
             'edit_rombel',
             'delete_rombel',
 
-            'view_biaya_lainnya',
-            'add_biaya_lainnya',
-            'edit_biaya_lainnya',
-            'delete_biaya_lainnya',
+            'view_pembayaran_lainnya',
+            'add_pembayaran_lainnya',
+            'edit_pembayaran_lainnya',
+            'delete_pembayaran_lainnya',
 
             'view_kurikulum',
             'add_kurikulum',
