@@ -104,7 +104,7 @@ $revisi = isset($revisi) ? $revisi : false;
                             <div class="mb-3">
                                 <label for="ket_mhs" class="form-label">Keterangan</label>
                                 @if ($page == 'form')
-                                <textarea class="form-control @error('ket_mhs') is-invalid @enderror" id="ket_mhs"
+                                <textarea class="form-control @error('ket_mhs') is-invalid @enderror" id="textarea-tinymce"
                                     rows="3"
                                     name="ket_mhs">{{ isset($data) ? $data->ket_mhs : old('ket_mhs') }}</textarea>
                                 @else

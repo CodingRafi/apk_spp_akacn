@@ -250,7 +250,7 @@
         });
 
         tinymce.init({
-            selector: 'textarea',
+            selector: '#textarea-tinymce',
             plugins: ` advlist anchor autosave image link lists media searchreplace table template visualblocks wordcount`,
             toolbar: 'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck code',
             a11ychecker_level: 'aaa',

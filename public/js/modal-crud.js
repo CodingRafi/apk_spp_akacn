@@ -23,9 +23,23 @@ function submitForm(originalForm, selector = "", func) {
         .html(`<i class="ti-reload fa-spin mr-2"></i> Loading...`)
         .attr("disabled", true);
 
+    let form = $(originalForm);
+    let data = new FormData(originalForm);
+    let form_textarea = form.find("textarea");
+
+    form_textarea.each(function () {
+        if ($(this).attr("id") == "textarea-tinymce") {
+            let editor = tinymce.get("textarea-tinymce");
+            if (editor) {
+                let content = editor.getContent();
+                data.set($(this).attr("name"), content);
+            }
+        }
+    });
+
     $.post({
-        url: $(originalForm).attr("action"),
-        data: new FormData(originalForm),
+        url: form.attr("action"),
+        data: data,
         dataType: "json",
         contentType: false,
         cache: false,
@@ -209,8 +223,11 @@ function deleteDataAjax(url, func) {
 function loopForm(originalForm) {
     for (field in originalForm) {
         if ($(`[name=${field}]`).attr("type") != "file") {
-            if ($(`[name=${field}]`).hasClass("summernote")) {
-                $(`[name=${field}]`).summernote("code", originalForm[field]);
+            if ($(`[name=${field}]`).attr("id") == "textarea-tinymce") {
+                let editor = tinymce.get("textarea-tinymce");
+                if (editor) {
+                    editor.setContent(originalForm[field]);
+                }
             } else if ($(`[name=${field}]`).attr("type") == "radio") {
                 // radio
                 $(`[name=${field}]`)

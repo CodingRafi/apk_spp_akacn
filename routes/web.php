@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
+use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\User\{
     AsdosController,
@@ -90,11 +91,26 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}', [ProdiController::class, 'angkatanDetail'])->name('prodi.angkatan.detail');
         Route::resource('prodi', ProdiController::class);
 
-        //? Prodi - Semester
-        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}/semester', [SemesterController::class, 'get'])->name('prodi.semesters');
-        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}/semester/data', [SemesterController::class, 'data'])->name('prodi.semesters.data');
-        Route::post('prodi/semester', [SemesterController::class, 'store'])->name('prodi.semesters.store');
-        Route::delete('prodi/semester/{tahun_semester_id}', [SemesterController::class, 'destroy'])->name('prodi.semesters.destroy');
+        Route::prefix('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}')->name('prodi.')->group(function () {
+            //? Prodi - Semester
+            Route::prefix('semester')->name('semester.')->group(function () {
+                Route::get('/', [SemesterController::class, 'index'])->name('index');
+                Route::get('/data', [SemesterController::class, 'data'])->name('data');
+                Route::post('/', [SemesterController::class, 'store'])->name('store');
+                Route::delete('/{tahun_semester_id}', [SemesterController::class, 'destroy'])->name('destroy');
+            });
+            
+            //? Prodi - Pembayaran Semester
+            Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
+                Route::get('/semester', [PembayaranSemesterController::class, 'getSemester'])->name('getSemester');
+                Route::get('/data', [PembayaranSemesterController::class, 'data'])->name('data');
+                Route::post('/', [PembayaranSemesterController::class, 'store'])->name('store');
+                Route::get('/{id}', [PembayaranSemesterController::class, 'show'])->name('show');
+                Route::put('/{id}', [PembayaranSemesterController::class, 'update'])->name('update');
+            });
+        });
+
+
 
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
@@ -109,14 +125,14 @@ Route::group(['middleware' => ['auth']], function () {
         });
         Route::resource('rombel', RombelController::class);
     });
-    
+
     Route::prefix('kelola-presensi')->name('kelola-presensi.')->group(function () {
         //? Whitelist IP
         Route::get('whitelist-ip/data', [WhitelistIPController::class, 'data'])->name('whitelist-ip.data');
         Route::get('whitelist-ip/get', [WhitelistIPController::class, 'get_ip'])->name('whitelist-ip.get-ip');
         Route::resource('whitelist-ip', WhitelistIPController::class);
     });
-    
+
     Route::prefix('kelola-pembayaran')->name('kelola-pembayaran.')->group(function () {
         Route::get('potongan/{prodi_id}/getSemester', [PotonganController::class, 'getSemester'])->name('potongan.getSemester');
         Route::get('potongan/data', [PotonganController::class, 'data'])->name('potongan.data');

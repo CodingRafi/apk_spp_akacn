@@ -58,7 +58,7 @@
                             <input type="hidden" name="revisi">
                             <div class="mb-3">
                                 <label for="ket_verify" class="form-label">Komentar</label>
-                                <textarea class="form-control @error('ket_verify') is-invalid @enderror" id="ket_verify"
+                                <textarea class="form-control @error('ket_verify') is-invalid @enderror" id="textarea-tinymce"
                                     rows="3"
                                     name="ket_verify">{{ isset($data) ? $data->ket_verify : old('ket_verify') }}</textarea>
                                 @error('ket_verify')

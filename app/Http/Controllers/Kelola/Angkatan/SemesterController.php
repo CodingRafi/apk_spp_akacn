@@ -9,7 +9,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class SemesterController extends Controller
 {
-    public function get($prodi_id, $tahun_ajaran_id)
+    public function index($prodi_id, $tahun_ajaran_id)
     {
         $data = DB::table('semesters')
             ->select('semesters.*')
@@ -38,7 +38,7 @@ class SemesterController extends Controller
             ->get();
 
         foreach ($datas as $data) {
-            $data->options = "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semesters.destroy', $data->id) . "`)'>
+            $data->options = "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->id]) . "`)'>
                 Hapus
             </button>";
         }
@@ -49,19 +49,17 @@ class SemesterController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $prodi_id, $tahun_ajaran_id)
     {
         $request->validate([
-            'prodi_id' => 'required',
-            'tahun_ajaran_id' => 'required',
-            'semester_id' => 'required',
+            'semester_id' => 'required'
         ]);
 
         DB::beginTransaction();
         try {
             DB::table('tahun_semester')->insert([
-                'prodi_id' => $request->prodi_id,
-                'tahun_ajaran_id' => $request->tahun_ajaran_id,
+                'prodi_id' => $prodi_id,
+                'tahun_ajaran_id' => $tahun_ajaran_id,
                 'semester_id' => $request->semester_id
             ]);
             DB::commit();

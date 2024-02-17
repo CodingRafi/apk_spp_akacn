@@ -46,7 +46,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="ket" class="form-label">Keterangan</label>
-                                    <textarea class="form-control @error('ket') is-invalid @enderror" id="ket" rows="3" name="ket">{{ isset($data) ? $data->ket : old('ket') }}</textarea>
+                                    <textarea class="form-control @error('ket') is-invalid @enderror" id="textarea-tinymce" rows="3" name="ket">{{ isset($data) ? $data->ket : old('ket') }}</textarea>
                                     @error('ket')
                                         <div class="invalid-feedback d-block">
                                             {{ $message }}
