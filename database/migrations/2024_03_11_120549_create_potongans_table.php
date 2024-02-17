@@ -16,9 +16,6 @@ return new class extends Migration
         Schema::create('potongans', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
-            $table->integer('semester');
             $table->timestamps();
         });
 
@@ -27,8 +24,7 @@ return new class extends Migration
             $table->foreignId('potongan_id')->constrained('potongans');
             $table->string('nominal');
             $table->string('ket');
-            $table->uuid('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->timestamps();
         });
 

@@ -19,6 +19,7 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
+use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\User\{
@@ -108,6 +109,15 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('/', [PembayaranSemesterController::class, 'store'])->name('store');
                 Route::get('/{id}', [PembayaranSemesterController::class, 'show'])->name('show');
                 Route::put('/{id}', [PembayaranSemesterController::class, 'update'])->name('update');
+            });
+
+            //? Prodi - Pembayaran lainnya
+            Route::prefix('pembayaran-lainnya')->name('pembayaran-lainnya.')->group(function () {
+                Route::get('/jenis', [PembayaranLainnyaController::class, 'getJenis'])->name('getJenis');
+                Route::get('/data', [PembayaranLainnyaController::class, 'data'])->name('data');
+                Route::post('/', [PembayaranLainnyaController::class, 'store'])->name('store');
+                Route::get('/{id}', [PembayaranLainnyaController::class, 'show'])->name('show');
+                Route::put('/{id}', [PembayaranLainnyaController::class, 'update'])->name('update');
             });
         });
 

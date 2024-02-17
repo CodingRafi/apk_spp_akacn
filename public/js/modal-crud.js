@@ -28,8 +28,8 @@ function submitForm(originalForm, selector = "", func) {
     let form_textarea = form.find("textarea");
 
     form_textarea.each(function () {
-        if ($(this).attr("id") == "textarea-tinymce") {
-            let editor = tinymce.get("textarea-tinymce");
+        if ($(this).hasClass("textarea-tinymce")) {
+            let editor = tinymce.get($(this).attr("id"));
             if (editor) {
                 let content = editor.getContent();
                 data.set($(this).attr("name"), content);
@@ -141,7 +141,7 @@ function editForm(url, title = "Edit", modal = "#modal-form", func) {
             $(`${modal} [name=_method]`).val("put");
 
             resetForm(`${modal} form`);
-            loopForm(response.data);
+            loopForm(response.data, modal);
 
             if (func != undefined) {
                 func(response.data);
@@ -220,33 +220,33 @@ function deleteDataAjax(url, func) {
     });
 }
 
-function loopForm(originalForm) {
+function loopForm(originalForm, modal) {
     for (field in originalForm) {
-        if ($(`[name=${field}]`).attr("type") != "file") {
-            if ($(`[name=${field}]`).attr("id") == "textarea-tinymce") {
-                let editor = tinymce.get("textarea-tinymce");
+        if ($(`${modal} [name=${field}]`).attr("type") != "file") {
+            if ($(`${modal} [name=${field}]`).hasClass("textarea-tinymce")) {
+                let editor = tinymce.get($(`${modal} [name=${field}]`).attr('id'));
                 if (editor) {
                     editor.setContent(originalForm[field]);
                 }
-            } else if ($(`[name=${field}]`).attr("type") == "radio") {
+            } else if ($(`${modal} [name=${field}]`).attr("type") == "radio") {
                 // radio
-                $(`[name=${field}]`)
+                $(`${modal} [name=${field}]`)
                     .filter(`[value="${originalForm[field]}"]`)
                     .prop("checked", true);
-            } else if ($(`[name=${field}]`).attr("type") == "checkbox") {
+            } else if ($(`${modal} [name=${field}]`).attr("type") == "checkbox") {
                 // radio
-                $(`[name=${field}]`)
+                $(`${modal} [name=${field}]`)
                     .filter(`[value="${originalForm[field]}"]`)
                     .prop("checked", true);
             } else {
                 if (
-                    $(`[name=${field}]`).length == 0 &&
+                    $(`${modal} [name=${field}]`).length == 0 &&
                     $(`[name="${field}[]"]`).attr("multiple")
                 ) {
                     // select multiple
                     $(`[name="${field}[]"]`).val(originalForm[field]);
                 } else {
-                    $(`[name=${field}]`).val(originalForm[field]);
+                    $(`${modal} [name=${field}]`).val(originalForm[field]);
                 }
             }
 

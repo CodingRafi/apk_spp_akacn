@@ -30,8 +30,9 @@ return new class extends Migration
             $table->text('ket');
             $table->enum('publish', [0,1]);
         });
-
+        
         Schema::create('tahun_pembayaran_lain', function (Blueprint $table) {
+            $table->id();
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi');
             $table->string('tahun_ajaran_id');

@@ -7,44 +7,20 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize mb-0">Potongan</h5>
                     @can('add_potongan')
-                        <a href="{{ route('data-master.potongan.create') }}" class="btn btn-primary text-capitalize">Tambah
-                            Potongan</a>
+                        <button type="button" class="btn btn-primary"
+                            onclick="addForm('{{ route('kelola-pembayaran.potongan.store') }}', 'Tambah Potongan', '#potongan')">
+                            Tambah Potongan
+                        </button>
                     @endcan
                 </div>
+
                 <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-3">
-                            <select id="filter-tahun-ajaran" class="form-control">
-                                <option value="">Pilih Tahun Ajaran</option>
-                                @foreach ($tahun_ajarans as $tahun_ajaran)
-                                <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select id="filter-prodi" class="form-control">
-                                <option value="">Pilih Prodi</option>
-                                @foreach ($prodis as $prodi)
-                                <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select id="filter-semester" class="form-control">
-                                <option value="">Pilih Semester</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
-                                    <th>Nominal</th>
-                                    <th>Tahun Ajaran</th>
-                                    <th>Prodi</th>
-                                    <th>Semester</th>
                                     @can('add_potongan')
                                         <th>Actions</th>
                                     @endcan
@@ -56,40 +32,48 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="potongan" tabindex="-1" aria-labelledby="potonganLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="get">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="potonganLabel">Tambah Potongan</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        @method('post')
+                        <div class="mb-3">
+                            <label for="nama" class="form-label">Nama</label>
+                            <input class="form-control" type="text" id="nama" placeholder="Nama" name="nama" />
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-start px-3">
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => table.ajax.reload())">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
     <script>
+        let table;
         $(document).ready(function() {
-            let table = $('.table').DataTable({
+            table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('data-master.potongan.data') }}',
-                    data: function(p) {
-                        p.semester = $('#filter-semester').val();
-                        p.prodi = $('#filter-prodi').val();
-                        p.tahun_ajaran = $('#filter-tahun-ajaran').val();
-                    }
+                    url: '{{ route('kelola-pembayaran.potongan.data') }}',
                 },
                 columns: [{
                         "data": "DT_RowIndex"
                     },
                     {
                         "data": "nama"
-                    },
-                    {
-                        "data": "nominal"
-                    },
-                    {
-                        "data": "tahun_ajaran"
-                    },
-                    {
-                        "data": "prodi"
-                    },
-                    {
-                        "data": "semester"
                     },
                     @can('edit_potongan', 'delete_potongan')
                         {
@@ -100,31 +84,6 @@
                 pageLength: 25,
                 responsive: true,
             });
-
-            $('#filter-semester, #filter-prodi, #filter-tahun-ajaran').on('change', function() {
-                table.ajax.reload();
-            });
         });
-
-        $('#filter-prodi').on('change', function() {
-            $('#filter-semester').empty().append('<option value="">Pilih Semester</option>');
-            if ($(this).val()) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ route('data-master.potongan.getSemester', ':id') }}".replace(':id', $(this)
-                        .val()),
-                    success: function(res) {
-                        $.each(res.data, function(i, e) {
-                            $('#filter-semester').append(
-                                `<option value="${e.id}">${e.nama}</option>`)
-                        })
-                    },
-                    error: function(err) {
-                        showAlert(err.responseJSON.message, 'error');
-                    }
-                })
-            }
-        })
     </script>
-    @include('potongan.js')
 @endpush

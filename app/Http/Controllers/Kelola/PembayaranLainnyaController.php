@@ -50,7 +50,9 @@ class PembayaranLainnyaController extends Controller
         ]);
 
         DB::table('pembayaran_lainnyas')->insert([
-            'nama' => $request->nama
+            'nama' => $request->nama,
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         return response()->json([
@@ -74,7 +76,8 @@ class PembayaranLainnyaController extends Controller
         ]);
 
         DB::table('pembayaran_lainnyas')->where('id', $id)->update([
-            'nama' => $request->nama
+            'nama' => $request->nama,
+            'updated_at' => now()
         ]);
 
         return response()->json([
