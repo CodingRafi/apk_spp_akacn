@@ -64,6 +64,13 @@
                             </a>
                         </li>
                     @endcan
+                    @can('view_ruang')
+                        <li class="menu-item {{ Request::is('data-master/ruang*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.ruang.index') }}" class="menu-link">
+                                <div data-i18n="ruang">Ruang</div>
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcan

@@ -11,7 +11,8 @@ use App\Http\Controllers\Kelola\{
     TahunAjaranController,
     ProdiController,
     PotonganController as KelolaPotonganController,
-    RombelController
+    RombelController,
+    RuangController
 };
 
 use App\Http\Controllers\{
@@ -97,6 +98,10 @@ Route::group(['middleware' => ['auth']], function () {
         //? Kurikulum
         Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');
         Route::resource('kurikulum', KurikulumController::class);
+
+        //? Ruang
+        Route::get('ruang/data', [RuangController::class, 'data'])->name('ruang.data');
+        Route::resource('ruang', RuangController::class);
 
         //? Mata Kuliah
         Route::prefix('mata-kuliah')->name('mata-kuliah.')->group(function () {

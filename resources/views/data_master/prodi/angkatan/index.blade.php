@@ -23,6 +23,9 @@
                             <li class="nav-item" style="white-space: nowrap;">
                                 <a class="nav-link a-tab" href="#potongan">Potongan</a>
                             </li>
+                            <li class="nav-item" style="white-space: nowrap;">
+                                <a class="nav-link a-tab" href="#krs">KRS</a>
+                            </li>
                         </ul>
                     </div>
 
@@ -118,6 +121,10 @@
                                     </thead>
                                 </table>
                             </div>
+                        </div>
+
+                        <div class="tab-pane" id="krs" role="tabpanel">
+                            
                         </div>
                     </div>
                 </div>
