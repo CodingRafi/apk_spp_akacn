@@ -70,6 +70,11 @@ class PermissionTableSeeder extends Seeder
             'add_kurikulum',
             'edit_kurikulum',
             'delete_kurikulum',
+
+            'view_matkul',
+            'add_matkul',
+            'edit_matkul',
+            'delete_matkul',
         ];
 
         foreach ($permissions as $permission) {

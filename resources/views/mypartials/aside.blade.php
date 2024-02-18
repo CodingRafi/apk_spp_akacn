@@ -28,7 +28,7 @@
             </li>
         @endcan
 
-        @can('view_tahun_ajaran', 'view_prodi', 'view_rombel')
+        @can('view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum')
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -54,6 +54,13 @@
                         <li class="menu-item {{ Request::is('data-master/rombel*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.rombel.index') }}" class="menu-link">
                                 <div data-i18n="rombel">Rombel</div>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('view_kurikulum')
+                        <li class="menu-item {{ Request::is('data-master/kurikulum*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.kurikulum.index') }}" class="menu-link">
+                                <div data-i18n="kurikulum">Kurikulum</div>
                             </a>
                         </li>
                     @endcan

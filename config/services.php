@@ -31,11 +31,28 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'status_internal' => [
-        1 => 'Aktif',
-        2 => 'Tidak Aktif',
-        3 => 'Tugas Belajar',
-        4 => 'Almarhum',
-        5 => 'Keluar'
+    'matkul' => [
+        'jenis' => [
+            "A" => "Wajib",
+            "B" => "Pilihan",
+            "C" => "Wajib Peminatan",
+            "D" => "Pilihan Peminatan",
+            "S" => "Tugas akhir/Skripsi/Tesis/Disertasi"
+        ],
+        "kelompok" => [
+            "A" => "MPK",
+            "B" => "MKK",
+            "C" => "MKB",
+            "D" => "MPB",
+            "E" => "MBB",
+            "F" => "MKU / MKDU", 
+            "G" => "MKDK",
+            "H" => "MKK"
+        ]
     ]
+
+
+
+
+
 ];

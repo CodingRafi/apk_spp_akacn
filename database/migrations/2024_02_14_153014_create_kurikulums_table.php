@@ -14,7 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('kurikulums', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
+            $table->string('nama');
+            $table->string('jml_sks_lulus');
+            $table->string('jml_sks_wajib');
+            $table->string('jml_sks_pilihan');
             $table->timestamps();
         });
     }

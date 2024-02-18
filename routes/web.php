@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
+    KurikulumController,
+    MatkulController,
     PembayaranController as KelolaPembayaranController,
     PembayaranLainnyaController as KelolaPembayaranLainnyaController,
     RoleController,
@@ -87,6 +89,18 @@ Route::group(['middleware' => ['auth']], function () {
         //? Tahun ajaran
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
+
+        //? Kurikulum
+        Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');
+        Route::resource('kurikulum', KurikulumController::class);
+
+        //? Mata Kuliah
+        Route::prefix('mata-kuliah')->name('mata-kuliah.')->group(function () {
+            Route::get('{kurikulum_id}/data', [MatkulController::class, 'data'])->name('data');
+            Route::post('/', [MatkulController::class, 'store'])->name('store');
+            Route::get('/{matkul_id}', [MatkulController::class, 'show'])->name('show');
+            Route::put('/{matkul_id}', [MatkulController::class, 'update'])->name('update');
+        });
 
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
