@@ -9,6 +9,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RuangController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_ruang', ['only' => ['index', 'store']]);
+        $this->middleware('permission:add_ruang', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_ruang', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_ruang', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('data_master.ruang.index');

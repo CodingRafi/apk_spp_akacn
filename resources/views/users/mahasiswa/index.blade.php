@@ -58,7 +58,7 @@
                                     <th>Name User</th>
                                     <th>Email</th>
                                     @can('edit_users', 'delete_users')
-                                        <th>Actions</th>
+                                        <th>Aksi</th>
                                     @endcan
                                 </tr>
                             </thead>

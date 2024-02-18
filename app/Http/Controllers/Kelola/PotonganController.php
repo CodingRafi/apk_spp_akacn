@@ -14,6 +14,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PotonganController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_potongan', ['only' => ['index', 'store']]);
+        $this->middleware('permission:add_potongan', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_potongan', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_potongan', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('kelola_pembayaran.potongan.index');

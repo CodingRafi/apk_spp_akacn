@@ -21,7 +21,7 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     @can('add_pembayaran_lainnya')
-                                        <th>Actions</th>
+                                        <th>Aksi</th>
                                     @endcan
                                 </tr>
                             </thead>

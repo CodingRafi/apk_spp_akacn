@@ -20,7 +20,7 @@
                                 <th>Potongan</th>
                                 <th>Kekurangan</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                     </table>

@@ -18,7 +18,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Angkatan</th>
-                                <th>Actions</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
                     </table>

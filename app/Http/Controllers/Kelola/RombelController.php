@@ -13,6 +13,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class RombelController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_rombel', ['only' => ['index', 'store']]);
+        $this->middleware('permission:add_rombel', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_rombel', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_rombel', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         $prodis = Prodi::where('status', "1")->get();

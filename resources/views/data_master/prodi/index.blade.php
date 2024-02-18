@@ -18,7 +18,7 @@
                                 <th>No</th>
                                 <th>Nama</th>
                                 @can('edit_prodi', 'delete_prodi')
-                                <th>Actions</th>
+                                <th>Aksi</th>
                                 @endcan
                             </tr>
                         </thead>

@@ -53,7 +53,7 @@
                                     <th>Prodi</th>
                                     <th>Status</th>
                                     <th>DIverifikasi</th>
-                                    <th>Actions</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
