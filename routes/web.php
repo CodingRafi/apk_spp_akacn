@@ -22,8 +22,7 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
-use App\Http\Controllers\Kelola\Angkatan\KRSController;
-use App\Http\Controllers\Kelola\Angkatan\KRSKurikulumController;
+use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\PotonganController;
@@ -70,20 +69,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
         Route::resource('asdos', AsdosController::class)->except('index', 'create', 'edit');
         Route::resource('petugas', PetugasController::class)->except('index', 'create', 'edit');
-
-        // Route::post('{role}', [UserController::class, 'store'])->name('store');
-        // Route::get('{role}/import', [UserController::class, 'import'])->name('import');
-        // Route::post('{role}/import', [UserController::class, 'saveImport'])->name('saveImport');
-        // Route::get('{role}/export/pembayaran', [UserController::class, 'exportPembayaran'])->name('export.pembayaran');
-        // Route::get('{role}/{user_id}/print', [UserController::class, 'printPembayaran'])->name('print.pembayaran');
-        // Route::patch('{role}/{id}', [UserController::class, 'update'])->name('update');
-        // Route::delete('{role}/{id}', [UserController::class, 'destroy'])->name('destroy');
-
-        // Route::name('potongan.')->group(function () {
-        //     Route::get('{role}/{id}/potongan', [UserPotonganController::class, 'index'])->name('index');
-        //     Route::get('{role}/{id}/potongan/{semester_id}', [UserPotonganController::class, 'data'])->name('data');
-        //     Route::post('{role}/{id}/potongan/set', [UserPotonganController::class, 'store'])->name('store');
-        // });
     });
 
     Route::post('/upload-file', [HomeController::class, 'upload_file'])->name('upload_file');
@@ -153,21 +138,13 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/{id}', [PotonganController::class, 'show'])->name('show');
                 Route::put('/{id}', [PotonganController::class, 'update'])->name('update');
             });
-
-            //? Prodi - KRS
-            Route::prefix('krs')->name('krs.')->group(function () {
-                Route::prefix('kurikulum')->name('kurikulum.')->group(function () {
-                    Route::post('/', [KRSKurikulumController::class, 'store'])->name('store');
-                    Route::get('/data', [KRSKurikulumController::class, 'data'])->name('data');
-                    Route::get('/{tahun_semester_id}', [KRSKurikulumController::class, 'show'])->name('show');
-                });
-                Route::get('/semester', [KRSController::class, 'getSemester'])->name('getSemester');
-                Route::get('/data', [KRSController::class, 'data'])->name('data');
-                Route::get('/create', [KRSController::class, 'create'])->name('create');
-                Route::post('/', [KRSController::class, 'store'])->name('store');
-                Route::get('/{id}', [KRSController::class, 'show'])->name('show');
-                Route::get('/{id}/edit', [KRSController::class, 'edit'])->name('edit');
-                Route::put('/{id}', [KRSController::class, 'update'])->name('update');
+            
+            //? Prodi - Matkul
+            Route::prefix('matkul')->name('matkul.')->group(function () {
+                Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
+                Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
+                Route::get('/{id}', [AngkatanMatkulController::class, 'show'])->name('show');
+                Route::put('/{id}', [AngkatanMatkulController::class, 'update'])->name('update');
             });
         });
 

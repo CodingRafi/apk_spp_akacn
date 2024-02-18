@@ -12,4 +12,8 @@ class Kurikulum extends Model
     public $incrementing = false;
     protected $keyType = 'string';
     protected $guarded = [];
+
+    public function matkul(){
+        return $this->hasMany(Matkul::class, 'kurikulum_id', 'id');
+    }
 }

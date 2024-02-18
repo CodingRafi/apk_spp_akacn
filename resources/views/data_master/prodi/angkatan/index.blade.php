@@ -24,7 +24,7 @@
                                 <a class="nav-link a-tab" href="#potongan">Potongan</a>
                             </li>
                             <li class="nav-item" style="white-space: nowrap;">
-                                <a class="nav-link a-tab" href="#krs">KRS</a>
+                                <a class="nav-link a-tab" href="#matkul">Mata Kuliah</a>
                             </li>
                         </ul>
                     </div>
@@ -123,22 +123,24 @@
                             </div>
                         </div>
 
-                        <div class="tab-pane" id="krs" role="tabpanel">
+                        <div class="tab-pane" id="matkul" role="tabpanel">
                             <div class="d-flex justify-content-between mb-3">
-                                <h5>KRS</h5>
+                                <h5>Mata Kuliah</h5>
                                 <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('data-master.prodi.krs.kurikulum.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Set Kurikulum', '#Krs', getSemesterKrs)">
+                                    onclick="addForm('{{ route('data-master.prodi.matkul.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Mata Kuliah', '#Matkul')">
                                     Tambah
                                 </button>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-krs">
+                                <table class="table table-matkul">
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Semester</th>
+                                            <th>Kode</th>
+                                            <th>Nama</th>
                                             <th>Kurikulum</th>
-                                            <th>Actions</th>
+                                            <th>Dosen</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -312,36 +314,87 @@
         </div>
     </div>
 
-    <div class="modal fade" id="Krs" tabindex="-1" role="dialog" aria-labelledby="KrsLabel"
+    <div class="modal fade" id="Matkul" tabindex="-1" role="dialog" aria-labelledby="MatkulLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="" id="form-krs">
+                <form action="" id="form-matkul">
                     @method('post')
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="KrsLabel">Tambah</h1>
+                        <h1 class="modal-title fs-5" id="MatkulLabel">Tambah</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="semester_krs_id" class="form-label">Semester</label>
-                            <select class="form-select" name="tahun_semester_id" id="semester_krs_id">
-                                <option value="">Pilih Semester</option>
+                            <label for="matkul_id" class="form-label">Mata Kuliah</label>
+                            <select class="form-select" name="matkul_id" id="matkul_id" style="width: 100%">
+                                @foreach ($kurikulums as $kurikulum)
+                                    <optgroup label="{{ $kurikulum->nama }}">
+                                        @foreach ($kurikulum->matkul as $matkul)
+                                            <option value="{{ $matkul->id }}">{{ $matkul->nama }}</option>
+                                        @endforeach
+                                    </optgroup>
+                                @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="kurikulum_id" class="form-label">Kurikulum</label>
-                            <select class="form-select" name="kurikulum_id" id="kurikulum_id">
-                                <option value="">Pilih Semester</option>
-                                @foreach ($kurikulum as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                            <label for="dosen_id" class="form-label">Dosen</label>
+                            <select class="form-select" name="dosen_id" id="dosen_id">
+                                <option value="">Pilih Dosen</option>
+                                @foreach ($dosens as $d)
+                                    <option value="{{ $d->id }}">{{ $d->name }} ({{ $d->login_key }})
+                                    </option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ruang_id" class="form-label">Ruang</label>
+                            <select class="form-select" name="ruang_id" id="ruang_id">
+                                <option value="">Pilih Ruang</option>
+                                @foreach ($ruangs as $ruang)
+                                    <option value="{{ $ruang->id }}">{{ $ruang->nama }} (Kapasitas:
+                                        {{ $ruang->kapasitas }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="hari" class="form-label">Hari</label>
+                            <select class="form-select" name="hari" id="hari">
+                                <option value="">Pilih Hari</option>
+                                @foreach (config('services.hari') as $key => $hari)
+                                    <option value="{{ $key }}">{{ $hari }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="jam_mulai" class="form-label">Jam Mulai</label>
+                                    <input class="form-control" type="time" id="jam_mulai" placeholder="Jam Mulai"
+                                        name="jam_mulai" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="jam_akhir" class="form-label">Jam Akhir</label>
+                                    <input class="form-control" type="time" id="jam_akhir" placeholder="Jam akhir"
+                                        name="jam_akhir" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cek_ip" class="form-label">Cek IP?</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" name="cek_ip"
+                                    value="1" id="cek_ip">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => tableKrs.ajax.reload())">Simpan</button>
+                            onclick="submitForm(this.form, this, () => tableMatkul.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -351,7 +404,7 @@
 
 @push('js')
     <script>
-        let tableSemester, tablePembayaranSemester, tablePembayaranLainnya, tablePotongan, tableKrs;
+        let tableSemester, tablePembayaranSemester, tablePembayaranLainnya, tablePotongan, tableMatkul;
 
         function getSemester() {
             $('#semester_id').attr('disabled', 'disabled');
@@ -429,35 +482,6 @@
                 error: function() {
                     console.log('Gagal get jenis pembayaran lainnya');
                     $('#pembayaran_lainnya_id').removeAttr('disabled');
-                }
-            })
-        }
-
-        function getSemesterKrs(data = {}) {
-            $('#semester_krs_id').attr('disabled', 'disabled');
-            $.ajax({
-                type: "GET",
-                url: "{{ route('data-master.prodi.pembayaran.getSemester', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
-                data: {
-                    tahun_semester_id: data.tahun_semester_id
-                },
-                success: function(res) {
-                    $('#semester_krs_id').empty().append('<option value="">Pilih Semester</option>')
-                    $.each(res.data, function(i, e) {
-                        $('#semester_krs_id').append(
-                            `<option value="${e.id}">${e.nama}</option>`
-                        )
-                    })
-
-                    if (data.tahun_semester_id) {
-                        $('#semester_krs_id').val(data.tahun_semester_id);
-                    } else {
-                        $('#semester_krs_id').removeAttr('disabled');
-                    }
-                },
-                error: function() {
-                    console.log('Gagal get semester Krs');
-                    $('#semester_krs_id').removeAttr('disabled');
                 }
             })
         }
@@ -566,20 +590,26 @@
                 pageLength: 25,
             });
 
-            tableKrs = $('.table-krs').DataTable({
+            tableMatkul = $('.table-matkul').DataTable({
                 processing: true,
                 autoWidth: false,
                 ajax: {
-                    url: '{{ route('data-master.prodi.krs.kurikulum.data', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
+                    url: '{{ route('data-master.prodi.matkul.data', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
                 },
                 columns: [{
                         "data": "DT_RowIndex"
                     },
                     {
-                        "data": "semester"
+                        "data": "kode"
+                    },
+                    {
+                        "data": "matkul"
                     },
                     {
                         "data": "kurikulum"
+                    },
+                    {
+                        "data": "dosen"
                     },
                     {
                         "data": "options"
