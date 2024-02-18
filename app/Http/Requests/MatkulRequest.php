@@ -33,6 +33,8 @@ class MatkulRequest extends FormRequest
             'sks_praktek' => 'min:0',
             'sks_praktek_lapangan' => 'min:0',
             'sks_simulasi' => 'min:0',
+            'tgl_mulai_aktif' => 'date',
+            'tgl_akhir_aktif' => 'date',
         ];
     }
 }

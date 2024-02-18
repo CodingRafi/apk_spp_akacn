@@ -71,11 +71,6 @@ class KurikulumController extends Controller
         }
     }
 
-    public function show(Kurikulum $kurikulum)
-    {
-        //
-    }
-
     public function edit(Kurikulum $kurikulum)
     {
         $prodis = Prodi::all();

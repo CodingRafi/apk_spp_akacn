@@ -90,6 +90,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
+        //? Semester
+        Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
+        Route::resource('tahun-ajaran', TahunAjaranController::class);
+
         //? Kurikulum
         Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');
         Route::resource('kurikulum', KurikulumController::class);

@@ -11,18 +11,18 @@
                 </div>
                 <div class="card-body">
                     <div class="f1">
-                        <fieldset data-id="1">
-                            <form
-                                action="{{ isset($data) ? route('data-master.tahun-ajaran.update', $data->id) : route('data-master.tahun-ajaran.store') }}"
-                                method="POST" class="form-tahun-ajaran">
-                                @csrf
-                                @if (isset($data))
-                                    @method('patch')
-                                @endif
+                        <form
+                            action="{{ isset($data) ? route('data-master.tahun-ajaran.update', $data->id) : route('data-master.tahun-ajaran.store') }}"
+                            method="POST" class="form-tahun-ajaran">
+                            @csrf
+                            @if (isset($data))
+                                @method('patch')
+                            @endif
+                            <fieldset data-id="1">
                                 <div class="mb-3">
                                     <label for="nama" class="form-label">Nama</label>
                                     <input class="form-control" type="text" id="nama" readonly name="nama"
-                                        value="{{ isset($data) ? $data->nama : (old('tgl_mulai') ? explode('-', old('tgl_mulai'))[0] . '/' . explode('-', old('tgl_akhir'))[0] : '') }}" />
+                                        value="{{ isset($data) ? $data->nama : (old('tgl_mulai') ? explode('-', old('tgl_mulai'))[0] . '/' . explode('-', old('tgl_selesai'))[0] : '') }}" />
                                 </div>
                                 <div class="mb-3">
                                     <label for="tgl_mulai" class="form-label">Tanggal Mulai</label>
@@ -36,11 +36,11 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3">
-                                    <label for="tgl_akhir" class="form-label">Tanggal Akhir</label>
-                                    <input class="form-control @error('tgl_akhir') is-invalid @enderror" type="date"
-                                        value="{{ isset($data) ? $data->tgl_akhir : old('tgl_akhir') }}" id="tgl_akhir"
-                                        name="tgl_akhir" />
-                                    @error('tgl_akhir')
+                                    <label for="tgl_selesai" class="form-label">Tanggal Akhir</label>
+                                    <input class="form-control @error('tgl_selesai') is-invalid @enderror" type="date"
+                                        value="{{ isset($data) ? $data->tgl_selesai : old('tgl_selesai') }}" id="tgl_selesai"
+                                        name="tgl_selesai" />
+                                    @error('tgl_selesai')
                                         <div class="invalid-feedback d-block">
                                             {{ $message }}
                                         </div>
@@ -55,14 +55,14 @@
                                     </div>
                                 </div>
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                                    <button class="btn btn-primary" type="submit">Simpan</button>
+                                    <button class="btn btn-primary" type="button" onclick="submitForm(this.form, this, setKurikulum)">Simpan</button>
                                 </div>
-                            </form>
-                        </fieldset>
+                            </fieldset>
 
-                        <fieldset data-id="2">
+                            <fieldset data-id="2">
 
-                        </fieldset>
+                            </fieldset>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -73,37 +73,25 @@
 @push('js')
     <script>
         let status_next = false;
-        let tahun_ajaaran_id;
+        let tahun_ajaran;
+        let tableSemester;
+        let url_update = '{{ route('data-master.tahun-ajaran.update', [':id']) }}';
+        let url_semester =
+            '{{ isset($data) ? route('data-master.mata-kuliah.data', $data->id) : route('data-master.mata-kuliah.data', [':id']) }}'
 
         function generateName() {
             let tgl_mulai = $('#tgl_mulai').val().split('-')[0];
-            let tgl_akhir = $('#tgl_akhir').val().split('-')[0];
+            let tgl_selesai = $('#tgl_selesai').val().split('-')[0];
 
-            $('#nama').val(`${tgl_mulai}/${tgl_akhir}`)
+            $('#nama').val(`${tgl_mulai}/${tgl_selesai}`)
         }
 
-        $('.form-tahun-ajaran').on('submit', function(e) {
-            e.preventDefault();
-            let data = new FormData($(this)[0]);
-
-            $.post({
-                    url: $(this).attr("action"),
-                    data: data,
-                    dataType: "json",
-                    contentType: false,
-                    cache: false,
-                    processData: false,
-                })
-                .done((response) => {
-
-                })
-                .fail((errors) => {
-                    loopErrors(errors.responseJSON.errors);
-                    showAlert(errors.responseJSON.message, "danger");
-                });
-        })
-
         $('#tgl_mulai').on('change', generateName);
-        $('#tgl_akhir').on('change', generateName);
+        $('#tgl_selesai').on('change', generateName);
+
+        function setTahunAjaran(){
+
+        }
     </script>
+    @include('mypartials.tab', ['form' => '.form-tahun-ajaran'])
 @endpush
