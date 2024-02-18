@@ -67,9 +67,9 @@
                                 </div>
                             @endif
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email"
-                                    placeholder="Enter your email" autofocus required />
+                                <label for="login_key" class="form-label">Email\NIDN\NIP\NIM</label>
+                                <input type="text" class="form-control" id="login_key" name="login_key"
+                                    placeholder="Email\NIDN\NIP\NIM" autofocus required />
                             </div>
                             <div class="mb-3 form-password-toggle">
                                 <div class="d-flex justify-content-between">

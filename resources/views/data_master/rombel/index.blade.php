@@ -67,8 +67,9 @@
 
 @push('js')
     <script>
+        let table;
         $(document).ready(function() {
-            let table = $('.table').DataTable({
+            table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,

@@ -38,11 +38,6 @@ class PermissionTableSeeder extends Seeder
             'add_whitelist_ip',
             'delete_whitelist_ip',
 
-            'view_biaya',
-            'add_biaya',
-            'edit_biaya',
-            'delete_biaya',
-
             'view_kelola_pembayaran',
             'edit_kelola_pembayaran',
 
@@ -81,10 +76,10 @@ class PermissionTableSeeder extends Seeder
             'edit_ruang',
             'delete_ruang',
 
-            'view_krs',
-            'add_krs',
-            'edit_krs',
-            'delete_krs',
+            'view_matkul',
+            'add_matkul',
+            'edit_matkul',
+            'delete_matkul',
         ];
 
         foreach ($permissions as $permission) {
