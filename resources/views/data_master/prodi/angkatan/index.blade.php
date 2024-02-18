@@ -124,7 +124,25 @@
                         </div>
 
                         <div class="tab-pane" id="krs" role="tabpanel">
-                            
+                            <div class="d-flex justify-content-between mb-3">
+                                <h5>KRS</h5>
+                                <button type="button" class="btn btn-primary"
+                                    onclick="addForm('{{ route('data-master.prodi.krs.kurikulum.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Set Kurikulum', '#Krs', getSemesterKrs)">
+                                    Tambah
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-krs">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Semester</th>
+                                            <th>Kurikulum</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,8 +175,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="PembayaranSemester" tabindex="-1" role="dialog" aria-labelledby="PembayaranSemesterLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="PembayaranSemester" tabindex="-1" role="dialog"
+        aria-labelledby="PembayaranSemesterLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <form action="" id="form-pembayaran-semester">
@@ -256,7 +274,7 @@
                             <select class="form-select" name="potongan_id" id="potongan_id">
                                 <option value="">Pilih Potongan</option>
                                 @foreach ($potongan as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -265,7 +283,7 @@
                             <select class="form-select" name="tahun_semester_id" id="tahun_semester_id">
                                 <option value="">Pilih Semester</option>
                                 @foreach ($semesterPotongan as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -293,11 +311,47 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="Krs" tabindex="-1" role="dialog" aria-labelledby="KrsLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <form action="" id="form-krs">
+                    @method('post')
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="KrsLabel">Tambah</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="semester_krs_id" class="form-label">Semester</label>
+                            <select class="form-select" name="tahun_semester_id" id="semester_krs_id">
+                                <option value="">Pilih Semester</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="kurikulum_id" class="form-label">Kurikulum</label>
+                            <select class="form-select" name="kurikulum_id" id="kurikulum_id">
+                                <option value="">Pilih Semester</option>
+                                @foreach ($kurikulum as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => tableKrs.ajax.reload())">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
     <script>
-        let tableSemester, tablePembayaranSemester, tablePembayaranLainnya, tablePotongan;
+        let tableSemester, tablePembayaranSemester, tablePembayaranLainnya, tablePotongan, tableKrs;
 
         function getSemester() {
             $('#semester_id').attr('disabled', 'disabled');
@@ -375,6 +429,35 @@
                 error: function() {
                     console.log('Gagal get jenis pembayaran lainnya');
                     $('#pembayaran_lainnya_id').removeAttr('disabled');
+                }
+            })
+        }
+
+        function getSemesterKrs(data = {}) {
+            $('#semester_krs_id').attr('disabled', 'disabled');
+            $.ajax({
+                type: "GET",
+                url: "{{ route('data-master.prodi.pembayaran.getSemester', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+                data: {
+                    tahun_semester_id: data.tahun_semester_id
+                },
+                success: function(res) {
+                    $('#semester_krs_id').empty().append('<option value="">Pilih Semester</option>')
+                    $.each(res.data, function(i, e) {
+                        $('#semester_krs_id').append(
+                            `<option value="${e.id}">${e.nama}</option>`
+                        )
+                    })
+
+                    if (data.tahun_semester_id) {
+                        $('#semester_krs_id').val(data.tahun_semester_id);
+                    } else {
+                        $('#semester_krs_id').removeAttr('disabled');
+                    }
+                },
+                error: function() {
+                    console.log('Gagal get semester Krs');
+                    $('#semester_krs_id').removeAttr('disabled');
                 }
             })
         }
@@ -475,6 +558,28 @@
                     },
                     {
                         "data": "publish"
+                    },
+                    {
+                        "data": "options"
+                    }
+                ],
+                pageLength: 25,
+            });
+
+            tableKrs = $('.table-krs').DataTable({
+                processing: true,
+                autoWidth: false,
+                ajax: {
+                    url: '{{ route('data-master.prodi.krs.kurikulum.data', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
+                },
+                columns: [{
+                        "data": "DT_RowIndex"
+                    },
+                    {
+                        "data": "semester"
+                    },
+                    {
+                        "data": "kurikulum"
                     },
                     {
                         "data": "options"

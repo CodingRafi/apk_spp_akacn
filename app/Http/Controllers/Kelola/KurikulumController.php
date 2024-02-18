@@ -38,6 +38,9 @@ class KurikulumController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->addColumn('jml_matkul', function($datas){
+                return DB::table('matkuls')->where('kurikulum_id', $datas->id)->count();
+            })
             ->rawColumns(['options'])
             ->make(true);
     }

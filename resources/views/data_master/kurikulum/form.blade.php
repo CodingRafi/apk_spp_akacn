@@ -40,7 +40,7 @@
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start f1-buttons">
                                 <button class="btn btn-primary btn-next btn-selanjutnya-1" type="button"
-                                    onclick="submitForm(this.form, this, setKurikulum)">Simpan</button>
+                                    onclick="submitForm(this.form, this, setKurikulum)">Simpan dan Lanjutkan</button>
                             </div>
                         </fieldset>
 

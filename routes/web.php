@@ -22,6 +22,8 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
+use App\Http\Controllers\Kelola\Angkatan\KRSController;
+use App\Http\Controllers\Kelola\Angkatan\KRSKurikulumController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\PotonganController;
@@ -150,6 +152,22 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('/', [PotonganController::class, 'store'])->name('store');
                 Route::get('/{id}', [PotonganController::class, 'show'])->name('show');
                 Route::put('/{id}', [PotonganController::class, 'update'])->name('update');
+            });
+
+            //? Prodi - KRS
+            Route::prefix('krs')->name('krs.')->group(function () {
+                Route::prefix('kurikulum')->name('kurikulum.')->group(function () {
+                    Route::post('/', [KRSKurikulumController::class, 'store'])->name('store');
+                    Route::get('/data', [KRSKurikulumController::class, 'data'])->name('data');
+                    Route::get('/{tahun_semester_id}', [KRSKurikulumController::class, 'show'])->name('show');
+                });
+                Route::get('/semester', [KRSController::class, 'getSemester'])->name('getSemester');
+                Route::get('/data', [KRSController::class, 'data'])->name('data');
+                Route::get('/create', [KRSController::class, 'create'])->name('create');
+                Route::post('/', [KRSController::class, 'store'])->name('store');
+                Route::get('/{id}', [KRSController::class, 'show'])->name('show');
+                Route::get('/{id}/edit', [KRSController::class, 'edit'])->name('edit');
+                Route::put('/{id}', [KRSController::class, 'update'])->name('update');
             });
         });
 

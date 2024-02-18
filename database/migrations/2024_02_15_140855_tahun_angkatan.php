@@ -45,6 +45,29 @@ return new class extends Migration
             $table->enum('publish', [0,1]);
             $table->timestamps();
         });
+
+        Schema::create('tahun_kurikulum', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->uuid('kurikulum_id');
+            $table->foreign('kurikulum_id')->references('id')->on('kurikulums');
+            $table->timestamps();
+        });
+        
+        Schema::create('tahun_krs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->foreignId('dosen_id')->constrained('users');
+            $table->uuid('matkul_id');
+            $table->foreign('matkul_id')->references('id')->on('matkuls');
+            $table->foreignId('ruang_id')->constrained('ruangs');
+            $table->char('hari', 1);
+            $table->time('jam_mulai');
+            $table->time('jam_akhir');
+            $table->enum('jenis', [1,2]); // 1 => online, 2 => offline
+            $table->enum('cek_ip', [0,1]);
+            $table->timestamps();
+        });
     }
 
     /**
@@ -57,5 +80,7 @@ return new class extends Migration
         Schema::dropIfExists('tahun_semester');
         Schema::dropIfExists('tahun_pembayaran');
         Schema::dropIfExists('tahun_pembayaran_lain');
+        Schema::dropIfExists('tahun_kurikulum');
+        Schema::dropIfExists('tahun_krs');
     }
 };

@@ -18,6 +18,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
+                                    <th>Jumlah Matkul</th>
                                     @can('edit_kurikulum', 'delete_kurikulum')
                                         <th>Aksi</th>
                                     @endcan
@@ -44,6 +45,9 @@
                     },
                     {
                         "data": "nama"
+                    },
+                    {
+                        "data": "jml_matkul"
                     },
                     @can('edit_kurikulum', 'hapus_kurikulum')
                         {

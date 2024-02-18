@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kurikulum;
 use App\Models\Potongan;
 use App\Models\Prodi;
 use App\Models\TahunAjaran;
@@ -99,8 +100,9 @@ class ProdiController extends Controller
                 ->where('tahun_semester.prodi_id', $prodi_id)
                 ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
                 ->get();
+        $kurikulum = Kurikulum::all();
 
-        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'potongan', 'semesterPotongan'));
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'potongan', 'semesterPotongan', 'kurikulum'));
     }
 
     public function edit($id)
