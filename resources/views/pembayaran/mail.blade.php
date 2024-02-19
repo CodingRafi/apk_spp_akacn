@@ -123,7 +123,7 @@
                                         @else
                                             <p
                                                 style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                {{ $pembayaran->mahasiswa->name }} dengan NIM {{ $pembayaran->mahasiswa->mahasiswa->nim }} telah melakukan pembayaran sebesar {{ formatRupiah($pembayaran->nominal) }}. Klik <a href="{{ route('kelola.pembayaran.show', $pembayaran->id) }}">disini</a> untuk verifikasi.
+                                                {{ $pembayaran->mahasiswa->name }} dengan NIM {{ $pembayaran->mahasiswa->mahasiswa->nim }} telah melakukan pembayaran sebesar {{ formatRupiah($pembayaran->nominal) }}. Klik <a href="{{ route('kelola-pembayaran.pembayaran.show', $pembayaran->id) }}">disini</a> untuk verifikasi.
                                             </p>
                                         @endif
 

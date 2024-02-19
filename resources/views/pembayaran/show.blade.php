@@ -1,37 +1,32 @@
     @extends('mylayouts.main')
 
     @section('container')
-        @php
-            $data = $semester
-                ->tahun_ajaran()
-                ->where('tahun_ajaran_id', $mhs->tahun_ajaran_id)
-                ->first();
-        @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
+                            {{-- @dd($data) --}}
                             <a href="{{ route('pembayaran.index') }}"><i
                                     class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                            <h5 class="text-capitalize mb-0">Pembayaran {{ $semester->nama }}</h5>
+                            <h5 class="text-capitalize mb-0">Pembayaran {{ $data->nama }}</h5>
                         </div>
-                        @if ($data && $data->pivot->publish)
-                            <a href="{{ route('pembayaran.create', $semester->id) }}"
+                        @if ($data && $data->publish)
+                            <a href="{{ route('pembayaran.create', ['type' => request('type'), 'id' => request('id')]) }}"
                                 class="btn btn-primary text-capitalize">Bayar</a>
                         @endif
                     </div>
                     <div class="card-body">
-                        @if ($data && $data->pivot->publish)
+                        @if ($data && $data->publish)
                             <div class="container-fluid p-0 border p-3 rounded mb-3">
-                                <p>Biaya: <strong>{{ formatRupiah($data->pivot->nominal) }}</strong></p>
-                                <p>Sudah dibayar: <strong>{{ formatRupiah($sudah_dibayar) }}</strong></p>
-                                <p>Potongan: <strong>{{ formatRupiah($potongans->sum('nominal')) }}</strong></p>
-                                <p>Kekurangan:
-                                    <strong>{{ formatRupiah(max(0, $data->pivot->nominal - ($sudah_dibayar + $potongans->sum('nominal')))) }}</strong>
-                                </p>
-                                {!! $data->pivot->ket !!}
-                                @if (count($potongans) > 0)
+                                <p>Biaya: <strong>{{ formatRupiah($data->nominal) }}</strong></p>
+                                {{-- <p>Sudah dibayar: <strong>{{ formatRupiah($sudah_dibayar) }}</strong></p> --}}
+                                {{-- <p>Potongan: <strong>{{ formatRupiah($potongans->sum('nominal')) }}</strong></p> --}}
+                                {{-- <p>Kekurangan:
+                                    <strong>{{ formatRupiah(max(0, $data->nominal - ($sudah_dibayar + $potongans->sum('nominal')))) }}</strong>
+                                </p> --}}
+                                {!! $data->ket !!}
+                                {{-- @if (count($potongans) > 0)
                                     <hr>
                                     <h5>Potongan</h5>
                                     <table class="table">
@@ -49,12 +44,14 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $potongan->nama }}</td>
                                                     <td>{{ formatRupiah($potongan->nominal) }}</td>
-                                                    <td><button class='btn btn-primary mx-2' onclick='detailPotongan({{ $potongan->id }})'>Detail</button></td>
+                                                    <td><button class='btn btn-primary mx-2'
+                                                            onclick='detailPotongan({{ $potongan->id }})'>Detail</button>
+                                                    </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
                                     </table>
-                                @endif
+                                @endif --}}
                             </div>
                         @else
                             <div class="alert alert-primary" role="alert">
@@ -88,7 +85,7 @@
                     processing: true,
                     serverSide: true,
                     responsive: true,
-                    ajax: '{{ route('pembayaran.dataPembayaran', request('semester_id')) }}',
+                    ajax: '{{ route('pembayaran.dataPembayaran', ['type' => request('type'), 'id' => request('id')]) }}',
                     columns: [{
                             "data": "DT_RowIndex"
                         },
@@ -113,5 +110,5 @@
                 });
             });
         </script>
-         @include('potongan.js')
+        {{-- @include('potongan.js') --}}
     @endpush

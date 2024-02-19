@@ -26,7 +26,7 @@
                 <div class="mb-3">
                     <label for="login_key" class="form-label">NIM</label>
                     <input class="form-control @error('login_key') is-invalid @enderror" type="text"
-                        value="{{ isset($data) ? $data->mahasiswa->login_key : old('login_key') }}" id="login_key"
+                        value="{{ isset($data) ? $data->login_key : old('login_key') }}" id="login_key"
                         placeholder="NIM" name="login_key" />
                     @error('login_key')
                         <div class="invalid-feedback d-block">
@@ -292,10 +292,10 @@
     $('#prodi_id').on('change', getRombel)
 </script>
 
-@if (old('tahun_masuk_id') || old('prodi_id'))
+@if (isset($data) || old('tahun_masuk_id') || old('prodi_id'))
     <script>
         getRombel().done(() => {
-            $('#rombel_id').val('{{ old('rombel_id') }}').trigger('change')
+            $('#rombel_id').val('{{ isset($data) ? $data->mahasiswa->rombel_id : old('rombel_id') }}').trigger('change')
         })
     </script>
 @endif

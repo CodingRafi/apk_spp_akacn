@@ -61,7 +61,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => tablePembayaranSemester.ajax.reload())">Simpan</button>
+                            onclick="submitForm(this.form, this, () => tablePembayaranLainnya.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>

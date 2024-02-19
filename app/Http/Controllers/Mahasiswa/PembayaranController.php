@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Mahasiswa;
 
+use App\Http\Controllers\Controller;
 use App\Models\{
     Pembayaran,
     Semester
@@ -9,11 +10,13 @@ use App\Models\{
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-use Auth, DB, DataTables;
 use App\Exports\PembayaranMhsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Mail\PembayaranMail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Yajra\DataTables\Facades\DataTables;
 
 class PembayaranController extends Controller
 {
@@ -33,78 +36,83 @@ class PembayaranController extends Controller
     public function data()
     {
         $mhs = Auth::user()->mahasiswa;
-        $data = DB::table('semesters as a')
-            ->select('a.*', 'c.publish', 'c.nominal')
-            ->join('prodi as b', 'a.prodi_id', '=', 'b.id')
-            ->leftJoin('semester_tahun as c', function ($join) use ($mhs) {
-                $join->on('a.id', '=', 'c.semester_id')
-                    ->where('c.tahun_ajaran_id', '=', $mhs->tahun_ajaran_id);
-            })
-            ->where('a.prodi_id', $mhs->prodi_id)
-            ->get();
+        $tahun_semester = DB::table('tahun_semester')
+            ->where('prodi_id', $mhs->prodi_id)
+            ->where('tahun_ajaran_id', $mhs->tahun_masuk_id)
+            ->get()
+            ->pluck('id');
 
-        foreach ($data as $row) {
-            $row->sudah_dibayar = DB::table('pembayarans')
-                ->select(DB::raw('sum(nominal) as total'))
-                ->where('mhs_id', Auth::user()->id)
-                ->where('semester_id', $row->id)
-                ->where('status', 'diterima')
-                ->first()->total;
+        $tahun_pembayaran_semester = DB::table('tahun_pembayaran')
+            ->select('tahun_pembayaran.id', 'semesters.nama')
+            ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
+            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->whereIn('tahun_semester_id', $tahun_semester)
+            ->get()
+            ->map(function ($data) {
+                $data->type = 'semester';
+                return $data;
+            });
 
-            $row->potongan = $mhs->potongan()->where('semester_id', $row->id)->sum('nominal');
+        $tahun_pembayaran_lainnya = DB::table('tahun_pembayaran_lain')
+            ->select('tahun_pembayaran_lain.id', 'pembayaran_lainnyas.nama')
+            ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+            ->where('tahun_pembayaran_lain.prodi_id', $mhs->prodi_id)
+            ->where('tahun_pembayaran_lain.tahun_ajaran_id', $mhs->tahun_masuk_id)
+            ->get()
+            ->map(function ($data) {
+                $data->type = 'lainnya';
+                return $data;
+            });
+
+        $datas = array_merge($tahun_pembayaran_semester->toArray(), $tahun_pembayaran_lainnya->toArray());
+
+        foreach ($datas as $data) {
+            $options = '';
+
+            $options = $options . "<a href='" . route('pembayaran.show', ['type' => $data->type, 'id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+
+            $data->options = $options;
         }
 
-        return DataTables::of($data)
+        return DataTables::of($datas)
+            ->addColumn('tagihan', function () {
+                return 'Rp. 0';
+            })
+            ->addColumn('status', function () {
+                return 'Belum Dibayar';
+            })
             ->addIndexColumn()
-            ->addColumn('options', function ($data) {
-                return "<a href='" . route('pembayaran.show', $data->id) . "' class='btn btn-info mx-2'>Detail</a>";
-            })
-            ->addColumn('sudah_dibayar', function ($data) {
-                return $data->publish ? formatRupiah($data->sudah_dibayar ? $data->sudah_dibayar : 0) : '-';
-            })
-            ->addColumn('harus_dibayar', function ($data) {
-                return $data->publish ? formatRupiah($data->nominal) : '-';
-            })
-            ->addColumn('status', function ($data) {
-                return $data->publish ? (($data->sudah_dibayar + $data->potongan) >= $data->nominal) ? '<span class="badge bg-success">Lunas</span>' : '<span class="badge bg-danger">Belum Lunas</span>' : '-';
-            })
-            ->addColumn('potongan', function ($data) {
-                return $data->publish ? formatRupiah($data->potongan) : '-';
-            })
-            ->addColumn('kekurangan', function ($data) {
-                if ($data->publish) {
-                    $kekurangan = $data->nominal - ($data->sudah_dibayar + $data->potongan);
-                    return formatRupiah(max(0, $kekurangan));
-                }else{
-                    return '-';
-                }
-            })
-            ->rawColumns(['options', 'status'])
+            ->rawColumns(['options'])
             ->make(true);
     }
 
-    public function dataPembayaran($semester_id)
+    public function dataPembayaran($type, $id)
     {
         $datas = DB::table('pembayarans')
             ->where('mhs_id', Auth::user()->id)
-            ->where('semester_id', $semester_id)
+            ->when($type == 'semester', function ($q) use ($id) {
+                $q->where('tahun_semester_id', $id);
+            })
+            ->when($type == 'lainnya', function ($q) use ($id) {
+                $q->where('tahun_pembayaran_lain_id', $id);
+            })
             ->get();
 
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('pembayaran.showPembayaran', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
+            $options = $options . "<a href='" . route('pembayaran.showPembayaran', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
 
             if ($data->status == 'diterima') {
-                $options = $options . "<a href='" . route('pembayaran.print', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Kwitansi</a>";
+                $options = $options . "<a href='" . route('pembayaran.print', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Kwitansi</a>";
             }
 
             if (auth()->user()->can('edit_pembayaran')) {
-                $options = $options . "<a href='" . route('pembayaran.edit', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
+                $options = $options . "<a href='" . route('pembayaran.edit', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
             if (auth()->user()->can('delete_pembayaran')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('pembayaran.destroy', ['semester_id' => $semester_id, 'pembayaran_id' => $data->id]) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('pembayaran.destroy', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "`)'>
                                     Hapus
                                 </button>";
             }
@@ -127,31 +135,13 @@ class PembayaranController extends Controller
             ->make(true);
     }
 
-    public function create($semester_id)
+    public function create($type, $id)
     {
-        $semester = Semester::where('id', $semester_id)->first();
-        $mhs = Auth::user()->mahasiswa;
-
-        //? validasi publish tahun ajaran
-        $data = $semester->tahun_ajaran()->where('tahun_ajaran_id', $mhs->tahun_ajaran_id)->first();
-        if (!$data || !$data->pivot->publish) {
-            abort(404);
-        }
-
-        return view('pembayaran.form', compact('semester', 'mhs'));
+        return view('pembayaran.form');
     }
 
-    public function store(Request $request, $semester_id)
+    public function store(Request $request, $type, $id)
     {
-        $semester = Semester::where('id', $semester_id)->first();
-        $mhs = Auth::user()->mahasiswa;
-
-        //? validasi publish tahun ajaran
-        $data = $semester->tahun_ajaran()->where('tahun_ajaran_id', $mhs->tahun_ajaran_id)->first();
-        if (!$data || !$data->pivot->publish) {
-            abort(404);
-        }
-
         $request->validate([
             'tgl_bayar' => 'required',
             'nominal' => 'required|numeric',
@@ -161,23 +151,23 @@ class PembayaranController extends Controller
         DB::beginTransaction();
         try {
             $bukti = $request->file('bukti')->store('bukti');
-
-            $pembayaran = Pembayaran::create([
+            $requestParse = [
                 'tgl_bayar' => $request->tgl_bayar,
                 'nominal' => $request->nominal,
                 'bukti' => $bukti,
                 'mhs_id' => Auth::user()->id,
-                'semester_id' => $semester_id,
                 'status' => 'pengajuan',
                 'ket_mhs' => $request->ket_mhs,
-                'prodi_id' => $data->pivot->prodi_id
-            ]);
+            ];
+
+            $requestParse[($type == 'semester' ? 'tahun_semester_id' : 'tahun_pembayaran_id')] = $id;
+            $pembayaran = Pembayaran::create($requestParse);
 
             $admin = DB::table('users')->find(1);
             Mail::to(Auth::user()->email)->send((new PembayaranMail($pembayaran, 'mhs')));
             Mail::to($admin->email)->send((new PembayaranMail($pembayaran, 'admin')));
             DB::commit();
-            return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
+            return redirect()->route('pembayaran.show', ['type' => $type, 'id' => $id])
                 ->with('success', 'Pembayaran berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollback();
@@ -185,20 +175,22 @@ class PembayaranController extends Controller
         }
     }
 
-    public function show($semester_id)
+    public function show($type, $id)
     {
-        $semester = Semester::where('id', $semester_id)->first();
-        $mhs = Auth::user()->mahasiswa;
-        $sudah_dibayar = DB::table('pembayarans')
-            ->select(DB::raw('sum(nominal) as total'))
-            ->where('mhs_id', Auth::user()->id)
-            ->where('semester_id', $semester_id)
-            ->where('status', 'diterima')
-            ->first()->total;
+        if ($type == 'semester') {
+            $data = DB::table('tahun_pembayaran')
+                ->select('tahun_pembayaran.*', 'semesters.nama')
+                ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
+                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                ->where('tahun_pembayaran.tahun_semester_id', $id)
+                ->first();
 
-        $potongans = $mhs->potongan()->where('semester_id', $semester_id)->get();
-
-        return view('pembayaran.show', compact('semester', 'mhs', 'sudah_dibayar', 'potongans'));
+            if (!$data) {
+                abort(404);
+            }
+        } else {
+        }
+        return view('pembayaran.show', compact('data'));
     }
 
     public function showPembayaran($semester_id, $pembayaran_id)

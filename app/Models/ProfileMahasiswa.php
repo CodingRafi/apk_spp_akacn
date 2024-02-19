@@ -10,4 +10,8 @@ class ProfileMahasiswa extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function rombel(){
+        return $this->belongsTo(Rombel::class, 'rombel_id', 'id');
+    }
 }

@@ -133,9 +133,21 @@ class UserController extends Controller
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::all();
             $prodis = Prodi::all();
+            $kewarganegaraan = Kewarganegaraan::all();
+            $jenis_tinggal = JenisTinggal::all();
+            $alat_transportasi = AlatTransportasi::all();
+            $pekerjaans = Pekerjaan::all();
+            $jenjang = Jenjang::all();
+            $penghasilans = Penghasilan::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
-                'prodis' => $prodis
+                'prodis' => $prodis,
+                'kewarganegaraan' => $kewarganegaraan,
+                'jenis_tinggal' => $jenis_tinggal,
+                'alat_transportasi' => $alat_transportasi,
+                'pekerjaans' => $pekerjaans,
+                'jenjang' => $jenjang,
+                'penghasilans' => $penghasilans
             ];
         }
 

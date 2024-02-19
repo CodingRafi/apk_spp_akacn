@@ -16,7 +16,6 @@ use App\Http\Controllers\Kelola\{
 };
 
 use App\Http\Controllers\{
-    PembayaranController,
     HomeController,
     DashboardController,
     ProfileController,
@@ -35,6 +34,7 @@ use App\Http\Controllers\Kelola\User\{
 };
 
 use App\Http\Controllers\Kelola\UserController;
+use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,7 +138,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/{id}', [PotonganController::class, 'show'])->name('show');
                 Route::put('/{id}', [PotonganController::class, 'update'])->name('update');
             });
-            
+
             //? Prodi - Matkul
             Route::prefix('matkul')->name('matkul.')->group(function () {
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
@@ -189,21 +189,20 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::middleware(['role:mahasiswa'])->group(function () {
         Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
-            Route::get('data', [PembayaranController::class, 'data'])->name('data');
-            Route::get('export', [PembayaranController::class, 'export'])->name('export');
-            Route::get('/', [PembayaranController::class, 'index'])->name('index');
-            Route::middleware(['pembayaran.semester'])->group(function () {
-                Route::get('{semester_id}/data', [PembayaranController::class, 'dataPembayaran'])->name('dataPembayaran');
-                Route::get('{semester_id}', [PembayaranController::class, 'show'])->name('show');
-                Route::get('{semester_id}/create', [PembayaranController::class, 'create'])->name('create');
-                Route::post('{semester_id}', [PembayaranController::class, 'store'])->name('store');
-                Route::get('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'showPembayaran'])->name('showPembayaran');
-                Route::get('{semester_id}/{pembayaran_id}/print', [PembayaranController::class, 'print'])->name('print');
-                Route::get('{semester_id}/{pembayaran_id}/edit', [PembayaranController::class, 'edit'])->name('edit');
-                Route::patch('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'update'])->name('update');
-                Route::delete('{semester_id}/{pembayaran_id}', [PembayaranController::class, 'destroy'])->name('destroy');
-                Route::get('{semester_id}/{pembayaran_id}/revisi', [PembayaranController::class, 'revisi'])->name('revisi');
-                Route::patch('{semester_id}/{pembayaran_id}/revisi', [PembayaranController::class, 'storeRevisi'])->name('storeRevisi');
+            Route::get('data', [MahasiswaPembayaranController::class, 'data'])->name('data');
+            Route::get('export', [MahasiswaPembayaranController::class, 'export'])->name('export');
+            Route::get('/', [MahasiswaPembayaranController::class, 'index'])->name('index');
+            Route::prefix('{type}/{id}')->middleware(['pembayaran.mhs'])->group(function () {
+                Route::get('/dataPembayaran', [MahasiswaPembayaranController::class, 'dataPembayaran'])->name('dataPembayaran');
+                Route::get('/create', [MahasiswaPembayaranController::class, 'create'])->name('create');
+                Route::post('/', [MahasiswaPembayaranController::class, 'store'])->name('store');
+                Route::get('/', [MahasiswaPembayaranController::class, 'show'])->name('show');
+                Route::get('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
+                Route::get('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'revisi'])->name('revisi');
+                Route::get('/{pembayaran_id}/edit', [MahasiswaPembayaranController::class, 'edit'])->name('edit');
+                Route::put('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'update'])->name('update');
+                Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
+                Route::get('/cetak', [MahasiswaPembayaranController::class, 'cetak'])->name('cetak');
             });
         });
     });

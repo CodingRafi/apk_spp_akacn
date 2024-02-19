@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class MahasiswaRequest extends FormRequest
 {
@@ -23,10 +24,7 @@ class MahasiswaRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'login_key' => 'required|unique:users,login_key',
-            'nisn' => 'required|unique:profile_mahasiswas,nisn',
-            'nik' => 'required|unique:profile_mahasiswas,nik',
+        $validate =  [
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
             'agama_id' => 'required',
@@ -40,6 +38,23 @@ class MahasiswaRequest extends FormRequest
             'rt' => 'digits:3',
             'rw' => 'digits:3',
         ];
+
+        if ($this->method() == 'POST') {
+            $validate += [
+                'login_key' => 'required|unique:users,login_key',
+                'nisn' => 'required|unique:profile_mahasiswas,nisn',
+                'nik' => 'required|unique:profile_mahasiswas,nik',
+            ];
+        } else {
+            $mhs = DB::table('profile_mahasiswas')->where('user_id', $this->mahasiswa)->first();
+            $validate += [
+                'login_key' => 'required|unique:users,login_key,'.$this->mahasiswa,
+                'nisn' => 'required|unique:profile_mahasiswas,nisn,'.$mhs->id,
+                'nik' => 'required|unique:profile_mahasiswas,nik,'.$mhs->id,
+            ];
+        }
+
+        return $validate;
     }
 
     public function messages()
