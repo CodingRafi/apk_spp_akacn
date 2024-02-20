@@ -31,7 +31,7 @@ class SemesterController extends Controller
     public function data($prodi_id, $tahun_ajaran_id)
     {
         $datas = DB::table('semesters')
-            ->select('semesters.*')
+            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester')
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
@@ -52,7 +52,8 @@ class SemesterController extends Controller
     public function store(Request $request, $prodi_id, $tahun_ajaran_id)
     {
         $request->validate([
-            'semester_id' => 'required'
+            'semester_id' => 'required',
+            'jatah_sks' => 'required'
         ]);
 
         DB::beginTransaction();
@@ -61,6 +62,7 @@ class SemesterController extends Controller
                 'prodi_id' => $prodi_id,
                 'tahun_ajaran_id' => $tahun_ajaran_id,
                 'semester_id' => $request->semester_id,
+                'jatah_sks' => $request->jatah_sks,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

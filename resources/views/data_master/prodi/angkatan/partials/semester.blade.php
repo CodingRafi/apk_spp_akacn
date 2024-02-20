@@ -14,6 +14,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
+                    <th>Jatah SKS</th>
                     <th>Tanggal Mulai</th>
                     <th>Tanggal Selesai</th>
                     @can('delete_semester')
@@ -40,6 +41,10 @@
                             <select class="form-select" name="semester_id" id="semester_id">
                                 <option value="">Pilih Semester</option>
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jatah_sks" class="form-label">Jatah SKS</label>
+                            <input type="number" class="form-control" id="jatah_sks" name="jatah_sks">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -88,6 +93,9 @@
                 },
                 {
                     "data": "nama"
+                },
+                {
+                    "data": "jatah_sks_semester"
                 },
                 {
                     "data": "tgl_mulai"

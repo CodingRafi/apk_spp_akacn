@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
             $table->string('semester_id');
             $table->foreign('semester_id')->references('id')->on('semesters');
+            $table->string('jatah_sks');
             $table->timestamps();
         });
 
