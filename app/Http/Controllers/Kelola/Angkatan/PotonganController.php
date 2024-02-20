@@ -9,22 +9,58 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PotonganController extends Controller
 {
-    public function data($prodi_id, $tahun_ajaran_id)
+    public function getSemester($prodi_id, $tahun_ajaran_id)
     {
-        $datas = DB::table('potongan_tahun_ajaran')
-            ->select('potongan_tahun_ajaran.*', 'potongans.nama as potongan', 'semesters.nama as semester')
-            ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
-            ->join('tahun_semester', 'tahun_semester.id', 'potongan_tahun_ajaran.tahun_semester_id')
+        $data = DB::table('tahun_semester')
+            ->select('tahun_semester.*', 'semesters.nama')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function getPembayaranLainnya($prodi_id, $tahun_ajaran_id)
+    {
+        $data = DB::table('tahun_pembayaran_lain')
+            ->select('tahun_pembayaran_lain.*', 'pembayaran_lainnyas.nama')
+            ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+            ->where('tahun_pembayaran_lain.prodi_id', $prodi_id)
+            ->where('tahun_pembayaran_lain.tahun_ajaran_id', $tahun_ajaran_id)
+            ->get();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function data($prodi_id, $tahun_ajaran_id)
+    {
+        $datas = DB::table('potongan_tahun_ajaran')
+            ->select('potongan_tahun_ajaran.id', 'potongans.nama as potongan', 'semesters.nama as semester', 'pembayaran_lainnyas.nama as lainnya', 'potongan_tahun_ajaran.publish', 'potongan_tahun_ajaran.nominal')
+            ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
+            ->leftJoin('tahun_semester', 'tahun_semester.id', 'potongan_tahun_ajaran.tahun_semester_id')
+            ->leftJoin('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->leftJoin('tahun_pembayaran_lain', 'tahun_pembayaran_lain.id', 'potongan_tahun_ajaran.tahun_pembayaran_lain_id')
+            ->leftJoin('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+            ->where(function ($q) use ($prodi_id, $tahun_ajaran_id) {
+                $q->where('tahun_semester.prodi_id', $prodi_id)
+                    ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id);
+            })
+            ->orWhere(function ($q) use ($prodi_id, $tahun_ajaran_id) {
+                $q->where('tahun_pembayaran_lain.prodi_id', $prodi_id)
+                    ->where('tahun_pembayaran_lain.tahun_ajaran_id', $tahun_ajaran_id);
+            })
             ->get();
 
         foreach ($datas as $data) {
             $options = '';
 
             $options = $options . " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.prodi.potongan.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, `Edit Potongan`, `#Potongan`)'>
+                        onclick='editForm(`" . route('data-master.prodi.potongan.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, `Edit Potongan`, `#Potongan`, get_potongan)'>
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
@@ -37,6 +73,9 @@ class PotonganController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->addColumn('namaParse', function($data){
+                return $data->semester ?? $data->lainnya;
+            })
             ->editColumn('publish', function ($data) {
                 return $data->publish ? 'Ya' : 'Tidak';
             })
@@ -51,7 +90,9 @@ class PotonganController extends Controller
     {
         $request->validate([
             'potongan_id' => 'required',
-            'tahun_semester_id' => 'required',
+            'type' => 'required',
+            'tahun_semester_id' => 'required_if:type,semester',
+            'tahun_pembayaran_lain_id' => 'required_if:type,lainnya',
             'nominal' => 'required',
             'ket' => 'required',
         ]);
@@ -60,7 +101,9 @@ class PotonganController extends Controller
         try {
             DB::table('potongan_tahun_ajaran')->insert([
                 'potongan_id' => $request->potongan_id,
+                'type' => $request->type,
                 'tahun_semester_id' => $request->tahun_semester_id,
+                'tahun_pembayaran_lain_id' => $request->tahun_pembayaran_lain_id,
                 'nominal' => $request->nominal,
                 'ket' => $request->ket,
                 'publish' => $request->publish ?? '0',
@@ -92,8 +135,6 @@ class PotonganController extends Controller
     public function update(Request $request, $prodi_id, $tahun_ajaran_id, $id)
     {
         $request->validate([
-            'potongan_id' => 'required',
-            'tahun_semester_id' => 'required',
             'nominal' => 'required',
             'ket' => 'required',
         ]);
@@ -103,8 +144,6 @@ class PotonganController extends Controller
             DB::table('potongan_tahun_ajaran')
                 ->where('id', $id)
                 ->update([
-                    'potongan_id' => $request->potongan_id,
-                    'tahun_semester_id' => $request->tahun_semester_id,
                     'nominal' => $request->nominal,
                     'ket' => $request->ket,
                     'publish' => $request->publish ?? '0',

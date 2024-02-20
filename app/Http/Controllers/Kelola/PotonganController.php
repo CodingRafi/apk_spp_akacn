@@ -22,6 +22,13 @@ class PotonganController extends Controller
         $this->middleware('permission:delete_potongan', ['only' => ['destroy']]);
     }
 
+    public function get(){
+        $datas = Potongan::where('type', request('type'))->get();
+        return response()->json([
+            'data' => $datas
+        ], 200);
+    }
+
     public function index()
     {
         return view('kelola_pembayaran.potongan.index');
@@ -61,6 +68,7 @@ class PotonganController extends Controller
     {
         $request->validate([
             'nama' => 'required',
+            'type' => 'required',
         ]);
 
         Potongan::create($request->all());
@@ -80,8 +88,21 @@ class PotonganController extends Controller
     public function update(Request $request, Potongan $potongan)
     {
         $request->validate([
-            'nama' => 'required'
+            'nama' => 'required',
+            'type' => 'required',
         ]);
+
+        if ($potongan->type !== $request->type) {
+            $cek = DB::table('potongan_tahun_ajaran')
+                ->where('potongan_id', $potongan->id)
+                ->count();
+
+            if ($cek > 0) {
+                return response()->json([
+                    'message' => 'Sudah pernah dipakai type tidak dapat diubah!'
+                ], 200);
+            }
+        }
 
         $potongan->update($request->all());
 

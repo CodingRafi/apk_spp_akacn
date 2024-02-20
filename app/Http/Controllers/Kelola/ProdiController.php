@@ -95,12 +95,17 @@ class ProdiController extends Controller
             abort(404);
         }
 
-        $potongan = Potongan::all();
         $semesterPotongan = DB::table('semesters')
             ->select('tahun_semester.id', 'semesters.nama')
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+            ->get();
+        $lainnyaPotongan = DB::table('tahun_pembayaran_lain')
+            ->select('tahun_pembayaran_lain.*', 'pembayaran_lainnyas.nama')
+            ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+            ->where('tahun_pembayaran_lain.prodi_id', $prodi_id)
+            ->where('tahun_pembayaran_lain.tahun_ajaran_id', $tahun_ajaran_id)
             ->get();
         $ruangs = DB::table('ruangs')->get();
         $dosens = User::role('dosen')
@@ -110,7 +115,7 @@ class ProdiController extends Controller
             ->get();
         $kurikulums = Kurikulum::all();
 
-        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'potongan', 'semesterPotongan', 'ruangs', 'dosens', 'kurikulums'));
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'semesterPotongan', 'lainnyaPotongan', 'ruangs', 'dosens', 'kurikulums'));
     }
 
     public function edit($id)

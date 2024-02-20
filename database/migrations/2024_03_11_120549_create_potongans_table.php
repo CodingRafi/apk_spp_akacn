@@ -16,15 +16,18 @@ return new class extends Migration
         Schema::create('potongans', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
+            $table->string('type');
             $table->timestamps();
         });
 
         Schema::create('potongan_tahun_ajaran', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['semester', 'lainnya']);
             $table->foreignId('potongan_id')->constrained('potongans');
             $table->string('nominal');
             $table->string('ket');
-            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->foreignId('tahun_semester_id')->nullable()->constrained('tahun_semester');
+            $table->foreignId('tahun_pembayaran_lain_id')->nullable()->constrained('tahun_pembayaran_lain');
             $table->enum('publish', [0,1]);
             $table->timestamps();
         });

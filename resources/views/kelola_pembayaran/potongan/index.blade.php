@@ -21,6 +21,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
+                                    <th>Type</th>
                                     @can('add_potongan')
                                         <th>Aksi</th>
                                     @endcan
@@ -32,8 +33,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="potongan" tabindex="-1" aria-labelledby="potonganLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="potongan" tabindex="-1" aria-labelledby="potonganLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="" method="get">
@@ -46,6 +46,14 @@
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
                             <input class="form-control" type="text" id="nama" placeholder="Nama" name="nama" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <select class="form-select @error('type') is-invalid @enderror" name="type" id="type">
+                                <option value="">Pilih Type</option>
+                                <option value="semester">Pembayaran Semester</option>
+                                <option value="lainnya">Pembayaran Lainnya</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
@@ -74,6 +82,9 @@
                     },
                     {
                         "data": "nama"
+                    },
+                    {
+                        "data": "type"
                     },
                     @can('edit_potongan', 'delete_potongan')
                         {

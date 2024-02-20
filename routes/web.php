@@ -26,6 +26,7 @@ use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\PotonganController;
 use App\Http\Controllers\Kelola\Angkatan\SemesterController;
+use App\Http\Controllers\Kelola\Mahasiswa\PotonganController as MahasiswaPotonganController;
 use App\Http\Controllers\Kelola\User\{
     AsdosController,
     DosenController,
@@ -69,6 +70,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
         Route::resource('asdos', AsdosController::class)->except('index', 'create', 'edit');
         Route::resource('petugas', PetugasController::class)->except('index', 'create', 'edit');
+
+        Route::prefix('{role}/potongan')->name('potongan.')->group(function () {
+            Route::get('/{user_id}/get', [MahasiswaPotonganController::class, 'get'])->name('get');
+            Route::get('/{user_id}/data', [MahasiswaPotonganController::class, 'data'])->name('data');
+            Route::get('/{user_id}', [MahasiswaPotonganController::class, 'index'])->name('index');
+            Route::post('/{user_id}', [MahasiswaPotonganController::class, 'store'])->name('store');
+            Route::delete('/{user_id}/{potongan_id}', [MahasiswaPotonganController::class, 'destroy'])->name('destroy');
+        });
     });
 
     Route::post('/upload-file', [HomeController::class, 'upload_file'])->name('upload_file');
@@ -170,8 +179,8 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::prefix('kelola-pembayaran')->name('kelola-pembayaran.')->group(function () {
-        Route::get('potongan/{prodi_id}/getSemester', [KelolaPotonganController::class, 'getSemester'])->name('potongan.getSemester');
         Route::get('potongan/data', [KelolaPotonganController::class, 'data'])->name('potongan.data');
+        Route::get('/potongan/get', [KelolaPotonganController::class, 'get'])->name('potongan.get');
         Route::resource('potongan', KelolaPotonganController::class);
 
         Route::prefix('pembayaran')->name('pembayaran.')->group(function () {

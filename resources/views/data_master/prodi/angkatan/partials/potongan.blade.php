@@ -3,7 +3,7 @@
         <h5>Potongan</h5>
         @can('add_potongan')
             <button type="button" class="btn btn-primary"
-                onclick="addForm('{{ route('data-master.prodi.potongan.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Potongan', '#Potongan')">
+                onclick="addForm('{{ route('data-master.prodi.potongan.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Potongan', '#Potongan', get_potongan)">
                 Tambah
             </button>
         @endcan
@@ -14,7 +14,7 @@
                 <tr>
                     <th>No</th>
                     <th>Nama</th>
-                    <th>Semester</th>
+                    <th>Untuk</th>
                     <th>Nominal</th>
                     <th>Status</th>
                     @can('edit_potongan', 'delete_potongan')
@@ -25,6 +25,30 @@
         </table>
     </div>
 </div>
+
+<template id="select-semester">
+    <div class="mb-3">
+        <label for="tahun_semester_id" class="form-label">Semester</label>
+        <select class="form-select" name="tahun_semester_id" id="tahun_semester_id">
+            <option value="">Pilih Semester</option>
+            @foreach ($semesterPotongan as $item)
+                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+            @endforeach
+        </select>
+    </div>
+</template>
+
+<template id="select-lainnya">
+    <div class="mb-3">
+        <label for="tahun_pembayaran_lain_id" class="form-label">Pembayaran Lainnya</label>
+        <select class="form-select" name="tahun_pembayaran_lain_id" id="tahun_pembayaran_lain_id">
+            <option value="">Pilih Pembayaran Lainnya</option>
+            @foreach ($lainnyaPotongan as $item)
+                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+            @endforeach
+        </select>
+    </div>
+</template>
 
 @can('add_potongan')
     <div class="modal fade" id="Potongan" tabindex="-1" role="dialog" aria-labelledby="PotonganLabel">
@@ -38,21 +62,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <select class="form-select" name="type" id="type">
+                                <option value="">Pilih Type</option>
+                                <option value="semester">Pembayaran Semester</option>
+                                <option value="lainnya">Pembayaran Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="jenis"></div>
+                        <div class="mb-3">
                             <label for="potongan_id" class="form-label">Potongan</label>
                             <select class="form-select" name="potongan_id" id="potongan_id">
                                 <option value="">Pilih Potongan</option>
-                                @foreach ($potongan as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tahun_semester_id" class="form-label">Semester</label>
-                            <select class="form-select" name="tahun_semester_id" id="tahun_semester_id">
-                                <option value="">Pilih Semester</option>
-                                @foreach ($semesterPotongan as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
@@ -98,7 +119,7 @@
                     "data": "potongan"
                 },
                 {
-                    "data": "semester"
+                    "data": "namaParse"
                 },
                 {
                     "data": "nominal"
@@ -115,4 +136,55 @@
             pageLength: 25,
         });
     })
+
+    function get_potongan(data = {}) {
+        let type = $('#type').val();
+        $('.jenis').empty();
+        $('#Potongan input, #Potongan select, #Potongan textarea').removeClass('is-invalid');
+        $('#potongan_id').attr('disabled', 'disabled');
+        $('#potongan_id').empty().append(
+            '<option value="">Pilih Potongan</option>'
+        )
+        $('#type, #tahun_semester_id, #tahun_pembayaran_lain_id, #potongan_id').removeAttr('disabled');
+        if (type) {
+            $.ajax({
+                type: "GET",
+                url: "{{ route('kelola-pembayaran.potongan.get') }}",
+                data: {
+                    type
+                },
+                success: function(res) {
+                    $('.jenis').html($('#select-' + type).html());
+                    $.each(res.data, function(i, e) {
+                        $('#potongan_id').append(
+                            `<option value="${e.id}">${e.nama}</option>`
+                        )
+                    })
+                    $('#potongan_id').removeAttr('disabled');
+                    
+                    if (data.type === 'semester' || data.type === 'lainnya') {
+                        if (data.type == 'semester') {
+                            $('#tahun_semester_id').val(data.tahun_semester_id);
+                        } else {
+                            $('#tahun_pembayaran_lain_id').val(data.tahun_pembayaran_lain_id);
+                        }
+
+                        $('#potongan_id').val(data.potongan_id);
+                        $('#type, #tahun_semester_id, #tahun_pembayaran_lain_id, #potongan_id').attr(
+                            'disabled', 'disabled');
+                    }
+                },
+                error: function() {
+                    alert('Telah terjadi kesalahan!');
+                }
+            })
+        } else {
+            $('.jenis').empty();
+            $('#potongan_id').empty().append(
+                '<option value="">Pilih Potongan</option>'
+            ).removeAttr('disabled');
+        }
+    }
+
+    $('#type').on('change', get_potongan)
 </script>

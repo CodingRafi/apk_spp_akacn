@@ -66,9 +66,9 @@ class UserController extends Controller
             // }
 
             if (auth()->user()->can('edit_users')) {
-                // if ($role == 'mahasiswa') {
-                //     $options = $options . "<a href='" . route('users.potongan.index', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
-                // }
+                if ($role == 'mahasiswa') {
+                    $options = $options . "<a href='" . route('kelola-users.potongan.index', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
+                }
                 $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 

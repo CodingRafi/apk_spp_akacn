@@ -57,7 +57,7 @@
                 <option value="">Pilih wilayah</option>
                 @foreach ($wilayah as $item)
                     <option value="{{ $item->id }}"
-                        {{ isset($data) ? ($data->{request('role')}->wilayah_id == $item->id ? 'selected' : '') : old('wilayah_id') }}>
+                        {{ isset($data) ? ($data->{request('role')}->wilayah_id == $item->id ? 'selected' : '') : (old('wilayah_id') == $item->id ? 'selected' : '') }}>
                         {{ $item->nama }}
                     </option>
                 @endforeach
