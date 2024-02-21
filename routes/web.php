@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
+    KuesionerController,
     KurikulumController,
     MatkulController,
     PembayaranController as KelolaPembayaranController,
@@ -98,6 +99,11 @@ Route::group(['middleware' => ['auth']], function () {
         //? Ruang
         Route::get('ruang/data', [RuangController::class, 'data'])->name('ruang.data');
         Route::resource('ruang', RuangController::class);
+
+        //? Kuesioner
+        Route::get('kuesioner/{id}/change-status', [KuesionerController::class, 'change_status'])->name('kuesioner.change-status');
+        Route::get('kuesioner/data', [KuesionerController::class, 'data'])->name('kuesioner.data');
+        Route::resource('kuesioner', KuesionerController::class);
 
         //? Mata Kuliah
         Route::prefix('mata-kuliah')->name('mata-kuliah.')->group(function () {

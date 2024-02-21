@@ -28,7 +28,7 @@
             </li>
         @endcan
 
-        @can('view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum')
+        @can('view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner')
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -68,6 +68,13 @@
                         <li class="menu-item {{ Request::is('data-master/ruang*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.ruang.index') }}" class="menu-link">
                                 <div data-i18n="ruang">Ruang</div>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('view_kuesioner')
+                        <li class="menu-item {{ Request::is('data-master/kuesioner*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.kuesioner.index') }}" class="menu-link">
+                                <div data-i18n="kuesioner">Kuesioner</div>
                             </a>
                         </li>
                     @endcan
@@ -131,7 +138,7 @@
                 <ul class="menu-sub">
                     @foreach (getRoleWithout(['admin']) as $role)
                         <li class="menu-item {{ Request::is('kelola-users/' . $role['name'] . '*') ? 'active' : '' }}">
-                            <a href="{{ route("kelola-users.index", ['role' => $role['name']]) }}" class="menu-link">
+                            <a href="{{ route('kelola-users.index', ['role' => $role['name']]) }}" class="menu-link">
                                 <div data-i18n="{{ $role['name'] }}" class="text-capitalize">{{ $role['name'] }}</div>
                             </a>
                         </li>

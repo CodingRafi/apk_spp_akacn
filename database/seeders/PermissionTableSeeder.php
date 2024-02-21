@@ -81,7 +81,12 @@ class PermissionTableSeeder extends Seeder
             'view_semester',
             'add_semester',
             'edit_semester',
-            'delete_semester'
+            'delete_semester',
+
+            'view_kuesioner',
+            'add_kuesioner',
+            'edit_kuesioner',
+            'delete_kuesioner'
         ];
 
         foreach ($permissions as $permission) {
