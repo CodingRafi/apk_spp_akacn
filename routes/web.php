@@ -36,6 +36,7 @@ use App\Http\Controllers\Kelola\User\{
 };
 
 use App\Http\Controllers\Kelola\UserController;
+use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 
 /*
@@ -219,6 +220,12 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
                 Route::get('/cetak', [MahasiswaPembayaranController::class, 'cetak'])->name('cetak');
             });
+        });
+
+        Route::prefix('krs')->name('krs.')->group(function () {
+            Route::get('/', [KrsController::class, 'index'])->name('index');
+            Route::get('dataSemester', [KrsController::class, 'dataSemester'])->name('dataSemester');
+            Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
         });
     });
 });

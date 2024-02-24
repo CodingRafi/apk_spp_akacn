@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kurikulum;
 use App\Models\Potongan;
 use App\Models\Prodi;
+use App\Models\Rombel;
 use App\Models\TahunAjaran;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -114,8 +115,9 @@ class ProdiController extends Controller
             ->where('profile_dosens.status', '1')
             ->get();
         $kurikulums = Kurikulum::all();
+        $rombel = Rombel::all();
 
-        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'semesterPotongan', 'lainnyaPotongan', 'ruangs', 'dosens', 'kurikulums'));
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'semesterPotongan', 'lainnyaPotongan', 'ruangs', 'dosens', 'kurikulums', 'rombel'));
     }
 
     public function edit($id)

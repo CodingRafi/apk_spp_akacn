@@ -90,7 +90,6 @@
                     @endcan
                 ],
                 pageLength: 25,
-                responsive: true,
             });
 
             $('#filter-semester, #filter-prodi, #filter-tahun-ajaran').on('change', function() {

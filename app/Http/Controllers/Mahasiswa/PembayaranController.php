@@ -30,7 +30,7 @@ class PembayaranController extends Controller
 
     public function index()
     {
-        return view('pembayaran.index');
+        return view('mahasiswa.pembayaran.index');
     }
 
     public function data()
@@ -108,7 +108,7 @@ class PembayaranController extends Controller
 
     public function create($type, $id)
     {
-        return view('pembayaran.form');
+        return view('mahasiswa.pembayaran.form');
     }
 
     public function store(Request $request, $type, $id)
@@ -161,7 +161,7 @@ class PembayaranController extends Controller
             }
         } else {
         }
-        return view('pembayaran.show', compact('data'));
+        return view('mahasiswa.pembayaran.show', compact('data'));
     }
 
     public function showPembayaran($semester_id, $pembayaran_id)
@@ -174,7 +174,7 @@ class PembayaranController extends Controller
 
         $semester = Semester::where('id', $semester_id)->first();
         $page = 'show';
-        return view('pembayaran.form', compact('data', 'semester', 'page'));
+        return view('mahasiswa.pembayaran.form', compact('data', 'semester', 'page'));
     }
 
     public function edit($semester_id, $pembayaran_id)
@@ -191,7 +191,7 @@ class PembayaranController extends Controller
 
         $semester = Semester::where('id', $semester_id)->first();
 
-        return view('pembayaran.form', compact('data', 'semester'));
+        return view('mahasiswa.pembayaran.form', compact('data', 'semester'));
     }
 
     public function update(Request $request, $semester_id, $pembayaran_id)
@@ -257,7 +257,7 @@ class PembayaranController extends Controller
         $semester = Semester::where('id', $semester_id)->first();
         $page = 'form';
         $revisi = true;
-        return view('pembayaran.form', compact('data', 'semester', 'page', 'revisi'));
+        return view('mahasiswa.pembayaran.form', compact('data', 'semester', 'page', 'revisi'));
     }
 
     public function storeRevisi(Request $request, $semester_id, $pembayaran_id)
@@ -311,6 +311,6 @@ class PembayaranController extends Controller
         if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status != 'diterima') {
             abort(404);
         }
-        return PDF::loadView('pembayaran.print', compact('data'))->setPaper([0, 0, 600, 550])->stream('kwitansi.pdf');
+        return PDF::loadView('mahasiswa.pembayaran.print', compact('data'))->setPaper([0, 0, 600, 550])->stream('kwitansi.pdf');
     }
 }

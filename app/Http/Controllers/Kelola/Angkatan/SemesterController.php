@@ -53,7 +53,9 @@ class SemesterController extends Controller
     {
         $request->validate([
             'semester_id' => 'required',
-            'jatah_sks' => 'required'
+            'jatah_sks' => 'required',
+            'tgl_mulai_krs' => 'required',
+            'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
         ]);
 
         DB::beginTransaction();
@@ -63,6 +65,8 @@ class SemesterController extends Controller
                 'tahun_ajaran_id' => $tahun_ajaran_id,
                 'semester_id' => $request->semester_id,
                 'jatah_sks' => $request->jatah_sks,
+                'tgl_mulai_krs' => $request->tgl_mulai_krs,
+                'tgl_akhir_krs' => $request->tgl_akhir_krs,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);

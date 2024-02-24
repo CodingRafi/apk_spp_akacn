@@ -15,8 +15,8 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Jatah SKS</th>
-                    <th>Tanggal Mulai</th>
-                    <th>Tanggal Selesai</th>
+                    <th>Tanggal Mulai Semester</th>
+                    <th>Tanggal Selesai Semester</th>
                     @can('delete_semester')
                         <th>Aksi</th>
                     @endcan
@@ -45,6 +45,14 @@
                         <div class="mb-3">
                             <label for="jatah_sks" class="form-label">Jatah SKS</label>
                             <input type="number" class="form-control" id="jatah_sks" name="jatah_sks">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tgl_mulai_krs" class="form-label">Tanggal Mulai Pengisian KRS</label>
+                            <input type="date" class="form-control" id="tgl_mulai_krs" name="tgl_mulai_krs">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tgl_akhir_krs" class="form-label">Tanggal Akhir Pengisian KRS</label>
+                            <input type="date" class="form-control" id="tgl_akhir_krs" name="tgl_akhir_krs">
                         </div>
                     </div>
                     <div class="modal-footer">

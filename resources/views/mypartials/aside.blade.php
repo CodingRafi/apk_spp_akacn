@@ -163,6 +163,12 @@
                     <div data-i18n="Analytics">Pembayaran</div>
                 </a>
             </li>
+            <li class="menu-item {{ Request::is('krs*') ? 'active' : '' }}">
+                <a href="{{ route('krs.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">KRS</div>
+                </a>
+            </li>
         @endcan
     </ul>
 </aside>

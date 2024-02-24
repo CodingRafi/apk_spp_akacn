@@ -42,6 +42,15 @@ class MatkulController extends Controller
         }
 
         return DataTables::of($datas)
+            ->addColumn('rombel', function($datas){
+                $rombel = DB::table('tahun_matkul_rombel')
+                    ->select('rombels.nama as rombel')
+                    ->join('rombels', 'rombels.id', 'tahun_matkul_rombel.rombel_id')
+                    ->where('tahun_matkul_rombel.tahun_matkul_id', $datas->id)
+                    ->get()
+                    ->pluck('rombel');
+                return implode(', ', $rombel->toArray());
+            })
             ->addIndexColumn()
             ->rawColumns(['options'])
             ->make(true);
@@ -51,10 +60,19 @@ class MatkulController extends Controller
     {
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token');
+            $requestParse = $request->except('_method', '_token', 'rombel_id');
             $requestParse['prodi_id'] = $prodi_id;
             $requestParse['tahun_ajaran_id'] = $tahun_ajaran_id;
             DB::table('tahun_matkul')->insert($requestParse);
+            $tahun_matkul_id = DB::getPdo()->lastInsertId();
+
+            foreach ($request->rombel_id as $rombel_id) {
+                DB::table('tahun_matkul_rombel')->insert([
+                    'tahun_matkul_id' => $tahun_matkul_id,
+                    'rombel_id' => $rombel_id
+                ]);
+            }
+
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil ditambah'
@@ -73,21 +91,22 @@ class MatkulController extends Controller
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
             ->where('tahun_matkul.id', $id)
             ->first();
-        
+
         return response()->json([
             'data' => $data
         ], 200);
     }
 
-    public function update(MatkulAngkatanRequest $request, $prodi_id, $tahun_ajaran_id, $id){
+    public function update(MatkulAngkatanRequest $request, $prodi_id, $tahun_ajaran_id, $id)
+    {
         DB::beginTransaction();
         try {
             $requestParse = $request->except('_method', '_token');
             DB::table('tahun_matkul')
-                    ->where('id', $id)
-                    ->where('prodi_id', $prodi_id)
-                    ->where('tahun_ajaran_id', $tahun_ajaran_id)
-                    ->update($requestParse);
+                ->where('id', $id)
+                ->where('prodi_id', $prodi_id)
+                ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                ->update($requestParse);
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil diubah'

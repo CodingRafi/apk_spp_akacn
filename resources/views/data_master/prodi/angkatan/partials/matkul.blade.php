@@ -17,6 +17,7 @@
                     <th>Nama</th>
                     <th>Kurikulum</th>
                     <th>Dosen</th>
+                    <th>Rombel</th>
                     @can('edit_matkul', 'delete_matkul')
                         <th>Aksi</th>
                     @endcan
@@ -25,6 +26,7 @@
         </table>
     </div>
 </div>
+
 
 @can('add_matkul')
     <div class="modal fade" id="Matkul" tabindex="-1" role="dialog" aria-labelledby="MatkulLabel" aria-hidden="true">
@@ -97,6 +99,17 @@
                             </div>
                         </div>
                         <div class="mb-3">
+                            <label for="rombel_id" class="form-label">Rombel</label>
+                            <select class="form-select select2" name="rombel_id[]" id="rombel_id" style="width: 100%"
+                                multiple>
+                                <option value="">Pilih Rombel</option>
+                                @foreach ($rombel as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="cek_ip" class="form-label">Cek IP?</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" name="cek_ip" value="1"
@@ -138,6 +151,9 @@
                 },
                 {
                     "data": "dosen"
+                },
+                {
+                    "data": "rombel"
                 },
                 @can('edit_matkul', 'delete_matkul')
                     {
