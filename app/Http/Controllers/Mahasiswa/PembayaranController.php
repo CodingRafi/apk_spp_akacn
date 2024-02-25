@@ -267,25 +267,24 @@ class PembayaranController extends Controller
         return redirect()->back()->with('success', 'Berhasil dihapus');
     }
 
-    public function revisi($semester_id, $pembayaran_id)
+    public function revisi($type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status == 'pengajuan') {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
-        $semester = Semester::where('id', $semester_id)->first();
         $page = 'form';
         $revisi = true;
-        return view('mahasiswa.pembayaran.form', compact('data', 'semester', 'page', 'revisi'));
+        return view('mahasiswa.pembayaran.form', compact('data', 'page', 'revisi'));
     }
 
-    public function storeRevisi(Request $request, $semester_id, $pembayaran_id)
+    public function storeRevisi(Request $request, $type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status == 'pengajuan') {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -308,7 +307,7 @@ class PembayaranController extends Controller
             'status' => 'pengajuan'
         ]);
 
-        return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
+        return redirect()->route('pembayaran.show', ['type' => $type, 'id' => $id])
             ->with('success', 'Pembayaran berhasil direvisi');
     }
 

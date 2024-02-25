@@ -28,7 +28,7 @@
                                         <h5 class="text-capitalize mb-0">{{ isset($data) ? ($page == 'show' ? 'Detail' : 'Edit') : 'Tambah' }} Pembayaran</h5>
                                     </div>
                                     @if (isset($data) && $data->status != 'pengajuan' && $data->revisi == '1' && $page != 'form')
-                                        <a href="{{ route('pembayaran.revisi', ['semester_id' => $semester->id, 'pembayaran_id' => $data->id]) }}"
+                                        <a href="{{ route('pembayaran.revisi', ['type' => request('type'), 'id' => request('id'), 'pembayaran_id' => $data->id]) }}"
                                             class="btn btn-warning"
                                             onclick="return confirm('Apakah anda yakin?')">Revisi</a>
                                     @endif
@@ -55,9 +55,11 @@
                                             </div>
                                         @endif
                                     @else
+                                        @if (!isset($revisi))
                                         <div class="alert alert-info" role="alert">
                                             Pembayaran ini sedang diajukan
                                         </div>
+                                        @endif
                                     @endif
                                 @endif
                                 <div class="mb-3">

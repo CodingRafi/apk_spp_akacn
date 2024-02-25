@@ -16,28 +16,36 @@
                                         <div class="col-md-3 px-0">
                                             <select class="form-select" id="filter-prodi">
                                                 <option value="" selected>Pilih Prodi</option>
-                                                {{-- @foreach ($prodis as $prodi)
+                                                @foreach ($prodis as $prodi)
                                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-3 px-0">
                                             <select class="form-select" id="filter-tahun-ajaran">
-                                                <option value="" selected>Pilih Tahun Ajaran</option>
-                                                {{-- @foreach ($tahun_ajarans as $tahun_ajaran)
+                                                <option value="" selected>Pilih Tahun Masuk</option>
+                                                @foreach ($tahun_ajarans as $tahun_ajaran)
                                                     <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                                @endforeach --}}
+                                                @endforeach
                                             </select>
                                         </div>
-                                        {{-- <div class="col-md-2 px-0">
-                                            <form action="{{ route('users.export.pembayaran', request('role')) }}" class="form-export">
+                                        <div class="col-md-3 px-0">
+                                            <select class="form-select" id="filter-rombel">
+                                                <option value="" selected>Pilih Rombel</option>
+                                                @foreach ($rombels as $rombel)
+                                                    <option value="{{ $rombel->id }}">{{ $rombel->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2 px-0">
+                                            <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}" class="form-export">
                                                 <input type="hidden" name="prodi">
                                                 <input type="hidden" name="tahun_ajaran">
                                                 <button type="button"
                                                     class="btn btn-primary w-100">Export Pembayaran</button>
                                             </form>
                                         </div>
-                                        <div class="col-md-1 px-0">
+                                        {{-- <div class="col-md-1 px-0">
                                             <a href="{{ route('users.import', request('role')) }}"
                                                 class="btn btn-primary d-block">Import</a>
                                         </div> --}}
@@ -96,6 +104,7 @@
                         data: function(p) {
                             p.prodi = $('#filter-prodi').val();
                             p.tahun_ajaran = $('#filter-tahun-ajaran').val();
+                            p.rombel = $('#filter-rombel').val();
                         }
                     @endif
                 },
@@ -121,12 +130,13 @@
     </script>
     @if (request('role') == 'mahasiswa')
         <script>
-            $('#filter-prodi, #filter-tahun-ajaran').on('change', function() {
+            $('#filter-prodi, #filter-tahun-ajaran, #filter-rombel').on('change', function() {
                 table.ajax.reload();
             });
 
             $('.form-export button').on('click', function() {
                 $('.form-export input[name="prodi"]').val($('#filter-prodi').val());
+                $('.form-export input[name="rombel"]').val($('#filter-rombel').val());
                 $('.form-export input[name="tahun_ajaran"]').val($('#filter-tahun-ajaran').val());
                 $('.form-export').submit();
             })

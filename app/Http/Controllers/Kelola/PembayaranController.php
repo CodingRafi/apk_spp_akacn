@@ -94,10 +94,9 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
         }
 
-        // dd(Auth::user()->petugas);
-        // if (!Auth::user()->petugas->ttd) {
-        //     return redirect()->back()->with('error', 'anda belum set tanda tangan');
-        // }
+        if (!Auth::user()->ttd) {
+            return redirect()->back()->with('error', 'Anda belum set tanda tangan');
+        }
 
         DB::beginTransaction();
         try {

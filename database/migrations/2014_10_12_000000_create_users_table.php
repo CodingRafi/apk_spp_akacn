@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('login_key')->unique();
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('ttd')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

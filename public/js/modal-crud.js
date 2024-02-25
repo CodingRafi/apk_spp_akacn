@@ -204,8 +204,6 @@ function deleteDataAjax(url, func) {
                     showAlert(response.message, "success");
                     if (typeof table !== "undefined") {
                         table.ajax.reload();
-                    } else {
-                        location.reload();
                     }
 
                     if (func != undefined) {

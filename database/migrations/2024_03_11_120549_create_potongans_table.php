@@ -34,7 +34,7 @@ return new class extends Migration
 
         Schema::create('potongan_mhs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('potongan_tahun_ajaran_id')->constrained('potongans');
+            $table->foreignId('potongan_tahun_ajaran_id')->constrained('potongan_tahun_ajaran');
             $table->foreignId('mhs_id')->constrained('users');
             $table->timestamps();
         });

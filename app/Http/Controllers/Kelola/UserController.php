@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
-use DataTables;
 use App\Models\{
     Agama,
     AlatTransportasi,
@@ -14,19 +12,17 @@ use App\Models\{
     User,
     TahunAjaran,
     Prodi,
-    Mahasiswa,
     Pekerjaan,
     Penghasilan,
-    Petugas,
     Wilayah
 };
 use App\Exports\UserPembayaranExport;
-use App\Http\Requests\StoreRequestUser;
 use Illuminate\Http\Request;
 use App\Imports\MahasiswaImport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
@@ -44,9 +40,11 @@ class UserController extends Controller
         if ($role == 'mahasiswa') {
             $prodis = DB::table('prodi')->get();
             $tahun_ajarans = DB::table('tahun_ajarans')->get();
+            $rombels = DB::table('rombels')->get();
             $return = [
                 'prodis' => $prodis,
-                'tahun_ajarans' => $tahun_ajarans
+                'tahun_ajarans' => $tahun_ajarans,
+                'rombels' => $rombels
             ];
         }
         return view('users.index', $return);
@@ -55,6 +53,10 @@ class UserController extends Controller
     public function data($role)
     {
         $datas = User::select('users.*')
+            ->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
+            ->where('b.prodi_id', request('prodi'))
+            ->where('b.tahun_masuk_id', request('tahun_ajaran'))
+            ->where('b.rombel_id', request('rombel'))
             ->role($role)
             ->get();
 
@@ -192,8 +194,9 @@ class UserController extends Controller
         }
 
         if (!request('prodi') || !request('tahun_ajaran')) {
-            return redirect()->back()->with('error', 'Harap pilih filter prodi dan tahun ajaran');
+            return redirect()->back()->with('error', 'Harap pilih filter prodi dan tahun Masuk');
         }
+
         return Excel::download(new UserPembayaranExport($role), 'pembayaran.xlsx');
     }
 

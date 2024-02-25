@@ -65,7 +65,7 @@ class PotonganController extends Controller
                         Edit
                     </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.potongan.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, () => {tablePotongan.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -73,7 +73,7 @@ class PotonganController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->addColumn('namaParse', function($data){
+            ->addColumn('namaParse', function ($data) {
                 return $data->semester ?? $data->lainnya;
             })
             ->editColumn('publish', function ($data) {
@@ -164,6 +164,32 @@ class PotonganController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil diubah'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
+    }
+
+    public function destroy($prodi_id, $tahun_ajaran_id, $id)
+    {
+        $cek = DB::table('potongan_mhs')
+            ->where('potongan_tahun_ajaran_id', $id)
+            ->count();
+
+        if ($cek > 0) {
+            return response()->json([
+                'message' => 'Sudah diset ke mahasiswa tidak bisa dihapus'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('potongan_tahun_ajaran')->where('id', $id)->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([

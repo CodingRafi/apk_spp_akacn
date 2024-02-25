@@ -113,12 +113,12 @@
                                             @endif
 
                                             @if ($pembayaran->status == 'diterima' || $pembayaran->status == 'ditolak')
-                                                {{-- <p
+                                                <p
                                                     style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; font-size: 16px; line-height: 1.5em; margin-top: 0; text-align: left;">
-                                                    <img src="{{ asset('storage/' . $pembayaran->verify->petugas->ttd) }}"
+                                                    <img src="{{ asset('storage/' . $pembayaran->verify->ttd) }}"
                                                         alt="" style="width: 12rem;margin: 0.6rem 0;"> <br>
                                                     Salam hormat,<br>{{ $pembayaran->verify->name }}
-                                                </p> --}}
+                                                </p>
                                             @endif
                                         @else
                                             <p

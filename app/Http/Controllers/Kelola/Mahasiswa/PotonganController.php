@@ -73,13 +73,15 @@ class PotonganController extends Controller
 
     public function store(Request $request, $role, $user_id)
     {
-        $user = User::findOrFail($user_id);
-
         foreach ($request->potongan_id as $potongan_id) {
-            DB::table('potongan_mhs')->insert([
-                'mhs_id' => $user_id,
-                'potongan_tahun_ajaran_id' => $potongan_id
-            ]);
+            $cek = DB::table('potongan_mhs')->where('mhs_id', $user_id)->where('potongan_tahun_ajaran_id', $potongan_id)->count();
+
+            if ($cek < 1) {
+                DB::table('potongan_mhs')->insert([
+                    'mhs_id' => $user_id,
+                    'potongan_tahun_ajaran_id' => $potongan_id
+                ]);
+            }
         }
 
         return response()->json([
@@ -106,7 +108,7 @@ class PotonganController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-users.potongan.destroy', ['role' => request('role'), 'user_id' => $user_id, 'potongan_id' => $data->id]) . "`)' type='button'>
                                                     Hapus
                                                 </button>";
             $data->options = $options;
@@ -122,5 +124,17 @@ class PotonganController extends Controller
             })
             ->rawColumns(['options'])
             ->make(true);
+    }
+
+    public function destroy($role, $user_id, $potongan_id)
+    {
+        DB::table('potongan_mhs')
+            ->where('mhs_id', $user_id)
+            ->where('potongan_tahun_ajaran_id', $potongan_id)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Berhasil dihapus!'
+        ], 200);
     }
 }

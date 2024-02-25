@@ -67,6 +67,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('kelola-users')->name('kelola-users.')->group(function () {
         Route::get('{role}', [UserController::class, 'index'])->name('index');
         Route::get('{role}/data', [UserController::class, 'data'])->name('data');
+        Route::get('{role}/exportPembayaran', [UserController::class, 'exportPembayaran'])->name('exportPembayaran');
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         Route::resource('mahasiswa', MahasiwaController::class)->except('index', 'create', 'edit');
@@ -161,6 +162,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('/', [PotonganController::class, 'store'])->name('store');
                 Route::get('/{id}', [PotonganController::class, 'show'])->name('show');
                 Route::put('/{id}', [PotonganController::class, 'update'])->name('update');
+                Route::delete('/{id}', [PotonganController::class, 'destroy'])->name('destroy');
             });
 
             //? Prodi - Matkul
@@ -223,6 +225,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/', [MahasiswaPembayaranController::class, 'show'])->name('show');
                 Route::get('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
                 Route::get('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'revisi'])->name('revisi');
+                Route::patch('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'storeRevisi'])->name('storeRevisi');
                 Route::get('/{pembayaran_id}/edit', [MahasiswaPembayaranController::class, 'edit'])->name('edit');
                 Route::patch('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'update'])->name('update');
                 Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
