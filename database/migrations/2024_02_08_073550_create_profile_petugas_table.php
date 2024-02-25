@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('mulai_asdos')->nullable();
             $table->string('telepon')->nullable();
             $table->string('handphone')->nullable();
+            $table->string('ttd')->nullable();
             $table->timestamps();
         });
     }

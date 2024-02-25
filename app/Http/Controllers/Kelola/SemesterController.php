@@ -109,7 +109,8 @@ class SemesterController extends Controller
             $data = $semester->update([
                 'nama' => $request->nama,
                 'tgl_mulai' => $request->tgl_mulai,
-                'tgl_selesai' => $request->tgl_selesai
+                'tgl_selesai' => $request->tgl_selesai,
+                'status' => $request->status ?? "0"
             ]);
             DB::commit();
             return response()->json([

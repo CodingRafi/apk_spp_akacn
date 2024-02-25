@@ -89,7 +89,7 @@ class TahunAjaranController extends Controller
     {
         if ($request->status) {
             $tahun_active = getTahunAjaranActive();
-            if ($tahun_active->id !== $tahunAjaran->id) {
+            if ($tahun_active && $tahun_active->id !== $tahunAjaran->id) {
                 return response()->json([
                     'message' => 'ada tahun ajaran yang sedang aktif'
                 ], 400);

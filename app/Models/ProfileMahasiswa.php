@@ -14,4 +14,8 @@ class ProfileMahasiswa extends Model
     public function rombel(){
         return $this->belongsTo(Rombel::class, 'rombel_id', 'id');
     }
+
+    public function prodi(){
+        return $this->belongsTo(Prodi::class, 'prodi_id', 'id');
+    }
 }

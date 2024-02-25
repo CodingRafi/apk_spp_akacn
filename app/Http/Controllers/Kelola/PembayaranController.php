@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pembayaran;
-use DataTables, Auth, DB;
 use App\Exports\PembayaranExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Mail\PembayaranMail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Yajra\DataTables\Facades\DataTables;
 
 class PembayaranController extends Controller
 {
@@ -28,7 +30,7 @@ class PembayaranController extends Controller
     public function data(){
         $datas = Pembayaran::select('pembayarans.*')
                         ->join('users as b', 'pembayarans.mhs_id', '=', 'b.id')
-                        ->join('mahasiswas as c', 'c.user_id', '=', 'b.id')
+                        ->join('profile_mahasiswas as c', 'c.user_id', '=', 'b.id')
                         ->when(request('status'), function($q){
                             $q->where('pembayarans.status', request('status'));
                         })->when(request('prodi'), function($q){
@@ -41,7 +43,7 @@ class PembayaranController extends Controller
             $options = '';
 
             if (auth()->user()->can('edit_kelola_pembayaran')) {
-                $options = $options ."<a href='". route('kelola.pembayaran.show', $data->id) ."' class='btn btn-warning mx-2'>Verifikasi</a>";
+                $options = $options ."<a href='". route('kelola-pembayaran.pembayaran.show', $data->id) ."' class='btn btn-warning mx-2'>Verifikasi</a>";
             }
         
             $data->options = $options;
@@ -49,7 +51,7 @@ class PembayaranController extends Controller
 
         return DataTables::of($datas)
                             ->addColumn('nim', function($datas){
-                                return $datas->mahasiswa->mahasiswa->nim;
+                                return $datas->mahasiswa->login_key;
                             })
                             ->addColumn('nama_mhs', function($datas){
                                 return $datas->mahasiswa->name;
@@ -67,6 +69,17 @@ class PembayaranController extends Controller
 
     public function show($pembayaran_id){
         $data = Pembayaran::findOrFail($pembayaran_id);
+
+        if ($data->tahun_semester_id) {
+            $data->type = DB::table('tahun_semester')
+                            ->select('semesters.nama')
+                            ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
+                            ->where('tahun_semester.id', $data->tahun_semester_id)
+                            ->first();
+        } else {
+            # code...
+        }
+
         return view('kelola_pembayaran.form', compact('data'));
     }
 
@@ -81,9 +94,10 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
         }
 
-        if (!Auth::user()->petugas->ttd) {
-            return redirect()->back()->with('error', 'anda belum set tanda tangan');
-        }
+        // dd(Auth::user()->petugas);
+        // if (!Auth::user()->petugas->ttd) {
+        //     return redirect()->back()->with('error', 'anda belum set tanda tangan');
+        // }
 
         DB::beginTransaction();
         try {
@@ -96,10 +110,10 @@ class PembayaranController extends Controller
             
             Mail::to($data->mahasiswa->email)->send((new PembayaranMail($data, 'mhs')));
             DB::commit();
-            return redirect()->route('kelola.pembayaran.index')->with('success', 'Berhasil disimpan!');
+            return redirect()->route('kelola-pembayaran.pembayaran.index')->with('success', 'Berhasil disimpan!');
         } catch (\Throwable $th) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
+            return redirect()->back()->with('error', $th->getMessage());
         }
 
     }

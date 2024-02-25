@@ -22,6 +22,11 @@ class PotonganController extends Controller
     public function get($role, $user_id)
     {
         $user = User::find($user_id);
+
+        if (!$user) {
+            abort(404);
+        }
+
         $mhs = $user->mahasiswa;
 
         $tahun_semester = DB::table('tahun_semester')
@@ -40,10 +45,10 @@ class PotonganController extends Controller
             ->pluck('id');
 
         $data = DB::table('potongan_tahun_ajaran')
-            ->select('potongans.id', 'potongans.nama', 'potongan_tahun_ajaran.nominal')
+            ->select('potongan_tahun_ajaran.id', 'potongans.nama', 'potongan_tahun_ajaran.nominal')
             ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
             ->leftJoin('potongan_mhs', function ($join) use ($user_id) {
-                $join->on('potongan_mhs.potongan_id', 'potongans.id')
+                $join->on('potongan_mhs.potongan_tahun_ajaran_id', 'potongan_tahun_ajaran.id')
                     ->where('potongan_mhs.mhs_id', $user_id);
             })
             ->where(function ($q) use ($tahun_semester, $tahun_pembayaran_lainnya) {
@@ -51,6 +56,7 @@ class PotonganController extends Controller
                     ->orWhereIn('potongan_tahun_ajaran.tahun_pembayaran_lain_id', $tahun_pembayaran_lainnya);
             })
             ->whereNull('potongan_mhs.mhs_id')
+            ->where('potongan_tahun_ajaran.publish', "1")
             ->get();
 
         return response()->json([
@@ -69,7 +75,12 @@ class PotonganController extends Controller
     {
         $user = User::findOrFail($user_id);
 
-        $user->potongan()->syncWithoutDetaching($request->potongan_id);
+        foreach ($request->potongan_id as $potongan_id) {
+            DB::table('potongan_mhs')->insert([
+                'mhs_id' => $user_id,
+                'potongan_tahun_ajaran_id' => $potongan_id
+            ]);
+        }
 
         return response()->json([
             'message' => 'Berhasil disimpan!'
@@ -78,8 +89,9 @@ class PotonganController extends Controller
 
     public function data($data, $user_id)
     {
-        $user = User::findOrFail($user_id);
-        $potongan_id = $user->potongan->pluck('id');
+        $potongan_id = DB::table('potongan_mhs')
+            ->where('mhs_id', $user_id)
+            ->pluck('potongan_tahun_ajaran_id');
 
         $datas = DB::table('potongan_tahun_ajaran')
             ->select('potongan_tahun_ajaran.id', 'potongans.nama as potongan', 'semesters.nama as semester', 'pembayaran_lainnyas.nama as lainnya', 'potongan_tahun_ajaran.publish', 'potongan_tahun_ajaran.nominal')
@@ -88,7 +100,7 @@ class PotonganController extends Controller
             ->leftJoin('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->leftJoin('tahun_pembayaran_lain', 'tahun_pembayaran_lain.id', 'potongan_tahun_ajaran.tahun_pembayaran_lain_id')
             ->leftJoin('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
-            ->whereIn('potongans.id', $potongan_id)
+            ->whereIn('potongan_tahun_ajaran.id', $potongan_id)
             ->get();
 
         foreach ($datas as $data) {

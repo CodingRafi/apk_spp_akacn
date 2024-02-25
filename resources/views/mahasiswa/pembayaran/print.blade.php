@@ -163,11 +163,15 @@
                             <td style="padding-right: .5rem">:</td>
                             <td><strong>{{ $data->mahasiswa->mahasiswa->prodi->nama }}</strong></td>
                         </tr>
+                        @if ($data->tahun_semester_id)
                         <tr>
                             <td style="padding-right: 2rem;">Semester</td>
                             <td style="padding-right: .5rem">:</td>
                             <td><strong>{{ $data->semester->nama }}</strong></td>
                         </tr>
+                        @else
+                            
+                        @endif
                         <tr>
                             <td style="padding-right: 2rem;">Nominal</td>
                             <td style="padding-right: .5rem">:</td>

@@ -33,12 +33,12 @@
                             </select>
                         </div>
                         <div class="col-md-1 mb-3">
-                            <form action="{{ route('kelola.pembayaran.export') }}" method="get" class="form-export">
+                            {{-- <form action="{{ route('kelola.pembayaran.export') }}" method="get" class="form-export">
                                 <input type="hidden" name="status">
                                 <input type="hidden" name="prodi">
                                 <input type="hidden" name="tahun_ajaran">
                                 <button type="button" class="btn btn-primary">Export</button>
-                            </form>
+                            </form> --}}
                         </div>
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('kelola.pembayaran.data') }}',
+                    url: '{{ route('kelola-pembayaran.pembayaran.data') }}',
                     data: function(p) {
                         p.status = $('#filter-status').val();
                         p.prodi = $('#filter-prodi').val();

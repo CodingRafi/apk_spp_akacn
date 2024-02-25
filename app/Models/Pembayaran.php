@@ -30,6 +30,9 @@ class Pembayaran extends Model
     public static function getPembayaranMahasiswa($user_id)
     {
         $user = User::find($user_id);
+        if (!$user) {
+            abort(404);
+        }
         $mhs = $user->mahasiswa;
 
         $tahun_semester = DB::table('tahun_semester')

@@ -139,6 +139,17 @@ class PotonganController extends Controller
             'ket' => 'required',
         ]);
 
+        $data = DB::table('potongan_tahun_ajaran')->where('id', $id)->first();
+        $cek = DB::table('potongan_mhs')
+            ->where('potongan_tahun_ajaran_id', $id)
+            ->count();
+
+        if ($request->publish !== $data->publish && $cek > 0) {
+            return response()->json([
+                'message' => 'Sudah diset ke mahasiswa tidak bisa dinonaktifkan publishnya'
+            ], 400);
+        }
+
         DB::beginTransaction();
         try {
             DB::table('potongan_tahun_ajaran')

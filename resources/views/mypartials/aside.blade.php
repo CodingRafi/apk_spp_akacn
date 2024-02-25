@@ -124,6 +124,14 @@
                             </a>
                         </li>
                     @endcan
+
+                    @can('view_kelola_pembayaran')
+                        <li class="menu-item {{ Request::is('kelola-pembayaran/pembayaran*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-pembayaran.pembayaran.index') }}" class="menu-link">
+                                <div data-i18n="pembayaran" class="text-capitalize">Verifikasi Pembayaran</div>
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcan
@@ -163,6 +171,9 @@
                     <div data-i18n="Analytics">Pembayaran</div>
                 </a>
             </li>
+        @endcan
+
+        @can('view_krs')
             <li class="menu-item {{ Request::is('krs*') ? 'active' : '' }}">
                 <a href="{{ route('krs.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-file"></i>

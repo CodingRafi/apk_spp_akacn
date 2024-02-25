@@ -97,7 +97,7 @@ class PembayaranController extends Controller
                 return "<a href='" . asset('storage/' . $datas->bukti) . "' class='btn btn-primary' target='_blank'>Lihat</a>";
             })
             ->editColumn('tgl_bayar', function ($datas) {
-                return date("d F Y", strtotime($datas->tgl_bayar));
+                return parseDate($datas->tgl_bayar);
             })
             ->editColumn('nominal', function ($datas) {
                 return formatRupiah($datas->nominal);
@@ -142,7 +142,7 @@ class PembayaranController extends Controller
                 ->with('success', 'Pembayaran berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollback();
-            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
+            return redirect()->back()->with('error', $th->getMessage());
         }
     }
 
@@ -155,33 +155,56 @@ class PembayaranController extends Controller
                 ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
                 ->where('tahun_pembayaran.tahun_semester_id', $id)
                 ->first();
-
-            if (!$data) {
-                abort(404);
-            }
         } else {
         }
-        return view('mahasiswa.pembayaran.show', compact('data'));
-    }
 
-    public function showPembayaran($semester_id, $pembayaran_id)
-    {
-        $data = Pembayaran::findOrFail($pembayaran_id);
-
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id) {
-            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
+        if (!$data) {
+            abort(404);
         }
 
-        $semester = Semester::where('id', $semester_id)->first();
-        $page = 'show';
-        return view('mahasiswa.pembayaran.form', compact('data', 'semester', 'page'));
+        $potongan = DB::table('potongan_mhs')
+            ->select('potongans.nama', 'potongan_tahun_ajaran.type', 'potongan_tahun_ajaran.ket', 'potongan_tahun_ajaran.nominal')
+            ->join('potongan_tahun_ajaran', 'potongan_tahun_ajaran.id', 'potongan_mhs.potongan_tahun_ajaran_id')
+            ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
+            ->where('potongan_mhs.mhs_id', Auth::user()->id)
+            ->where('potongans.type', $type)
+            ->when('type' == 'semester', function ($q) use ($id) {
+                return $q->where('potongan_tahun_ajaran.tahun_semester_id', $id);
+            })
+            ->when('type' == 'lainnya', function ($q) use ($id) {
+                return $q->where('potongan_tahun_ajaran.tahun_pembayaran_lain_id', $id);
+            })
+            ->get();
+
+        $sudah_dibayar = DB::table('pembayarans')
+            ->where('mhs_id', Auth::user()->id)
+            ->when($type == 'semester', function ($q) use ($id) {
+                return $q->where('tahun_semester_id', $id);
+            })
+            ->when($type == 'lainnya', function ($q) use ($id) {
+                return $q->where('tahun_pembayaran_lain_id', $id);
+            })
+            ->where('status', 'diterima')
+            ->sum('nominal');
+        return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'sudah_dibayar'));
     }
 
-    public function edit($semester_id, $pembayaran_id)
+    public function showPembayaran($type, $id, $pembayaran_id)
+    {
+        $data = Pembayaran::findOrFail($pembayaran_id);
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
+            abort(404);
+        }
+
+        $page = 'show';
+        return view('mahasiswa.pembayaran.form', compact('data', 'page'));
+    }
+
+    public function edit($type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id) {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -189,16 +212,14 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', 'Tidak dapat diedit');
         }
 
-        $semester = Semester::where('id', $semester_id)->first();
-
-        return view('mahasiswa.pembayaran.form', compact('data', 'semester'));
+        return view('mahasiswa.pembayaran.form', compact('data'));
     }
 
-    public function update(Request $request, $semester_id, $pembayaran_id)
+    public function update(Request $request, $type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id) {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -224,15 +245,15 @@ class PembayaranController extends Controller
             'ket_mhs' => $request->ket_mhs
         ]);
 
-        return redirect()->route('pembayaran.show', ['semester_id' => $semester_id])
+        return redirect()->route('pembayaran.show', ['type' => $type, 'id' => $id])
             ->with('success', 'Pembayaran berhasil diedit');
     }
 
-    public function destroy($semester_id, $pembayaran_id)
+    public function destroy($type, $id, $pembayaran_id)
     {
         $pembayaran = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($pembayaran->mhs_id != Auth::user()->id || $pembayaran->semester_id != $semester_id) {
+        if ($pembayaran->mhs_id != Auth::user()->id || ($type == 'semester' ? $pembayaran->tahun_semester_id != $id : $pembayaran->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -305,10 +326,10 @@ class PembayaranController extends Controller
         return Excel::download(new PembayaranMhsExport($semester), 'pembayaran.xlsx');
     }
 
-    public function print($semester_id, $pembayaran_id)
+    public function print($type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
-        if ($data->mhs_id != Auth::user()->id || $data->semester_id != $semester_id || $data->status != 'diterima') {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status != 'diterima') {
             abort(404);
         }
         return PDF::loadView('mahasiswa.pembayaran.print', compact('data'))->setPaper([0, 0, 600, 550])->stream('kwitansi.pdf');

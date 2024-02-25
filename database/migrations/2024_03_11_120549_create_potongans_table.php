@@ -25,7 +25,7 @@ return new class extends Migration
             $table->enum('type', ['semester', 'lainnya']);
             $table->foreignId('potongan_id')->constrained('potongans');
             $table->string('nominal');
-            $table->string('ket');
+            $table->text('ket');
             $table->foreignId('tahun_semester_id')->nullable()->constrained('tahun_semester');
             $table->foreignId('tahun_pembayaran_lain_id')->nullable()->constrained('tahun_pembayaran_lain');
             $table->enum('publish', [0,1]);
@@ -34,7 +34,7 @@ return new class extends Migration
 
         Schema::create('potongan_mhs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('potongan_id')->constrained('potongans');
+            $table->foreignId('potongan_tahun_ajaran_id')->constrained('potongans');
             $table->foreignId('mhs_id')->constrained('users');
             $table->timestamps();
         });

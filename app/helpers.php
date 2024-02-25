@@ -41,7 +41,6 @@ if (!function_exists('parseDate')) {
 
     function parseDate($date)
     {
-        $date = Carbon::createFromFormat('Y-m-d', $date);
-        return $date->translatedFormat('d F Y');
+        return date("d F Y", strtotime($date));
     }
 }

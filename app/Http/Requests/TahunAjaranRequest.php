@@ -31,7 +31,7 @@ class TahunAjaranRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $startYear = date('Y', strtotime($value));
                     $cek = DB::table('tahun_ajarans')->where('id', $startYear)->first();
-                    if ($cek && ($this->method() == 'POST' || ($this->method() == 'PUT' && $cek->id != request('tahun_ajaran')))) {
+                    if ($cek && ($this->method() == 'POST' || ($this->method() == 'PUT' && $cek->id != request('tahun_ajaran')->id))) {
                         $fail('Tahun Ajaran ini sudah ada');
                     }
                 }

@@ -18,40 +18,51 @@
                     </div>
                     <div class="card-body">
                         @if ($data && $data->publish)
-                            <div class="container-fluid p-0 border p-3 rounded mb-3">
-                                <p>Biaya: <strong>{{ formatRupiah($data->nominal) }}</strong></p>
-                                {{-- <p>Sudah dibayar: <strong>{{ formatRupiah($sudah_dibayar) }}</strong></p> --}}
-                                {{-- <p>Potongan: <strong>{{ formatRupiah($potongans->sum('nominal')) }}</strong></p> --}}
-                                {{-- <p>Kekurangan:
-                                    <strong>{{ formatRupiah(max(0, $data->nominal - ($sudah_dibayar + $potongans->sum('nominal')))) }}</strong>
-                                </p> --}}
-                                {!! $data->ket !!}
-                                {{-- @if (count($potongans) > 0)
-                                    <hr>
-                                    <h5>Potongan</h5>
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama</th>
-                                                <th>Nominal</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($potongans as $potongan)
-                                                <tr>
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $potongan->nama }}</td>
-                                                    <td>{{ formatRupiah($potongan->nominal) }}</td>
-                                                    <td><button class='btn btn-primary mx-2'
-                                                            onclick='detailPotongan({{ $potongan->id }})'>Detail</button>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                @endif --}}
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="card-title">
+                                                    Tagihan
+                                                </h5>
+                                                <button class="bg-transparent p-0 border-0 text-secondary"
+                                                    data-bs-toggle="modal" data-bs-target="#tagihan">Detail</button>
+                                            </div>
+                                            <p class="card-text">{{ formatRupiah($data->nominal) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="card-title">
+                                                    Potongan
+                                                </h5>
+                                                <button class="bg-transparent p-0 border-0 text-secondary"
+                                                    data-bs-toggle="modal" data-bs-target="#potongan">Detail</button>
+                                            </div>
+                                            <p class="card-text">{{ formatRupiah($potongan->sum('nominal')) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Sudah dibayar</h5>
+                                            <p class="card-text">{{ formatRupiah($sudah_dibayar) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">Belum dibayar</h5>
+                                            <p class="card-text">{{ formatRupiah($data->nominal - ($potongan->sum('nominal') + $sudah_dibayar)) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         @else
                             <div class="alert alert-primary" role="alert">
@@ -72,6 +83,51 @@
                                 </thead>
                             </table>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="tagihan" tabindex="-1" aria-labelledby="tagihanLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="tagihanLabel">Detail Tagihan</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {!! $data->ket !!}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="potongan" tabindex="-1" aria-labelledby="potonganLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="potonganLabel">Detail Potongan</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2">Nama</th>
+                                    <th class="col-md-2">Nominal</th>
+                                    <th class="col-md-8">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($potongan as $item)
+                                    <tr>
+                                        <td class="col-md-2">{{ $item->nama }}</td>
+                                        <td class="col-md-2">{{ formatRupiah($item->nominal) }}</td>
+                                        <td class="col-md-8">{{ $item->ket }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

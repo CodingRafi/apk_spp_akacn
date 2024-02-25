@@ -86,7 +86,12 @@ class PermissionTableSeeder extends Seeder
             'view_kuesioner',
             'add_kuesioner',
             'edit_kuesioner',
-            'delete_kuesioner'
+            'delete_kuesioner',
+
+            'view_krs',
+            'add_krs',
+            'edit_krs',
+            'delete_krs'
         ];
 
         foreach ($permissions as $permission) {

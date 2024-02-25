@@ -25,7 +25,7 @@
                                         <a
                                             href="{{ route('pembayaran.show', ['type' => request('type'), 'id' => request('id')]) }}"><i
                                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                                        <h5 class="text-capitalize mb-0">Tambah Pembayaran</h5>
+                                        <h5 class="text-capitalize mb-0">{{ isset($data) ? ($page == 'show' ? 'Detail' : 'Edit') : 'Tambah' }} Pembayaran</h5>
                                     </div>
                                     @if (isset($data) && $data->status != 'pengajuan' && $data->revisi == '1' && $page != 'form')
                                         <a href="{{ route('pembayaran.revisi', ['semester_id' => $semester->id, 'pembayaran_id' => $data->id]) }}"
@@ -107,7 +107,9 @@
                                         <textarea class="form-control @error('ket_mhs') is-invalid @enderror" id="textarea-tinymce" rows="3"
                                             name="ket_mhs">{{ isset($data) ? $data->ket_mhs : old('ket_mhs') }}</textarea>
                                     @else
-                                        {!! $data->ket_mhs !!}
+                                        <p>
+                                            {!! $data->ket_mhs !!}
+                                        </p>
                                     @endif
                                     @error('ket_mhs')
                                         <div class="invalid-feedback d-block">

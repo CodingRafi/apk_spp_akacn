@@ -222,9 +222,9 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
                 Route::get('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'revisi'])->name('revisi');
                 Route::get('/{pembayaran_id}/edit', [MahasiswaPembayaranController::class, 'edit'])->name('edit');
-                Route::put('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'update'])->name('update');
+                Route::patch('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'update'])->name('update');
                 Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
-                Route::get('/cetak', [MahasiswaPembayaranController::class, 'cetak'])->name('cetak');
+                Route::get('/{pembayaran_id}/print', [MahasiswaPembayaranController::class, 'print'])->name('print');
             });
         });
 
