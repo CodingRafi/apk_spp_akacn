@@ -226,6 +226,12 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/', [KrsController::class, 'index'])->name('index');
             Route::get('dataSemester', [KrsController::class, 'dataSemester'])->name('dataSemester');
             Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
+            Route::get('/{tahun_semester_id}/getMatkul', [KrsController::class, 'getMatkul'])->name('getMatkul');
+            Route::get('/{tahun_semester_id}/dataMatkul', [KrsController::class, 'dataMatkul'])->name('dataMatkul');
+            Route::get('/{tahun_semester_id}/getTotalSKS', [KrsController::class, 'getTotalSKS'])->name('getTotalSKS');
+            Route::post('/{tahun_semester_id}', [KrsController::class, 'store'])->name('store');
+            Route::post('/{tahun_semester_id}/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
+            Route::delete('/{tahun_semester_id}/{krs_matkul_id}', [KrsController::class, 'destroy'])->name('destroy');
         });
     });
 });

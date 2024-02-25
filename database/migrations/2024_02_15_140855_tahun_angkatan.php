@@ -56,11 +56,17 @@ return new class extends Migration
             $table->foreignId('dosen_id')->constrained('users');
             $table->uuid('matkul_id');
             $table->foreign('matkul_id')->references('id')->on('matkuls');
-            $table->foreignId('ruang_id')->constrained('ruangs');
             $table->char('hari', 1);
             $table->time('jam_mulai');
             $table->time('jam_akhir');
             $table->enum('cek_ip', [0, 1]);
+            $table->timestamps();
+        });
+        
+        Schema::create('tahun_matkul_ruang', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->foreignId('ruang_id')->constrained('ruangs');
             $table->timestamps();
         });
 
@@ -74,15 +80,10 @@ return new class extends Migration
         Schema::create('krs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mhs_id')->constrained('users');
-            $table->foreignId('verify_id')->constrained('users');
-            $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi');
-            $table->string('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
-            $table->string('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters');
-            $table->enum('status', ['pengajuan', 'diterima', 'ditolak'])->default('pengajuan');
-            $table->text('ket');
+            $table->foreignId('verify_id')->nullable()->constrained('users');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->enum('status', ['pengajuan', 'diterima', 'ditolak', 'pending'])->default('pending');
+            $table->text('ket')->nullable();
             $table->date('tgl_mulai_revisi')->nullable();
             $table->date('tgl_akhir_revisi')->nullable();
             $table->timestamps();

@@ -54,7 +54,6 @@
                         <div class="mb-3">
                             <label for="dosen_id" class="form-label">Dosen</label>
                             <select class="form-select" name="dosen_id" id="dosen_id">
-                                <option value="">Pilih Dosen</option>
                                 @foreach ($dosens as $d)
                                     <option value="{{ $d->id }}">{{ $d->name }} ({{ $d->login_key }})
                                     </option>
@@ -63,8 +62,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="ruang_id" class="form-label">Ruang</label>
-                            <select class="form-select" name="ruang_id" id="ruang_id">
-                                <option value="">Pilih Ruang</option>
+                            <select class="form-select select2" name="ruang_id[]" id="ruang_id" multiple style="width: 100%">
                                 @foreach ($ruangs as $ruang)
                                     <option value="{{ $ruang->id }}">{{ $ruang->nama }} (Kapasitas:
                                         {{ $ruang->kapasitas }})
@@ -102,7 +100,6 @@
                             <label for="rombel_id" class="form-label">Rombel</label>
                             <select class="form-select select2" name="rombel_id[]" id="rombel_id" style="width: 100%"
                                 multiple>
-                                <option value="">Pilih Rombel</option>
                                 @foreach ($rombel as $item)
                                     <option value="{{ $item->id }}">{{ $item->nama }}
                                     </option>

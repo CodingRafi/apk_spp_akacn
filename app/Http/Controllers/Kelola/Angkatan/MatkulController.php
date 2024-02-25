@@ -60,7 +60,7 @@ class MatkulController extends Controller
     {
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token', 'rombel_id');
+            $requestParse = $request->except('_method', '_token', 'rombel_id', 'ruang_id');
             $requestParse['prodi_id'] = $prodi_id;
             $requestParse['tahun_ajaran_id'] = $tahun_ajaran_id;
             DB::table('tahun_matkul')->insert($requestParse);
@@ -70,6 +70,13 @@ class MatkulController extends Controller
                 DB::table('tahun_matkul_rombel')->insert([
                     'tahun_matkul_id' => $tahun_matkul_id,
                     'rombel_id' => $rombel_id
+                ]);
+            }
+
+            foreach ($request->ruang_id as $ruang_id) {
+                DB::table('tahun_matkul_ruang')->insert([
+                    'tahun_matkul_id' => $tahun_matkul_id,
+                    'ruang_id' => $ruang_id
                 ]);
             }
 
