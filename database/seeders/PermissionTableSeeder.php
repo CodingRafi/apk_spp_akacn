@@ -43,11 +43,6 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_pembayaran',
             'delete_kelola_pembayaran',
 
-            'view_pembayaran',
-            'add_pembayaran',
-            'edit_pembayaran',
-            'delete_pembayaran',
-
             'view_potongan',
             'add_potongan',
             'edit_potongan',
@@ -87,6 +82,11 @@ class PermissionTableSeeder extends Seeder
             'add_kuesioner',
             'edit_kuesioner',
             'delete_kuesioner',
+
+            'view_pembayaran',
+            'add_pembayaran',
+            'edit_pembayaran',
+            'delete_pembayaran',
 
             'view_krs',
             'add_krs',

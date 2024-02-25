@@ -132,6 +132,8 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/', [SemesterController::class, 'index'])->name('index');
                 Route::get('/data', [SemesterController::class, 'data'])->name('data');
                 Route::post('/', [SemesterController::class, 'store'])->name('store');
+                Route::get('/{tahun_semester_id}', [SemesterController::class, 'show'])->name('show');
+                Route::put('/{tahun_semester_id}', [SemesterController::class, 'update'])->name('update');
                 Route::delete('/{tahun_semester_id}', [SemesterController::class, 'destroy'])->name('destroy');
             });
 

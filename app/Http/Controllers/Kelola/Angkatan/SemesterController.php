@@ -22,6 +22,9 @@ class SemesterController extends Controller
             ->where('tahun_ajarans.id', ">=", $tahun_ajaran_id)
             ->where('tahun_ajarans.status', "1")
             ->where('semesters.status', "1")
+            ->when(request('semester_id') && request('semester_id') != '', function ($q) {
+                $q->orWhere('tahun_semester.semester_id', request('semester_id'));
+            })
             ->get();
 
         return response()->json([
@@ -32,16 +35,28 @@ class SemesterController extends Controller
     public function data($prodi_id, $tahun_ajaran_id)
     {
         $datas = DB::table('semesters')
-            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester')
+            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester', 'tahun_semester.id as tahun_semester_id')
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
             ->get();
 
         foreach ($datas as $data) {
-            $data->options = "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->id]) . "`)'>
-                Hapus
+            $options = '';
+            if (auth()->user()->can('edit_prodi')) {
+                $options = $options . " <button class='btn btn-warning'
+                onclick='editForm(`" . route('data-master.prodi.semester.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`, `Edit Semester`, `#AddSemester`, getSemester)'>
+                <i class='ti-pencil'></i>
+                Edit
             </button>";
+            }
+
+            if (auth()->user()->can('delete_prodi')) {
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->id]) . "`)'>
+                                                    Hapus
+                                                </button>";
+            }
+            $data->options = $options;
         }
 
         return DataTables::of($datas)
@@ -81,5 +96,33 @@ class SemesterController extends Controller
                 'message' => $th->getMessage()
             ], 400);
         }
+    }
+
+    public function show($prodi_id, $tahun_ajaran_id, $tahun_semester_id)
+    {
+        $data = DB::table('tahun_semester')->where('id', $tahun_semester_id)->first();
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function update(Request $request, $prodi_id, $tahun_ajaran_id, $id)
+    {
+        $request->validate([
+            'jatah_sks' => 'required',
+            'tgl_mulai_krs' => 'required',
+            'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
+        ]);
+
+        DB::table('tahun_semester')->where('id', $id)->update([
+            'jatah_sks' => $request->jatah_sks,
+            'tgl_mulai_krs' => $request->tgl_mulai_krs,
+            'tgl_akhir_krs' => $request->tgl_akhir_krs,
+            'updated_at' => now()
+        ]);
+        
+        return response()->json([
+            'message' => 'Berhasil diubah'
+        ], 200);
     }
 }

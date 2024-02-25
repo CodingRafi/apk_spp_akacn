@@ -31,6 +31,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <form action="">
+                    @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="SemesterLabel">Tambah Semester</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -68,11 +69,14 @@
 <script>
     let tableSemester;
 
-    function getSemester() {
+    function getSemester(data = {}) {
         $('#semester_id').attr('disabled', 'disabled');
         $.ajax({
             type: "GET",
             url: "{{ route('data-master.prodi.semester.index', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+            data: {
+                semester_id: data.semester_id
+            },
             success: function(res) {
                 $('#semester_id').empty().append('<option value="">Pilih Semester</option>')
                 $.each(res.data, function(i, e) {
@@ -80,7 +84,12 @@
                         `<option value="${e.id}">${e.nama}</option>`
                     )
                 })
-                $('#semester_id').removeAttr('disabled');
+
+                if (data.semester_id) {
+                    $('#semester_id').val(data.semester_id);
+                } else {
+                    $('#semester_id').removeAttr('disabled');
+                }
             },
             error: function() {
                 console.log('Gagal get semester');
