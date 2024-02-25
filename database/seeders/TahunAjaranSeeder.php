@@ -31,7 +31,6 @@ class TahunAjaranSeeder extends Seeder
             'semester' => '1',
             'tgl_mulai' => '2023/01/01',
             'tgl_selesai' => '2024/03/01',
-            'jatah_sks' => '200'
-        ]);
+        ]); 
     }
 }

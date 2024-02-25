@@ -5,7 +5,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <a href="{{ route('data-master.prodi.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                    <a href="{{ route('data-master.prodi.show', request('prodi_id')) }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                     <h5 class="text-capitalize mb-0">Angkatan {{ request('tahun_ajaran_id') }}</h5>
                 </div>
                 <div class="card-body">

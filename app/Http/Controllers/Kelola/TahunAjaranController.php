@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TahunAjaranRequest;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,43 +57,25 @@ class TahunAjaranController extends Controller
         return view('data_master.tahun_ajaran.form');
     }
 
-    public function store(Request $request)
+    public function store(TahunAjaranRequest $request)
     {
-        $request->validate([
-            'tgl_mulai' => 'required|unique:tahun_ajarans,id',
-            'tgl_akhir' => 'required|after:tgl_mulai',
-            'nama' => 'required'
-        ], [
-            'tahun_mulai' => 'Tahun mulai sudah digunakan',
-        ]);
-
-        //? Validasi tanggal mulai
-        $cek = DB::table('tahun_ajarans')
-                    ->where('id', explode('-', $request->tgl_mulai)[0])
-                    ->count();
-
-        if ($cek > 0) {
-            return response()->json([
-                'message' => 'Tahun Ajaran ini sudah ada'
-            ], 400);
-        }
-        
-        if (getTahunAjaranActive()) {
+        if ($request->status && getTahunAjaranActive()) {
             return response()->json([
                 'message' => 'ada tahun ajaran yang sedang aktif'
             ], 400);
         }
 
-        TahunAjaran::create([
+        $data = TahunAjaran::create([
             'id' => explode('-', $request->tgl_mulai)[0],
             'nama' => $request->nama,
             'tgl_mulai' => $request->tgl_mulai,
-            'tgl_akhir' => $request->tgl_akhir,
-            'status' => $request->status ? "1" : "0",
+            'tgl_selesai' => $request->tgl_selesai,
+            'status' => $request->status ?? "0"
         ]);
 
         return response()->json([
-            'message' => 'Berhasil disimpan'
+            'message' => 'Berhasil disimpan',
+            'data' => $data
         ], 200);
     }
 
@@ -102,32 +85,28 @@ class TahunAjaranController extends Controller
         return view('data_master.tahun_ajaran.form', compact('data'));
     }
 
-    public function update(Request $request, TahunAjaran $tahunAjaran)
+    public function update(TahunAjaranRequest $request, TahunAjaran $tahunAjaran)
     {
-        $request->validate([
-            'kode' => 'required',
-            'tahun_mulai' => 'required|digits:4',
-            'tahun_akhir' => 'required|digits:4',
-            'semester' => 'required|digits:1'
-        ]);
-
         if ($request->status) {
             $tahun_active = getTahunAjaranActive();
             if ($tahun_active->id !== $tahunAjaran->id) {
-                return redirect()->back()
-                    ->with(['error' => 'ada tahun ajaran yang sedang aktif'])
-                    ->withInput();
+                return response()->json([
+                    'message' => 'ada tahun ajaran yang sedang aktif'
+                ], 400);
             }
         }
 
         $tahunAjaran->update([
-            'kode' => $request->kode,
-            'tahun_mulai' => $request->tahun_mulai,
-            'tahun_akhir' => $request->tahun_akhir,
-            'semester' => $request->semester,
-            'status' => $request->status ? "1" : "0",
+            'nama' => $request->nama,
+            'tgl_mulai' => $request->tgl_mulai,
+            'tgl_selesai' => $request->tgl_selesai,
+            'status' => $request->status ?? "0"
         ]);
-        return redirect()->route('data-master.tahun-ajaran.index')->with('success', 'Berhasil diubah');
+
+        return response()->json([
+            'message' => 'Berhasil diubah',
+            'data' => $tahunAjaran
+        ]);
     }
 
     public function destroy(TahunAjaran $tahunAjaran)

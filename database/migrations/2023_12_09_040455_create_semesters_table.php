@@ -22,7 +22,6 @@ return new class extends Migration
             $table->enum('status', [0,1]);
             $table->date('tgl_mulai');
             $table->date('tgl_selesai');
-            $table->string('jatah_sks');
             $table->timestamps();
         });
     }

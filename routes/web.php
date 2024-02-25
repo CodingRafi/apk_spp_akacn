@@ -13,7 +13,8 @@ use App\Http\Controllers\Kelola\{
     ProdiController,
     PotonganController as KelolaPotonganController,
     RombelController,
-    RuangController
+    RuangController,
+    SemesterController as KelolaSemesterController
 };
 
 use App\Http\Controllers\{
@@ -90,8 +91,13 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
         //? Semester
-        Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
-        Route::resource('tahun-ajaran', TahunAjaranController::class);
+        Route::prefix('semester')->name('semester.')->group(function () {
+            Route::get('{tahun_ajaran_id}/data', [KelolaSemesterController::class, 'data'])->name('data');
+            Route::get('{tahun_ajaran_id}/getLastSemester', [KelolaSemesterController::class, 'getLastSemester'])->name('getLastSemester');
+            Route::post('/', [KelolaSemesterController::class, 'store'])->name('store');
+            Route::get('/{semester_id}', [KelolaSemesterController::class, 'show'])->name('show');
+            Route::put('/{semester_id}', [KelolaSemesterController::class, 'update'])->name('update');
+        });
 
         //? Kurikulum
         Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');

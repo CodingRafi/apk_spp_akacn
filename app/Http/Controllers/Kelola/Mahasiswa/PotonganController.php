@@ -12,12 +12,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PotonganController extends Controller
 {
-    public function __construct()
-    {
-        if (request('role') != 'mahasiswa') {
-            abort(404);
-        }
-    }
+    // public function __construct()
+    // {
+    //     if (request('role') != 'mahasiswa') {
+    //         abort(404);
+    //     }
+    // }
 
     public function get($role, $user_id)
     {
