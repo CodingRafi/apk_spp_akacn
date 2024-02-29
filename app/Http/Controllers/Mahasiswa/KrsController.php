@@ -139,7 +139,7 @@ class KrsController extends Controller
         }
 
         $datas = DB::table('krs')
-            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama', 'users.name as dosen', 'matkuls.sks_mata_kuliah')
+            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama', 'users.name as dosen', 'matkuls.sks_mata_kuliah', 'tahun_matkul.id as tahun_matkul_id')
             ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
@@ -158,7 +158,21 @@ class KrsController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->addColumn('ruang', function ($datas) {
+                $ruang = DB::table('ruangs')
+                    ->select('ruangs.kapasitas', 'ruangs.nama')
+                    ->join('tahun_matkul_ruang', 'ruangs.id', 'tahun_matkul_ruang.ruang_id')
+                    ->where('tahun_matkul_ruang.tahun_matkul_id', $datas->tahun_matkul_id)
+                    ->get();
+
+                $ruangParse = '';
+                foreach ($ruang as $item) {
+                    $ruangParse .= $item->nama . ' (Kapasitas: ' . $item->kapasitas . ')<br>';
+                }
+
+                return $ruangParse;
+            })
+            ->rawColumns(['options', 'ruang'])
             ->make(true);
     }
 
@@ -297,5 +311,12 @@ class KrsController extends Controller
 
     public function ajukan(Request $request, $tahun_semester_id)
     {
+        DB::table('krs')
+            ->where('mhs_id', Auth::user()->id)
+            ->where('tahun_semester_id', $tahun_semester_id)->update([
+                'status' => 'pengajuan'
+            ]);
+
+        return redirect()->back()->with('success', 'Data Berhasil Di Ajukan');
     }
 }

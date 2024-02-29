@@ -1,9 +1,9 @@
     @extends('mylayouts.main')
 
     @section('container')
-    @php
-        $check_tgl = $tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d');
-    @endphp
+        @php
+            $check_tgl = $tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d') && ($krs ? $krs->status == 'pending' : true);
+        @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="card">
@@ -12,12 +12,18 @@
                             <a href="{{ route('krs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                             <h5 class="text-capitalize mb-0">KRS {{ $tahun_semester->nama }}</h5>
                         </div>
-                        
                         @if ($check_tgl)
-                            <button type="button" class="btn btn-primary"
-                                onclick="addForm('{{ route('krs.store', $tahun_semester->id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
-                                Tambah Mata Kuliah
-                            </button>
+                            <div class="d-flex" style="gap: 1rem;">
+                                <button type="button" class="btn btn-primary"
+                                    onclick="addForm('{{ route('krs.store', $tahun_semester->id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
+                                    Tambah Mata Kuliah
+                                </button>
+                                <form action="{{ route('krs.ajukan', $tahun_semester->id) }}" class="form-ajukan"
+                                    method="POST">
+                                    @csrf
+                                    <button type="button" class="btn btn-warning btn-ajukan">Ajukan KRS</button>
+                                </form>
+                            </div>
                         @endif
                     </div>
                     <div class="card-body">
@@ -35,6 +41,12 @@
                                 </div>
                             @endif
                         @endif
+
+                        @if ($krs && $krs->status == 'pengajuan')
+                            <div class="alert alert-info">
+                                KRS ini sedang diajukan
+                            </div>
+                        @endif
                         <div class="table-responsive">
                             <table class="table table-pembayaran">
                                 <thead>
@@ -43,6 +55,8 @@
                                         <th>Kode</th>
                                         <th>Nama</th>
                                         <th>SKS</th>
+                                        <th>Dosen</th>
+                                        <th>Ruang</th>
                                         @if ($check_tgl)
                                             <th>Aksi</th>
                                         @endif
@@ -164,6 +178,12 @@
                         {
                             "data": "sks_mata_kuliah"
                         },
+                        {
+                            "data": "dosen"
+                        },
+                        {
+                            "data": "ruang"
+                        },
                         @if ($check_tgl)
                             {
                                 "data": "options"
@@ -174,5 +194,22 @@
                     responsive: true,
                 });
             });
+
+            $('.btn-ajukan').on('click', function() {
+                Swal.fire({
+                    title: "Apakah anda yakin ingin mengajukan KRS?",
+                    text: "Klik 'Ya' jika anda yakin",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya",
+                    cancelButtonText: "Tidak",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('.form-ajukan').submit()
+                    }
+                });
+            })
         </script>
     @endpush

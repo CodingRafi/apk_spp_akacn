@@ -53,19 +53,17 @@ class UserController extends Controller
     public function data($role)
     {
         $datas = User::select('users.*')
-            ->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
-            ->where('b.prodi_id', request('prodi'))
-            ->where('b.tahun_masuk_id', request('tahun_ajaran'))
-            ->where('b.rombel_id', request('rombel'))
+            ->when($role == 'mahasiswa', function ($q) {
+                $q->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
+                    ->where('b.prodi_id', request('prodi'))
+                    ->where('b.tahun_masuk_id', request('tahun_ajaran'))
+                    ->where('b.rombel_id', request('rombel'));
+            })
             ->role($role)
             ->get();
 
         foreach ($datas as $data) {
             $options = '';
-
-            // if ($role == 'mahasiswa') {
-            //     $options = $options . "<a href='" . route('users.print.pembayaran', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-info mx-2' target='_blank'>Report Pembayaran</a>";
-            // }
 
             if (auth()->user()->can('edit_users')) {
                 if ($role == 'mahasiswa') {

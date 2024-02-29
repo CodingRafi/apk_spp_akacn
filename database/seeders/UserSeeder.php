@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'role' => 'mahasiswa',
-                'permission' => array_map('strval', range(54, 61))
+                'permission' => array_map('strval', range(58, 65))
             ]
         ];
 

@@ -156,6 +156,11 @@ class PembayaranController extends Controller
                 ->where('tahun_pembayaran.tahun_semester_id', $id)
                 ->first();
         } else {
+            $data = DB::table('tahun_pembayaran_lain')
+                ->select('tahun_pembayaran_lain.*', 'pembayaran_lainnyas.nama')
+                ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+                ->where('pembayaran_lainnyas.id', $id)
+                ->first();
         }
 
         if (!$data) {
@@ -186,6 +191,7 @@ class PembayaranController extends Controller
             })
             ->where('status', 'diterima')
             ->sum('nominal');
+
         return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'sudah_dibayar'));
     }
 

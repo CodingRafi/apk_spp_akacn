@@ -55,14 +55,14 @@ return new class extends Migration
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
             $table->foreignId('dosen_id')->constrained('users');
             $table->uuid('matkul_id');
-            $table->foreign('matkul_id')->references('id')->on('matkuls');
             $table->char('hari', 1);
             $table->time('jam_mulai');
             $table->time('jam_akhir');
+            $table->foreign('matkul_id')->references('id')->on('matkuls');
             $table->enum('cek_ip', [0, 1]);
             $table->timestamps();
         });
-        
+
         Schema::create('tahun_matkul_ruang', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
@@ -95,6 +95,28 @@ return new class extends Migration
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
             $table->timestamps();
         });
+
+        Schema::create('jadwal', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('pengajar_id')->constrained('users');
+            $table->timestamp('presensi_mulai');
+            $table->timestamp('presensi_selesai')->nullable();
+            $table->date('tgl');
+            $table->timestamp('jam_mulai');
+            $table->timestamp('jam_selesai');
+            $table->text('materi');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->string('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters');
+            $table->timestamps();
+        });
+
+        Schema::create('jadwal_presensi', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('jadwal_id')->constrained('jadwal');
+            $table->foreignId('mhs_id')->constrained('users');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -111,5 +133,7 @@ return new class extends Migration
         Schema::dropIfExists('tahun_matkul_rombel');
         Schema::dropIfExists('krs');
         Schema::dropIfExists('krs_matkul');
+        Schema::dropIfExists('jadwal');
+        Schema::dropIfExists('jadwal_presensi');
     }
 };

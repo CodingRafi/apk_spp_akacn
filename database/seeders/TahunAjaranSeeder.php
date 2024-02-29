@@ -19,7 +19,7 @@ class TahunAjaranSeeder extends Seeder
         TahunAjaran::create([
             'id' => '2023',
             'nama' => '2023/2024',
-            'status' => 1,
+            'status' => "1",
             'tgl_mulai' => '2023/01/01',
             'tgl_selesai' => '2024/01/01',
         ]);
@@ -31,6 +31,7 @@ class TahunAjaranSeeder extends Seeder
             'semester' => '1',
             'tgl_mulai' => '2023/01/01',
             'tgl_selesai' => '2024/03/01',
+            'status' => '1'
         ]); 
     }
 }

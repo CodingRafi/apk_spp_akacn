@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
+    KrsController as KelolaKrsController,
     KuesionerController,
     KurikulumController,
     MatkulController,
@@ -23,6 +24,7 @@ use App\Http\Controllers\{
     ProfileController,
     WhitelistIPController
 };
+use App\Http\Controllers\Dosen\PresensiController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
@@ -200,7 +202,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/potongan/get', [KelolaPotonganController::class, 'get'])->name('potongan.get');
         Route::resource('potongan', KelolaPotonganController::class);
 
-        Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
+        Route::prefix('verifikasi-pembayaran')->name('pembayaran.')->group(function () {
             Route::get('/', [KelolaPembayaranController::class, 'index'])->name('index');
             Route::get('/data', [KelolaPembayaranController::class, 'data'])->name('data');
             Route::get('/export', [KelolaPembayaranController::class, 'export'])->name('export');
@@ -211,6 +213,18 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('pembayaran-lainnya/data', [KelolaPembayaranLainnyaController::class, 'data'])->name('pembayaran-lainnya.data');
         Route::resource('pembayaran-lainnya', KelolaPembayaranLainnyaController::class);
+    });
+
+    Route::prefix('verifikasi-krs')->name('verifikasi-krs.')->group(function () {
+        Route::get('/', [KelolaKrsController::class, 'index'])->name('index');
+        Route::get('/data', [KelolaKrsController::class, 'data'])->name('data');
+        Route::get('/{id}', [KelolaKrsController::class, 'show'])->name('show');
+        Route::get('/{id}/dataMatkul', [KelolaKrsController::class, 'dataMatkul'])->name('dataMatkul');
+        Route::delete('/{id}/{krs_matkul_id}', [KelolaKrsController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('presensi')->name('presensi.')->group(function () {
+        Route::get('/', [PresensiController::class, 'index'])->name('index');
     });
 
     Route::middleware(['role:mahasiswa'])->group(function () {
@@ -239,9 +253,9 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
             Route::get('/{tahun_semester_id}/getMatkul', [KrsController::class, 'getMatkul'])->name('getMatkul');
             Route::get('/{tahun_semester_id}/dataMatkul', [KrsController::class, 'dataMatkul'])->name('dataMatkul');
+            Route::post('/{tahun_semester_id}/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
             Route::get('/{tahun_semester_id}/getTotalSKS', [KrsController::class, 'getTotalSKS'])->name('getTotalSKS');
             Route::post('/{tahun_semester_id}', [KrsController::class, 'store'])->name('store');
-            Route::post('/{tahun_semester_id}/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
             Route::delete('/{tahun_semester_id}/{krs_matkul_id}', [KrsController::class, 'destroy'])->name('destroy');
         });
     });
