@@ -17,8 +17,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('kurikulum_id');
             $table->foreign('kurikulum_id')->references('id')->on('kurikulums')->onDelete('cascade');
-            $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
             $table->string('kode');
             $table->string('nama');
             $table->char('jenis_matkul', 1)->nullable();
@@ -36,6 +34,13 @@ return new class extends Migration
             $table->date('tgl_mulai_aktif')->nullable();
             $table->date('tgl_akhir_aktif')->nullable();
             $table->timestamps();
+        });
+
+        Schema::create('matkul_prodi', function (Blueprint $table) {
+            $table->uuid('matkul_id');
+            $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
         });
     }
 

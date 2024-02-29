@@ -37,7 +37,8 @@ class MatkulController extends Controller
         return DataTables::of($datas)
             ->addIndexColumn()
             ->addColumn('prodi', function ($datas) {
-                return $datas->prodi->nama;
+                $prodi = implode(', ', $datas->prodi->pluck('nama')->toArray());
+                return $prodi;
             })
             ->rawColumns(['options'])
             ->make(true);
@@ -47,9 +48,12 @@ class MatkulController extends Controller
     {
         DB::beginTransaction();
         try {
-            $requestParse = $request->all();
+            $requestParse = $request->except('prodi_id', '_method', '_token');
             $requestParse['id'] = generateUuid();
             $data = Matkul::create($requestParse);
+
+            $data->prodi()->sync($request->prodi_id);
+
             DB::commit();
             return response()->json([
                 'data' => $data,
@@ -64,6 +68,7 @@ class MatkulController extends Controller
     public function show($id)
     {
         $data = Matkul::find($id);
+        $data['prodi_id'] = $data->prodi->pluck('id');
         return response()->json([
             'data' => $data
         ], 200);
@@ -71,11 +76,27 @@ class MatkulController extends Controller
 
     public function update(MatkulRequest $request, $id)
     {
+        $matkul = Matkul::find($id);
+        //? Validasi Prodi
+        $oldProdi = $matkul->prodi->pluck('id')->toArray();
+        $cek = array_diff($oldProdi, $request->prodi_id);
+
+        if (count($cek) > 0) {
+            foreach ($cek as $item) {
+                $cekUseMatkul = DB::table('tahun_matkul')->where('matkul_id', $item)->count();
+                if ($cekUseMatkul > 0) {
+                    return response()->json([
+                        'message' => 'Tidak bisa mengubah prodi, karena sudah ada yang menggunakan'
+                    ], 200);
+                }
+            }
+        }
+
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token');
-            $matkul = Matkul::find($id);
+            $requestParse = $request->except('_method', '_token', 'prodi_id');
             $data = $matkul->update($requestParse);
+            $matkul->prodi()->sync($request->prodi_id);
             DB::commit();
             return response()->json([
                 'data' => $data,

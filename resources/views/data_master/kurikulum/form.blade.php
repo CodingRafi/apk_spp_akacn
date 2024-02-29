@@ -88,8 +88,7 @@
                         <input type="hidden" name="kurikulum_id">
                         <div class="mb-3">
                             <label for="prodi_id" class="form-label">Prodi</label>
-                            <select class="form-select" name="prodi_id" id="prodi_id">
-                                <option value="">Pilih Prodi</option>
+                            <select class="form-select select2" multiple name="prodi_id[]" id="prodi_id" style="width: 100%">
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach

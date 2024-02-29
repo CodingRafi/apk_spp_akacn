@@ -14,6 +14,6 @@ class Matkul extends Model
     protected $guarded = [];
 
     public function prodi(){
-        return $this->belongsTo(Prodi::class);
+        return $this->belongsToMany(Prodi::class, 'matkul_prodi', 'matkul_id', 'prodi_id');
     }
 }
