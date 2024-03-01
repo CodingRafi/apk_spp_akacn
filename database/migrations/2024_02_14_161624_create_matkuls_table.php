@@ -37,6 +37,7 @@ return new class extends Migration
         });
 
         Schema::create('matkul_prodi', function (Blueprint $table) {
+            $table->id();
             $table->uuid('matkul_id');
             $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
             $table->uuid('prodi_id');

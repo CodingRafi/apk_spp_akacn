@@ -31,11 +31,6 @@
                                     <a class="nav-link a-tab" href="#potongan">Potongan</a>
                                 </li>
                             @endcan
-                            @can('view_matkul')
-                                <li class="nav-item" style="white-space: nowrap;">
-                                    <a class="nav-link a-tab" href="#matkul">Mata Kuliah</a>
-                                </li>
-                            @endcan
                         </ul>
                     </div>
 
@@ -54,10 +49,6 @@
 
                         @can('view_potongan')
                             @include('data_master.prodi.angkatan.partials.potongan')
-                        @endcan
-
-                        @can('view_matkul')
-                            @include('data_master.prodi.angkatan.partials.matkul')
                         @endcan
                     </div>
                 </div>

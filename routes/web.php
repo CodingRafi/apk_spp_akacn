@@ -93,6 +93,19 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
+        //? Tahun ajaran matkul
+        Route::prefix('tahun-ajaran')->name('tahun-ajaran.')->group(function () {
+            Route::prefix('{id}/matkul')->name('matkul.')->group(function () {
+                Route::get('/', [AngkatanMatkulController::class, 'index'])->name('index');
+                Route::get('/{kurikulum_id}/get-matkul', [AngkatanMatkulController::class, 'getMatkul'])->name('getMatkul');
+                Route::get('/{matkul_id}/get-rombel', [AngkatanMatkulController::class, 'getRombel'])->name('getRombel');
+                Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
+                Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
+                Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
+                Route::put('/{matkul_id}', [AngkatanMatkulController::class, 'update'])->name('update');
+            });
+        });
+
         //? Semester
         Route::prefix('semester')->name('semester.')->group(function () {
             Route::get('{tahun_ajaran_id}/data', [KelolaSemesterController::class, 'data'])->name('data');
@@ -168,12 +181,12 @@ Route::group(['middleware' => ['auth']], function () {
             });
 
             //? Prodi - Matkul
-            Route::prefix('matkul')->name('matkul.')->group(function () {
-                Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
-                Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
-                Route::get('/{id}', [AngkatanMatkulController::class, 'show'])->name('show');
-                Route::put('/{id}', [AngkatanMatkulController::class, 'update'])->name('update');
-            });
+            // Route::prefix('matkul')->name('matkul.')->group(function () {
+            //     Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
+            //     Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
+            //     Route::get('/{id}', [AngkatanMatkulController::class, 'show'])->name('show');
+            //     Route::put('/{id}', [AngkatanMatkulController::class, 'update'])->name('update');
+            // });
         });
 
         //? Rombel

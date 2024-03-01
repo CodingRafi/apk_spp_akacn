@@ -24,6 +24,7 @@ class MatkulAngkatanRequest extends FormRequest
     public function rules()
     {
         $validate =  [
+            'kurikulum_id' => 'required',
             'matkul_id' => 'required',
             'dosen_id' => 'required',
             'ruang_id' => 'required',

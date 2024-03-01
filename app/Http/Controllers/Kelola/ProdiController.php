@@ -63,7 +63,7 @@ class ProdiController extends Controller
     public function store(Request $request)
     {
         $request->validate(['nama' => 'required']);
-        Prodi::create(['nama' => $request->nama]);
+        Prodi::create(['id' => generateUuid(), 'nama' => $request->nama]);
         return redirect()->route('data-master.prodi.index')->with('success', 'Berhasil ditambahkan');
     }
 
@@ -108,16 +108,8 @@ class ProdiController extends Controller
             ->where('tahun_pembayaran_lain.prodi_id', $prodi_id)
             ->where('tahun_pembayaran_lain.tahun_ajaran_id', $tahun_ajaran_id)
             ->get();
-        $ruangs = DB::table('ruangs')->get();
-        $dosens = User::role('dosen')
-            ->select('users.*')
-            ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-            ->where('profile_dosens.status', '1')
-            ->get();
-        $kurikulums = Kurikulum::all();
-        $rombel = Rombel::all();
 
-        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'semesterPotongan', 'lainnyaPotongan', 'ruangs', 'dosens', 'kurikulums', 'rombel'));
+        return view('data_master.prodi.angkatan.index', compact('prodi_id', 'tahun_ajaran_id', 'semesterPotongan', 'lainnyaPotongan'));
     }
 
     public function edit($id)
