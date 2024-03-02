@@ -20,11 +20,10 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('template_surat_user', function (Blueprint $table) {
+        Schema::create('template_surat_role', function (Blueprint $table) {
             $table->id();
             $table->foreignId('role_id')->constrained('roles');
-            $table->unsignedBigInteger('template_surat_id');
-            $table->foreign('template_surat_id')->references('id')->on('template_surats');
+            $table->foreignId('template_surat_id')->constrained('template_surats');
             $table->timestamps();
         });
     }

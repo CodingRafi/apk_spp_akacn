@@ -15,7 +15,8 @@ use App\Http\Controllers\Kelola\{
     PotonganController as KelolaPotonganController,
     RombelController,
     RuangController,
-    SemesterController as KelolaSemesterController
+    SemesterController as KelolaSemesterController,
+    TemplateSuratController
 };
 
 use App\Http\Controllers\{
@@ -122,6 +123,10 @@ Route::group(['middleware' => ['auth']], function () {
         //? Ruang
         Route::get('ruang/data', [RuangController::class, 'data'])->name('ruang.data');
         Route::resource('ruang', RuangController::class);
+
+        //? Template Surat
+        Route::get('template-surat/data', [TemplateSuratController::class, 'data'])->name('template-surat.data');
+        Route::resource('template-surat', TemplateSuratController::class);
 
         //? Kuesioner
         Route::get('kuesioner/{id}/change-status', [KuesionerController::class, 'change_status'])->name('kuesioner.change-status');

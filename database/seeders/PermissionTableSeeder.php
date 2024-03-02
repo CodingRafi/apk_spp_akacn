@@ -78,6 +78,11 @@ class PermissionTableSeeder extends Seeder
             'edit_semester',
             'delete_semester',
 
+            'view_template_surat',
+            'add_template_surat',
+            'edit_template_surat',
+            'delete_template_surat',
+
             'view_kuesioner',
             'add_kuesioner',
             'edit_kuesioner',

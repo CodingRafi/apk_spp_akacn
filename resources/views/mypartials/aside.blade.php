@@ -78,6 +78,11 @@
                             </a>
                         </li>
                     @endcan
+                    <li class="menu-item {{ Request::is('data-master/template-surat*') ? 'active' : '' }}">
+                        <a href="{{ route('data-master.template-surat.index') }}" class="menu-link">
+                            <div data-i18n="template-surat">Template Surat</div>
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endcan
