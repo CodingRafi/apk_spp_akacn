@@ -4,8 +4,12 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize">Presensi</h5>
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <h5 class="text-capitalize">Kelola Presensi</h5>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -13,7 +17,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Tahun Ajaran</th>
+                                    <th>Nama</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -27,12 +31,14 @@
 
 @push('js')
     <script>
-        let table;
         $(document).ready(function() {
-            table = $('.table').DataTable({
+            let table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('presensi.dataTahunAjaran') }}',
+                responsive: true,
+                ajax: {
+                    url: '{{ route('kelola-presensi.presensi.getTahunAjaran') }}',
+                },
                 columns: [{
                         "data": "DT_RowIndex"
                     },

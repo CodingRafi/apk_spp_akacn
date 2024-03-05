@@ -83,15 +83,25 @@ class PermissionTableSeeder extends Seeder
             'edit_template_surat',
             'delete_template_surat',
 
+            'view_kelola_krs',
+            'add_kelola_krs',
+            'edit_kelola_krs',
+            'delete_kelola_krs',
+
             'view_kuesioner',
             'add_kuesioner',
             'edit_kuesioner',
             'delete_kuesioner',
 
-            'view_kelola_krs',
-            'add_kelola_krs',
-            'edit_kelola_krs',
-            'delete_kelola_krs',
+            'view_kelola_presensi',
+            'add_kelola_presensi',
+            'edit_kelola_presensi',
+            'delete_kelola_presensi',
+
+            'view_presensi',
+            'add_presensi',
+            'edit_presensi',
+            'delete_presensi',
 
             'view_pembayaran',
             'add_pembayaran',

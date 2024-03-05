@@ -74,6 +74,20 @@ class SemesterController extends Controller
             'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
         ]);
 
+        if ($request->status) {
+            $check = DB::table('tahun_semester_id')
+                ->where('prodi_id', $prodi_id)
+                ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                ->where('status', "1")
+                ->count();
+
+            if ($check > 0) {
+                return response()->json([
+                    'message' => 'Sudah ada semester aktif'
+                ], 400);
+            }
+        }
+
         DB::beginTransaction();
         try {
             DB::table('tahun_semester')->insert([
@@ -83,6 +97,7 @@ class SemesterController extends Controller
                 'jatah_sks' => $request->jatah_sks,
                 'tgl_mulai_krs' => $request->tgl_mulai_krs,
                 'tgl_akhir_krs' => $request->tgl_akhir_krs,
+                'status' => ($request->status ?? "0"),
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
@@ -114,13 +129,30 @@ class SemesterController extends Controller
             'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
         ]);
 
+        $data = DB::table('tahun_semester')->where('id', $id)->first();
+
+        if ($data->status != $request->status && $request->status == "1") {
+            $check = DB::table('tahun_semester')
+                ->where('prodi_id', $prodi_id)
+                ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                ->where('status', "1")
+                ->count();
+
+            if ($check > 0) {
+                return response()->json([
+                    'message' => 'Sudah ada semester aktif'
+                ], 400);
+            }
+        }
+
         DB::table('tahun_semester')->where('id', $id)->update([
             'jatah_sks' => $request->jatah_sks,
             'tgl_mulai_krs' => $request->tgl_mulai_krs,
             'tgl_akhir_krs' => $request->tgl_akhir_krs,
+            'status' => request('status') ?? '0',
             'updated_at' => now()
         ]);
-        
+
         return response()->json([
             'message' => 'Berhasil diubah'
         ], 200);

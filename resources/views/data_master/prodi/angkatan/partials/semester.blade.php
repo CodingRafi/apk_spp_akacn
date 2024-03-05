@@ -55,6 +55,13 @@
                             <label for="tgl_akhir_krs" class="form-label">Tanggal Akhir Pengisian KRS</label>
                             <input type="date" class="form-control" id="tgl_akhir_krs" name="tgl_akhir_krs">
                         </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <div class='form-check form-switch'>
+                                <input class='form-check-input' type='checkbox' role='switch' name='status' value='1'
+                                    id='status'>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary"

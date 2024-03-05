@@ -58,11 +58,17 @@ return [
         '4' => 'Kamis',
         '5' => 'Jumat',
         '6' => 'Sabtu',
-        '7' => 'Minggu'
-    ]
+        '7' => 'Minggu',
+    ],
 
+    'statusPresensi' => [
+        'H' => 'Hadir',
+        '-' => 'Tidak Hadir',
+        'C' => 'Cuti',
+        'I' => 'Izin',
+        'S' => 'Sakit',
+        'A' => 'Alpa',
+    ],
 
-
-
-
+    'max_pertemuan' => 14
 ];

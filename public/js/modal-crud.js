@@ -236,7 +236,11 @@ function loopForm(originalForm, modal) {
                 $(`${modal} [name=${field}]`)
                     .filter(`[value="${originalForm[field]}"]`)
                     .prop("checked", true);
-            } else {
+            } else if($(`${modal} [name=${field}]`).attr("type") == 'time'){
+                // Time
+                $(`${modal} [name=${field}]`).val(originalForm[field].substring(0, 5));
+            }
+             else {
                 if (
                     $(`${modal} [name=${field}]`).length == 0 &&
                     $(`[name="${field}[]"]`).attr("multiple")

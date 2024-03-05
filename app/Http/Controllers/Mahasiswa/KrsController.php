@@ -81,27 +81,18 @@ class KrsController extends Controller
             abort(404);
         }
 
-        $mhs = Auth::user()->mahasiswa;
-
         $tahun_semester = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.id', $tahun_semester_id)
             ->first();
 
-        $data = DB::table('tahun_matkul')
-            ->join('tahun_matkul_rombel', 'tahun_matkul.id', 'tahun_matkul_rombel.tahun_matkul_id')
-            ->where('tahun_matkul.prodi_id', $mhs->prodi_id)
-            ->where('tahun_matkul.tahun_ajaran_id', $mhs->tahun_masuk_id)
-            ->where('tahun_matkul_rombel.rombel_id', $mhs->rombel_id)
-            ->get();
-
         $krs = DB::table('krs')
             ->where('krs.mhs_id', Auth::user()->id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->first();
 
-        return view('mahasiswa.krs.show', compact('tahun_semester', 'data', 'krs'));
+        return view('mahasiswa.krs.show', compact('tahun_semester', 'krs'));
     }
 
     public function getMatkul($tahun_semester_id)
@@ -119,7 +110,7 @@ class KrsController extends Controller
             ->leftJoin('krs_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->leftJoin('krs', function ($join) use ($tahun_semester_id) {
                 $join->on('krs_matkul.krs_id', 'krs.id')
-                    ->where('krs.mhs_id', Auth::user()->id)
+                    ->where('krs.mhs_id', (Auth::user()->id))
                     ->where('krs.tahun_semester_id', $tahun_semester_id);
             })
             ->whereNull('krs_matkul.tahun_matkul_id')

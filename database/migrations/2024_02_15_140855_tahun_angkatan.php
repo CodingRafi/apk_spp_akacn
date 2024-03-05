@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('semester_id');
             $table->foreign('semester_id')->references('id')->on('semesters');
             $table->string('jatah_sks');
+            $table->enum('status', [0, 1]);
             $table->timestamps();
         });
 
@@ -98,16 +99,18 @@ return new class extends Migration
 
         Schema::create('jadwal', function (Blueprint $table) {
             $table->id();
+            $table->enum('type', ['ujian', 'pertemuan'])->default('pertemuan');
+            $table->string('kode')->unique();
             $table->foreignId('pengajar_id')->constrained('users');
             $table->timestamp('presensi_mulai');
             $table->timestamp('presensi_selesai')->nullable();
             $table->date('tgl');
-            $table->timestamp('jam_mulai');
-            $table->timestamp('jam_selesai');
             $table->text('materi');
+            $table->string('nama')->nullable();
+            $table->char('after', 3)->nullable();
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
-            $table->string('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->text('ket')->nullable();
             $table->timestamps();
         });
 
@@ -115,6 +118,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jadwal_id')->constrained('jadwal');
             $table->foreignId('mhs_id')->constrained('users');
+            $table->varchar('status');
             $table->timestamps();
         });
     }

@@ -4,11 +4,14 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <h5 class="text-capitalize">Verifikasi KRS</h5>
-                        </div>
+                <div class="card-header d-flex justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <a href="{{ route('verifikasi-krs.index') }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="text-capitalize mb-0">Verifikasi KRS</h5>
+                    </div>
+                    <div class="d-flex">
+                        
                     </div>
                 </div>
                 <div class="card-body">
@@ -42,6 +45,13 @@
                         </table>
                     </div>
                     <div class="table-responsive mt-3">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="text-capitalize">Mata Kuliah</h5>
+                            <button type="button" class="btn btn-primary"
+                                onclick="addForm('{{ route('krs.store', $data->tahun_semester_id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
+                                Tambah Mata Kuliah
+                            </button>
+                        </div>
                         <table class="table mt-3 table-matkul">
                             <thead>
                                 <tr>
@@ -59,6 +69,10 @@
             </div>
         </div>
     </div>
+    @include('krs.js', [
+        'tahun_semester_id' => $data->tahun_semester_id,
+        'jatah_sks' => $data->jatah_sks,
+    ])
 @endsection
 
 @push('js')
@@ -70,8 +84,7 @@
                 serverSide: true,
                 responsive: true,
                 ajax: '{{ route('verifikasi-krs.dataMatkul', ['id' => request('id')]) }}',
-                columns: [
-                    {
+                columns: [{
                         "data": "kode"
                     },
                     {

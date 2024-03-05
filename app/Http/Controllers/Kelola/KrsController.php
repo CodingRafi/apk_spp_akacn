@@ -65,7 +65,7 @@ class KrsController extends Controller
     public function show($id)
     {
         $data = DB::table('krs')
-            ->select('krs.*', 'b.login_key', 'b.name', 'd.nama as prodi', 'e.name as verify', 'g.nama as semester', 'h.nama as tahun_masuk')
+            ->select('krs.*', 'b.login_key', 'b.name', 'd.nama as prodi', 'e.name as verify', 'g.nama as semester', 'h.nama as tahun_masuk', 'f.id as tahun_semester_id', 'f.jatah_sks', 'krs.status')
             ->join('users as b', 'krs.mhs_id', '=', 'b.id')
             ->join('profile_mahasiswas as c', 'c.user_id', '=', 'b.id')
             ->join('prodi as d', 'c.prodi_id', '=', 'd.id')
@@ -75,6 +75,10 @@ class KrsController extends Controller
             ->join('tahun_ajarans as h', 'c.tahun_masuk_id', '=', 'h.id')
             ->where('krs.id', $id)
             ->first();
+
+        if ($data->status == 'pending') {
+            abort(403);
+        }
 
         return view('kelola.krs.show', compact('data'));
     }

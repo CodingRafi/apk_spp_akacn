@@ -23,26 +23,14 @@ class MatkulAngkatanRequest extends FormRequest
      */
     public function rules()
     {
-        $validate =  [
+        return [
             'kurikulum_id' => 'required',
             'matkul_id' => 'required',
             'dosen_id' => 'required',
             'ruang_id' => 'required',
             'hari' => 'required',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_akhir' => 'required|date_format:H:i|after:jam_mulai',
         ];
-        
-        if ($this->method() == 'POST') {
-            $validate += [
-                'jam_mulai' => 'required|date_format:H:i',
-                'jam_akhir' => 'required|date_format:H:i|after:jam_mulai',
-            ];
-        }else{
-            $validate += [
-                'jam_mulai' => 'required|date_format:H:i:s',
-                'jam_akhir' => 'required|date_format:H:i:s|after:jam_mulai',
-            ];
-        }
-
-        return $validate;
     }
 }

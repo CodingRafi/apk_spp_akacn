@@ -19,7 +19,6 @@
     <ul class="menu-inner py-1" style="overflow-y: auto;overflow-x: hidden">
 
         @can('view_kelola_pembayaran')
-            <!-- Dashboard -->
             <li class="menu-item {{ Request::is('dashboard') ? 'active' : '' }}">
                 <a href="/dashboard" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-home-circle"></i>
@@ -78,11 +77,13 @@
                             </a>
                         </li>
                     @endcan
-                    <li class="menu-item {{ Request::is('data-master/template-surat*') ? 'active' : '' }}">
-                        <a href="{{ route('data-master.template-surat.index') }}" class="menu-link">
-                            <div data-i18n="template-surat">Template Surat</div>
-                        </a>
-                    </li>
+                    @can('view_template_surat')
+                        <li class="menu-item {{ Request::is('data-master/template-surat*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.template-surat.index') }}" class="menu-link">
+                                <div data-i18n="template-surat">Template Surat</div>
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcan
@@ -99,6 +100,13 @@
                         <li class="menu-item {{ Request::is('kelola-presensi/whitelist-ip*') ? 'active' : '' }}">
                             <a href="{{ route('kelola-presensi.whitelist-ip.index') }}" class="menu-link">
                                 <div data-i18n="whitelist-ip">Whitelist IP</div>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('view_kelola_presensi')
+                        <li class="menu-item {{ Request::is('kelola-presensi/presensi*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-presensi.presensi.index') }}" class="menu-link">
+                                <div data-i18n="presensi">Presensi</div>
                             </a>
                         </li>
                     @endcan
@@ -187,11 +195,22 @@
             </li>
         @endcan
 
-        <li class="menu-item {{ Request::is('verifikasi-krs*') ? 'active' : '' }}">
-            <a href="{{ route('verifikasi-krs.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Analytics">Verifikasi KRS</div>
-            </a>
-        </li>
+        @can('view_presensi')
+            <li class="menu-item {{ Request::is('presensi*') ? 'active' : '' }}">
+                <a href="{{ route('presensi.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Presensi</div>
+                </a>
+            </li>
+        @endcan
+
+        @can('view_kelola_krs')
+            <li class="menu-item {{ Request::is('verifikasi-krs*') ? 'active' : '' }}">
+                <a href="{{ route('verifikasi-krs.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Verifikasi KRS</div>
+                </a>
+            </li>
+        @endcan
     </ul>
 </aside>

@@ -61,11 +61,14 @@
             z-index: 9999 !important;
         }
 
-        .nav-tabs:not(.nav-fill):not(.nav-justified) .nav-link, .nav-pills:not(.nav-fill):not(.nav-justified) .nav-link{
+        .nav-tabs:not(.nav-fill):not(.nav-justified) .nav-link,
+        .nav-pills:not(.nav-fill):not(.nav-justified) .nav-link {
             background-color: #fff;
         }
 
-        .nav-tabs .nav-link.active, .nav-tabs .nav-link.active:hover, .nav-tabs .nav-link.active:focus{
+        .nav-tabs .nav-link.active,
+        .nav-tabs .nav-link.active:hover,
+        .nav-tabs .nav-link.active:focus {
             background-color: #eceef1 !important;
         }
     </style>
@@ -181,6 +184,11 @@
     <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('js/modal-crud.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script>
         setFstDropdown();
     </script>
