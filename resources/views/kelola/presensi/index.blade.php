@@ -5,11 +5,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <h5 class="text-capitalize">Kelola Presensi</h5>
-                        </div>
-                    </div>
+                    <h5 class="text-capitalize">Kelola Presensi</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">

@@ -31,7 +31,7 @@ class TahunAjaranController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('data-master.tahun-ajaran.matkul.index', ['id' => $data->id]) . "' class='btn btn-warning mx-2'>Set Mata Kuliah</a>";
+            $options = $options . "<a href='" . route('data-master.tahun-ajaran.matkul.index', ['id' => $data->id]) . "' class='btn btn-info mx-2'>Mata Kuliah</a>";
 
             if (auth()->user()->can('edit_tahun_ajaran')) {
                 $options = $options . "<a href='" . route('data-master.tahun-ajaran.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";

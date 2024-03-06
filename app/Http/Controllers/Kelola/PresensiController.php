@@ -48,7 +48,7 @@ class PresensiController extends Controller
 
         if ($tahunSemester) {
             $jadwals = DB::table('jadwal')
-                ->select('jadwal.*', 'matkuls.nama as matkul')
+                ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
                 ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
                 ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
                 ->where('tahun_semester_id', $tahunSemester->id)

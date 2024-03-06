@@ -70,5 +70,10 @@ return [
         'A' => 'Alpa',
     ],
 
+    'ujian' => [
+        'uts' => 'UTS',
+        'uas' => 'UAS'
+    ],
+
     'max_pertemuan' => 14
 ];

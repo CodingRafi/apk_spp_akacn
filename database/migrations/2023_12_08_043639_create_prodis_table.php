@@ -21,7 +21,6 @@ return new class extends Migration
             $table->uuid('jenjang_id');
             $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('cascade');
             $table->enum('status', [0,1])->default(1);
-            $table->integer('jml_semester');
             $table->timestamps();
         });
     }

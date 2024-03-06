@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jenjang;
 use App\Models\Kurikulum;
 use App\Models\Potongan;
 use App\Models\Prodi;
@@ -57,14 +58,30 @@ class ProdiController extends Controller
 
     public function create()
     {
-        return view('data_master.prodi.form');
+        $jenjangs = Jenjang::all();
+        return view('data_master.prodi.form', compact('jenjangs'));
     }
 
     public function store(Request $request)
     {
-        $request->validate(['nama' => 'required']);
-        Prodi::create(['id' => generateUuid(), 'nama' => $request->nama]);
-        return redirect()->route('data-master.prodi.index')->with('success', 'Berhasil ditambahkan');
+        $request->validate([
+            'nama' => 'required',
+            'kode' => 'required|unique:prodi',
+            'akreditas' => 'required',
+            'jenjang_id' => 'required',
+        ]);
+        
+        Prodi::create([
+            'id' => generateUuid(),
+            'kode' => $request->kode,
+            'nama' => $request->nama,
+            'akreditas' => $request->akreditas,
+            'jenjang_id' => $request->jenjang_id,
+            'status' => $request->status ?? '0'
+        ]);
+
+        return redirect()->route('data-master.prodi.index')
+        ->with('success', 'Berhasil ditambahkan');
     }
 
     public function show(Prodi $prodi)
@@ -115,13 +132,25 @@ class ProdiController extends Controller
     public function edit($id)
     {
         $data = Prodi::findOrFail($id);
-        return view('data_master.prodi.form', compact('data'));
+        $jenjangs = Jenjang::all();
+        return view('data_master.prodi.form', compact('data', 'jenjangs'));
     }
 
     public function update(Request $request, Prodi $prodi)
     {
-        $request->validate(['nama' => 'required']);
-        $prodi->update(['nama' => $request->nama]);
+        $request->validate([
+            'nama' => 'required',
+            'kode' => 'required|unique:prodi,id,' . $prodi->id,
+            'akreditas' => 'required',
+            'jenjang_id' => 'required',
+        ]);
+        $prodi->update([
+            'kode' => $request->kode,
+            'nama' => $request->nama,
+            'akreditas' => $request->akreditas,
+            'jenjang_id' => $request->jenjang_id,
+            'status' => $request->status ?? '0'
+        ]);
         return redirect()->route('data-master.prodi.index')->with('success', 'Berhasil diubah');
     }
 
