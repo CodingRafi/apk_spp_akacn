@@ -17,4 +17,8 @@ class Prodi extends Model
     public function semester(){
         return $this->hasMany(Semester::class, 'prodi_id');
     }
+
+    public function jenjang(){
+        return $this->belongsTo(Jenjang::class, 'jenjang_id');
+    }
 }

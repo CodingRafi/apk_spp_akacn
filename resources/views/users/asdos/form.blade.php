@@ -28,6 +28,20 @@
                 @include('users.default.identitas')
             </div>
             <div class="col-md-6">
+                <div class="mb-3">
+                    <label for="dosen_id" class="form-label">Dosen</label>
+                    <select name="dosen_id" id="dosen_id" class="form-control">
+                        <option value="">Pilih Dosen</option>
+                        @foreach ($dosen as $row)
+                        <option value="{{ $row->id }}" {{ isset($data) ? ($data->asdos->dosen_id == $row->id ? 'selected' : '') : (old('dosen_id') == $row->id ? 'selected' : '') }}>{{ $row->name }} | {{ $row->login_key }}</option>
+                        @endforeach
+                    </select>
+                    @error('dosen_id')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
                 @include('users.default.alamat')
                 @include('users.default.telp')
             </div>

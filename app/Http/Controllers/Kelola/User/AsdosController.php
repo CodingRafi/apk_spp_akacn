@@ -37,9 +37,17 @@ class AsdosController extends Controller
     }
 
     public function update(AsdosRequest $request, $id){
+        $user = User::findOrFail($id);
+        
+        if ($user->asdos->dosen_id != $request->dosen_id) {
+            $cek = DB::table('jadwals')->where('pengajar_id', $id)->count();
+            if ($cek > 0) {
+                return redirect()->back()->with('error', 'Dosen tidak bisa diubah!');
+            }
+        }
+
         DB::beginTransaction();
         try {
-            $user = User::findOrFail($id);
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email,

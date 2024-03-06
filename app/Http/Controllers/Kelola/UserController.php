@@ -55,9 +55,11 @@ class UserController extends Controller
         $datas = User::select('users.*')
             ->when($role == 'mahasiswa', function ($q) {
                 $q->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
-                    ->where('b.prodi_id', request('prodi'))
-                    ->where('b.tahun_masuk_id', request('tahun_ajaran'))
-                    ->where('b.rombel_id', request('rombel'));
+                    ->when(request('prodi') || request('tahun_ajaran') || request('rombel'), function ($q) {
+                        $q->where('b.prodi_id', request('prodi'))
+                            ->orWhere('b.tahun_masuk_id', request('tahun_ajaran'))
+                            ->orWhere('b.rombel_id', request('rombel'));
+                    });
             })
             ->role($role)
             ->get();
@@ -97,7 +99,7 @@ class UserController extends Controller
 
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::all();
-            $prodis = Prodi::all();
+            $prodis = Prodi::where('status', '1')->get();
             $kewarganegaraan = Kewarganegaraan::all();
             $jenis_tinggal = JenisTinggal::all();
             $alat_transportasi = AlatTransportasi::all();
@@ -113,6 +115,14 @@ class UserController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans
+            ];
+        } else if ($role == 'asdos') {
+            $dosen = User::role('dosen')
+                ->join('profile_dosens as b', 'users.id', 'b.user_id')
+                ->where('b.status', '1')
+                ->get();
+            $return += [
+                'dosen' => $dosen
             ];
         }
 
@@ -132,7 +142,10 @@ class UserController extends Controller
 
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::all();
-            $prodis = Prodi::all();
+            $prodis = Prodi::where(function ($q) use ($data) {
+                $q->where('status', '1')
+                    ->orWhere('id', $data->mahasiswa->prodi_id);
+            })->get();
             $kewarganegaraan = Kewarganegaraan::all();
             $jenis_tinggal = JenisTinggal::all();
             $alat_transportasi = AlatTransportasi::all();
@@ -148,6 +161,14 @@ class UserController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans
+            ];
+        } else if ($role == 'asdos') {
+            $dosen = User::role('dosen')
+                ->join('profile_dosens as b', 'users.id', 'b.user_id')
+                ->where('b.status', '1')
+                ->get();
+            $return += [
+                'dosen' => $dosen
             ];
         }
 

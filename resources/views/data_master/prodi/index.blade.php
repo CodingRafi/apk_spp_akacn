@@ -17,6 +17,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
+                                <th>Jenjang</th>
+                                <th>Status</th>
                                 @can('edit_prodi', 'delete_prodi')
                                 <th>Aksi</th>
                                 @endcan
@@ -41,6 +43,8 @@
             columns: [
                         { "data": "DT_RowIndex" },
                         { "data": "nama" },
+                        { "data": "jenjang" },
+                        { "data": "status" },
                         @can('edit_prodi', 'hapus_prodi')
                             { "data": "options" }
                         @endcan

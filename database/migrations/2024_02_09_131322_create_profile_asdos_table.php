@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('profile_asdos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('dosen_id')->constrained('users');
             $table->string('tempat_lahir');
             $table->date('tgl_lahir');
             $table->enum('jk', ['l', 'p']);

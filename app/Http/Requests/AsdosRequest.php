@@ -33,6 +33,7 @@ class AsdosRequest extends FormRequest
                 'agama_id' => 'required',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'dosen_id' => 'required'
             ];
         } else {
             return [
@@ -44,6 +45,7 @@ class AsdosRequest extends FormRequest
                 'agama_id' => 'required',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'dosen_id' => 'required'
             ];
         }
     }

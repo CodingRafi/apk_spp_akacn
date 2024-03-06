@@ -52,7 +52,13 @@ class ProdiController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->addColumn('jenjang', function($datas){
+                return $datas->jenjang->nama;
+            })
+            ->editCOlumn('status', function ($datas) {
+                return $datas->status ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'status'])
             ->make(true);
     }
 
