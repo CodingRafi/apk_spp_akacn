@@ -37,7 +37,30 @@ class PresensiController extends Controller
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
             ->get()
             ->pluck('nama', 'id');
-        return view('kelola.presensi.showTahunAjaran', compact('tahun_ajaran_id', 'tahunSemester'));
+
+        $tahunMatkul = DB::table('tahun_matkul')
+            ->select(
+                'tahun_matkul.id',
+                'matkuls.nama',
+                'tahun_matkul.hari',
+                'tahun_matkul.jam_mulai',
+                'tahun_matkul.jam_akhir'
+            )
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->get()
+            ->map(function ($data) {
+                $data->rombel = DB::table('tahun_matkul_rombel')
+                    ->select('rombels.nama')
+                    ->join('rombels', 'rombels.id', '=', 'tahun_matkul_rombel.rombel_id')
+                    ->where('tahun_matkul_rombel.tahun_matkul_id', $data->id)
+                    ->get()
+                    ->pluck('nama')
+                    ->implode(',');
+                return $data;
+            });
+
+        return view('kelola.presensi.showTahunAjaran', compact('tahun_ajaran_id', 'tahunSemester', 'tahunMatkul'));
     }
 
     public function getJadwal($tahun_ajaran_id)

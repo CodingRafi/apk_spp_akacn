@@ -105,12 +105,12 @@ return new class extends Migration
             $table->timestamp('presensi_mulai');
             $table->timestamp('presensi_selesai')->nullable();
             $table->date('tgl');
-            $table->text('materi');
-            $table->string('nama')->nullable();
-            $table->char('after', 3)->nullable();
+            $table->text('materi')->nullable();
+            $table->string('jenis_ujian')->nullable();
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->text('ket')->nullable();
+            $table->foreignId('created_id')->constrained('users');
             $table->timestamps();
         });
 

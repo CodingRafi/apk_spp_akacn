@@ -45,8 +45,39 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input class="form-control" type="text" id="nama" name="nama" />
+                            <label for="type" class="form-label">Type</label>
+                            <select name="type" id="type" class="form-control">
+                                <option value="">Pilih Type</option>
+                                <option value="ujian">Ujian</option>
+                                <option value="pertemuan">Pertemuan</option>
+                            </select>
+                        </div>
+                        <div class="div-ujian"></div>
+                        <div class="mb-3">
+                            <label for="kode" class="form-label">Kode Presensi</label>
+                            <div class="d-flex" style="gap: 1rem;">
+                                <input class="form-control" type="text" id="kode" name="kode" />
+                                <button class="btn btn-primary btn-generate" onclick="generateCode()"
+                                    type="button">Generate</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
+                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select" onchange="getTotal()">
+                                <option value="">Pilih Pelajaran</option>
+                                @foreach ($tahunMatkul as $matkul)
+                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }} | {{ $matkul->rombel }}
+                                        |
+                                        {{ config('services.hari')[$matkul->hari] }}, {{ $matkul->jam_mulai }} -
+                                        {{ $matkul->jam_akhir }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pengajar_id" class="form-label">Pengajar/Pengawas</label>
+                            <select name="pengajar_id" id="pengajar_id" class="form-control">
+                                <option value="">Pilih Pengajar/Pengawas</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
@@ -56,10 +87,46 @@
             </div>
         </div>
     </div>
+
+    <template id="select-ujian">
+        <div class="mb-3">
+            <label for="jenis" class="form-label">Jenis Ujian</label>
+            <select name="jenis" id="jenis" class="form-control">
+                <option value="">Pilih jenis</option>
+                @foreach (config('services.ujian') as $key => $item)
+                    <option value="{{ $key }}">{{ $item }}</option>
+                @endforeach
+            </select>
+        </div>
+    </template>
+
+    <template id="select-pertemuan">
+        <div class="mb-3">
+            <label for="pengajar_id" class="form-label">Asdos</label>
+            <select name="pengajar_id" id="pengajar_id" class="form-control">
+                <option value="">Pilih Asdos</option>
+            </select>
+        </div>
+    </template>
 @endsection
 
 @push('js')
     <script>
+        function generateCode() {
+            $('#kode').val(generateRandomCode(6));
+        }
+
+        function getPengajar(){
+            
+        }
+
+        $('#type').on('change', function() {
+            $('.div-ujian').empty();
+            if ($(this).val() == 'ujian') {
+                $('.div-ujian').html($('#select-ujian').html());
+            }
+        });
+
         $(document).ready(function() {
             let table = $('.table').DataTable({
                 processing: true,
