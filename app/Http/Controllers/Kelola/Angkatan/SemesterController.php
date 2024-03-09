@@ -75,7 +75,7 @@ class SemesterController extends Controller
         ]);
 
         if ($request->status) {
-            $check = DB::table('tahun_semester_id')
+            $check = DB::table('tahun_semester')
                 ->where('prodi_id', $prodi_id)
                 ->where('tahun_ajaran_id', $tahun_ajaran_id)
                 ->where('status', "1")

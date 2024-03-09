@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers\Kelola;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
+
+class RekapPresensiController extends Controller
+{
+    public function index($tahun_ajaran_id)
+    {
+        $roleUser = getRole();
+
+        $tahun_semester = DB::table('tahun_semester')
+            ->select('tahun_semester.id', 'semesters.nama')
+            ->join('semesters', 'semesters.id', '=', 'tahun_semester.semester_id')
+            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+            ->get();
+
+        $tahun_matkul = DB::table('tahun_matkul')
+            ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->when($roleUser->name == 'dosen', function($q){
+                $q->where('tahun_matkul.dosen_id', auth()->user()->id);
+            })
+            ->get();
+
+        return view('kelola.rekap_presensi.index', compact('tahun_semester', 'tahun_matkul'));
+    }
+
+    public function getRombel(){
+        $rombel = DB::table('tahun_matkul_rombel')
+                    ->select('rombels.id', 'rombels.nama')
+                    ->join('rombels', 'rombels.id', '=', 'tahun_matkul_rombel.rombel_id')
+                    ->where('tahun_matkul_rombel.tahun_matkul_id', request('tahun_matkul_id'))
+                    ->get();
+
+        return response()->json([
+            'data' => $rombel
+        ], 200);
+    }
+
+    public function getPresensi($tahun_ajaran_id)
+    {
+        $mahasiswas = DB::table('users')
+            ->select('users.name', 'users.login_key', 'users.id')
+            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', '=', 'users.id')
+            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
+            ->where('profile_mahasiswas.rombel_id', request('rombel_id'))
+            ->get()
+            ->map(function ($mahasiswa) {
+                $getPresensi = DB::table('jadwal')
+                    ->select('jadwal.id as jadwal_id', 'jadwal_presensi.status', 'jadwal_presensi.mhs_id', 'jadwal.jenis_ujian', 'jadwal.type')
+                    ->leftJoin('jadwal_presensi', function ($join) use ($mahasiswa) {
+                        $join->on('jadwal_presensi.jadwal_id', '=', 'jadwal.id')
+                            ->where('jadwal_presensi.mhs_id', '=', $mahasiswa->id);
+                    })
+                    ->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'))
+                    ->where('jadwal.tahun_semester_id', request('tahun_semester_id'))
+                    ->orderBy('jadwal.created_at', 'ASC')
+                    ->get();
+
+                $presensiPertemuan = $getPresensi->filter(function ($data) {
+                    return $data->type == 'pertemuan';
+                });
+
+                $presensi = [];
+
+                for ($i = 0; $i <= config('services.max_pertemuan'); $i++) {
+                    $presensi[$i] = [
+                        'jadwal_id' => $presensiPertemuan->get($i)->jadwal_id ?? null,
+                        'status' => $presensiPertemuan->get($i)->status ?? null
+                    ];
+                }
+
+                $presensiUjian = $getPresensi->filter(function ($data) {
+                    return $data->type == 'ujian';
+                });
+
+                $resPresensi = [];
+
+                foreach (config('services.ujian') as $key => $jenis) {
+                    $presensiCheck = $presensiUjian->firstWhere('jenis_ujian', $jenis['key']);
+                    $sliceData = array_slice($presensi, $jenis['indexStart'], (7 * ($key + 1)));
+                    $sliceData[] = [
+                        'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
+                        'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
+                        'status' => $presensiCheck ? $presensiCheck->status : null,
+                        'jenis' => $jenis['key']
+                    ];
+                    $resPresensi = array_merge($resPresensi, $sliceData);
+                }
+
+                $mahasiswa->presensi = $resPresensi;
+                return $mahasiswa;
+            });
+
+        return response()->json([
+            'data' => $mahasiswas
+        ], 200);
+    }
+}

@@ -4,11 +4,38 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <a
-                        href="{{ route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
-                            class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                    <h5 class="text-capitalize mb-0">Pertemuan</h5>
+                <div class="card-header d-flex justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <a
+                            href="{{ route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="text-capitalize mb-0">Pertemuan</h5>
+                    </div>
+                    @if (getRole()->name != 'admin')
+                        <div class="d-flex align-items-center" style="gap: 1rem;">
+                            @if ($data->pengajar_id == Auth::user()->id)
+                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
+                                    Jadwal</button>
+                                @if ($data->presensi_mulai && !$data->presensi_selesai)
+                                    <form
+                                        action="{{ route('kelola-presensi.presensi.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('put')
+                                        <button class="btn btn-danger" type="submit">Selesai Pelajaran</button>
+                                    </form>
+                                @elseif(!$data->presensi_mulai)
+                                    <form
+                                        action="{{ route('kelola-presensi.presensi.mulaiJadwal', ['jadwal_id' => $data->id]) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('put')
+                                        <button class="btn btn-primary" type="submit">Mulai Pelajaran</button>
+                                    </form>
+                                @endif
+                            @endif
+                        </div>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -24,11 +51,11 @@
                                 </tr>
                                 <tr>
                                     <td>Presensi Masuk Pengajar</td>
-                                    <td>{{ date('H:i', strtotime($data->presensi_mulai)) }}</td>
+                                    <td>{{ $data->presensi_mulai }}</td>
                                 </tr>
                                 <tr>
                                     <td>Presensi Pulang Pengajar</td>
-                                    <td>{{ date('H:i', strtotime($data->presensi_selesai)) }}</td>
+                                    <td>{{ $data->presensi_selesai }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -108,18 +135,49 @@
                             <select name="status" id="status" class="form-control">
                                 <option value="">Pilih Status</option>
                                 @foreach (config('services.statusPresensi') as $key => $status)
-                                <option value="{{ $key }}">{{ $status }}</option>
+                                    <option value="{{ $key }}">{{ $status }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this, () => get_presensi())">Simpan</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => get_presensi())">Simpan</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    @if ($data->pengajar_id == Auth::user()->id)
+        <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <form action="{{ route('kelola-presensi.presensi.updateJadwal', ['jadwal_id' => $data->id]) }}">
+                        @method('put')
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit Jadwal</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="materi" class="form-label">Materi</label>
+                                <input class="form-control" type="text" name="materi"
+                                    value="{{ $data->materi }}" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ket" class="form-label">Keterangan</label>
+                                <textarea cols="30" rows="10" class="form-control" name="ket">{{ $data->ket }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="submitForm(this.form, this, () => {location.reload()})">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('js')

@@ -11,7 +11,7 @@
                         <h5 class="text-capitalize mb-0">Presensi {{ request('tahun_ajaran_id') }}</h5>
                     </div>
                     <button type="button" class="btn btn-primary"
-                        onclick="addForm('{{ route('data-master.ruang.store') }}', 'Tambah Jadwal', '#jadwal')">
+                        onclick="addForm('{{ route('kelola-presensi.presensi.store', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Jadwal', '#jadwal')">
                         Tambah
                     </button>
                 </div>
@@ -44,15 +44,19 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
+                        <div class="div-alert"></div>
                         <div class="mb-3">
-                            <label for="type" class="form-label">Type</label>
-                            <select name="type" id="type" class="form-control">
-                                <option value="">Pilih Type</option>
-                                <option value="ujian">Ujian</option>
-                                <option value="pertemuan">Pertemuan</option>
+                            <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
+                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select">
+                                <option value="">Pilih Pelajaran</option>
+                                @foreach ($tahunMatkul as $matkul)
+                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }}
+                                        |
+                                        {{ config('services.hari')[$matkul->hari] }}, {{ $matkul->jam_mulai }} -
+                                        {{ $matkul->jam_akhir }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="div-ujian"></div>
                         <div class="mb-3">
                             <label for="kode" class="form-label">Kode Presensi</label>
                             <div class="d-flex" style="gap: 1rem;">
@@ -61,27 +65,36 @@
                                     type="button">Generate</button>
                             </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
-                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select" onchange="getTotal()">
-                                <option value="">Pilih Pelajaran</option>
-                                @foreach ($tahunMatkul as $matkul)
-                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }} | {{ $matkul->rombel }}
-                                        |
-                                        {{ config('services.hari')[$matkul->hari] }}, {{ $matkul->jam_mulai }} -
-                                        {{ $matkul->jam_akhir }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="pengajar_id" class="form-label">Pengajar/Pengawas</label>
-                            <select name="pengajar_id" id="pengajar_id" class="form-control">
-                                <option value="">Pilih Pengajar/Pengawas</option>
-                            </select>
-                        </div>
+                        @if (getRole()->name == 'admin')
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select name="type" id="type" class="form-control">
+                                    <option value="">Pilih Type</option>
+                                    <option value="ujian">Ujian</option>
+                                    <option value="pertemuan">Pertemuan</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="tgl" class="form-label">Tanggal</label>
+                                <input class="form-control" type="date" name="tgl" />
+                            </div>
+                            <div class="div-ujian"></div>
+                            <div class="div-pengajar"></div>
+                        @else
+                            <input type="hidden" name="type" value="pertemuan">
+                            <input type="hidden" name="pengajar_id" value="{{ Auth::user()->id }}">
+                            <div class="mb-3">
+                                <label for="materi" class="form-label">Materi</label>
+                                <input class="form-control" type="text" name="materi" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="ket" class="form-label">Keterangan</label>
+                                <textarea cols="30" rows="10" class="form-control" name="ket"></textarea>
+                            </div>
+                        @endif
                     </div>
                     <div class="modal-footer justify-content-start px-3">
-                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this)">Simpan</button>
+                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this, () => table.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -92,19 +105,16 @@
         <div class="mb-3">
             <label for="jenis" class="form-label">Jenis Ujian</label>
             <select name="jenis" id="jenis" class="form-control">
-                <option value="">Pilih jenis</option>
-                @foreach (config('services.ujian') as $key => $item)
-                    <option value="{{ $key }}">{{ $item }}</option>
-                @endforeach
+                <option value="">Pilih Jenis Ujian</option>
             </select>
         </div>
     </template>
 
-    <template id="select-pertemuan">
+    <template id="select-pengajar">
         <div class="mb-3">
-            <label for="pengajar_id" class="form-label">Asdos</label>
+            <label for="pengajar_id" class="form-label"></label>
             <select name="pengajar_id" id="pengajar_id" class="form-control">
-                <option value="">Pilih Asdos</option>
+                <option value="">Pilih</option>
             </select>
         </div>
     </template>
@@ -115,20 +125,114 @@
         function generateCode() {
             $('#kode').val(generateRandomCode(6));
         }
+        
+        function getTotal() {
+            $('.div-alert').empty();
 
-        function getPengajar(){
-            
+            let id = $('#tahun_matkul_id').val();
+            if (id) {
+                $.ajax({
+                    url: "{{ route('kelola-presensi.presensi.getTotalPelajaran', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}"
+                        .replace(':tahun_matkul_id', id),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.total < 14) {
+                            $('.div-alert').append(
+                                `<div class="alert alert-primary" role="alert">Sudah terjadi ${res.total} kali pelajaran</div>`
+                            );
+                        } else {
+                            $('.div-alert').append(
+                                `<div class="alert alert-danger" role="alert">Sudah terjadi ${res.total} kali pelajaran. Tidak bisa melakukan pelajaran</div>`
+                            )
+                        }
+                    },
+                    error: function(err) {
+                        showAlert(err.responseJSON.message)
+                    }
+                })
+            }
         }
 
-        $('#type').on('change', function() {
-            $('.div-ujian').empty();
-            if ($(this).val() == 'ujian') {
-                $('.div-ujian').html($('#select-ujian').html());
-            }
-        });
+        function getPengajar(tahun_matkul_id) {
+            $.ajax({
+                url: '{{ route('kelola-presensi.presensi.getPengajar', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
+                    .replace(':tahun_matkul_id', tahun_matkul_id),
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#pengajar_id').append(
+                            `<option value="${e.id}">${e.name} | ${e.login_key}</option>`)
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get pengajar');
+                }
+            })
+        }
 
+        function getPengawas() {
+            $.ajax({
+                url: '{{ route('kelola-presensi.presensi.getPengawas') }}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#pengajar_id').append(
+                            `<option value="${e.id}">${e.name} | ${e.login_key}</option>`)
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get pengawas');
+                }
+            })
+        }
+
+        function generateForm() {
+            if ($('#type').val()) {
+                $('.div-ujian, .div-pengajar').empty();
+                $('.div-pengajar').html($('#select-pengajar').html());
+                $('#pengajar_id').empty();
+                if ($('#type').val() == 'ujian') {
+                    $('label[for="pengajar_id"]').text('Pengawas');
+                    $('#pengajar_id').append('<option value="">Pilih Pengawas</option>');
+                    $('.div-ujian').html($('#select-ujian').html());
+                    getPengawas();
+                    getJenisUjian();
+                } else {
+                    $('label[for="pengajar_id"]').text('Asdos');
+                    $('#pengajar_id').append('<option value="">Pilih Asdos</option>');
+                    if ($('#tahun_matkul_id').val()) {
+                        getTotal();
+                        getPengajar($('#tahun_matkul_id').val());
+                    }
+                }
+            }
+        }
+
+        function getJenisUjian(tahun_matkul_id){
+            $.ajax({
+                url: '{{ route('kelola-presensi.presensi.getJenisUjian', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'.replace(':tahun_matkul_id', tahun_matkul_id),
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $('#jenis').empty().append(`<option value="">Pilih Jenis Ujian</option>`);
+                    $.each(res.data, function(i, e) {
+                        $('#jenis').append(`<option value="${e}">${e.toUpperCase()}</option>`)
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get jenis ujian');
+                }
+            })
+        }
+
+        $('#type, #tahun_matkul_id').on('change', generateForm);
+
+        let table;
         $(document).ready(function() {
-            let table = $('.table').DataTable({
+            table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,

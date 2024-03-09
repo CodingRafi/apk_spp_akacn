@@ -14,6 +14,7 @@ use App\Http\Controllers\Kelola\{
     ProdiController,
     PotonganController as KelolaPotonganController,
     PresensiController as KelolaPresensiController,
+    RekapPresensiController,
     RombelController,
     RuangController,
     SemesterController as KelolaSemesterController,
@@ -212,28 +213,30 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('presensi')->name('presensi.')->group(function () {
             Route::get('/', [KelolaPresensiController::class, 'index'])->name('index');
             Route::get('/get-tahun-ajaran', [KelolaPresensiController::class, 'getTahunAjaran'])->name('getTahunAjaran');
+            Route::get('/get-pengawas', [KelolaPresensiController::class, 'getPengawas'])->name('getPengawas');
             Route::get('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'show'])->name('show');
+            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/total', [KelolaPresensiController::class, 'getTotalPelajaran'])->name('getTotalPelajaran');
+            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-pengajar', [KelolaPresensiController::class, 'getPengajar'])->name('getPengajar');
+            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-ujian', [KelolaPresensiController::class, 'getJenisUjian'])->name('getJenisUjian');
+            Route::post('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'store'])->name('store');
             Route::get('/{tahun_ajaran_id}/get-jadwal', [KelolaPresensiController::class, 'getJadwal'])->name('getJadwal');
             Route::get('/{tahun_ajaran_id}/{jadwal_id}', [KelolaPresensiController::class, 'showJadwal'])->name('showJadwal');
+            Route::put('/{jadwal_id}', [KelolaPresensiController::class, 'updateJadwal'])->name('updateJadwal');
+            Route::put('/{jadwal_id}/mulai', [KelolaPresensiController::class, 'mulaiJadwal'])->name('mulaiJadwal');
+            Route::put('/{jadwal_id}/selesai', [KelolaPresensiController::class, 'selesaiJadwal'])->name('selesaiJadwal');
             Route::get('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/get-presensi', [KelolaPresensiController::class, 'getPresensi'])->name('getPresensi');
             Route::get('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}', [KelolaPresensiController::class, 'getPresensiMhs'])->name('getPresensiMhs');
             Route::put('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}', [KelolaPresensiController::class, 'updatePresensiMhs'])->name('updatePresensiMhs');
         });
 
         //? Rekap Presensi
-
-        //? Presensi Dosen
-        Route::middleware(['role:dosen'])->group(function () {
-            Route::get('/', [PresensiController::class, 'index'])->name('index');
-            Route::get('/data-tahun-ajaran', [PresensiController::class, 'dataTahunAjaran'])->name('dataTahunAjaran');
-            Route::get('/{tahun_ajaran_id}/data', [PresensiController::class, 'data'])->name('data');
-            Route::post('/{tahun_ajaran_id}', [PresensiController::class, 'store'])->name('store');
-            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/total', [PresensiController::class, 'getTotalPelajaran'])->name('getTotalPelajaran');
-            Route::get('/{tahun_ajaran_id}', [PresensiController::class, 'show'])->name('show');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}/jadwal', [PresensiController::class, 'detailJadwal'])->name('detailJadwal');
-            Route::put('/{tahun_ajaran_id}/{jadwal_id}/jadwal', [PresensiController::class, 'update'])->name('update');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}/dataPresensi', [PresensiController::class, 'dataPresensi'])->name('dataPresensi');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}/dataChart', [PresensiController::class, 'dataChart'])->name('dataChart');
+        Route::prefix('rekap')->name('rekap.')->group(function () {
+            Route::get('/get-rombel', [RekapPresensiController::class, 'getRombel'])->name('getRombel');
+            Route::prefix('{tahun_ajaran_id}')->group(function () {
+                Route::get('/', [RekapPresensiController::class, 'index'])->name('index');
+                Route::get('/get-presensi', [RekapPresensiController::class, 'getPresensi'])->name('getPresensi');
+                Route::get('/{tahun_matkul_id}', [RekapPresensiController::class, 'show'])->name('show');
+            });
         });
     });
 

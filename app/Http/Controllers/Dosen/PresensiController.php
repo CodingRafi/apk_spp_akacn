@@ -84,35 +84,6 @@ class PresensiController extends Controller
             'kode' => 'required|max:6|min:6',
         ]);
 
-        $cek = $this->getTotalPelajaran($tahun_ajaran_id, $request->tahun_matkul_id);
-        $statusCodeCek = $cek->getStatusCode();
-        $cek = json_decode($cek->getContent());
-
-        //? Validasi jumlah pembelajaran yang sudah terjadi
-        if ($statusCodeCek == 200) {
-            if ($cek->total >= 14) {
-                return response()->json([
-                    'message' => 'Maksimal 14 pelajaran'
-                ], 400);
-            }
-        } else {
-            return response()->json([
-                'message' => $cek->message
-            ], 400);
-        }
-
-        $getTahunSemesterAktif = DB::table('tahun_semester')
-            ->select('id')
-            ->where('status', '1')
-            ->orderBy('id', 'desc')
-            ->first();
-
-        //? Validasi tahun semester
-        if (!$getTahunSemesterAktif) {
-            return response()->json([
-                'message' => 'Tidak ada semester yang aktif'
-            ], 400);
-        }
 
         $getTahunMatkul = DB::table('tahun_matkul')
             ->where('id', $request->tahun_matkul_id)
@@ -124,33 +95,10 @@ class PresensiController extends Controller
             ], 400);
         }
 
-        //? Validasi IP
-        if ($getTahunMatkul->cek_ip == '1') {
-            $whitelist_ip = DB::table('whitelist_ip')->get()->pluck('ip')->toArray();
-            if (!in_array($request->ip(), $whitelist_ip)) {
-                return response()->json([
-                    'message' => 'Jaringan anda tidak valid!'
-                ], 400);
-            }
-        }
+        
+        
 
-        //? Validasi hari
-        $today = Carbon::now();
-        Carbon::setLocale('id');
-        $day = $today->translatedFormat('l');
-
-        if ($day != config('services.hari')[$getTahunMatkul->hari]) {
-            return response()->json([
-                'message' => 'Sekarang bukan hari ' . config('services.hari')[$getTahunMatkul->hari]
-            ], 400);
-        }
-
-        //? Validasi jam
-        if ($today->format('H:i') < $getTahunMatkul->jam_mulai || $today->format('H:i') > $getTahunMatkul->jam_akhir) {
-            return response()->json([
-                'message' => 'Sekarang bukan waktunya pembelajaran'
-            ], 400);
-        }
+        
 
         DB::table('jadwal')->insert([
             'pengajar_id' => Auth::user()->id,
@@ -167,30 +115,6 @@ class PresensiController extends Controller
 
         return response()->json([
             'message' => 'Berhasil disimpan'
-        ], 200);
-    }
-
-    public function getTotalPelajaran($tahun_ajaran_id, $tahun_matkul_id)
-    {
-        $semesterAktif = DB::table('tahun_semester')
-            ->where('tahun_ajaran_id', $tahun_ajaran_id)
-            ->where('status', '1')
-            ->orderBy('id', 'desc')
-            ->first();
-
-        if (!$semesterAktif) {
-            return response()->json([
-                'message' => 'Tidak ada semester aktif'
-            ], 400);
-        }
-
-        $totalJadwal = DB::table('jadwal')
-            ->where('tahun_matkul_id', $tahun_matkul_id)
-            ->where('tahun_semester_id', $semesterAktif->id)
-            ->count();
-
-        return response()->json([
-            'total' => $totalJadwal
         ], 200);
     }
 

@@ -118,6 +118,7 @@ class UserController extends Controller
             ];
         } else if ($role == 'asdos') {
             $dosen = User::role('dosen')
+                ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();
@@ -164,6 +165,7 @@ class UserController extends Controller
             ];
         } else if ($role == 'asdos') {
             $dosen = User::role('dosen')
+                ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();

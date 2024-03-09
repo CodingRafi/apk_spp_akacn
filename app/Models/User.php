@@ -55,4 +55,8 @@ class User extends Authenticatable
     public function petugas(){
         return $this->hasOne(ProfilePetugas::class, 'user_id', 'id');
     }
+
+    public function jadwalMahasiswa(){
+        return $this->belongsToMany(Jadwal::class, 'jadwal_presensi', 'mhs_id', 'jadwal_id')->withPivot('status');
+    }
 }

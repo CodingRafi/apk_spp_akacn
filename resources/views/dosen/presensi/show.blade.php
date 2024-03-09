@@ -255,33 +255,5 @@
 
             chartPresensi(data)
         }
-
-        function getTotal() {
-            $('.div-alert').empty();
-
-            let id = $('#tahun_matkul_id').val();
-            if (id) {
-                $.ajax({
-                    url: "{{ route('kelola-presensi.getTotalPelajaran', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}"
-                        .replace(':tahun_matkul_id', id),
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(res) {
-                        if (res.total < 14) {
-                            $('.div-alert').append(
-                                `<div class="alert alert-primary" role="alert">Sudah terjadi ${res.total} kali pelajaran</div>`
-                            );
-                        } else {
-                            $('.div-alert').append(
-                                `<div class="alert alert-danger" role="alert">Sudah terjadi ${res.total} kali pelajaran. Tidak bisa melakukan pelajaran</div>`
-                            )
-                        }
-                    },
-                    error: function(err) {
-                        showAlert(err.responseJSON.message)
-                    }
-                })
-            }
-        }
     </script>
 @endpush

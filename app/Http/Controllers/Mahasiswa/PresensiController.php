@@ -12,25 +12,22 @@ class PresensiController extends Controller
 {
     public function index()
     {
-        return view('mahasiswa.presensi.index');
+        $user = Auth::user();
+        $mhs = $user->mahasiswa;
+        $tahun_semester = DB::table('tahun_semester')
+            ->select('tahun_semester.id', 'semesters.nama')
+            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
+            ->where('tahun_semester.prodi_id', $mhs->prodi_id)
+            ->get();
+
+        return view('mahasiswa.presensi.index', compact('tahun_semester'));
     }
 
     public function data()
     {
         $user = Auth::user();
-        $mhs = $user->mahasiswa;
-
-        if (!request('tahun_semester_id')) {
-            $tahunSemesterId = DB::table('tahun_semester')
-                ->select('id')
-                ->where('prodi_id', $mhs->prodi_id)
-                ->where('tahun_ajaran_id', $mhs->tahun_masuk_id)
-                ->where('status', '1')
-                ->orderBy('id', 'desc')
-                ->first()->id;
-        } else {
-            $tahunSemesterId = request('tahun_semester_id');
-        }
+        $tahunSemesterId = request('tahun_semester_id');
 
         $krs = DB::table('krs')
             ->select('id')
@@ -54,10 +51,10 @@ class PresensiController extends Controller
 
         $tahunMatkulId = $krsMatkul->pluck('tahun_matkul_id');
         $jadwal = DB::table('jadwal')
-            ->select('jadwal.id', 'jadwal_presensi.status', 'jadwal.tahun_matkul_id')
-            ->leftJoin('jadwal_presensi', function ($join) {
+            ->select('jadwal.id as jadwal_id', 'jadwal_presensi.status', 'jadwal.jenis_ujian', 'jadwal.type', 'jadwal.tahun_matkul_id')
+            ->leftJoin('jadwal_presensi', function ($join) use ($user) {
                 $join->on('jadwal.id', 'jadwal_presensi.jadwal_id')
-                    ->where('jadwal_presensi.mhs_id', Auth::user()->id);
+                    ->where('jadwal_presensi.mhs_id', $user->id);
             })
             ->where('jadwal.tahun_semester_id', $tahunSemesterId)
             ->whereIn('jadwal.tahun_matkul_id', $tahunMatkulId)
@@ -66,31 +63,46 @@ class PresensiController extends Controller
 
         $data = [];
 
-        $maxPertemuan = config('services.max_pertemuan');
         foreach ($krsMatkul as $matkul) {
-            $jadwalMatkul = $jadwal->map(function ($row) use ($matkul) {
-                if ($row->tahun_matkul_id == $matkul->tahun_matkul_id) {
-                    return [
-                        'id' => $row->id,
-                        'status' => $row->status
-                    ];
-                }
+            $getPresensi = $jadwal->filter(function ($row) use ($matkul) {
+                return $row->tahun_matkul_id == $matkul->tahun_matkul_id;
             });
+
+            $presensiPertemuan = $getPresensi->filter(function ($data) {
+                return $data->type == 'pertemuan';
+            });
+
+            $presensi = [];
+
+            for ($i = 0; $i <= config('services.max_pertemuan'); $i++) {
+                $presensi[$i] = [
+                    'jadwal_id' => $presensiPertemuan->get($i)->jadwal_id ?? null,
+                    'status' => $presensiPertemuan->get($i)->status ?? null
+                ];
+            }
+
+            $presensiUjian = $getPresensi->filter(function ($data) {
+                return $data->type == 'ujian';
+            });
+
+            $resPresensi = [];
+
+            foreach (config('services.ujian') as $key => $jenis) {
+                $presensiCheck = $presensiUjian->firstWhere('jenis_ujian', $jenis['key']);
+                $sliceData = array_slice($presensi, $jenis['indexStart'], (7 * ($key + 1)));
+                $sliceData[] = [
+                    'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
+                    'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
+                    'status' => $presensiCheck ? $presensiCheck->status : null,
+                    'jenis' => $jenis['key']
+                ];
+                $resPresensi = array_merge($resPresensi, $sliceData);
+            }
 
             $data[$matkul->tahun_matkul_id] = [
                 'matkul' => $matkul->nama,
-                'presensi' => $jadwalMatkul
+                'presensi' => $resPresensi
             ];
-
-            $totalPertemuan = count($data[$matkul->tahun_matkul_id]['presensi']);
-            if ($totalPertemuan < $maxPertemuan) {
-                for ($i=1; $i <= ($maxPertemuan - $totalPertemuan); $i++) {
-                    $data[$matkul->tahun_matkul_id]['presensi'][] = [
-                        'id' => null,
-                        'status' => null
-                    ];
-                }
-            }
         }
 
         return response()->json([
@@ -126,6 +138,12 @@ class PresensiController extends Controller
             }
         }
 
+        if (!$data->presensi_mulai) {
+            return response()->json([
+                'message' => 'Pengajar belum memulai pelajaran'
+            ], 400);
+        }
+
         $user = Auth::user();
         $mhs = $user->mahasiswa;
 
@@ -154,7 +172,6 @@ class PresensiController extends Controller
                 'message' => 'Anda harus mengambil KRS terlebih dahulu'
             ], 400);
         }
-
         //? Validasi KRS matkul
         $krsMatkul = DB::table('krs_matkul')
             ->where('krs_id', $krs->id)
@@ -166,7 +183,7 @@ class PresensiController extends Controller
                 'message' => 'Kode tidak valid!'
             ], 400);
         }
-
+        
         //? Validasi hari
         $today = Carbon::now();
         Carbon::setLocale('id');
@@ -185,10 +202,23 @@ class PresensiController extends Controller
             ], 400);
         }
 
+        $cekSudahPresensi = DB::table('jadwal_presensi')
+                    ->where('jadwal_id', $data->id)
+                    ->where('mhs_id', Auth::user()->id)
+                    ->count();
+
+        if ($cekSudahPresensi > 0) {
+            return response()->json([
+                'message' => 'Anda sudah melakukan presensi!'
+            ], 400);
+        }
+
         DB::table('jadwal_presensi')->insert([
             'jadwal_id' => $data->id,
             'mhs_id' => Auth::user()->id,
-            'status' => 'H'
+            'status' => 'H',
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         return response()->json([

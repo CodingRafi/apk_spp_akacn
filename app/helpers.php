@@ -2,6 +2,7 @@
 
 use App\Models\TahunAjaran;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 use Spatie\Permission\Models\Role;
 
@@ -44,3 +45,13 @@ if (!function_exists('parseDate')) {
         return date("d F Y", strtotime($date));
     }
 }
+
+if (!function_exists('getRole')) {
+
+    function getRole()
+    {
+        return Auth::user()->roles->first();
+    }
+}
+
+

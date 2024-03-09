@@ -71,8 +71,16 @@ return [
     ],
 
     'ujian' => [
-        'uts' => 'UTS',
-        'uas' => 'UAS'
+        [
+            'key' => 'uts',
+            'value' => 'UTS',
+            'indexStart' => 0
+        ],
+        [
+            'key' => 'uas',
+            'value' => 'UAS',
+            'indexStart' => 8
+        ]
     ],
 
     'max_pertemuan' => 14
