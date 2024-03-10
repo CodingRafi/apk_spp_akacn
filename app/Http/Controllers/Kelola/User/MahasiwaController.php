@@ -44,7 +44,6 @@ class MahasiwaController extends Controller
             $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
-                'profile' => $request->path_profile
             ];
 
             if ($request->profile) {
