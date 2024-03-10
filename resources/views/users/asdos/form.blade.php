@@ -1,3 +1,7 @@
+@php
+    $page = isset($page) ? $page : 'form';
+    $role = ($page == 'form') ? request('role') : getRole()->name;
+@endphp
 <div id="tab-main">
     <ul class="nav nav-tabs">
         <li class="nav-item" style="white-space: nowrap;">
@@ -25,12 +29,15 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.identitas')
+                @include('users.default.identitas', [
+                    'role' => $role,
+                    'page' => $page
+                ])
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="dosen_id" class="form-label">Dosen</label>
-                    <select name="dosen_id" id="dosen_id" class="form-control">
+                    <select name="dosen_id" id="dosen_id" class="form-control" {{ $page == 'profile' ? 'disabled' : '' }}>
                         <option value="">Pilih Dosen</option>
                         @foreach ($dosen as $row)
                         <option value="{{ $row->id }}" {{ isset($data) ? ($data->asdos->dosen_id == $row->id ? 'selected' : '') : (old('dosen_id') == $row->id ? 'selected' : '') }}>{{ $row->name }} | {{ $row->login_key }}</option>
@@ -42,14 +49,20 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.alamat')
-                @include('users.default.telp')
+                @include('users.default.alamat',[
+                    'role' => $role
+                ])
+                @include('users.default.telp', [
+                    'role' => $role
+                ])
             </div>
         </div>
     </div>
 
     <div class="tab-pane" id="lainnya" role="tabpanel">
-        @include('users.default.ngajar')
+        @include('users.default.ngajar', [
+            'role' => $role
+        ])
     </div>
 </div>
 

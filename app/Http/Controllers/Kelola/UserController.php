@@ -116,7 +116,7 @@ class UserController extends Controller
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans
             ];
-        } else if ($role == 'asdos') {
+        } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')

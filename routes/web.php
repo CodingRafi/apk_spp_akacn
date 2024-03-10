@@ -36,6 +36,7 @@ use App\Http\Controllers\Kelola\Angkatan\PotonganController;
 use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\Mahasiswa\PotonganController as MahasiswaPotonganController;
 use App\Http\Controllers\Kelola\User\{
+    AdminController,
     AsdosController,
     DosenController,
     MahasiwaController,
@@ -77,6 +78,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{role}/exportPembayaran', [UserController::class, 'exportPembayaran'])->name('exportPembayaran');
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::resource('admin', AdminController::class)->only('update');
         Route::resource('mahasiswa', MahasiwaController::class)->except('index', 'create', 'edit');
         Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
         Route::resource('asdos', AsdosController::class)->except('index', 'create', 'edit');

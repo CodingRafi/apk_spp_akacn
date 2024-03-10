@@ -68,7 +68,7 @@
                                     <th>Nama</th>
                                     @if (request('role') == 'mahasiswa')
                                         <th>NIM</th>
-                                    @elseif(request('role') == 'dosen' || request('role') == 'petugas')
+                                    @elseif(request('role') == 'dosen')
                                         <th>NIP</th>
                                     @elseif(request('role') == 'asdos')
                                         <th>NIDN</th>

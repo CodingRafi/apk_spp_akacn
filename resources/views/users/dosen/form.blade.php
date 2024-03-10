@@ -1,3 +1,7 @@
+@php
+    $page = isset($page) ? $page : 'form';
+    $role = ($page == 'form') ? request('role') : getRole()->name;
+@endphp
 <div id="tab-main">
     <ul class="nav nav-tabs">
         <li class="nav-item" style="white-space: nowrap;">
@@ -28,7 +32,10 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.identitas')
+                @include('users.default.identitas', [
+                    'role' => $role,
+                    'page' => $page
+                ])
                 <div class="mb-3">
                     <label for="nidn" class="form-label">NIDN</label>
                     <input class="form-control @error('nidn') is-invalid @enderror" type="text"
@@ -75,8 +82,12 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.alamat')
-                @include('users.default.telp')
+                @include('users.default.alamat', [
+                    'role' => $role
+                ])
+                @include('users.default.telp', [
+                    'role' => $role
+                ])
                 <div class="mb-3">
                     <label for="status_pernikahan" class="form-label">Status
                         Pernikahan</label>
@@ -107,9 +118,9 @@
                 <div class="mb-3">
                     <label for="nominal_tunjangan" class="form-label">Nominal
                         Tunjangan</label>
-                    <input class="form-control @error('nominal_tunjangan') is-invalid @enderror" type="text"
+                    <input class="form-control @error('nominal_tunjangan') is-invalid @enderror" type="number"
                         value="{{ isset($data) ? $data->dosen->nominal_tunjangan : old('nominal_tunjangan') }}"
-                        id="nominal_tunjangan" placeholder="Nominal Tunjangan" name="nominal_tunjangan" />
+                        id="nominal_tunjangan" placeholder="Nominal Tunjangan" name="nominal_tunjangan" {{ $page == 'profile' ? 'disabled' : '' }} />
                     @error('nominal_tunjangan')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -181,7 +192,9 @@
     </div>
 
     <div class="tab-pane" id="lainnya" role="tabpanel">
-        @include('users.default.ngajar')
+        @include('users.default.ngajar', [
+            'role' => $role
+        ])
     </div>
 </div>
 

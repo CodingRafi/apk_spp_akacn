@@ -37,6 +37,7 @@ class DosenRequest extends FormRequest
                 'npwp' => 'unique:profile_dosens,npwp',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
             ];
         }else{
             $dosen = DB::table('profile_dosens')
@@ -55,6 +56,7 @@ class DosenRequest extends FormRequest
                 'npwp' => 'unique:profile_dosens,npwp,'.$dosen->id,
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
             ];
         }
     }

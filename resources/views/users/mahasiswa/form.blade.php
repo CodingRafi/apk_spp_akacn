@@ -1,3 +1,8 @@
+@php
+    $page = isset($page) ? $page : 'form';
+    $role = ($page == 'form') ? request('role') : getRole()->name;
+@endphp
+
 <div id="tab-main">
     <ul class="nav nav-tabs">
         <li class="nav-item" style="white-space: nowrap;">
@@ -27,7 +32,7 @@
                     <label for="login_key" class="form-label">NIM</label>
                     <input class="form-control @error('login_key') is-invalid @enderror" type="text"
                         value="{{ isset($data) ? $data->login_key : old('login_key') }}" id="login_key"
-                        placeholder="NIM" name="login_key" />
+                        placeholder="NIM" name="login_key" {{ $page == 'profile' ? 'disabled' : '' }} />
                     @error('login_key')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -56,8 +61,13 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.identitas')
-                @include('users.default.telp')
+                @include('users.default.identitas', [
+                    'role' => $role,
+                    'page' => $page
+                ])
+                @include('users.default.telp', [
+                    'role' => $role
+                ])
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
@@ -78,7 +88,9 @@
                         </div>
                     @enderror
                 </div>
-                @include('users.default.alamat')
+                @include('users.default.alamat', [
+                    'role' => $role
+                ])
                 <div class="mb-3">
                     <label for="kelurahan" class="form-label">Kelurahan</label>
                     <input class="form-control @error('kelurahan') is-invalid @enderror" type="text"
@@ -139,7 +151,7 @@
                 <div class="mb-3">
                     <label for="tahun_masuk_id" class="form-label">Tahun Masuk</label>
                     <select class="form-select @error('tahun_masuk_id') is-invalid @enderror" name="tahun_masuk_id"
-                        id="tahun_masuk_id">
+                        id="tahun_masuk_id" {{ $page == 'profile' ? 'disabled' : '' }}>
                         <option value="">Pilih Tahun Masuk</option>
                         @foreach ($tahun_ajarans as $tahun_ajaran)
                             <option value="{{ $tahun_ajaran->id }}"
@@ -157,7 +169,7 @@
                 <div class="mb-3">
                     <label for="prodi_id" class="form-label">Prodi</label>
                     <select class="form-select @error('prodi_id') is-invalid @enderror" name="prodi_id"
-                        id="prodi_id">
+                        id="prodi_id" {{ $page == 'profile' ? 'disabled' : '' }}>
                         <option value="">Pilih Prodi</option>
                         @foreach ($prodis as $prodi)
                             <option value="{{ $prodi->id }}"
@@ -174,7 +186,7 @@
                 <div class="mb-3">
                     <label for="rombel_id" class="form-label">Rombel</label>
                     <select class="form-select @error('rombel_id') is-invalid @enderror" name="rombel_id"
-                        id="rombel_id">
+                        id="rombel_id" {{ $page == 'profile' ? 'disabled' : '' }}>
                         <option value="">Pilih Rombel</option>
                     </select>
                     @error('rombel_id')

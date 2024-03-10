@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class PetugasController extends Controller
 {
@@ -15,12 +16,18 @@ class PetugasController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = User::create([
+            $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'login_key' => $request->email,
                 'password' => Hash::make('000000')
-            ]);
+            ];
+
+            if ($request->ttd) {
+                $dataRequestUser['ttd'] = $request->ttd->store('ttd');
+            }
+
+            $user = User::create($dataRequestUser);
 
             $user->assignRole('petugas');
 
@@ -37,24 +44,50 @@ class PetugasController extends Controller
         }
     }
 
-    public function update(PetugasRequest $request, $id){
+    public function update(PetugasRequest $request, $id)
+    {
         DB::beginTransaction();
         try {
+            $role = getRole();
             $user = User::findOrFail($id);
-            $user->update([
+            $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'login_key' => $request->email,
-            ]);
+            ];
 
+            if ($request->profile) {
+                if ($user->profile) {
+                    Storage::delete($user->profile);
+                }
+                $dataRequestUser['profile'] = $request->profile->store('profile');
+            }
+
+            if ($request->ttd) {
+                if ($user->ttd) {
+                    Storage::delete($user->ttd);
+                }
+                $dataRequestUser['ttd'] = $request->ttd->store('ttd');
+            }
+
+            $user->update($dataRequestUser);
+
+            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'profile', 'ttd'];
             $dataRequest = $request->all();
-            $dataRequest = array_diff_key($dataRequest, array_flip(['_token', '_method', 'name', 'email', 'login_key']));
-            $dataRequest['user_id'] = $user->id;
-            $dataRequest['status'] = $request->status ? "1" : "0";
+            if ($role->name != 'admin') {
+                $removeColumn[] = 'status';
+            } else {
+                $dataRequest['status'] = $request->status ? "1" : "0";
+            }
+            $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
             $user->petugas()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.index', ['role' => 'petugas'])->with('success', 'Berhasil diubah');
+            if ($role->name == 'admin') {
+                return redirect()->route('kelola-users.index', ['role' => 'petugas'])->with('success', 'Berhasil diubah');
+            } else {
+                return redirect()->back()->with('success', 'Berhasil diubah');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

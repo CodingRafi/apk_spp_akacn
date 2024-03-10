@@ -32,6 +32,8 @@ class PetugasRequest extends FormRequest
                 'agama_id' => 'required',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'profile' => 'file|mimes:png,jpg,jpeg|max:1024',
+                'ttd' => 'file|mimes:png,jpg,jpeg|max:1024'
             ];
         } else {
             return [
@@ -42,6 +44,8 @@ class PetugasRequest extends FormRequest
                 'agama_id' => 'required',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'profile' => 'file|mimes:png,jpg,jpeg|max:1024',
+                'ttd' => 'file|mimes:png,jpg,jpeg|max:1024',
             ];
         }
     }

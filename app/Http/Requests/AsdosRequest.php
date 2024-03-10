@@ -23,31 +23,34 @@ class AsdosRequest extends FormRequest
      */
     public function rules()
     {
+        $validate = [
+            'name' => 'required',
+            'tempat_lahir' => 'required',
+            'tgl_lahir' => 'required',
+            'agama_id' => 'required',
+            'rt' => 'digits:3',
+            'rw' => 'digits:3',
+            'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
+        ];
+
+        $role = getRole();
+        if ($role->name == 'admin') {
+            $validate += ['dosen_id' => 'required'];
+        }
+
         if ($this->method() == 'POST') {
-            return [
-                'name' => 'required',
-                'email' => 'unique:users,email',
-                'login_key' => 'required|unique:users,login_key',
-                'tempat_lahir' => 'required',
-                'tgl_lahir' => 'required',
-                'agama_id' => 'required',
-                'rt' => 'digits:3',
-                'rw' => 'digits:3',
-                'dosen_id' => 'required'
+            $validate += [
+                'email' => 'required|unique:users,email',
+                'login_key' => 'required|unique:users,login_key'
             ];
         } else {
-            return [
-                'name' => 'required',
-                'email' => 'unique:users,email,' . $this->asdo,
-                'login_key' => 'required|unique:users,login_key,' . $this->asdo,
-                'tempat_lahir' => 'required',
-                'tgl_lahir' => 'required',
-                'agama_id' => 'required',
-                'rt' => 'digits:3',
-                'rw' => 'digits:3',
-                'dosen_id' => 'required'
+            $validate += [
+                'email' => 'required|unique:users,email,' . $this->asdo,
+                'login_key' => 'required|unique:users,login_key,' . $this->asdo
             ];
         }
+
+        return $validate;
     }
 
     public function messages()

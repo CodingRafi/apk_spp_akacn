@@ -3,7 +3,7 @@
         <div class="mb-3">
             <label for="rt" class="form-label">RT</label>
             <input class="form-control @error('rt') is-invalid @enderror" type="number"
-                value="{{ isset($data) ? $data->{request('role')}->rt : old('rt') }}" id="rt" placeholder="rt" name="rt" />
+                value="{{ isset($data) ? $data->{$role}->rt : old('rt') }}" id="rt" placeholder="rt" name="rt" />
             @error('rt')
                 <div class="invalid-feedback d-block">
                     {{ $message }}
@@ -15,7 +15,7 @@
         <div class="mb-3">
             <label for="rw" class="form-label">RW</label>
             <input class="form-control @error('rw') is-invalid @enderror" type="number"
-                value="{{ isset($data) ? $data->{request('role')}->rw : old('rw') }}" id="rw" placeholder="rw"
+                value="{{ isset($data) ? $data->{$role}->rw : old('rw') }}" id="rw" placeholder="rw"
                 name="rw" />
             @error('rw')
                 <div class="invalid-feedback d-block">
@@ -28,7 +28,7 @@
 <div class="mb-3">
     <label for="jalan" class="form-label">Jalan</label>
     <input class="form-control @error('jalan') is-invalid @enderror" type="text"
-        value="{{ isset($data) ? $data->{request('role')}->jalan : old('jalan') }}" id="jalan" placeholder="Jalan"
+        value="{{ isset($data) ? $data->{$role}->jalan : old('jalan') }}" id="jalan" placeholder="Jalan"
         name="jalan" />
     @error('jalan')
         <div class="invalid-feedback d-block">
@@ -41,7 +41,7 @@
         <div class="mb-3">
             <label for="dusun" class="form-label">Dusun</label>
             <input class="form-control @error('dusun') is-invalid @enderror" type="text"
-                value="{{ isset($data) ? $data->{request('role')}->dusun : old('dusun') }}" id="dusun" placeholder="Dusun"
+                value="{{ isset($data) ? $data->{$role}->dusun : old('dusun') }}" id="dusun" placeholder="Dusun"
                 name="dusun" />
             @error('dusun')
                 <div class="invalid-feedback d-block">
@@ -57,7 +57,7 @@
                 <option value="">Pilih wilayah</option>
                 @foreach ($wilayah as $item)
                     <option value="{{ $item->id }}"
-                        {{ isset($data) ? ($data->{request('role')}->wilayah_id == $item->id ? 'selected' : '') : (old('wilayah_id') == $item->id ? 'selected' : '') }}>
+                        {{ isset($data) ? ($data->{$role}->wilayah_id == $item->id ? 'selected' : '') : (old('wilayah_id') == $item->id ? 'selected' : '') }}>
                         {{ $item->nama }}
                     </option>
                 @endforeach
@@ -73,7 +73,7 @@
 <div class="mb-3">
     <label for="kode_pos" class="form-label">Kode Pos</label>
     <input class="form-control @error('kode_pos') is-invalid @enderror" type="text"
-        value="{{ isset($data) ? $data->{request('role')}->kode_pos : old('kode_pos') }}" id="kode_pos" placeholder="Kode Pos"
+        value="{{ isset($data) ? $data->{$role}->kode_pos : old('kode_pos') }}" id="kode_pos" placeholder="Kode Pos"
         name="kode_pos" />
     @error('kode_pos')
         <div class="invalid-feedback d-block">

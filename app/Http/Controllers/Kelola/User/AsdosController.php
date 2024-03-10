@@ -7,6 +7,7 @@ use App\Http\Requests\AsdosRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class AsdosController extends Controller
 {
@@ -37,9 +38,10 @@ class AsdosController extends Controller
     }
 
     public function update(AsdosRequest $request, $id){
+        $role = getRole();
         $user = User::findOrFail($id);
         
-        if ($user->asdos->dosen_id != $request->dosen_id) {
+        if ($role->name == 'admin' && $user->asdos->dosen_id != $request->dosen_id) {
             $cek = DB::table('jadwals')->where('pengajar_id', $id)->count();
             if ($cek > 0) {
                 return redirect()->back()->with('error', 'Dosen tidak bisa diubah!');
@@ -48,20 +50,39 @@ class AsdosController extends Controller
 
         DB::beginTransaction();
         try {
-            $user->update([
+            $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'login_key' => $request->login_key,
-            ]);
+            ];
+
+            if ($request->profile) {
+                if ($user->profile) {
+                    Storage::delete($user->profile);
+                }
+                $dataRequestUser['profile'] = $request->profile->store('profile');
+            }
+
+            $user->update($dataRequestUser);
 
             $dataRequest = $request->all();
-            $dataRequest = array_diff_key($dataRequest, array_flip(['_token', '_method', 'name', 'email', 'login_key']));
-            $dataRequest['user_id'] = $user->id;
-            $dataRequest['status'] = $request->status ? "1" : "0";
+            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'path_profile', 'profile'];
+            $dataRequest = $request->all();
+            if ($role->name != 'admin') {
+                $removeColumn[] = 'dosen_id';
+                $removeColumn[] = 'status';
+            }else{
+                $dataRequest['status'] = $request->status ? "1" : "0";
+            }
+            $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
             $user->asdos()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil diubah');
+            if ($role->name == 'admin') {
+                return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil diubah');
+            }else{
+                return redirect()->back()->with('success', 'Berhasil diubah');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

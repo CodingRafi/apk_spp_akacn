@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Wilayah;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DosenController extends Controller
 {
@@ -16,11 +17,16 @@ class DosenController extends Controller
     {
         DB::beginTransaction();
         try {
+            if ($request->profile) {
+                $request['path_profile'] = $request->profile->store('profile');
+            }
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'login_key' => $request->login_key,
-                'password' => Hash::make('000000')
+                'password' => Hash::make('000000'),
+                'profile' => $request->path_profile
             ]);
 
             $user->assignRole('dosen');
@@ -41,21 +47,41 @@ class DosenController extends Controller
     public function update(DosenRequest $request, $id){
         DB::beginTransaction();
         try {
+            $role = getRole();
             $user = User::findOrFail($id);
-            $user->update([
+
+            $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
                 'login_key' => $request->login_key,
-            ]);
+            ];
 
+            if ($request->profile) {
+                if ($user->profile) {
+                    Storage::delete($user->profile);
+                }
+                $dataRequestUser['profile'] = $request->profile->store('profile');
+            }
+
+            $user->update($dataRequestUser);
+
+            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'profile'];
             $dataRequest = $request->all();
-            $dataRequest = array_diff_key($dataRequest, array_flip(['_token', '_method', 'name', 'email', 'login_key']));
-            $dataRequest['user_id'] = $user->id;
-            $dataRequest['status'] = $request->status ? "1" : "0";
+            if ($role->name != 'admin') {
+                $removeColumn[] = 'tunjangan';
+                $removeColumn[] = 'status';
+            }else{
+                $dataRequest['status'] = $request->status ? "1" : "0";
+            }
+            $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
             $user->dosen()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.index', ['role' => 'dosen'])->with('success', 'Berhasil diubah');
+            if ($role->name == 'admin') {
+                return redirect()->route('kelola-users.index', ['role' => 'dosen'])->with('success', 'Berhasil diubah');
+            }else{
+                return redirect()->back()->with('success', 'Berhasil diubah');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());

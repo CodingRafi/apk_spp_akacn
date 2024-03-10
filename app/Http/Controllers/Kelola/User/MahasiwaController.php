@@ -7,6 +7,7 @@ use App\Http\Requests\MahasiswaRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class MahasiwaController extends Controller
 {
@@ -38,21 +39,46 @@ class MahasiwaController extends Controller
     public function update(MahasiswaRequest $request, $id){
         DB::beginTransaction();
         try {
+            $role = getRole();
             $user = User::findOrFail($id);
-            $user->update([
+            $dataRequestUser = [
                 'name' => $request->name,
                 'email' => $request->email,
-                'login_key' => $request->login_key,
-            ]);
+                'profile' => $request->path_profile
+            ];
 
+            if ($request->profile) {
+                if ($user->profile) {
+                    Storage::delete($user->profile);
+                }
+                $dataRequestUser['profile'] = $request->profile->store('profile');
+            }
+
+            if ($role->name == 'admin') {
+                $dataRequestUser['login_key'] = $request->login_key;
+            }
+
+            $user->update($dataRequestUser);
+
+            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'path_profile', 'profile'];
             $dataRequest = $request->all();
-            $dataRequest = array_diff_key($dataRequest, array_flip(['_token', '_method', 'name', 'email', 'login_key']));
-            $dataRequest['user_id'] = $user->id;
-            $dataRequest['status'] = $request->status ? "1" : "0";
+            if ($role->name != 'admin') {
+                $removeColumn[] = 'status';
+                $removeColumn[] = 'tahun_masuk_id';
+                $removeColumn[] = 'prodi_id';
+                $removeColumn[] = 'rombel_id';
+            }else{
+                $dataRequest['status'] = $request->status ? "1" : "0";
+            }
+            $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
             $user->mahasiswa()->update($dataRequest);
 
             DB::commit();
-            return redirect()->route('kelola-users.index', ['role' => 'mahasiswa'])->with('success', 'Berhasil diubah');
+            if ($role->name == 'admin') {
+                return redirect()->route('kelola-users.index', ['role' => 'mahasiswa'])->with('success', 'Berhasil diubah');
+            }else{
+                return redirect()->back()->with('success', 'Berhasil diubah');
+            }
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
