@@ -1,6 +1,6 @@
 @php
     $page = isset($page) ? $page : 'form';
-    $role = ($page == 'form') ? request('role') : getRole()->name;
+    $role = $page == 'form' ? request('role') : getRole()->name;
 @endphp
 <div id="tab-main">
     <ul class="nav nav-tabs">
@@ -19,9 +19,15 @@
                 <input class="form-control input-pp @error('ttd') is-invalid @enderror" type="file" name="ttd"
                     id="ttd" accept="image/*" />
                 @if (Auth::user()->ttd)
-                    <a href="{{ asset('storage/' . Auth::user()->ttd) }}" class="btn btn-primary" target="_blank">Lihat</a>
+                    <a href="{{ asset('storage/' . Auth::user()->ttd) }}" class="btn btn-primary"
+                        target="_blank">Lihat</a>
                 @endif
             </div>
+            @error('ttd')
+                <div class="invalid-feedback d-block">
+                    {{ $message }}
+                </div>
+            @enderror
         </div>
     </div>
 </div>
