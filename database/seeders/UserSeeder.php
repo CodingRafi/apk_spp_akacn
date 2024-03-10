@@ -28,15 +28,15 @@ class UserSeeder extends Seeder
             ],
             [
                 'role' => 'dosen',
-                'permission' => array_map('strval', range(62, 65))
+                'permission' => array_map('strval', range(62, 66))
             ],
             [
                 'role' => 'asdos',
-                'permission' => []
+                'permission' => array_map('strval', range(62, 66))
             ],
             [
                 'role' => 'mahasiswa',
-                'permission' => array_map('strval', range(66, 77))
+                'permission' => array_map('strval', range(67, 78))
             ]
         ];
 

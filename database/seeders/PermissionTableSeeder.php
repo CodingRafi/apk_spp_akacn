@@ -78,10 +78,10 @@ class PermissionTableSeeder extends Seeder
             'edit_semester',
             'delete_semester',
 
-            'view_template_surat',
-            'add_template_surat',
-            'edit_template_surat',
-            'delete_template_surat',
+            'view_kelola_template_surat',
+            'add_kelola_template_surat',
+            'edit_kelola_template_surat',
+            'delete_kelola_template_surat',
 
             'view_kelola_krs',
             'add_kelola_krs',
@@ -98,6 +98,8 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_presensi',
             'delete_kelola_presensi',
 
+            'view_template_surat',
+
             'view_presensi',
             'add_presensi',
             'edit_presensi',
@@ -111,7 +113,7 @@ class PermissionTableSeeder extends Seeder
             'view_krs',
             'add_krs',
             'edit_krs',
-            'delete_krs'
+            'delete_krs',
         ];
 
         foreach ($permissions as $permission) {

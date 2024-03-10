@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize mb-0">Template Surat</h5>
-                    @can('add_template_surat')
+                    @can('add_kelola_template_surat')
                         <button type="button" class="btn btn-primary"
                             onclick="addForm('{{ route('data-master.template-surat.store') }}', 'Template Surat', '#template_surat')">
                             Tambah
@@ -21,10 +21,10 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     <th>File</th>
+                                    @canany(['edit_kelola_template_surat', 'delete_kelola_template_surat'])
                                     <th>Role</th>
-                                    @can('add_template_surat')
-                                        <th>Aksi</th>
-                                    @endcan
+                                    <th>Aksi</th>
+                                    @endcanany
                                 </tr>
                             </thead>
                         </table>
@@ -34,6 +34,7 @@
         </div>
     </div>
 
+    @can('add_kelola_template_surat')
     <div class="modal fade" id="template_surat" tabindex="-1" aria-labelledby="template_suratLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -68,6 +69,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @push('js')
@@ -88,14 +90,14 @@
                     {
                         "data": "file"
                     },
+                    @canany(['edit_kelola_template_surat', 'delete_kelola_template_surat'])
                     {
                         "data": "role"
                     },
-                    @can('delete_template_surat')
-                        {
-                            "data": "options"
-                        }
-                    @endcan
+                    {
+                        "data": "options"
+                    }                   
+                    @endcanany
                 ],
                 pageLength: 25,
                 responsive: true,

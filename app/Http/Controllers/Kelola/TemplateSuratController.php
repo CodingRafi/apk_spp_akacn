@@ -11,6 +11,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class TemplateSuratController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_kelola_template_surat', ['only' => ['index', 'store']]);
+        $this->middleware('permission:add_kelola_template_surat', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_kelola_template_surat', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_kelola_template_surat', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         $roles = Role::where('name', '!=', 'admin')->get()->pluck('name', 'id');
@@ -19,12 +27,18 @@ class TemplateSuratController extends Controller
 
     public function data()
     {
-        $datas = TemplateSurat::all();
+        $role = getRole();
+        $datas = TemplateSurat::when($role->name != 'admin', function ($q) use ($role) {
+                    $q->whereHas('roles', function ($q) use ($role) {
+                        $q->where('roles.name', $role->name);
+                    });
+                })
+                ->get();
 
         foreach ($datas as $data) {
             $options = '';
 
-            if (auth()->user()->can('edit_template_surat')) {
+            if (auth()->user()->can('edit_kelola_template_surat')) {
                 $options = $options . " <button class='btn btn-warning'
                         onclick='editForm(`" . route('data-master.template-surat.show', $data->id) . "`, `Edit Template Surat`, `#template_surat`)'>
                         <i class='ti-pencil'></i>
@@ -32,7 +46,7 @@ class TemplateSuratController extends Controller
                     </button>";
             }
 
-            if (auth()->user()->can('delete_template_surat')) {
+            if (auth()->user()->can('delete_kelola_template_surat')) {
                 $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.template-surat.destroy', $data->id) . "`)' type='button'>
                                         Hapus
                                     </button>";
@@ -44,7 +58,7 @@ class TemplateSuratController extends Controller
         return DataTables::of($datas)
             ->addIndexColumn()
             ->addColumn('file', function($datas){
-                return '<a href="' . asset('storage/' . $datas->path) . '" target="_blank">Lihat</a>';
+                return '<a href="' . asset('storage/' . $datas->path) . '" target="_blank" class="btn btn-info">Lihat</a>';
             })
             ->addColumn('role', function($datas){
                 return $datas->roles->pluck('name')->implode(', ');

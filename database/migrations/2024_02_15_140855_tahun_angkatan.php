@@ -120,6 +120,18 @@ return new class extends Migration
             $table->string('status');
             $table->timestamps();
         });
+
+        Schema::create('mhs_nilai', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->decimal('presensi', 8, 2);
+            $table->decimal('uts', 8, 2);
+            $table->decimal('uas', 8, 2);
+            $table->foreignId('mutu_id')->constrained('mutu');
+            $table->decimal('nilai_mutu', 8, 2);
+            $table->timestamps();
+        });
     }
 
     /**

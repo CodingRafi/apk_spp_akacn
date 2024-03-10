@@ -25,6 +25,7 @@ use App\Http\Controllers\{
     HomeController,
     DashboardController,
     ProfileController,
+    TemplateSuratController as ControllersTemplateSuratController,
     WhitelistIPController
 };
 use App\Http\Controllers\Dosen\PresensiController;
@@ -304,6 +305,8 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/', [MahasiswaPresensiController::class, 'store'])->name('store');
         });
     });
+
+    Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 });
 
 require __DIR__ . '/auth.php';

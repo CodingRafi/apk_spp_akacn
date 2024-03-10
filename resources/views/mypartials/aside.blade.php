@@ -27,7 +27,8 @@
             </li>
         @endcan
 
-        @can('view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner')
+        @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner', 'view_ruang',
+            'view_kelola_template_surat'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -77,18 +78,20 @@
                             </a>
                         </li>
                     @endcan
-                    @can('view_template_surat')
-                        <li class="menu-item {{ Request::is('data-master/template-surat*') ? 'active' : '' }}">
-                            <a href="{{ route('data-master.template-surat.index') }}" class="menu-link">
-                                <div data-i18n="template-surat">Template Surat</div>
-                            </a>
-                        </li>
+                    @can('view_kelola_template_surat')
+                        @if (getRole()->name == 'admin')
+                            <li class="menu-item {{ Request::is('data-master/template-surat*') ? 'active' : '' }}">
+                                <a href="{{ route('data-master.template-surat.index') }}" class="menu-link">
+                                    <div data-i18n="template-surat">Template Surat</div>
+                                </a>
+                            </li>
+                        @endif
                     @endcan
                 </ul>
             </li>
-        @endcan
+        @endcanany
 
-        @can('view_whitelist_ip')
+        @canAny(['view_whitelist_ip', 'view_kelola_presensi'])
             <li class="menu-item {{ Request::is('kelola-presensi*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -112,9 +115,9 @@
                     @endcan
                 </ul>
             </li>
-        @endcan
+        @endcanAny
 
-        @can('view_potongan', 'view_kelola_pembayaran')
+        @canany(['view_potongan', 'view_kelola_pembayaran', 'view_pembayaran_lainnya'])
             <li class="menu-item {{ Request::is('kelola-pembayaran*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -147,7 +150,7 @@
                     @endcan
                 </ul>
             </li>
-        @endcan
+        @endcanany
 
         @can('view_users')
             <li class="menu-item {{ Request::is('kelola-users*') ? 'active open' : '' }}">
@@ -165,6 +168,15 @@
                         </li>
                     @endforeach
                 </ul>
+            </li>
+        @endcan
+
+        @can('view_kelola_krs')
+            <li class="menu-item {{ Request::is('verifikasi-krs*') ? 'active' : '' }}">
+                <a href="{{ route('verifikasi-krs.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Verifikasi KRS</div>
+                </a>
             </li>
         @endcan
 
@@ -204,13 +216,15 @@
             </li>
         @endcan
 
-        @can('view_kelola_krs')
-            <li class="menu-item {{ Request::is('verifikasi-krs*') ? 'active' : '' }}">
-                <a href="{{ route('verifikasi-krs.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-file"></i>
-                    <div data-i18n="Analytics">Verifikasi KRS</div>
-                </a>
-            </li>
+        @can('view_template_surat')
+            @if (getRole()->name != 'admin')
+                <li class="menu-item {{ Request::is('template-surat*') ? 'active' : '' }}">
+                    <a href="{{ route('template-surat.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-file"></i>
+                        <div data-i18n="Analytics">Template Surat</div>
+                    </a>
+                </li>
+            @endif
         @endcan
     </ul>
 </aside>
