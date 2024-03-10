@@ -40,20 +40,20 @@ class PembayaranController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('pembayaran.show', ['type' => $data->type, 'id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $options = $options . "<a href='" . route('pembayaran.show', ['type' => $data->type, 'id' => $data->untuk]) . "' class='btn btn-info mx-2'>Detail</a>";
 
             $data->options = $options;
         }
 
         return DataTables::of($datas)
-            ->addColumn('tagihan', function () {
-                return 'Rp. 0';
+            ->addColumn('tagihan', function ($datas) {
+                return formatRupiah($datas->sisa);
             })
-            ->addColumn('status', function () {
-                return 'Belum Dibayar';
+            ->addColumn('status', function ($datas) {
+                return $datas->sisa > 0 ? '<span class="badge bg-danger text-white">BELUM LUNAS</span>' : '<span class="badge bg-success text-white">LUNAS</span>';
             })
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->rawColumns(['options', 'status'])
             ->make(true);
     }
 
@@ -131,7 +131,7 @@ class PembayaranController extends Controller
                 'ket_mhs' => $request->ket_mhs,
             ];
 
-            $requestParse[($type == 'semester' ? 'tahun_semester_id' : 'tahun_pembayaran_id')] = $id;
+            $requestParse[($type == 'semester' ? 'tahun_semester_id' : 'tahun_pembayaran_lain_id')] = $id;
             $pembayaran = Pembayaran::create($requestParse);
 
             $admin = DB::table('users')->find(1);
@@ -148,24 +148,22 @@ class PembayaranController extends Controller
 
     public function show($type, $id)
     {
-        if ($type == 'semester') {
-            $data = DB::table('tahun_pembayaran')
-                ->select('tahun_pembayaran.*', 'semesters.nama')
-                ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
-                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-                ->where('tahun_pembayaran.tahun_semester_id', $id)
-                ->first();
-        } else {
-            $data = DB::table('tahun_pembayaran_lain')
-                ->select('tahun_pembayaran_lain.*', 'pembayaran_lainnyas.nama')
-                ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
-                ->where('pembayaran_lainnyas.id', $id)
-                ->first();
-        }
-
-        if (!$data) {
-            abort(404);
-        }
+        $data = DB::table('rekap_pembayaran')
+            ->when($type == 'semester', function ($q) {
+                $q->join('tahun_pembayaran', 'tahun_pembayaran.id', 'rekap_pembayaran.untuk')
+                    ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
+                    ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                    ->select('rekap_pembayaran.*', 'tahun_pembayaran.publish', 'tahun_pembayaran.ket');
+            })
+            ->when($type == 'lainnya', function ($q) {
+                $q->join('tahun_pembayaran_lain', 'tahun_pembayaran_lain.id', 'rekap_pembayaran.untuk')
+                    ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+                    ->select('rekap_pembayaran.*', 'tahun_pembayaran_lain.publish', 'tahun_pembayaran_lain.ket');
+            })
+            ->where('rekap_pembayaran.user_id', Auth::user()->id)
+            ->where('rekap_pembayaran.type', $type)
+            ->where('rekap_pembayaran.untuk', $id)
+            ->first();
 
         $potongan = DB::table('potongan_mhs')
             ->select('potongans.nama', 'potongan_tahun_ajaran.type', 'potongan_tahun_ajaran.ket', 'potongan_tahun_ajaran.nominal')
@@ -181,18 +179,7 @@ class PembayaranController extends Controller
             })
             ->get();
 
-        $sudah_dibayar = DB::table('pembayarans')
-            ->where('mhs_id', Auth::user()->id)
-            ->when($type == 'semester', function ($q) use ($id) {
-                return $q->where('tahun_semester_id', $id);
-            })
-            ->when($type == 'lainnya', function ($q) use ($id) {
-                return $q->where('tahun_pembayaran_lain_id', $id);
-            })
-            ->where('status', 'diterima')
-            ->sum('nominal');
-
-        return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'sudah_dibayar'));
+        return view('mahasiswa.pembayaran.show', compact('data', 'potongan'));
     }
 
     public function showPembayaran($type, $id, $pembayaran_id)

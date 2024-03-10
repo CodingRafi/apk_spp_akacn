@@ -29,7 +29,7 @@
                                                 <button class="bg-transparent p-0 border-0 text-secondary"
                                                     data-bs-toggle="modal" data-bs-target="#tagihan">Detail</button>
                                             </div>
-                                            <p class="card-text">{{ formatRupiah($data->nominal) }}</p>
+                                            <p class="card-text">{{ formatRupiah($data->harus) }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -43,7 +43,7 @@
                                                 <button class="bg-transparent p-0 border-0 text-secondary"
                                                     data-bs-toggle="modal" data-bs-target="#potongan">Detail</button>
                                             </div>
-                                            <p class="card-text">{{ formatRupiah($potongan->sum('nominal')) }}</p>
+                                            <p class="card-text">{{ formatRupiah($data->potongan) }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -51,7 +51,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">Sudah dibayar</h5>
-                                            <p class="card-text">{{ formatRupiah($sudah_dibayar) }}</p>
+                                            <p class="card-text">{{ formatRupiah($data->total_pembayaran) }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +59,7 @@
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">Belum dibayar</h5>
-                                            <p class="card-text">{{ formatRupiah($data->nominal - ($potongan->sum('nominal') + $sudah_dibayar)) }}</p>
+                                            <p class="card-text">{{ formatRupiah($data->sisa) }}</p>
                                         </div>
                                     </div>
                                 </div>
