@@ -84,6 +84,7 @@ return new class extends Migration
             $table->foreignId('verify_id')->nullable()->constrained('users');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->enum('status', ['pengajuan', 'diterima', 'ditolak', 'pending'])->default('pending');
+            $table->string('jml_sks_diambil')->default(0);
             $table->text('ket')->nullable();
             $table->date('tgl_mulai_revisi')->nullable();
             $table->date('tgl_akhir_revisi')->nullable();

@@ -54,8 +54,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="jenis_pembayaran" class="form-label">Pembayaran</label>
-                                    <input class="form-control" type="text"
-                                        value="{{ $data->type->nama }}" disabled />
+                                    <input class="form-control" type="text" value="{{ $data->type->nama }}" disabled />
                                 </div>
                                 <div class="mb-3">
                                     <label for="tgl_bayar" class="form-label">Tanggal Bayar</label>
@@ -118,9 +117,13 @@
                                 </div>
                                 @if ($data->verify_id == Auth::user()->id)
                                     <div class="d-flex" style="gap: 1rem;">
-                                        <a class="btn btn-revisi btn-warning"
-                                            href="{{ route('kelola-pembayaran.pembayaran.revisi', $data->id) }}" type="button"
-                                            onclick="return confirm('Apakah anda yakin ingin?')">Revisi</a>
+                                        <form action="{{ route('kelola-pembayaran.pembayaran.revisi', $data->id) }}"
+                                            method="post">
+                                            @method('patch')
+                                            @csrf
+                                            <button class="btn btn-revisi btn-warning" type="submit"
+                                                onclick="return confirm('Apakah anda yakin ingin?')">Revisi</button>
+                                        </form>
                                     </div>
                                 @endif
                             @endif

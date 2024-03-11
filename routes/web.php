@@ -24,6 +24,7 @@ use App\Http\Controllers\Kelola\{
 use App\Http\Controllers\{
     HomeController,
     DashboardController,
+    KrsController as ControllersKrsController,
     ProfileController,
     TemplateSuratController as ControllersTemplateSuratController,
     WhitelistIPController
@@ -254,7 +255,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/export', [KelolaPembayaranController::class, 'export'])->name('export');
             Route::get('/{pembayaran_id}', [KelolaPembayaranController::class, 'show'])->name('show');
             Route::post('/{pembayaran_id}', [KelolaPembayaranController::class, 'store'])->name('store');
-            Route::get('/{pembayaran_id}/revisi', [KelolaPembayaranController::class, 'revisi'])->name('revisi');
+            Route::patch('/{pembayaran_id}/revisi', [KelolaPembayaranController::class, 'revisi'])->name('revisi');
         });
 
         Route::get('pembayaran-lainnya/data', [KelolaPembayaranLainnyaController::class, 'data'])->name('pembayaran-lainnya.data');
@@ -264,9 +265,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('verifikasi-krs')->name('verifikasi-krs.')->group(function () {
         Route::get('/', [KelolaKrsController::class, 'index'])->name('index');
         Route::get('/data', [KelolaKrsController::class, 'data'])->name('data');
-        Route::get('/{id}', [KelolaKrsController::class, 'show'])->name('show');
-        Route::get('/{id}/dataMatkul', [KelolaKrsController::class, 'dataMatkul'])->name('dataMatkul');
-        Route::delete('/{id}/{krs_matkul_id}', [KelolaKrsController::class, 'destroy'])->name('destroy');;
+        Route::get('/{krs_id}', [KelolaKrsController::class, 'show'])->name('show');
+        Route::post('/{krs_id}', [KelolaKrsController::class, 'store'])->name('store');
+        Route::patch('/{krs_id}/revisi', [KelolaKrsController::class, 'revisi'])->name('revisi');
+    });
+    
+    Route::prefix('krs/{tahun_semester_id}')->name('krs.')->group(function () {
+        Route::post('/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
+        Route::get('/dataMatkul/{mhs_id?}', [ControllersKrsController::class, 'dataMatkul'])->name('dataMatkul');
+        Route::get('/getMatkul/{mhs_id?}', [ControllersKrsController::class, 'getMatkul'])->name('getMatkul');
+        Route::get('/getTotalSks/{mhs_id?}', [ControllersKrsController::class, 'getTotalSks'])->name('getTotalSks');
+        Route::post('/{mhs_id?}', [ControllersKrsController::class, 'store'])->name('store');
+        Route::delete('/{tahun_matkul_id}/{mhs_id?}', [ControllersKrsController::class, 'destroy'])->name('destroy');;
     });
 
     Route::middleware(['role:mahasiswa'])->group(function () {
@@ -293,12 +303,12 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/', [KrsController::class, 'index'])->name('index');
             Route::get('dataSemester', [KrsController::class, 'dataSemester'])->name('dataSemester');
             Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
-            Route::get('/{tahun_semester_id}/dataMatkul', [KrsController::class, 'dataMatkul'])->name('dataMatkul');
-            Route::post('/{tahun_semester_id}/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
-            Route::post('/{tahun_semester_id}', [KrsController::class, 'store'])->name('store');
-            Route::delete('/{tahun_semester_id}/{krs_matkul_id}', [KrsController::class, 'destroy'])->name('destroy');
-            Route::get('/{tahun_semester_id}/getMatkul', [KrsController::class, 'getMatkul'])->name('getMatkul');
-            Route::get('/{tahun_semester_id}/getTotalSKS', [KrsController::class, 'getTotalSKS'])->name('getTotalSKS');
+            Route::patch('/{tahun_semester_id}/revisi', [KrsController::class, 'revisi'])->name('revisi');
+            // Route::get('/{tahun_semester_id}/dataMatkul', [KrsController::class, 'dataMatkul'])->name('dataMatkul');
+            // Route::post('/{tahun_semester_id}', [KrsController::class, 'store'])->name('store');
+            // Route::delete('/{tahun_semester_id}/{krs_matkul_id}', [KrsController::class, 'destroy'])->name('destroy');
+            // Route::get('/{tahun_semester_id}/getMatkul', [KrsController::class, 'getMatkul'])->name('getMatkul');
+            // Route::get('/{tahun_semester_id}/getTotalSKS', [KrsController::class, 'getTotalSKS'])->name('getTotalSKS');
         });
 
         Route::prefix('presensi')->name('presensi.')->group(function () {

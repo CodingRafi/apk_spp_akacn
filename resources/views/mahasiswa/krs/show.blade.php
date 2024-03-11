@@ -2,7 +2,27 @@
 
     @section('container')
         @php
-            $check_tgl = $tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d') && ($krs ? $krs->status == 'pending' : true);
+            $validation = true;
+            $dataEmpty = true;
+
+            if ($krs) {
+                $dataEmpty = false;
+                if ($krs->status == 'pending') {
+                    $validation =
+                        $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                        $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
+                        $tahun_semester->status;
+                } elseif ($krs->status == 'ditolak') {
+                    $validation =
+                        $krs->tgl_mulai_revisi <= date('Y-m-d') &&
+                        $krs->tgl_akhir_revisi >= date('Y-m-d') &&
+                        $tahun_semester->status;
+                }else{
+                    $validation = false;
+                }
+            } else {
+                $validation = $tahun_semester->status;
+            }
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -12,23 +32,33 @@
                             <a href="{{ route('krs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                             <h5 class="text-capitalize mb-0">KRS {{ $tahun_semester->nama }}</h5>
                         </div>
-                        @if ($check_tgl)
-                            <div class="d-flex" style="gap: 1rem;">
-                                <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('krs.store', $tahun_semester->id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
-                                    Tambah Mata Kuliah
-                                </button>
-                                <form action="{{ route('krs.ajukan', $tahun_semester->id) }}" class="form-ajukan"
-                                    method="POST">
-                                    @csrf
-                                    <button type="button" class="btn btn-warning btn-ajukan">Ajukan KRS</button>
-                                </form>
-                            </div>
+                        @if ($validation)
+                            @if ($dataEmpty || ($krs->status == 'pending' || $krs->status == 'ditolak'))
+                                <div class="d-flex" style="gap: 1rem;">
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="addForm('{{ route('krs.store', $tahun_semester->id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
+                                        Tambah Mata Kuliah
+                                    </button>
+                                    @if ($dataEmpty || $krs->status == 'pending')
+                                        <form action="{{ route('krs.ajukan', $tahun_semester->id) }}" class="form-ajukan"
+                                            method="POST">
+                                            @csrf
+                                            <button type="button" class="btn btn-warning btn-ajukan">Ajukan KRS</button>
+                                        </form>
+                                        @elseif($krs->status == 'ditolak')
+                                        <form action="{{ route('krs.revisi', $tahun_semester->id) }}" method="post" class="form-revisi">
+                                            @csrf
+                                            @method('patch')
+                                            <button type="button" class="btn btn-warning btn-revisi">Revisi</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @endif
                         @endif
                     </div>
                     <div class="card-body">
-                        @if (!$krs || ($krs && $krs->status == 'pending'))
-                            @if (!$check_tgl)
+                        @if ($dataEmpty || $krs->status == 'pending')
+                            @if (!$validation)
                                 <div class="alert alert-danger">
                                     Bukan waktu pengisian KRS
                                 </div>
@@ -40,6 +70,15 @@
                                     <strong>{{ parseDate($tahun_semester->tgl_akhir_krs) }}</strong>
                                 </div>
                             @endif
+                        @elseif($krs && $krs->status == 'diterima')
+                            <div class="alert alert-success">
+                                KRS ini sudah diterima
+                            </div>
+                        @elseif($krs && $krs->status == 'ditolak')
+                            <div class="alert alert-danger">
+                                KRS ini ditolak. Tanggal revisi : {{ parseDate($krs->tgl_mulai_revisi) }} -
+                                {{ parseDate($krs->tgl_akhir_revisi) }}
+                            </div>
                         @endif
 
                         @if ($krs && $krs->status == 'pengajuan')
@@ -48,16 +87,15 @@
                             </div>
                         @endif
                         <div class="table-responsive">
-                            <table class="table table-pembayaran">
+                            <table class="table table-matkul">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
                                         <th>Kode</th>
                                         <th>Nama</th>
                                         <th>SKS</th>
                                         <th>Dosen</th>
                                         <th>Ruang</th>
-                                        @if ($check_tgl)
+                                        @if ($validation)
                                             <th>Aksi</th>
                                         @endif
                                     </tr>
@@ -69,53 +107,16 @@
             </div>
         </div>
 
-        @if ($check_tgl)
-            @include('krs.js', [
-                'tahun_semester_id' => $tahun_semester->id,
-                'jatah_sks' => $tahun_semester->jatah_sks
-            ])
-        @endif
     @endsection
 
     @push('js')
+        @include('krs.js', [
+            'tahun_semester_id' => $tahun_semester->id,
+            'jatah_sks' => $tahun_semester->jatah_sks,
+            'mhs_id' => Auth::user()->id,
+            'check_tgl' => $validation,
+        ])
         <script>
-            let table;
-
-            $(document).ready(function() {
-                table = $('.table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    responsive: true,
-                    ajax: '{{ route('krs.dataMatkul', ['tahun_semester_id' => $tahun_semester->id]) }}',
-                    columns: [{
-                            "data": "DT_RowIndex"
-                        },
-                        {
-                            "data": "kode"
-                        },
-                        {
-                            "data": "nama"
-                        },
-                        {
-                            "data": "sks_mata_kuliah"
-                        },
-                        {
-                            "data": "dosen"
-                        },
-                        {
-                            "data": "ruang"
-                        },
-                        @if ($check_tgl)
-                            {
-                                "data": "options"
-                            }
-                        @endif
-                    ],
-                    pageLength: 25,
-                    responsive: true,
-                });
-            });
-
             $('.btn-ajukan').on('click', function() {
                 Swal.fire({
                     title: "Apakah anda yakin ingin mengajukan KRS?",
@@ -129,6 +130,23 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $('.form-ajukan').submit()
+                    }
+                });
+            })
+
+            $('.btn-revisi').on('click', function() {
+                Swal.fire({
+                    title: "Apakah anda yakin ingin merevisi KRS?",
+                    text: "Klik 'Ya' jika anda yakin",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya",
+                    cancelButtonText: "Tidak",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('.form-revisi').submit()
                     }
                 });
             })

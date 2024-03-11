@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\KrsController as ControllersKrsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -10,6 +11,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KrsController extends Controller
 {
+    protected $krsController;
+
+    public function __construct(ControllersKrsController $krsController)
+    {
+        $this->krsController = $krsController;
+    }
+
     public function index()
     {
         return view('mahasiswa.krs.index');
@@ -19,8 +27,9 @@ class KrsController extends Controller
     {
         $mhs = Auth::user()->mahasiswa;
         $datas = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs')
+            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'krs.jml_sks_diambil', 'krs.status')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->leftJoin('krs', 'krs.tahun_semester_id', 'tahun_semester.id')
             ->where('tahun_semester.prodi_id', $mhs->prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
             ->get();
@@ -38,51 +47,45 @@ class KrsController extends Controller
             ->addColumn('tgl_pengisian', function ($datas) {
                 return parseDate($datas->tgl_mulai_krs) . ' s.d ' . parseDate($datas->tgl_akhir_krs);
             })
+            ->editColumn('jatah_sks', function ($datas) {
+                return $datas->jatah_sks . ' SKS';
+            })
             ->addColumn('sks_diambil', function ($datas) {
-                return 0;
+                return ($datas->jml_sks_diambil ?? 0) . ' SKS';
             })
             ->addColumn('status', function ($datas) {
-                return 'Belum Mengisi';
+                $status = '';
+
+                if ($datas->status) {
+                    if ($datas->status == 'pending') {
+                        $status = '<span class="badge bg-warning text-white">SEDANG MENGISI</span>';
+                    } elseif ($datas->status == 'diterima') {
+                        $status = '<span class="badge bg-success text-white">DITERIMA</span>';
+                    } elseif ($datas->status == 'ditolak') {
+                        $status = '<span class="badge bg-danger text-white">DITOLAK</span>';
+                    } else {
+                        $status = '<span class="badge bg-secondary text-white">PENGAJUAN</span>';
+                    }
+                } else {
+                    $status = '<span class="badge bg-warning text-white">BELUM MENGISI</span>';
+                }
+
+                return $status;
             })
-            ->rawColumns(['options'])
+            ->rawColumns(['options', 'status'])
             ->make(true);
-    }
-
-    private function validateTahunSemester($tahun_semester_id)
-    {
-        $mhs = Auth::user()->mahasiswa;
-
-        $data = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs')
-            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->where('tahun_semester.prodi_id', $mhs->prodi_id)
-            ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
-            ->where('tahun_semester.id', $tahun_semester_id)
-            ->first();
-
-        if (!$data) {
-            return [
-                'status' => false,
-                'message' => 'Tidak Boleh Mengakses Tahun Semester ini'
-            ];
-        }
-
-        return [
-            'status' => true,
-            'data' => $data
-        ];
     }
 
     public function show($tahun_semester_id)
     {
-        $validate = $this->validateTahunSemester($tahun_semester_id);
+        $validate = $this->krsController->validateTahunSemester($tahun_semester_id, Auth::user()->id);
 
         if (!$validate['status']) {
             abort(404);
         }
 
         $tahun_semester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs')
+            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'tahun_semester.status')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.id', $tahun_semester_id)
             ->first();
@@ -95,212 +98,8 @@ class KrsController extends Controller
         return view('mahasiswa.krs.show', compact('tahun_semester', 'krs'));
     }
 
-    public function getMatkul($tahun_semester_id)
-    {
-        $validate = $this->validateTahunSemester($tahun_semester_id);
 
-        if (!$validate['status']) {
-            return response()->json($validate, 400);
-        }
-
-        $matkul = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.nama', 'users.name as dosen', 'matkuls.kode', 'matkuls.sks_mata_kuliah')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('users', 'users.id', 'tahun_matkul.dosen_id')
-            ->leftJoin('krs_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->leftJoin('krs', function ($join) use ($tahun_semester_id) {
-                $join->on('krs_matkul.krs_id', 'krs.id')
-                    ->where('krs.mhs_id', (Auth::user()->id))
-                    ->where('krs.tahun_semester_id', $tahun_semester_id);
-            })
-            ->whereNull('krs_matkul.tahun_matkul_id')
-            ->get();
-
-        return response()->json([
-            'data' => $matkul
-        ], 200);
-    }
-
-    public function dataMatkul($tahun_semester_id)
-    {
-        $validate = $this->validateTahunSemester($tahun_semester_id);
-
-        if (!$validate['status']) {
-            return response()->json($validate, 400);
-        }
-
-        $datas = DB::table('krs')
-            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama', 'users.name as dosen', 'matkuls.sks_mata_kuliah', 'tahun_matkul.id as tahun_matkul_id')
-            ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
-            ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('users', 'users.id', 'tahun_matkul.dosen_id')
-            ->where('krs.mhs_id', Auth::user()->id)
-            ->where('krs.tahun_semester_id', $tahun_semester_id)
-            ->get();
-
-
-        foreach ($datas as $data) {
-            $options = "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('krs.destroy', ['tahun_semester_id' => $tahun_semester_id, 'krs_matkul_id' => $data->id]) . "`)'>
-                                                Hapus
-                                            </button>";
-            $data->options = $options;
-        }
-
-        return DataTables::of($datas)
-            ->addIndexColumn()
-            ->addColumn('ruang', function ($datas) {
-                $ruang = DB::table('ruangs')
-                    ->select('ruangs.kapasitas', 'ruangs.nama')
-                    ->join('tahun_matkul_ruang', 'ruangs.id', 'tahun_matkul_ruang.ruang_id')
-                    ->where('tahun_matkul_ruang.tahun_matkul_id', $datas->tahun_matkul_id)
-                    ->get();
-
-                $ruangParse = '';
-                foreach ($ruang as $item) {
-                    $ruangParse .= $item->nama . ' (Kapasitas: ' . $item->kapasitas . ')<br>';
-                }
-
-                return $ruangParse;
-            })
-            ->rawColumns(['options', 'ruang'])
-            ->make(true);
-    }
-
-    private function getOrCreateKRS($tahun_semester_id)
-    {
-        $krs = DB::table('krs')
-            ->where('mhs_id', Auth::user()->id)
-            ->where('tahun_semester_id', $tahun_semester_id)
-            ->first();
-
-        if (!$krs) {
-            $krs = DB::table('krs')
-                ->insertGetId([
-                    'mhs_id' => Auth::user()->id,
-                    'tahun_semester_id' => $tahun_semester_id
-                ]);
-        } else {
-            $krs = $krs->id;
-        }
-
-        return $krs;
-    }
-
-    public function getTotalSKS($tahun_semester_id)
-    {
-        $krs = $this->getOrCreateKRS($tahun_semester_id);
-
-        $sumSKSMatkulDipilih = DB::table('krs_matkul')
-            ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->where('krs_matkul.krs_id', $krs)
-            ->sum('matkuls.sks_mata_kuliah');
-
-        return response()->json([
-            'total' => $sumSKSMatkulDipilih
-        ], 200);
-    }
-
-    public function store(Request $request, $tahun_semester_id)
-    {
-        //? Validate Tahun Semester
-        $validate = $this->validateTahunSemester($tahun_semester_id);
-
-        if (!$validate['status']) {
-            return response()->json($validate, 400);
-        }
-
-        //? Validate Tanggal pengisian KRS
-        $tahun_semester = $validate['data'];
-        if (!($tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d'))) {
-            return response()->json([
-                'message' => 'Tanggal mengisi KRS harus diantara ' . parseDate($tahun_semester->tgl_mulai_krs) . ' s.d ' . parseDate($tahun_semester->tgl_akhir_krs)
-            ], 400);
-        }
-
-        $request->validate([
-            'tahun_matkul_id' => 'required'
-        ], [
-            'tahun_matkul_id.required' => 'Mata Kuliah Tidak Boleh Kosong',
-        ]);
-
-        $krs = $this->getOrCreateKRS($tahun_semester_id);
-
-        //? Validate Max SKS
-        $sumSKSMatkulDipilih = DB::table('krs_matkul')
-            ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->where('krs_matkul.krs_id', $krs)
-            ->sum('matkuls.sks_mata_kuliah');
-
-        $sumSKSMatkulRequest = DB::table('tahun_matkul')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->whereIn('tahun_matkul.id', $request->tahun_matkul_id)
-            ->sum('matkuls.sks_mata_kuliah');
-
-        if (($sumSKSMatkulRequest + $sumSKSMatkulDipilih) > $tahun_semester->jatah_sks) {
-            return response()->json([
-                'message' => 'Total SKS Tidak Boleh Lebih Besar Dari Jatah SKS'
-            ], 400);
-        }
-
-        DB::beginTransaction();
-        try {
-            foreach ($request->tahun_matkul_id as $tahun_matkul_id) {
-                if (!DB::table('krs_matkul')->where('krs_id', $krs)->where('tahun_matkul_id', $tahun_matkul_id)->exists()) {
-                    DB::table('krs_matkul')
-                        ->insert([
-                            'krs_id' => $krs,
-                            'tahun_matkul_id' => $tahun_matkul_id,
-                            'created_at' => now(),
-                            'updated_at' => now()
-                        ]);
-                }
-            }
-            DB::commit();
-            return response()->json([
-                'message' => 'Data Berhasil Di Simpan'
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    public function destroy($tahun_semester_id, $krs_matkul_id)
-    {
-        DB::beginTransaction();
-        try {
-            $cek = DB::table('krs_matkul')
-                ->join('krs', 'krs_matkul.krs_id', 'krs.id')
-                ->where('krs.mhs_id', Auth::user()->id)
-                ->where('krs.tahun_semester_id', $tahun_semester_id)
-                ->where('krs_matkul.id', $krs_matkul_id)
-                ->first();
-
-            if (!$cek) {
-                return response()->json([
-                    'message' => 'Telah terjadi kesalahan!'
-                ], 400);
-            }
-
-            DB::table('krs_matkul')->where('id', $krs_matkul_id)->delete();
-            DB::commit();
-            return response()->json([
-                'message' => 'Berhasil di hapus!'
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    public function ajukan(Request $request, $tahun_semester_id)
+    public function ajukan($tahun_semester_id)
     {
         DB::table('krs')
             ->where('mhs_id', Auth::user()->id)
@@ -309,5 +108,35 @@ class KrsController extends Controller
             ]);
 
         return redirect()->back()->with('success', 'Data Berhasil Di Ajukan');
+    }
+
+    public function revisi($tahun_semester_id)
+    {
+        $data =  DB::table('krs')
+            ->where('mhs_id', Auth::user()->id)
+            ->where('tahun_semester_id', $tahun_semester_id)
+            ->first();
+
+        if (!$data) {
+            return redirect()->back()->with('error', 'Data Tidak Ditemukan');
+        }
+
+        if ($data->status != 'ditolak') {
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
+        }
+        
+        if (!($data->tgl_mulai_revisi <= date('Y-m-d') && $data->tgl_akhir_revisi >= date('Y-m-d'))) {
+            return redirect()->back()->with('error', 'Bukan Tanggal Revisi!');
+        }
+
+        DB::table('krs')
+            ->where('mhs_id', Auth::user()->id)
+            ->where('tahun_semester_id', $tahun_semester_id)
+            ->update([
+                'status' => 'pengajuan',
+                'verify_id' => null
+            ]);
+
+        return redirect()->back()->with('success', 'Berhasil direvisi!');
     }
 }

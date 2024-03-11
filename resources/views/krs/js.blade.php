@@ -1,3 +1,9 @@
+@php
+    $role = getRole();
+    $urlGetMatkul = $role->name == 'mahasiswa' ? route('krs.getMatkul', $tahun_semester_id) : route('krs.getMatkul', ['tahun_semester_id' => $tahun_semester_id, 'mhs_id' => $mhs_id]);
+    $urlGetTotalSks = $role->name == 'mahasiswa' ? route('krs.getTotalSks', $tahun_semester_id) : route('krs.getTotalSks', ['tahun_semester_id' => $tahun_semester_id, 'mhs_id' => $mhs_id]);
+    $check_tgl = isset($check_tgl) ? $check_tgl : true;
+@endphp
 <div class="modal fade" id="addMatkul" tabindex="-1" aria-labelledby="addMatkulLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -23,7 +29,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary"
-                        onclick="submitForm(this.form, this)">Tambahkan</button>
+                        onclick="submitForm(this.form, this, () => tableMatkul.ajax.reload())">Tambahkan</button>
                 </div>
             </form>
         </div>
@@ -37,7 +43,7 @@
         $('#tahun_matkul_id').empty().attr('disabled', 'disabled');
         $.ajax({
             type: "GET",
-            url: "{{ route('krs.getMatkul', $tahun_semester_id) }}",
+            url: "{{ $urlGetMatkul }}",
             success: function(res) {
                 $.each(res.data, function(i, e) {
                     $('#tahun_matkul_id').append(
@@ -57,7 +63,7 @@
     function getTotalSKS() {
         $.ajax({
             type: "GET",
-            url: "{{ route('krs.getTotalSKS', $tahun_semester_id) }}",
+            url: "{{ $urlGetTotalSks }}",
             success: function(res) {
                 total_sks = parseInt(res.total);
                 $('.sks_diambil').text(res.total);
@@ -81,4 +87,36 @@
             $('#addMatkul .alert').removeClass('alert-danger').addClass('alert-info');
         }
     })
+
+    let tableMatkul;
+    $(document).ready(function() {
+        tableMatkul = $('.table-matkul').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: '{{ route('krs.dataMatkul', ['tahun_semester_id' => $tahun_semester_id, 'mhs_id' => $mhs_id]) }}',
+            columns: [{
+                    "data": "kode"
+                },
+                {
+                    "data": "matkul"
+                },
+                {
+                    "data": "sks_mata_kuliah"
+                },
+                {
+                    "data": "dosen"
+                },
+                {
+                    "data": "ruang"
+                },
+                @if ($check_tgl)
+                {
+                    "data": "options"
+                }
+                @endif
+            ],
+            pageLength: 25,
+        });
+    });
 </script>

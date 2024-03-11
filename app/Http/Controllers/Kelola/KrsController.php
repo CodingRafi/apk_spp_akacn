@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -37,8 +38,8 @@ class KrsController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('verifikasi-krs.show', $data->id) . "' class='btn btn-warning mx-2'>Verifikasi</a>";
             if (auth()->user()->can('edit_kelola_krs')) {
+                $options = $options . "<a href='" . route('verifikasi-krs.show', $data->id) . "' class='btn btn-warning mx-2'>Verifikasi</a>";
             }
 
             $data->options = $options;
@@ -65,7 +66,7 @@ class KrsController extends Controller
     public function show($id)
     {
         $data = DB::table('krs')
-            ->select('krs.*', 'b.login_key', 'b.name', 'd.nama as prodi', 'e.name as verify', 'g.nama as semester', 'h.nama as tahun_masuk', 'f.id as tahun_semester_id', 'f.jatah_sks', 'krs.status')
+            ->select('krs.*', 'b.login_key', 'b.name', 'd.nama as prodi', 'e.name as verify', 'g.nama as semester', 'h.nama as tahun_masuk', 'f.id as tahun_semester_id', 'f.jatah_sks', 'krs.status', 'b.id as mhs_id')
             ->join('users as b', 'krs.mhs_id', '=', 'b.id')
             ->join('profile_mahasiswas as c', 'c.user_id', '=', 'b.id')
             ->join('prodi as d', 'c.prodi_id', '=', 'd.id')
@@ -83,40 +84,43 @@ class KrsController extends Controller
         return view('kelola.krs.show', compact('data'));
     }
 
-    public function dataMatkul($id)
-    {
-        $datas = DB::table('krs_matkul as a')
-            ->select('a.id', 'c.nama as matkul', 'c.sks_mata_kuliah', 'c.kode', 'd.name as dosen', 'a.tahun_matkul_id')
-            ->join('tahun_matkul as b', 'a.tahun_matkul_id', '=', 'b.id')
-            ->join('matkuls as c', 'b.matkul_id', '=', 'c.id')
-            ->join('users as d', 'b.dosen_id', '=', 'd.id')
-            ->where('a.krs_id', $id)
-            ->get();
+    public function store(Request $request, $krs_id)
+    {   
+        $request->validate([
+            'status' => 'required|in:diterima,ditolak',
+            'tgl_mulai' => 'required_if:status,ditolak',
+            'tgl_akhir' => 'required_if:status,ditolak'
+        ]);
 
-        foreach ($datas as $data) {
-            $options = "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('verifikasi-krs.destroy', ['id' => $id, 'krs_matkul_id' => $data->id]) . "`)'>
-                                                                Hapus
-                                                            </button>";
-            $data->options = $options;
+        DB::table('krs')
+            ->where('id', $krs_id)
+            ->update([
+                'status' => $request->status,
+                'verify_id' => Auth::user()->id,
+                'tgl_mulai_revisi' => $request->tgl_mulai,
+                'tgl_akhir_revisi' => $request->tgl_akhir,
+            ]);
+        return redirect()->route('verifikasi-krs.index')->with('success', 'Berhasil disimpan!');
+    }
+
+    public function revisi($krs_id)
+    {
+        $data = DB::table('krs')->where('id', $krs_id)->first();
+        if ($data->status == 'pengajuan' || $data->status == 'pending') {
+            return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
         }
 
-        return DataTables::of($datas)
-            ->addIndexColumn()
-            ->addColumn('ruang', function ($datas) {
-                $ruang = DB::table('ruangs')
-                    ->select('ruangs.kapasitas', 'ruangs.nama')
-                    ->join('tahun_matkul_ruang', 'ruangs.id', 'tahun_matkul_ruang.ruang_id')
-                    ->where('tahun_matkul_ruang.tahun_matkul_id', $datas->tahun_matkul_id)
-                    ->get();
+        if ($data->verify_id != Auth::user()->id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat merevisi ini');
+        }
 
-                $ruangParse = '';
-                foreach ($ruang as $item) {
-                    $ruangParse .= $item->nama . ' (Kapasitas: ' . $item->kapasitas . ')<br>';
-                }
+        DB::table('krs')
+            ->where('id', $krs_id)
+            ->update([
+                'status' => 'pengajuan',
+                'verify_id' => null
+            ]);
 
-                return $ruangParse;
-            })
-            ->rawColumns(['options', 'ruang'])
-            ->make(true);
+        return redirect()->back()->with('success', 'Berhasil direvisi!');
     }
 }
