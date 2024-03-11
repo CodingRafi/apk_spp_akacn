@@ -44,7 +44,7 @@
                         <div class="alert alert-success">
                             KRS ini sudah diterima
                         </div>
-                    @else
+                    @elseif($data->status == 'ditolak')
                         <div class="alert alert-danger">
                             KRS ini ditolak. Tanggal revisi : {{ parseDate($data->tgl_mulai_revisi) }} - {{ parseDate($data->tgl_akhir_revisi) }}
                         </div>

@@ -11,4 +11,8 @@ class Gaji extends Model
 
     protected $guarded = ['id'];
     protected $table = 'gaji';
+
+    public function users(){
+        return $this->belongsTo(User::class);
+    }
 }

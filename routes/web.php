@@ -264,7 +264,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('pembayaran-lainnya', KelolaPembayaranLainnyaController::class);
     });
 
-    Route::resource('kelola-gaji', GajiController::class);
+    Route::prefix('kelola-gaji')->name('kelola-gaji.')->group(function () {
+        Route::get('/', [GajiController::class, 'index'])->name('index');
+        Route::post('/', [GajiController::class, 'store'])->name('store');
+        Route::get('data', [GajiController::class, 'data'])->name('data');
+        Route::get('/{id}', [GajiController::class, 'show'])->name('show');
+        Route::patch('/{id}/publish', [GajiController::class, 'publish'])->name('publish');
+        Route::patch('/{id}/unpublish', [GajiController::class, 'unpublish'])->name('unpublish');
+        Route::get('/{id}/data', [GajiController::class, 'dataDetail'])->name('dataDetail');
+        Route::delete('/{id}', [GajiController::class, 'destroy'])->name('destroy');
+    });
 
     Route::get('setting/data', [SettingController::class, 'data'])->name('setting.data');
     Route::resource('setting', SettingController::class)->only('index', 'show', 'update');

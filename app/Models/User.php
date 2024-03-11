@@ -59,4 +59,8 @@ class User extends Authenticatable
     public function jadwalMahasiswa(){
         return $this->belongsToMany(Jadwal::class, 'jadwal_presensi', 'mhs_id', 'jadwal_id')->withPivot('status');
     }
+
+    public function jadwalPengajar(){
+        return $this->hasMany(Jadwal::class, 'pengajar_id');
+    }
 }

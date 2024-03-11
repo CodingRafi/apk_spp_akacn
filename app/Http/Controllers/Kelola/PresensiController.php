@@ -263,9 +263,22 @@ class PresensiController extends Controller
                 ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
                 ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
                 ->where('tahun_semester_id', $tahunSemester->id)
+                ->when($role->name == 'dosen', function($q){
+                    $asdos = DB::table('users')
+                                    ->select('users.id')
+                                    ->join('profile_asdos', 'profile_asdos.user_id', 'users.id')
+                                    ->where('profile_asdos.dosen_id', Auth::user()->id)
+                                    ->get()
+                                    ->pluck('id')
+                                    ->toArray();
+
+                    $q->where('pengajar_id', Auth::user()->id)
+                        ->orWhere('pengajar_id', $asdos);
+                })
                 ->when($role->name == 'asdos', function ($q) {
                     $q->where('pengajar_id', Auth::user()->id);
                 })
+                ->orderBy('id', 'desc')
                 ->get();
         }
 
