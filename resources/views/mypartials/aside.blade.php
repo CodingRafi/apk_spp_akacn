@@ -216,6 +216,24 @@
             </li>
         @endcan
 
+        @can('view_kelola_gaji')
+            <li class="menu-item {{ Request::is('kelola-gaji*') ? 'active' : '' }}">
+                <a href="{{ route('kelola-gaji.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Kelola Gaji</div>
+                </a>
+            </li>
+        @endcan
+
+        @can('view_setting')
+            <li class="menu-item {{ Request::is('setting*') ? 'active' : '' }}">
+                <a href="{{ route('setting.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Setting</div>
+                </a>
+            </li>
+        @endcan
+
         @can('view_template_surat')
             @if (getRole()->name != 'admin')
                 <li class="menu-item {{ Request::is('template-surat*') ? 'active' : '' }}">

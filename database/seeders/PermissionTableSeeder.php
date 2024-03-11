@@ -83,6 +83,14 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_template_surat',
             'delete_kelola_template_surat',
 
+            'view_kelola_gaji',
+            'add_kelola_gaji',
+            'edit_kelola_gaji',
+            'delete_kelola_gaji',
+
+            'view_setting',
+            'edit_setting',
+
             'view_kelola_krs',
             'add_kelola_krs',
             'edit_kelola_krs',

@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
+    GajiController,
     KrsController as KelolaKrsController,
     KuesionerController,
     KurikulumController,
@@ -18,6 +19,7 @@ use App\Http\Controllers\Kelola\{
     RombelController,
     RuangController,
     SemesterController as KelolaSemesterController,
+    SettingController,
     TemplateSuratController
 };
 
@@ -262,6 +264,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('pembayaran-lainnya', KelolaPembayaranLainnyaController::class);
     });
 
+    Route::resource('kelola-gaji', GajiController::class);
+
+    Route::get('setting/data', [SettingController::class, 'data'])->name('setting.data');
+    Route::resource('setting', SettingController::class)->only('index', 'show', 'update');
+
     Route::prefix('verifikasi-krs')->name('verifikasi-krs.')->group(function () {
         Route::get('/', [KelolaKrsController::class, 'index'])->name('index');
         Route::get('/data', [KelolaKrsController::class, 'data'])->name('data');
@@ -304,11 +311,6 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('dataSemester', [KrsController::class, 'dataSemester'])->name('dataSemester');
             Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
             Route::patch('/{tahun_semester_id}/revisi', [KrsController::class, 'revisi'])->name('revisi');
-            // Route::get('/{tahun_semester_id}/dataMatkul', [KrsController::class, 'dataMatkul'])->name('dataMatkul');
-            // Route::post('/{tahun_semester_id}', [KrsController::class, 'store'])->name('store');
-            // Route::delete('/{tahun_semester_id}/{krs_matkul_id}', [KrsController::class, 'destroy'])->name('destroy');
-            // Route::get('/{tahun_semester_id}/getMatkul', [KrsController::class, 'getMatkul'])->name('getMatkul');
-            // Route::get('/{tahun_semester_id}/getTotalSKS', [KrsController::class, 'getTotalSKS'])->name('getTotalSKS');
         });
 
         Route::prefix('presensi')->name('presensi.')->group(function () {

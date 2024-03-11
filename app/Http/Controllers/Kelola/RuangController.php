@@ -69,14 +69,16 @@ class RuangController extends Controller
             ->make(true);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $data = Ruang::findOrFail($id);
         return response()->json([
             'data' => $data
         ], 200);
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'nama' => 'required',
             'kapasitas' => 'required|min:0'
