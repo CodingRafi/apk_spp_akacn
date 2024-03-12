@@ -10,11 +10,14 @@
                         <h5 class="text-capitalize mb-0">Detail</h5>
                     </div>
                     @if (!$data->status)
-                        <form action="{{ route('kelola-gaji.publish', $data->id) }}" method="post">
-                            @csrf
-                            @method('patch')
-                            <button type="submit" class="btn btn-primary">Publish</button>
-                        </form>
+                        <div class="d-flex align-items-center" style="gap: 1rem;">
+                            <button class="btn btn-warning btn-generate">Generate Ulang</button>
+                            <form action="{{ route('kelola-gaji.publish', $data->id) }}" method="post">
+                                @csrf
+                                @method('patch')
+                                <button type="submit" class="btn btn-primary">Publish</button>
+                            </form>
+                        </div>
                     @else
                         <form action="{{ route('kelola-gaji.unpublish', $data->id) }}" method="post">
                             @csrf
@@ -115,6 +118,41 @@
                 ],
                 pageLength: 25,
             });
+
+            function generate_ulang() {
+                $.LoadingOverlay("show");
+                $.ajax({
+                    url: '{{ route('kelola-gaji.generateUlang', ['id' => request('id')]) }}',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(res) {
+                        $.LoadingOverlay("hide");
+                        showAlert(res.message, 'success');
+                        table.ajax.reload();
+                    },
+                    error: function(err) {
+                        $.LoadingOverlay("hide");
+                        showAlert('Gagal generate ulang', 'error');
+                    }
+                })
+            }
+
+            $('.btn-generate').on('click', function() {
+                Swal.fire({
+                    title: 'Apakah anda yakin akan generate ulang?',
+                    text: 'Klik "Ya" jika setuju, klik "Tidak" jika tidak setuju',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya',
+                    cancelButtonText: 'Tidak'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        generate_ulang();
+                    }
+                });
+            })
         });
     </script>
 @endpush

@@ -140,6 +140,57 @@ class GajiController extends Controller
         return redirect()->back()->with('success', 'Berhasil di unpublish');
     }
 
+    public function generateUlang($id){
+        $gaji = Gaji::findOrFail($id);
+        if ($gaji->status == '1') {
+            return response()->json([
+                'message' => 'Gaji sudah dipublish!'
+            ], 200);
+        }
+
+        
+        $getDefaultFeeTransport = DB::table('settings')->where('id', 1)->first();
+        $defaultFeeTransport = (int) $getDefaultFeeTransport->value;
+        $pengajar = User::role(['dosen', 'asdos'])
+        ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
+        ->leftJoin('profile_dosens', 'profile_dosens.user_id', 'users.id')
+        ->leftJoin('profile_asdos', 'profile_asdos.user_id', 'users.id')
+        ->where(function ($q) {
+            $q->where('profile_dosens.status', '1')
+            ->orWhere('profile_asdos.status', '1');
+        })
+        ->with(['jadwalPengajar' => function ($q) use ($gaji) {
+            $q->where('tgl', '>=', $gaji->tgl_awal)
+            ->where('tgl', '<=', $gaji->tgl_akhir);
+        }])
+        ->get()
+        ->map(function ($data) {
+            $data->total_kehadiran = $data->jadwalPengajar->count();
+            return $data;
+        });
+
+        foreach ($pengajar as $item) {
+            $total_fee_transport = ($defaultFeeTransport * $item->total_kehadiran);
+            $tunjangan = (int) $item->tunjangan ?? 0;
+            DB::table('gaji_user')
+                ->updateOrInsert([
+                    'gaji_id' => $gaji->id,
+                    'user_id' => $item->id,
+                ], [
+                    'tunjangan' => $tunjangan,
+                    'fee_transport' => $defaultFeeTransport,
+                    'total_kehadiran' => $item->total_kehadiran,
+                    'total_fee_transport' => $total_fee_transport,
+                    'total' => $total_fee_transport + $tunjangan,
+                    'updated_at' => now()
+                ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil digenerate ulang!'
+        ], 200);
+    }
+
     public function destroy($id)
     {
         $data = Gaji::findOrFail($id);
