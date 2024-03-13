@@ -8,6 +8,7 @@ use App\Http\Controllers\Kelola\{
     KuesionerController,
     KurikulumController,
     MatkulController,
+    MutuController,
     PembayaranController as KelolaPembayaranController,
     PembayaranLainnyaController as KelolaPembayaranLainnyaController,
     RoleController,
@@ -50,6 +51,7 @@ use App\Http\Controllers\Kelola\UserController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
+use App\Http\Controllers\Pengajar\GajiController as PengajarGajiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,6 +138,10 @@ Route::group(['middleware' => ['auth']], function () {
         //? Template Surat
         Route::get('template-surat/data', [TemplateSuratController::class, 'data'])->name('template-surat.data');
         Route::resource('template-surat', TemplateSuratController::class);
+
+        //? Mutu
+        Route::get('mutu/data', [MutuController::class, 'data'])->name('mutu.data');
+        Route::resource('mutu', MutuController::class);
 
         //? Kuesioner
         Route::get('kuesioner/{id}/change-status', [KuesionerController::class, 'change_status'])->name('kuesioner.change-status');
@@ -266,14 +272,19 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::prefix('kelola-gaji')->name('kelola-gaji.')->group(function () {
         Route::get('/', [GajiController::class, 'index'])->name('index');
-        Route::post('/', [GajiController::class, 'store'])->name('store');
         Route::get('data', [GajiController::class, 'data'])->name('data');
+        Route::post('/', [GajiController::class, 'store'])->name('store');
         Route::get('/{id}', [GajiController::class, 'show'])->name('show');
         Route::get('/{id}/generate-ulang', [GajiController::class, 'generateUlang'])->name('generateUlang');
         Route::patch('/{id}/publish', [GajiController::class, 'publish'])->name('publish');
         Route::patch('/{id}/unpublish', [GajiController::class, 'unpublish'])->name('unpublish');
         Route::get('/{id}/data', [GajiController::class, 'dataDetail'])->name('dataDetail');
         Route::delete('/{id}', [GajiController::class, 'destroy'])->name('destroy');
+    });
+    
+    Route::prefix('gaji')->name('gaji.')->group(function () {
+        Route::get('/', [PengajarGajiController::class, 'index'])->name('index');
+        Route::get('data', [PengajarGajiController::class, 'data'])->name('data');
     });
 
     Route::get('setting/data', [SettingController::class, 'data'])->name('setting.data');

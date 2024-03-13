@@ -78,6 +78,11 @@ class PermissionTableSeeder extends Seeder
             'edit_semester',
             'delete_semester',
 
+            'view_mutu',
+            'add_mutu',
+            'edit_mutu',
+            'delete_mutu',
+
             'view_kelola_template_surat',
             'add_kelola_template_surat',
             'edit_kelola_template_surat',
@@ -106,6 +111,7 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_presensi',
             'delete_kelola_presensi',
 
+            'view_gaji',
             'view_template_surat',
 
             'view_presensi',

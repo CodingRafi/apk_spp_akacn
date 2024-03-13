@@ -16,8 +16,7 @@ return new class extends Migration
         Schema::create('mutu', function (Blueprint $table) {
             $table->id();
             $table->char('nama');
-            $table->decimal('nilai', 8, 2);
-            $table->string('ket');
+            $table->decimal('nilai', 5, 2);
             $table->enum('status', [0, 1]);
             $table->timestamps();
         });

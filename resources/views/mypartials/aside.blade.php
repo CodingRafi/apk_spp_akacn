@@ -28,7 +28,7 @@
         @endcan
 
         @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner', 'view_ruang',
-            'view_kelola_template_surat'])
+            'view_kelola_template_surat', 'view_kelola_mutu'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -75,6 +75,13 @@
                         <li class="menu-item {{ Request::is('data-master/kuesioner*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.kuesioner.index') }}" class="menu-link">
                                 <div data-i18n="kuesioner">Kuesioner</div>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('view_mutu')
+                        <li class="menu-item {{ Request::is('data-master/mutu*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.mutu.index') }}" class="menu-link">
+                                <div data-i18n="mutu">Mutu</div>
                             </a>
                         </li>
                     @endcan
