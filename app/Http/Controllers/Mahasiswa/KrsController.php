@@ -29,7 +29,10 @@ class KrsController extends Controller
         $datas = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'krs.jml_sks_diambil', 'krs.status')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->leftJoin('krs', 'krs.tahun_semester_id', 'tahun_semester.id')
+            ->leftJoin('krs', function ($join) {
+                $join->on('krs.tahun_semester_id', 'tahun_semester.id')
+                    ->where('krs.mhs_id', Auth::user()->id);
+            })
             ->where('tahun_semester.prodi_id', $mhs->prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
             ->get();
@@ -124,7 +127,7 @@ class KrsController extends Controller
         if ($data->status != 'ditolak') {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan!');
         }
-        
+
         if (!($data->tgl_mulai_revisi <= date('Y-m-d') && $data->tgl_akhir_revisi >= date('Y-m-d'))) {
             return redirect()->back()->with('error', 'Bukan Tanggal Revisi!');
         }

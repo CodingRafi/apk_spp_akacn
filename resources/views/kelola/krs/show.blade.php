@@ -76,6 +76,11 @@
                                 <th>:</th>
                                 <th>{{ $data->semester }}</th>
                             </tr>
+                            <tr>
+                                <th>Rombel</th>
+                                <th>:</th>
+                                <th>{{ $data->rombel }}</th>
+                            </tr>
                         </table>
                     </div>
                     <div class="d-flex justify-content-between mt-3">

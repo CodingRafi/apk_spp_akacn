@@ -228,7 +228,10 @@ class RombelController extends Controller
     public function getTahunAjaran()
     {
         $tahun_ajarans = TahunAjaran::select('tahun_ajarans.*')
-            ->leftJoin('rombel_tahun_ajarans', 'rombel_tahun_ajarans.tahun_masuk_id', '=', 'tahun_ajarans.id')
+            ->leftJoin('rombel_tahun_ajarans', function($join){
+                $join->on('rombel_tahun_ajarans.tahun_masuk_id', '=', 'tahun_ajarans.id')
+                    ->where('rombel_tahun_ajarans.rombel_id', request('rombel_id'));
+            })
             ->whereNull('rombel_tahun_ajarans.tahun_masuk_id')
             ->when(request('dosen_pa_id') && request('dosen_pa_id') !== '', function ($query) {
                 $oldData = DB::table('rombel_tahun_ajarans')->where('id', request('dosen_pa_id'))->first();

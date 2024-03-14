@@ -11,7 +11,18 @@ class KrsController extends Controller
 {
     public function validateTahunSemester($tahun_semester_id, $mhs_id = null)
     {
+        $role = getRole();
+
+        if ($role->name == 'admin' && $mhs_id == null) {
+            abort(404);
+        }
+
         $mhs = DB::table('profile_mahasiswas')->where('user_id', $mhs_id)->first();
+
+        if (!$mhs) {
+            abort(404);
+        }
+
         $data = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
@@ -107,18 +118,47 @@ class KrsController extends Controller
             ->make(true);
     }
 
-    public function getMatkul($krs_id)
+    public function getMatkul($tahun_semester_id, $mhs_id = null)
     {
+        $role = getRole();
+
+        if ($role->name == 'mahasiswa') {
+            $mhs_id = Auth::user()->id;
+        }
+
+        $validate = $this->validateTahunSemester($tahun_semester_id, $mhs_id);
+
+        if (!$validate['status']) {
+            return response()->json($validate, 400);
+        }
+
+        $mhs = DB::table('profile_mahasiswas')
+            ->select('profile_mahasiswas.rombel_id')
+            ->where('user_id', $mhs_id)
+            ->first();
+
+        if (!$mhs) {
+            abort(404);
+        }
+
+        $krsMatkul = DB::table('krs')
+            ->select('krs_matkul.tahun_matkul_id')
+            ->join('krs_matkul', 'krs.id', 'krs_matkul.krs_id')
+            ->where('krs.mhs_id', $mhs_id)
+            ->where('krs.tahun_semester_id', $tahun_semester_id)
+            ->get()
+            ->pluck('tahun_matkul_id')
+            ->toArray();
+
         $matkul = DB::table('tahun_matkul')
             ->select('tahun_matkul.id', 'matkuls.nama', 'users.name as dosen', 'matkuls.kode', 'matkuls.sks_mata_kuliah')
+            ->join('tahun_matkul_rombel', function ($join) use ($mhs) {
+                $join->on('tahun_matkul_rombel.tahun_matkul_id', '=', 'tahun_matkul.id')
+                    ->where('tahun_matkul_rombel.rombel_id', '=', $mhs->rombel_id);
+            })
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
             ->join('users', 'users.id', 'tahun_matkul.dosen_id')
-            ->leftJoin('krs_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->leftJoin('krs', function ($join) use ($krs_id) {
-                $join->on('krs_matkul.krs_id', 'krs.id')
-                    ->where('krs.id', $krs_id);
-            })
-            ->whereNull('krs_matkul.tahun_matkul_id')
+            ->whereNotIn('tahun_matkul.id', $krsMatkul)
             ->get();
 
         return response()->json([
@@ -126,12 +166,27 @@ class KrsController extends Controller
         ], 200);
     }
 
-    public function getTotalSks($krs_id)
+    public function getTotalSks($tahun_semester_id, $mhs_id = null)
     {
-        $sumSKSMatkulDipilih = DB::table('krs_matkul')
+        $role = getRole();
+
+        if ($role->name == 'mahasiswa') {
+            $mhs_id = Auth::user()->id;
+        }
+
+        $validate = $this->validateTahunSemester($tahun_semester_id, $mhs_id);
+
+        if (!$validate['status']) {
+            return response()->json($validate, 400);
+        }
+
+        $sumSKSMatkulDipilih = DB::table('krs')
+            ->select('matkuls.sks_mata_kuliah')
+            ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->where('krs_matkul.krs_id', $krs_id)
+            ->where('krs.mhs_id', $mhs_id)
+            ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->sum('matkuls.sks_mata_kuliah');
 
         return response()->json([
@@ -194,11 +249,11 @@ class KrsController extends Controller
 
         //? Validate Max SKS
         $sumSKSMatkulDipilih = DB::table('krs_matkul')
-        ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-        ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-        ->where('krs_matkul.krs_id', $krs->id)
-        ->sum('matkuls.sks_mata_kuliah');
-        
+            ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
+            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->where('krs_matkul.krs_id', $krs->id)
+            ->sum('matkuls.sks_mata_kuliah');
+
         $sumSKSMatkulRequest = DB::table('tahun_matkul')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
             ->whereIn('tahun_matkul.id', $request->tahun_matkul_id)

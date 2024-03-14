@@ -124,13 +124,14 @@ return new class extends Migration
 
         Schema::create('mhs_nilai', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('mhs_id')->constrained('users');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
-            $table->decimal('presensi', 5, 2);
-            $table->decimal('uts', 5, 2);
-            $table->decimal('uas', 5, 2);
-            $table->foreignId('mutu_id')->constrained('mutu');
-            $table->decimal('nilai_mutu', 5, 2);
+            $table->decimal('presensi', 5, 2)->nullable();
+            $table->decimal('uts', 5, 2)->nullable();
+            $table->decimal('uas', 5, 2)->nullable();
+            $table->foreignId('mutu_id')->nullable()->constrained('mutu');
+            $table->decimal('nilai_mutu', 5, 2)->nullable();
             $table->timestamps();
         });
     }

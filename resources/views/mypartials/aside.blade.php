@@ -196,6 +196,15 @@
             </li>
         @endcan
 
+        @can('view_kelola_nilai')
+            <li class="menu-item {{ Request::is('kelola-nilai*') ? 'active' : '' }}">
+                <a href="{{ route('kelola-nilai.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Kelola Nilai</div>
+                </a>
+            </li>
+        @endcan
+
         @can('view_pembayaran')
             <li class="menu-item {{ Request::is('pembayaran*') ? 'active' : '' }}">
                 <a href="{{ route('pembayaran.index') }}" class="menu-link">

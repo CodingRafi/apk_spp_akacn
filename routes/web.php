@@ -9,6 +9,7 @@ use App\Http\Controllers\Kelola\{
     KurikulumController,
     MatkulController,
     MutuController,
+    NilaiController,
     PembayaranController as KelolaPembayaranController,
     PembayaranLainnyaController as KelolaPembayaranLainnyaController,
     RoleController,
@@ -250,6 +251,17 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::get('/{tahun_matkul_id}', [RekapPresensiController::class, 'show'])->name('show');
             });
         });
+    });
+
+    Route::prefix('kelola-nilai')->name('kelola-nilai.')->group(function () {
+        Route::get('/', [NilaiController::class, 'index'])->name('index');
+        Route::get('/dataTahunAjaran', [NilaiController::class, 'dataTahunAjaran'])->name('dataTahunAjaran');
+        Route::get('/{tahun_ajaran_id}', [NilaiController::class, 'show'])->name('show');
+        Route::get('/{tahun_ajaran_id}/getRombel', [NilaiController::class, 'getRombel'])->name('getRombel');
+        Route::get('/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai', [NilaiController::class, 'getNilai'])->name('getNilai');
+        Route::put('/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai', [NilaiController::class, 'store'])->name('store');
+        Route::get('/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}', [NilaiController::class, 'detailRombel'])->name('detailRombel');
+        Route::get('/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/mhs', [NilaiController::class, 'dataMhs'])->name('dataMhs');
     });
 
     Route::prefix('kelola-pembayaran')->name('kelola-pembayaran.')->group(function () {

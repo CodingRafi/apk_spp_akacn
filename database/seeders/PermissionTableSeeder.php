@@ -106,6 +106,11 @@ class PermissionTableSeeder extends Seeder
             'edit_kuesioner',
             'delete_kuesioner',
 
+            'view_kelola_nilai',
+            'add_kelola_nilai',
+            'edit_kelola_nilai',
+            'delete_kelola_nilai',
+
             'view_kelola_presensi',
             'add_kelola_presensi',
             'edit_kelola_presensi',
