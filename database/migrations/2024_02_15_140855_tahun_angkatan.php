@@ -127,11 +127,13 @@ return new class extends Migration
             $table->foreignId('mhs_id')->constrained('users');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->integer('jml_sks')->nullable();
             $table->decimal('presensi', 5, 2)->nullable();
             $table->decimal('uts', 5, 2)->nullable();
             $table->decimal('uas', 5, 2)->nullable();
             $table->foreignId('mutu_id')->nullable()->constrained('mutu');
             $table->decimal('nilai_mutu', 5, 2)->nullable();
+            $table->enum('publish', [0,1])->default(0);
             $table->timestamps();
         });
     }

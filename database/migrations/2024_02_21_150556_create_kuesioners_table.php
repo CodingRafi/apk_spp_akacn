@@ -24,9 +24,8 @@ return new class extends Migration
         Schema::create('t_kuesioners', function (Blueprint $table) {
             $table->id();
             $table->foreignId('mhs_id')->constrained('users');
-            $table->foreignId('dosen_id')->constrained('users');
-            $table->string('matkul_id');
-            $table->foreign('matkul_id')->references('id')->on('matkuls');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
             $table->timestamps();
         });
 

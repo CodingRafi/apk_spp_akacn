@@ -133,6 +133,9 @@ class PermissionTableSeeder extends Seeder
             'add_krs',
             'edit_krs',
             'delete_krs',
+
+            'view_khs',
+            'view_transkrip',
         ];
 
         foreach ($permissions as $permission) {

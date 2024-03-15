@@ -49,9 +49,12 @@ use App\Http\Controllers\Kelola\User\{
 };
 
 use App\Http\Controllers\Kelola\UserController;
+use App\Http\Controllers\Mahasiswa\KhsController;
 use App\Http\Controllers\Mahasiswa\KrsController;
+use App\Http\Controllers\Mahasiswa\KuesionerController as MahasiswaKuesionerController;
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
+use App\Http\Controllers\Mahasiswa\TranskipController;
 use App\Http\Controllers\Pengajar\GajiController as PengajarGajiController;
 
 /*
@@ -352,6 +355,20 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/data', [MahasiswaPresensiController::class, 'data'])->name('data');
             Route::post('/', [MahasiswaPresensiController::class, 'store'])->name('store');
         });
+
+        Route::prefix('khs')->name('khs.')->group(function () {
+            Route::get('/', [KhsController::class, 'index'])->name('index');
+            Route::get('/dataSemester', [KhsController::class, 'dataSemester'])->name('dataSemester');
+            Route::get('/{tahun_semester_id}', [KhsController::class, 'show'])->name('show');
+            Route::get('/{tahun_semester_id}/data', [KhsController::class, 'data'])->name('data');
+        });
+
+        Route::prefix('transkip')->name('transkip.')->group(function () {
+            Route::get('/', [TranskipController::class, 'index'])->name('index');
+            Route::get('/data', [TranskipController::class, 'data'])->name('data');
+        });
+
+        Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
     });
 
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');

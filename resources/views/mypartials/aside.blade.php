@@ -250,6 +250,20 @@
             </li>
         @endcan
 
+        <li class="menu-item {{ Request::is('khs*') ? 'active' : '' }}">
+            <a href="{{ route('khs.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Analytics">Kartu Hasil Studi</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ Request::is('transkip*') ? 'active' : '' }}">
+            <a href="{{ route('transkip.index') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Analytics">Transkip Nilai</div>
+            </a>
+        </li>
+
         @can('view_template_surat')
             @if (getRole()->name != 'admin')
                 <li class="menu-item {{ Request::is('template-surat*') ? 'active' : '' }}">

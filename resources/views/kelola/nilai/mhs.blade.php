@@ -24,6 +24,8 @@
                                     <th>UAS</th>
                                     <th>Mutu</th>
                                     <th>Nilai Mutu</th>
+                                    <th>Jumlah SKS</th>
+                                    <th>Publish</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -75,6 +77,13 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label for="publish" class="form-label">Publish</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" name="publish" value="1"
+                                    id="publish">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
                         <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this)">Simpan</button>
@@ -119,6 +128,12 @@
                     },
                     {
                         "data": "nilai_mutu"
+                    },
+                    {
+                        "data": "jml_sks"
+                    },
+                    {
+                        "data": "publish"
                     },
                     {
                         "data": "options"

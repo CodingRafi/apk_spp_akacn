@@ -107,7 +107,7 @@ class NilaiController extends Controller
     public function dataMhs($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
     {
         $datas = DB::table('users')
-            ->select('users.id', 'users.name', 'users.login_key', 'mhs_nilai.presensi', 'mhs_nilai.uts', 'mhs_nilai.uas', 'mhs_nilai.nilai_mutu', 'mutu.nama as mutu')
+            ->select('users.id', 'users.name', 'users.login_key', 'mhs_nilai.presensi', 'mhs_nilai.uts', 'mhs_nilai.uas', 'mhs_nilai.nilai_mutu', 'mutu.nama as mutu', 'mhs_nilai.publish', 'mhs_nilai.jml_sks')
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
             ->join('krs', 'krs.mhs_id', 'users.id')
             ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
@@ -135,7 +135,10 @@ class NilaiController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->editCOlumn('publish', function ($datas) {
+                return $datas->publish ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'publish'])
             ->make(true);
     }
 
@@ -146,6 +149,12 @@ class NilaiController extends Controller
                 ->where('id', $request->mutu_id)
                 ->first();
         }
+
+        $matkul = DB::table('tahun_matkul')
+                    ->select('matkuls.sks_mata_kuliah')
+                    ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                    ->where('tahun_matkul.id', $tahun_matkul_id)
+                    ->first();
 
         DB::table('mhs_nilai')
             ->updateOrInsert([
@@ -158,6 +167,8 @@ class NilaiController extends Controller
                 'uas' => $request->uas,
                 'mutu_id' => $request->mutu_id,
                 'nilai_mutu' => $request->mutu_id ? $mutu->nilai : null,
+                'publish' => $request->publish ?? '0',
+                'jml_sks' => $matkul->sks_mata_kuliah,
                 'updated_at' => now()
             ]);
 

@@ -15,6 +15,9 @@ class AgamaSeeder extends Seeder
      */
     public function run()
     {
-        
+        Agama::create([
+            'id' => '1',
+            'nama' => 'Islam'
+        ]);
     }
 }
