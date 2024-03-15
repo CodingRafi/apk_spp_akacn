@@ -15,9 +15,11 @@ return new class extends Migration
     {
         Schema::create('wilayahs', function (Blueprint $table) {
             $table->string('id')->primary();
+            $table->string('id_level_wilayah');
             $table->string('negara_id');
             $table->foreign('negara_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
             $table->string('nama');
+            $table->string('id_induk_wilayah')->nullable();
             $table->timestamps();
         });
     }

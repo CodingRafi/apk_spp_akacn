@@ -3,6 +3,8 @@
 use App\Models\TahunAjaran;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Ramsey\Uuid\Uuid;
 use Spatie\Permission\Models\Role;
 
@@ -54,4 +56,41 @@ if (!function_exists('getRole')) {
     }
 }
 
+if (!function_exists('getUrlNeoFeeder')) {
 
+    function getUrlNeoFeeder()
+    {
+        return DB::table('settings')->where('id', 2)->first()->value;
+    }
+}
+
+if (!function_exists('getDataNeoFeeder')) {
+
+    function getDataNeoFeeder($raw)
+    {
+        $url = getUrlNeoFeeder();
+
+        //? Get Token
+        $resToken = Http::post($url, [
+            "act" => "GetToken",
+            "username" => "034095",
+            "password" => "034095akacaraka"
+        ]);
+
+        if ($resToken->status() != 200) {
+            dd('Gagal get token');
+        }
+
+        $token = $resToken->json()['data']['token'];
+
+        //? Get Data
+        $raw['token'] = $token;
+        $res = Http::post($url, $raw);
+
+        if ($res->status() != 200) {
+            dd('Gagal get data');
+        }
+
+        return $res;
+    }
+}

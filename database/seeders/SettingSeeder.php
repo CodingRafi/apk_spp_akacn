@@ -22,5 +22,13 @@ class SettingSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'URL Neofeeder',
+            'type' => 'text',
+            'value' => '',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 }

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('lembaga_pengangkat', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('nama');
+            $table->timestamps();
         });
     }
 

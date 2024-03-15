@@ -41,7 +41,10 @@
                             <label for="nama" class="form-label">Nama</label>
                             <input class="form-control" type="text" id="nama" name="nama" />
                         </div>
-                        <div class="div-value"></div>
+                        <div class="mb-3">
+                            <label for="value" class="form-label">Value</label>
+                            <input class="form-control" type="text" id="value" name="value" />
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
                         <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this)">Simpan</button>
@@ -50,13 +53,6 @@
             </div>
         </div>
     </div>
-
-    <template id="type-number">
-        <div class="mb-3">
-            <label for="value" class="form-label">Value</label>
-            <input class="form-control" type="number" id="value" name="value" />
-        </div>
-    </template>
 @endsection
 
 @push('js')
@@ -65,9 +61,12 @@
             $('.div-value').empty();
 
             if(data.type == 'number'){
-                $('.div-value').append($('#type-number').html());
-                $('#value').val(data.value);
+                $('#value').attr('type', 'number').val(data.value);
+            }else if(data.type == 'text'){
+                $('#value').attr('type' , 'text').val(data.value);
             }
+
+            console.log(data)
         }
 
         let table;

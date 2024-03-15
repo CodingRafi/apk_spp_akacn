@@ -104,6 +104,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('data-master')->name('data-master.')->group(function () {
         //? Tahun ajaran
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
+        Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
         //? Tahun ajaran matkul
