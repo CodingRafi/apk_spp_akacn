@@ -12,7 +12,7 @@ class GetLembagaPengangkatNeoFeeder extends Command
      *
      * @var string
      */
-    protected $signature = 'neo-feeder:get-lembaga-pengangkatan';
+    protected $signature = 'neo-feeder:get-lembaga-pengangkat';
 
     /**
      * The console command description.
@@ -36,8 +36,13 @@ class GetLembagaPengangkatNeoFeeder extends Command
             "offset" => "0"
         ]);
 
-        foreach ($res->json()['data'] as $data) {
-            DB::table('lembaga_pengangkat')->updateOrInsert([
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
+
+        foreach ($res['res']->json()['data'] as $data) {
+            DB::table('lembaga_pengangkats')->updateOrInsert([
                 'id' => $data['id_lembaga_angkat'],
             ], [
                 'nama' => $data['nama_lembaga_angkat'],
@@ -46,6 +51,7 @@ class GetLembagaPengangkatNeoFeeder extends Command
             ]);
         }
 
-        echo 'Data lembaga pengangkat berhasil di get!';
+        $this->info('Data lembaga pengangkat berhasil di get!');
+        return 0;
     }
 }

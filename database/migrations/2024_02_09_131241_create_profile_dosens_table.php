@@ -31,7 +31,7 @@ return new class extends Migration
             $table->string('no_sk_pengangkatan')->nullable();
             $table->date('mulai_sk_pengangkatan')->nullable();
             $table->string('lembaga_pengangkat_id')->nullable();
-            $table->foreign('lembaga_pengangkat_id')->references('id')->on('lembaga_pengangkat')->onDelete('cascade');
+            $table->foreign('lembaga_pengangkat_id')->references('id')->on('lembaga_pengangkats')->onDelete('cascade');
             $table->string('nama_pangkat_golongan')->nullable();
             $table->string('jalan')->nullable();
             $table->string('dusun')->nullable();

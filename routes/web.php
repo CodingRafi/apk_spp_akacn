@@ -55,6 +55,7 @@ use App\Http\Controllers\Mahasiswa\KuesionerController as MahasiswaKuesionerCont
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
 use App\Http\Controllers\Mahasiswa\TranskipController;
+use App\Http\Controllers\NeoFeeder\NeoFeederController;
 use App\Http\Controllers\Pengajar\GajiController as PengajarGajiController;
 
 /*
@@ -372,6 +373,18 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
+
+    Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
+        Route::prefix('wilayah')->name('wilayah.')->group(function () {
+            Route::get('/', [NeoFeederController::class, 'indexWilayah'])->name('index');
+            Route::get('/data', [NeoFeederController::class, 'dataWilayah'])->name('data');
+            Route::get('/get', [NeoFeederController::class, 'getWilayah'])->name('get');
+        });
+
+        Route::get('/{type}', [NeoFeederController::class, 'index'])->name('index');
+        Route::get('/{type}/data', [NeoFeederController::class, 'data'])->name('data');
+        Route::get('/{type}/get', [NeoFeederController::class, 'get'])->name('get');
+    });
 });
 
 require __DIR__ . '/auth.php';

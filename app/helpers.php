@@ -69,6 +69,13 @@ if (!function_exists('getDataNeoFeeder')) {
     function getDataNeoFeeder($raw)
     {
         $url = getUrlNeoFeeder();
+        
+        if ($url == '') {
+            return [
+                'status' => false,
+                'message' => 'Url NEO FEEDER belum diset'
+            ];
+        }
 
         //? Get Token
         $resToken = Http::post($url, [
@@ -78,7 +85,10 @@ if (!function_exists('getDataNeoFeeder')) {
         ]);
 
         if ($resToken->status() != 200) {
-            dd('Gagal get token');
+            return [
+                'status' => false,
+                'message' => 'Gagal get token'
+            ];
         }
 
         $token = $resToken->json()['data']['token'];
@@ -88,9 +98,15 @@ if (!function_exists('getDataNeoFeeder')) {
         $res = Http::post($url, $raw);
 
         if ($res->status() != 200) {
-            dd('Gagal get data');
+            return [
+                'status' => false,
+                'message' => 'Gagal get data'
+            ];
         }
 
-        return $res;
+        return [
+            'status' => true,
+            'res' => $res
+        ];
     }
 }

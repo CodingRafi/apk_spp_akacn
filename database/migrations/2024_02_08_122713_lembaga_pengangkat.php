@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('lembaga_pengangkat', function (Blueprint $table) {
+        Schema::create('lembaga_pengangkats', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('nama');
             $table->timestamps();

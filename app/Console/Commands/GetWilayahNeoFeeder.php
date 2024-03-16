@@ -35,8 +35,13 @@ class GetWilayahNeoFeeder extends Command
             "limit" => "10000",
             "offset" => "0"
         ]);
+
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
         
-        foreach ($res->json()['data'] as $data) {
+        foreach ($res['res']->json()['data'] as $data) {
             DB::table('wilayahs')->updateOrInsert([
                 'id' => $data['id_wilayah'],
             ], [
@@ -49,6 +54,7 @@ class GetWilayahNeoFeeder extends Command
             ]);
         }
 
-        echo 'Data wilayah berhasil di get!';
+        $this->info('Data wilayah berhasil di get!');
+        return 0;
     }
 }

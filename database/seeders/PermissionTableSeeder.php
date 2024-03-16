@@ -101,6 +101,8 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_krs',
             'delete_kelola_krs',
 
+            'view_neo_feeder',
+
             'view_kuesioner',
             'add_kuesioner',
             'edit_kuesioner',

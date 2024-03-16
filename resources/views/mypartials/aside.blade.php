@@ -124,6 +124,34 @@
             </li>
         @endcanAny
 
+        @canany(['view_neo_feeder'])
+        <li class="menu-item {{ Request::is('neo-feeder*') ? 'active open' : '' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-archive"></i>
+                <div data-i18n="Layouts">Data Master Neo Feeder</div>
+            </a>
+
+            @php
+                $type = ['agama', 'jenis-tinggal', 'alat-transportasi', 'jenjang', 'kewarganegaraan', 'lembaga-pengangkat', 'pekerjaan', 'penghasilan'];
+            @endphp
+
+            <ul class="menu-sub">
+                @foreach ($type as $item)
+                <li class="menu-item {{ Request::is('neo-feeder/'. $item .'*') ? 'active' : '' }}">
+                    <a href="{{ route('neo-feeder.index', ['type' => $item]) }}" class="menu-link">
+                        <div data-i18n="{{ $item }}" class="text-capitalize">{{ $item }}</div>
+                    </a>
+                </li>
+                @endforeach
+                <li class="menu-item {{ Request::is('neo-feeder/wilayah*') ? 'active' : '' }}">
+                    <a href="{{ route('neo-feeder.wilayah.index') }}" class="menu-link">
+                        <div data-i18n="wilayah" class="text-capitalize">Wilayah</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+    @endcanany
+
         @canany(['view_potongan', 'view_kelola_pembayaran', 'view_pembayaran_lainnya'])
             <li class="menu-item {{ Request::is('kelola-pembayaran*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">

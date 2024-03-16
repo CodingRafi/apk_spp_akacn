@@ -36,7 +36,12 @@ class GetJenisTinggalNeoFeeder extends Command
             "offset" => "0"
         ]);
 
-        foreach ($res->json()['data'] as $data) {
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
+
+        foreach ($res['res']->json()['data'] as $data) {
             DB::table('jenis_tinggals')->updateOrInsert([
                 'id' => $data['id_jenis_tinggal'],
             ], [
@@ -46,6 +51,7 @@ class GetJenisTinggalNeoFeeder extends Command
             ]);
         }
 
-        echo 'Data jenis tinggal berhasil di get!';
+        $this->info('Data jenis tinggal berhasil di get!');
+        return 0;
     }
 }

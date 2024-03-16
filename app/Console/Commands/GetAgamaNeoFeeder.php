@@ -35,17 +35,22 @@ class GetAgamaNeoFeeder extends Command
             "limit" => "10",
             "offset" => "0"
         ]);
+        
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
 
-        foreach ($res->json()['data'] as $data) {
+        foreach ($res['res']->json()['data'] as $data) {
             DB::table('agamas')->updateOrInsert([
                 'id' => $data['id_agama'],
-            ],[
+            ], [
                 'nama' => $data['nama_agama'],
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
         }
-
-        echo 'Data agama berhasil di get!';
+        $this->info('Data agama berhasil di get!');
+        return 0;
     }
 }

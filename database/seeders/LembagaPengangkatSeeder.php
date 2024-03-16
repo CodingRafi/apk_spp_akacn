@@ -15,7 +15,7 @@ class LembagaPengangkatSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('lembaga_pengangkat')->insert([
+        DB::table('lembaga_pengangkats')->insert([
             'id' => '1',
             'nama' => 'test'
         ]);

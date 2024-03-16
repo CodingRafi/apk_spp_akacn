@@ -36,7 +36,12 @@ class GetProdiNeoFeeder extends Command
             "offset" => "0"
         ]);
 
-        foreach ($res->json()['data'] as $data) {
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
+
+        foreach ($res['res']->json()['data'] as $data) {
             DB::table('prodi')->updateOrInsert([
                 'id' => $data['id_prodi'],
             ], [
@@ -49,6 +54,7 @@ class GetProdiNeoFeeder extends Command
             ]);
         }
 
-        echo 'Data prodi berhasil di get!';
+        $this->info('Data prodi berhasil di get!');
+        return 0;
     }
 }
