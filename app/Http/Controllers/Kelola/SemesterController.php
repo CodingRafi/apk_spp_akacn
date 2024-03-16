@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SemesterRequest;
 use App\Models\Semester;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -78,7 +79,8 @@ class SemesterController extends Controller
         }
     }
 
-    public function getLastSemester($tahun_ajaran_id){
+    public function getLastSemester($tahun_ajaran_id)
+    {
         $data = DB::table('semesters')->where('tahun_ajaran_id', $tahun_ajaran_id)->orderBy('id', 'desc')->first();
         return response()->json([
             'semester' => $data ? $data->semester : 0
@@ -97,13 +99,13 @@ class SemesterController extends Controller
     {
         $semester = Semester::find($id);
         $cek = DB::table('tahun_semester')->where('semester_id', $id)->count();
-        
+
         if ($semester->status != $request->status && $cek > 0) {
             return response()->json([
                 'message' => 'Semester ini sudah digunakan, tidak bisa ubah status'
             ], 400);
         }
-        
+
         DB::beginTransaction();
         try {
             $data = $semester->update([
@@ -120,6 +122,22 @@ class SemesterController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
+        }
+    }
+
+    public function getNeoFeeder($tahun_ajaran_id)
+    {
+        $result = Artisan::call("neo-feeder:get-semester {$tahun_ajaran_id}");
+        $output = Artisan::output();
+
+        if ($result) {
+            return response()->json([
+                'output' => $output
+            ], 400);
+        } else {
+            return response()->json([
+                'output' => $output
+            ], 200);
         }
     }
 

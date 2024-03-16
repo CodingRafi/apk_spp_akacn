@@ -122,7 +122,7 @@
                     @foreach ($type as $item)
                         <li class="menu-item {{ Request::is('neo-feeder/' . $item . '*') ? 'active' : '' }}">
                             <a href="{{ route('neo-feeder.index', ['type' => $item]) }}" class="menu-link">
-                                <div data-i18n="{{ $item }}" class="text-capitalize">{{ $item }}</div>
+                                <div data-i18n="{{ $item }}" class="text-capitalize">{{ str_replace('-', ' ', $item) }}</div>
                             </a>
                         </li>
                     @endforeach

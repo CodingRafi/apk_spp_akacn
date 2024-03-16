@@ -37,7 +37,12 @@ class GetTahunAjaranNeoFeeder extends Command
             "offset" => "0"
         ]);
 
-        foreach ($res->json()['data'] as $data) {
+        if (!$res['status']) {
+            $this->error($res['message']);
+            return 1;
+        }
+
+        foreach ($res['res']->json()['data'] as $data) {
             DB::table('tahun_ajarans')->updateOrInsert([
                 'id' => $data['id_tahun_ajaran'],
             ], [
@@ -50,6 +55,7 @@ class GetTahunAjaranNeoFeeder extends Command
             ]);
         }
 
-        echo 'Data tahun ajaran berhasil di get!';
+        $this->info('Data tahun ajaran berhasil di get!');
+        return 0;
     }
 }

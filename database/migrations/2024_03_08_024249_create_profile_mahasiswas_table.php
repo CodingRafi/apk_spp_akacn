@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('profile_mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('id_neo_feeder')->nullable();
             $table->string('nisn');
             $table->string('nik');
             $table->string('tempat_lahir');

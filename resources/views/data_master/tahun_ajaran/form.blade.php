@@ -49,8 +49,8 @@
                                 <label for="status" class="form-label">Status</label>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" role="switch" name="status"
-                                        id="status"
-                                        {{ isset($data) ? ($data->status ? 'checked' : '') : old('status') }} value="1">
+                                        id="status" {{ isset($data) ? ($data->status ? 'checked' : '') : old('status') }}
+                                        value="1">
                                 </div>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
@@ -62,10 +62,13 @@
                         <fieldset data-id="2">
                             <div class="d-flex justify-content-between mb-3">
                                 <h5>Semester</h5>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('data-master.semester.store') }}', 'Tambah', '#semester', getLastSemester)">
-                                    Tambah
-                                </button>
+                                <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
+                                    <button class="btn btn-primary" type="button" onclick="get()">Get NEO Feeder</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="addForm('{{ route('data-master.semester.store') }}', 'Tambah', '#semester', getLastSemester)">
+                                        Tambah
+                                    </button>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-semester">
@@ -121,8 +124,8 @@
                         <div class="mb-3">
                             <label for="status" class="form-label">Status</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" name="status" id="status"
-                                    value="1">
+                                <input class="form-check-input" type="checkbox" role="switch" name="status"
+                                    id="status" value="1">
                             </div>
                         </div>
                     </div>
@@ -157,14 +160,14 @@
         $('#tgl_mulai').on('change', generateName);
         $('#tgl_selesai').on('change', generateName);
 
-        function getLastSemester(){
+        function getLastSemester() {
             $.ajax({
                 url: url_last_semester,
                 method: 'get',
-                success: function(data){
+                success: function(data) {
                     $('input#semester').val(parseInt(data.semester) + 1);
                 },
-                error: function(){
+                error: function() {
                     alert('Gagal get last semester');
                 }
             })
@@ -177,8 +180,7 @@
                 ajax: {
                     url: url_semester,
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'nama'
                     },
                     {
@@ -228,6 +230,22 @@
         $('.btn-selesai').on('click', function() {
             window.location.href = '{{ route('data-master.tahun-ajaran.index') }}'
         })
+
+        function get() {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: '{{ route('data-master.semester.get-neo-feeder', ['tahun_ajaran_id' => request('tahun_ajaran')]) }}',
+                success: function(res) {
+                    showAlert(res.output, 'success')
+                    $.LoadingOverlay("hide");
+                    tableSemester.ajax.reload();
+                },
+                error: function(err) {
+                    $.LoadingOverlay("hide");
+                    showAlert(err.responseJSON.output, 'error')
+                }
+            })
+        }
     </script>
     @include('mypartials.tab', ['form' => '.form-tahun-ajaran'])
 @endpush
