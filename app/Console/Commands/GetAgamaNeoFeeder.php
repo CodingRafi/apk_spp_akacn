@@ -50,6 +50,15 @@ class GetAgamaNeoFeeder extends Command
                 'updated_at' => now()
             ]);
         }
+
+        DB::table('agamas')->updateOrInsert([
+            'id' => 98,
+        ],[
+            'nama' => 'Tidak diisi',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
         $this->info('Data agama berhasil di get!');
         return 0;
     }

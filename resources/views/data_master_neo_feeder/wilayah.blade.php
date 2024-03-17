@@ -47,9 +47,10 @@
         });
 
         function get() {
+            console.log('oke')
             $.LoadingOverlay("show");
             $.ajax({
-                url: '{{ route('neo-feeder.wilayah.get') }}',
+                url: '{{ route('neo-feeder.get', ['type' => 'wilayah']) }}',
                 success: function(res) {
                     showAlert(res.output, 'success')
                     $.LoadingOverlay("hide");

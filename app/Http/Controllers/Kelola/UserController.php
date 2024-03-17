@@ -74,7 +74,7 @@ class UserController extends Controller
                 $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
-            if (auth()->user()->can('delete_users')) {
+            if (auth()->user()->can('delete_users') && $role != 'dosen') {
                 $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.' . $role . '.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";

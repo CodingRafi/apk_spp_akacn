@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
+        Route::get('prodi/get-neo-feeder', [ProdiController::class, 'getNeoFeeder'])->name('prodi.getNeoFeeder');
         Route::get('prodi/{prodi_id}/angkatan', [ProdiController::class, 'angkatan'])->name('prodi.angkatan');
         Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}', [ProdiController::class, 'angkatanDetail'])->name('prodi.angkatan.detail');
         Route::resource('prodi', ProdiController::class);
@@ -378,7 +379,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::prefix('wilayah')->name('wilayah.')->group(function () {
             Route::get('/', [NeoFeederController::class, 'indexWilayah'])->name('index');
             Route::get('/data', [NeoFeederController::class, 'dataWilayah'])->name('data');
-            Route::get('/get', [NeoFeederController::class, 'getWilayah'])->name('get');
         });
 
         Route::get('/{type}', [NeoFeederController::class, 'index'])->name('index');

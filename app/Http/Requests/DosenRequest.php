@@ -33,7 +33,7 @@ class DosenRequest extends FormRequest
                 'tgl_lahir' => 'required',
                 'agama_id' => 'required',
                 'nik' => 'unique:profile_dosens,nik',
-                'nidn' => 'unique:profile_dosens,nidn',
+                'nip' => 'unique:profile_dosens,nip',
                 'npwp' => 'unique:profile_dosens,npwp',
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
@@ -52,7 +52,7 @@ class DosenRequest extends FormRequest
                 'tgl_lahir' => 'required',
                 'agama_id' => 'required',
                 'nik' => 'unique:profile_dosens,nik,'.$dosen->id,
-                'nidn' => 'unique:profile_dosens,nidn,'.$dosen->id,
+                'nip' => 'unique:profile_dosens,nip,'.$dosen->id,
                 'npwp' => 'unique:profile_dosens,npwp,'.$dosen->id,
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
@@ -64,8 +64,8 @@ class DosenRequest extends FormRequest
     public function messages()
     {
         return [
-            'login_key.required' => 'NIP wajib diisi',
-            'login_key.unique' => 'NIP sudah terdaftar'
+            'login_key.required' => 'NIDN wajib diisi',
+            'login_key.unique' => 'NIDN sudah terdaftar'
         ];
     }
 }

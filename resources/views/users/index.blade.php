@@ -50,10 +50,12 @@
                                                 class="btn btn-primary d-block">Import</a>
                                         </div> --}}
                                     @endif
+                                    @if (request('role') != 'dosen')
                                     <div class="col-md-2 px-0">
                                         <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
                                             class="btn btn-primary d-block text-capitalize">Tambah</a>
                                     </div>
+                                    @endif
                                 </div>
                             @endcan
                         </div>
@@ -68,9 +70,7 @@
                                     <th>Nama</th>
                                     @if (request('role') == 'mahasiswa')
                                         <th>NIM</th>
-                                    @elseif(request('role') == 'dosen')
-                                        <th>NIP</th>
-                                    @elseif(request('role') == 'asdos')
+                                    @elseif(request('role') == 'dosen' || request('role') == 'asdos')
                                         <th>NIDN</th>
                                     @else
                                         <th>Email</th>

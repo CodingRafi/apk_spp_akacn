@@ -22,7 +22,7 @@ return new class extends Migration
             $table->uuid('agama_id');
             $table->foreign('agama_id')->references('id')->on('agamas')->onDelete('cascade');
             $table->enum('status', [0, 1]);
-            $table->string('nidn')->nullable();
+            $table->string('nip')->nullable();
             $table->string('nama_ibu')->nullable();
             $table->string('nik')->nullable();
             $table->string('npwp')->nullable();

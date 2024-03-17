@@ -51,6 +51,14 @@ class GetLembagaPengangkatNeoFeeder extends Command
             ]);
         }
 
+        DB::table('lembaga_pengangkats')->updateOrInsert([
+            'id' => 1,
+        ], [
+            'nama' => 'Kementerian Riset, Teknologi dan Pendidikan Tinggi',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
         $this->info('Data lembaga pengangkat berhasil di get!');
         return 0;
     }

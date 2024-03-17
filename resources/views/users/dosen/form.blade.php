@@ -22,11 +22,11 @@
             <div class="col-md-6">
                 @include('users.form_user')
                 <div class="mb-3">
-                    <label for="login_key" class="form-label">NIP</label>
-                    <input class="form-control @error('login_key') is-invalid @enderror" type="text"
-                        value="{{ isset($data) ? $data->login_key : old('login_key') }}" id="login_key"
-                        placeholder="NIP" name="login_key" />
-                    @error('login_key')
+                    <label for="nip" class="form-label">NIP</label>
+                    <input class="form-control @error('nip') is-invalid @enderror" type="text"
+                        value="{{ isset($data) ? $data->dosen->nip : old('nip') }}" id="nip"
+                        placeholder="NIP" name="nip" />
+                    @error('nip')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
                         </div>
@@ -37,11 +37,11 @@
                     'page' => $page
                 ])
                 <div class="mb-3">
-                    <label for="nidn" class="form-label">NIDN</label>
-                    <input class="form-control @error('nidn') is-invalid @enderror" type="text"
-                        value="{{ isset($data) ? $data->dosen->nidn : old('nidn') }}" id="nidn" placeholder="NIDN"
-                        name="nidn" />
-                    @error('nidn')
+                    <label for="login_key" class="form-label">NIDN</label>
+                    <input class="form-control @error('login_key') is-invalid @enderror" type="text"
+                        value="{{ isset($data) ? $data->login_key : old('login_key') }}" id="login_key" placeholder="login_key"
+                        name="login_key" />
+                    @error('login_key')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
                         </div>
