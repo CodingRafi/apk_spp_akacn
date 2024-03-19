@@ -83,6 +83,11 @@ class PermissionTableSeeder extends Seeder
             'edit_mutu',
             'delete_mutu',
 
+            'view_materi',
+            'add_materi',
+            'edit_materi',
+            'delete_materi',
+
             'view_kelola_template_surat',
             'add_kelola_template_surat',
             'edit_kelola_template_surat',

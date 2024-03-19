@@ -17,6 +17,7 @@
                     <th>Jatah SKS</th>
                     <th>Tanggal Mulai Semester</th>
                     <th>Tanggal Selesai Semester</th>
+                    <th>Status</th>
                     @can('delete_semester')
                         <th>Aksi</th>
                     @endcan
@@ -122,10 +123,13 @@
                     "data": "jatah_sks_semester"
                 },
                 {
-                    "data": "tgl_mulai"
+                    "data": "tgl_mulai_krs"
                 },
                 {
-                    "data": "tgl_selesai"
+                    "data": "tgl_akhir_krs"
+                },
+                {
+                    "data": "status"
                 },
                 @can('delete_semester')
                     {

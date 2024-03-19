@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         $roles = [
             [
                 'role' => 'admin',
-                'permission' => array_map('strval', range(1, 80))
+                'permission' => array_map('strval', range(1, 84))
             ],
             [
                 'role' => 'petugas',
@@ -28,15 +28,15 @@ class UserSeeder extends Seeder
             ],
             [
                 'role' => 'dosen',
-                'permission' => array_map('strval', range(77, 82))
+                'permission' => array_map('strval', range(81, 86))
             ],
             [
                 'role' => 'asdos',
-                'permission' => array_map('strval', range(77, 82))
+                'permission' => array_map('strval', range(81, 86))
             ],
             [
                 'role' => 'mahasiswa',
-                'permission' => array_map('strval', range(83, 96))
+                'permission' => array_map('strval', range(87, 100))
             ]
         ];
 

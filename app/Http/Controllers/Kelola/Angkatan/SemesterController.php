@@ -36,7 +36,7 @@ class SemesterController extends Controller
     public function data($prodi_id, $tahun_ajaran_id)
     {
         $datas = DB::table('semesters')
-            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester', 'tahun_semester.id as tahun_semester_id')
+            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester', 'tahun_semester.id as tahun_semester_id', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'tahun_semester.status')
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
@@ -62,7 +62,10 @@ class SemesterController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->editCOlumn('status', function ($datas) {
+                return $datas->status ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'status'])
             ->make(true);
     }
 

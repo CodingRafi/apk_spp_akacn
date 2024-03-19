@@ -1,10 +1,14 @@
+@php
+    $disabled = isset($disabled) ? $disabled : false;
+@endphp
+
 <div class="mb-3">
     <label for="mampu_handle_kebutuhan_khusus" class="form-label">Mampu handle
         Kebutuhan
         Khusus?</label>
     <div class="d-flex gap-3">
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_khusus" value="1"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_khusus" value="1"
                 id="mampu_handle_kebutuhan_khusus-1"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_khusus == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_khusus') == 1 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_khusus-1">
@@ -12,7 +16,7 @@
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_khusus" value="0"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_khusus" value="0"
                 id="mampu_handle_kebutuhan_khusus-0"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_khusus == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_khusus') == 0 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_khusus-0">
@@ -32,7 +36,7 @@
         braille?</label>
     <div class="d-flex gap-3">
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_braille" value="1"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_braille" value="1"
                 id="mampu_handle_kebutuhan_braille-1"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_braille == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_braille') == 1 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_braille-1">
@@ -40,7 +44,7 @@
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_braille" value="0"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_braille" value="0"
                 id="mampu_handle_kebutuhan_braille-0"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_braille == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_braille') == 0 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_braille-0">
@@ -60,7 +64,7 @@
         bahasa isyarat?</label>
     <div class="d-flex gap-3">
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_bahasa_isyarat" value="1"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_bahasa_isyarat" value="1"
                 id="mampu_handle_kebutuhan_bahasa_isyarat-1"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_bahasa_isyarat == 1 ? 'checked' : '') : (old('mampu_handle_kebutuhan_bahasa_isyarat') == 1 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_bahasa_isyarat-1">
@@ -68,7 +72,7 @@
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="mampu_handle_kebutuhan_bahasa_isyarat" value="0"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="mampu_handle_kebutuhan_bahasa_isyarat" value="0"
                 id="mampu_handle_kebutuhan_bahasa_isyarat-0"
                 {{ isset($data) ? ($data->{$role}->mampu_handle_kebutuhan_bahasa_isyarat == 0 ? 'checked' : '') : (old('mampu_handle_kebutuhan_bahasa_isyarat') == 0 ? 'checked' : '') }}>
             <label class="form-check-label" for="mampu_handle_kebutuhan_bahasa_isyarat-0">

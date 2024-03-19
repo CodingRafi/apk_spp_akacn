@@ -9,6 +9,12 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KrsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:add_kelola_krs', ['only' => ['simpan']]);
+        $this->middleware('permission:edit_kelola_krs', ['only' => ['revisi']]);
+    }
+
     public function validateTahunSemester($tahun_semester_id, $mhs_id = null)
     {
         $role = getRole();
@@ -64,6 +70,28 @@ class KrsController extends Controller
         }
 
         return $krs;
+    }
+
+    public function simpan($tahun_semester_id, $mhs_id)
+    {
+        DB::table('krs')
+            ->where('mhs_id', $mhs_id)
+            ->where('tahun_semester_id', $tahun_semester_id)->update([
+                'status' => 'diterima'
+            ]);
+
+        return redirect()->back()->with('success', 'Data Berhasil Di simpan');
+    }
+
+    public function revisi($tahun_semester_id, $mhs_id)
+    {
+        DB::table('krs')
+            ->where('mhs_id', $mhs_id)
+            ->where('tahun_semester_id', $tahun_semester_id)->update([
+                'status' => 'pending'
+            ]);
+
+        return redirect()->back()->with('success', 'Data Berhasil Di revisi');
     }
 
     public function dataMatkul($tahun_semester_id, $mhs_id = null)
@@ -232,12 +260,6 @@ class KrsController extends Controller
                         'message' => 'Tanggal revisi KRS harus diantara ' . parseDate($krs->tgl_mulai_revisi) . ' s.d ' . parseDate($krs->tgl_akhir_revisi)
                     ], 400);
                 }
-            }
-        } else {
-            if ($krs->status != 'pengajuan') {
-                return response()->json([
-                    'message' => 'Sudah tidak boleh edit KRS!'
-                ], 200);
             }
         }
 

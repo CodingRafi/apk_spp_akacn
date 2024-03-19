@@ -18,18 +18,40 @@ class PembayaranMhsMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $mhs = Auth::user()->mahasiswa;
+        $user = Auth::user();
+
+        if ($user->hasRole('mahasiswa')) {
+            $mhs_id = $user->id;
+        }
+
+        if (!$user->hasRole('mahasiswa') && request('mhs_id')) {
+            abort(404);
+        }
+
+        $mhs = DB::table('mahasiswa')->where('user_id', $mhs_id)->first();
+        
+        if (!$mhs) {
+            abort(403);
+        }
+
         if ($request->type == 'semester') {
             $cek = DB::table('tahun_semester')
                 ->where('prodi_id', $mhs->prodi_id)
                 ->where('tahun_ajaran_id', $mhs->tahun_masuk_id)
                 ->where('id', $request->id)
                 ->first();
+            if (!$cek) {
+                abort(404);
+            }
+        } elseif ($request->type == 'lainnya') {
+            $cek = DB::table('tahun_pembayaran_lain')
+                ->where('prodi_id', $mhs->prodi_id)
+                ->where('id', $request->id)
+                ->first();
 
             if (!$cek) {
                 abort(404);
             }
-        } else if ($request->type == 'lainnya') {
         } else {
             abort(404);
         }

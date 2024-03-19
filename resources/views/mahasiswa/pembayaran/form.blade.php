@@ -23,7 +23,7 @@
                                 <div class="d-flex justify-content-between align-items-center ">
                                     <div class="d-flex align-items-center">
                                         <a
-                                            href="{{ route('pembayaran.show', ['type' => request('type'), 'id' => request('id')]) }}"><i
+                                            href="{{ route('pembayaran.show', ['type' => request('type'), 'id' => request('id'), 'mhs_id' => $mhs_id]) }}"><i
                                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                                         <h5 class="text-capitalize mb-0">{{ isset($data) ? ($page == 'show' ? 'Detail' : 'Edit') : 'Tambah' }} Pembayaran</h5>
                                     </div>

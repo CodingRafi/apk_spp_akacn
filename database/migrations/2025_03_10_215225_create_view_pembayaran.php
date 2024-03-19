@@ -50,47 +50,43 @@ return new class extends Migration
         DB::statement("
             create view rekap_pembayaran as
             select
-            rps.user_id,
-            s.nama,
-            'semester' as type,
-            rps.tahun_semester_id as untuk,
-            tp.nominal as harus,
-            rps.total as total_pembayaran,
-            COALESCE(rp.total, 0) AS potongan,
-            GREATEST(
-                tp.nominal - (rps.total + COALESCE(rp.total, 0)),
-                0
-            ) AS sisa
-        from
-            rekap_pembayaran_semester rps
-            inner join tahun_pembayaran tp on tp.tahun_semester_id = rps.tahun_semester_id
-            inner join rekap_potongan rp on (
+                u.id as user_id,
+                s.nama,
+                'semester' as type,
+                ts.id as untuk,
+                COALESCE(tp.nominal , 0) as harus,
+                COALESCE(rps.total, 0) as total_pembayaran,
+                COALESCE(rp.total, 0) AS potongan, 
+                GREATEST(tp.nominal - (COALESCE(rps.total, 0) + COALESCE(rp.total, 0)),0) AS sisa 
+            from users u
+            inner join profile_mahasiswas pm ON pm.user_id = u.id
+            inner join tahun_semester as ts on ts.prodi_id = pm.prodi_id and ts.tahun_ajaran_id = pm.tahun_masuk_id
+            inner join semesters s on ts.semester_id = s.id
+            inner join tahun_pembayaran tp on ts.id = tp.tahun_semester_id
+            left join rekap_pembayaran_semester rps on rps.user_id = u.id and rps.tahun_semester_id = ts.id
+            left join rekap_potongan rp on (
                 rp.id = rps.user_id
                 and rp.tahun_semester_id = rps.tahun_semester_id
             )
-            inner join tahun_semester ts on ts.id = rps.tahun_semester_id
-            inner join semesters s on s.id = ts.semester_id
-        union
-        select
-            rpl.user_id,
-            pl.nama,
-            'lainnya' as type,
-            rpl.tahun_pembayaran_lain_id as untuk,
-            tpl.nominal as harus,
-            rpl.total as total_pembayaran,
-            COALESCE(rp.total, 0) AS potongan,
-            GREATEST(
-                tpl.nominal - (rpl.total + COALESCE(rp.total, 0)),
-                0
-            ) AS sisa
-        from
-            rekap_pembayaran_lain rpl
-            inner join tahun_pembayaran_lain tpl on tpl.id = rpl.tahun_pembayaran_lain_id
-            inner join rekap_potongan rp on (
-                rp.id = rpl.user_id
-                and rp.tahun_pembayaran_lain_id = rpl.tahun_pembayaran_lain_id
-            )
+            union
+            select
+                u.id as user_id,
+                pl.nama,
+                'lainnya' as type,
+                tpl.id as untuk,
+                COALESCE(tpl.nominal , 0) as harus,
+                COALESCE(rpl.total, 0) as total_pembayaran,
+                COALESCE(rp.total, 0) AS potongan, 
+                GREATEST(tpl.nominal - (COALESCE(rpl.total, 0) + COALESCE(rp.total, 0)),0) AS sisa 
+            from users u
+            inner join profile_mahasiswas pm ON pm.user_id = u.id
+            inner join tahun_pembayaran_lain tpl on tpl.prodi_id = pm.prodi_id and tpl.tahun_ajaran_id = pm.tahun_masuk_id
             inner join pembayaran_lainnyas pl on pl.id = tpl.pembayaran_lainnya_id
+            left join rekap_pembayaran_lain rpl on rpl.tahun_pembayaran_lain_id = tpl.id 
+            left join rekap_potongan rp on (
+                rp.id = u.id
+                and rp.tahun_pembayaran_lain_id  = tpl.id
+            )
         ");
     }
 

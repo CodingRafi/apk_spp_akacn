@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('rt')->nullable();
             $table->string('rw')->nullable();
             $table->string('kode_pos')->nullable();
+            $table->string('kewarganegaraan_id');
+            $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
             $table->uuid('wilayah_id')->nullable();
             $table->foreign('wilayah_id')->references('id')->on('wilayahs')->onDelete('cascade');
             $table->string('mulai_asdos')->nullable();

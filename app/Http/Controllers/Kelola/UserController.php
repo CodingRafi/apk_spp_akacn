@@ -67,14 +67,13 @@ class UserController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            if (auth()->user()->can('edit_users')) {
-                if ($role == 'mahasiswa') {
-                    $options = $options . "<a href='" . route('kelola-users.potongan.index', ['role' => $role, 'user_id' => $data->id]) . "' class='btn btn-primary mx-2'>Potongan</a>";
-                }
+            $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
+
+            if (auth()->user()->can('edit_users') && ($role != 'dosen' || ($role == 'dosen' && $data->dosen->source == 'app'))) {
                 $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
-            if (auth()->user()->can('delete_users') && $role != 'dosen') {
+            if (auth()->user()->can('delete_users') && ($role != 'dosen' || ($role == 'dosen' && $data->dosen->source == 'app'))) {
                 $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.' . $role . '.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";
@@ -91,16 +90,15 @@ class UserController extends Controller
     public function create($role)
     {
         $agamas = Agama::all();
-        $wilayah = Wilayah::all();
+        $kewarganegaraan = Kewarganegaraan::all();
         $return = [
             'agamas' => $agamas,
-            'wilayah' => $wilayah
+            'kewarganegaraan' => $kewarganegaraan
         ];
 
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::all();
             $prodis = Prodi::where('status', '1')->get();
-            $kewarganegaraan = Kewarganegaraan::all();
             $jenis_tinggal = JenisTinggal::all();
             $alat_transportasi = AlatTransportasi::all();
             $pekerjaans = Pekerjaan::all();
@@ -133,12 +131,17 @@ class UserController extends Controller
     public function edit($role, $id)
     {
         $data = User::findOrFail($id);
+
+        if ($role == 'dosen' && $data->dosen->source == 'neo_feeder') {
+            abort(403);
+        }
+
         $agamas = Agama::all();
-        $wilayah = Wilayah::all();
+        $kewarganegaraan = Kewarganegaraan::all();
         $return = [
             'agamas' => $agamas,
-            'wilayah' => $wilayah,
-            'data' => $data
+            'data' => $data,
+            'kewarganegaraan' => $kewarganegaraan
         ];
 
         if ($role == 'mahasiswa') {
@@ -147,7 +150,6 @@ class UserController extends Controller
                 $q->where('status', '1')
                     ->orWhere('id', $data->mahasiswa->prodi_id);
             })->get();
-            $kewarganegaraan = Kewarganegaraan::all();
             $jenis_tinggal = JenisTinggal::all();
             $alat_transportasi = AlatTransportasi::all();
             $pekerjaans = Pekerjaan::all();
@@ -259,5 +261,58 @@ class UserController extends Controller
         }
 
         return Pdf::loadView('kelola_pembayaran.print', compact('data', 'pembayarans'))->stream('pembayaran.pdf');
+    }
+
+    public function show($role, $id)
+    {
+        $data = User::findOrFail($id);
+        $agamas = Agama::all();
+        $kewarganegaraan = Kewarganegaraan::all();
+        $return = [
+            'agamas' => $agamas,
+            'kewarganegaraan' => $kewarganegaraan,
+            'data' => $data
+        ];
+
+        if ($role == 'mahasiswa') {
+            $tahun_ajarans = TahunAjaran::all();
+            $prodis = Prodi::where(function ($q) use ($data) {
+                $q->where('status', '1')
+                    ->orWhere('id', $data->mahasiswa->prodi_id);
+            })->get();
+            $jenis_tinggal = JenisTinggal::all();
+            $alat_transportasi = AlatTransportasi::all();
+            $pekerjaans = Pekerjaan::all();
+            $jenjang = Jenjang::all();
+            $penghasilans = Penghasilan::all();
+            $mhs = $data->mahasiswa;
+            $tahun_semester = DB::table('tahun_semester')
+            ->select('tahun_semester.id', 'semesters.nama')
+            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
+            ->where('tahun_semester.prodi_id', $mhs->prodi_id)
+            ->get();
+            $return += [
+                'tahun_ajarans' => $tahun_ajarans,
+                'prodis' => $prodis,
+                'kewarganegaraan' => $kewarganegaraan,
+                'jenis_tinggal' => $jenis_tinggal,
+                'alat_transportasi' => $alat_transportasi,
+                'pekerjaans' => $pekerjaans,
+                'jenjang' => $jenjang,
+                'penghasilans' => $penghasilans,
+                'tahun_semester' => $tahun_semester
+            ];
+        } elseif ($role == 'asdos') {
+            $dosen = User::role('dosen')
+                ->select('users.*')
+                ->join('profile_dosens as b', 'users.id', 'b.user_id')
+                ->where('b.status', '1')
+                ->get();
+            $return += [
+                'dosen' => $dosen
+            ];
+        }
+        return view('users.' . $role . '.show', $return);
     }
 }

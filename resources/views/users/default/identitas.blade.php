@@ -1,7 +1,10 @@
+@php
+    $disabled = isset($disabled) ? $disabled : false;
+@endphp
 
 <div class="mb-3">
     <label for="tempat_lahir" class="form-label">Tempat Lahir</label>
-    <input class="form-control @error('tempat_lahir') is-invalid @enderror" type="text"
+    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('tempat_lahir') is-invalid @enderror" type="text"
         value="{{ isset($data) ? $data->{$role}->tempat_lahir : old('tempat_lahir') }}" id="tempat_lahir"
         placeholder="Tempat Lahir" name="tempat_lahir" />
     @error('tempat_lahir')
@@ -12,7 +15,7 @@
 </div>
 <div class="mb-3">
     <label for="tgl_lahir" class="form-label">Tanggal Lahir</label>
-    <input class="form-control @error('tgl_lahir') is-invalid @enderror" type="date"
+    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('tgl_lahir') is-invalid @enderror" type="date"
         value="{{ isset($data) ? $data->{$role}->tgl_lahir : old('tgl_lahir') }}" id="tgl_lahir"
         placeholder="Tempat Lahir" name="tgl_lahir" />
     @error('tgl_lahir')
@@ -23,7 +26,7 @@
 </div>
 <div class="mb-3">
     <label for="agama_id" class="form-label">Agama</label>
-    <select class="form-select @error('agama_id') is-invalid @enderror" name="agama_id">
+    <select {{ $disabled ? 'disabled' : '' }} class="form-select @error('agama_id') is-invalid @enderror" name="agama_id">
         <option value="">Pilih Agama</option>
         @foreach ($agamas as $agama)
             <option value="{{ $agama->id }}"
@@ -40,7 +43,7 @@
 <div class="mb-3">
     <label for="status" class="form-label">Status</label>
     <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" name="status" id="publish"
+        <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="checkbox" role="switch" name="status" id="publish"
             {{ isset($data) ? ($data->{$role}->status ? 'checked' : '') : (old('status') ? 'checked' : '') }} {{ $page == 'profile' ? 'disabled' : '' }}>
     </div>
     @error('jk')
@@ -53,14 +56,14 @@
     <label for="jk" class="form-label">Jenis Kelamin</label>
     <div class="d-flex gap-3">
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="jk" value="l" id="jk-l"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="jk" value="l" id="jk-l"
                 {{ isset($data) ? ($data->{$role}->jk == 'l' ? 'checked' : '') : (old('jk') == 'l' ? 'checked' : '') }}>
             <label class="form-check-label" for="jk-l">
                 Laki-laki
             </label>
         </div>
         <div class="form-check">
-            <input class="form-check-input" type="radio" name="jk" value="p" id="jk-p"
+            <input {{ $disabled ? 'disabled' : '' }} class="form-check-input" type="radio" name="jk" value="p" id="jk-p"
                 {{ isset($data) ? ($data->{$role}->jk == 'p' ? 'checked' : '') : (old('jk') == 'p' ? 'checked' : '') }}>
             <label class="form-check-label" for="jk-p">
                 Perempuan

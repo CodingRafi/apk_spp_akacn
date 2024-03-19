@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\KrsController as ControllersKrsController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,10 @@ class KrsController extends Controller
     public function __construct(ControllersKrsController $krsController)
     {
         $this->krsController = $krsController;
+        $this->middleware('permission:view_krs', ['only' => ['index']]);
+        $this->middleware('permission:add_krs', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_krs', ['only' => ['edit', 'update', 'revisi', 'storeRevisi']]);
+        $this->middleware('permission:delete_krs', ['only' => ['destroy']]);
     }
 
     public function index()
@@ -23,15 +28,33 @@ class KrsController extends Controller
         return view('mahasiswa.krs.index');
     }
 
-    public function dataSemester()
+    private function validateMhsId($mhs_id = null)
     {
-        $mhs = Auth::user()->mahasiswa;
+        $user = Auth::user();
+
+        if ($user->hasRole('mahasiswa')) {
+            $mhs_id = $user->id;
+        }
+
+        $user = User::findOrFail($mhs_id);
+
+        if ((!$user->hasRole('mahasiswa') && $mhs_id == null) || $user->mahasiswa == null) {
+            abort(404);
+        }
+
+        return $mhs_id;
+    }
+
+    public function dataSemester($mhs_id = null)
+    {
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $mhs = User::findOrFail($mhs_id)->mahasiswa;
         $datas = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'krs.jml_sks_diambil', 'krs.status')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->leftJoin('krs', function ($join) {
+            ->leftJoin('krs', function ($join) use($mhs_id) {
                 $join->on('krs.tahun_semester_id', 'tahun_semester.id')
-                    ->where('krs.mhs_id', Auth::user()->id);
+                    ->where('krs.mhs_id', $mhs_id);
             })
             ->where('tahun_semester.prodi_id', $mhs->prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
@@ -40,7 +63,7 @@ class KrsController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('krs.show', ['tahun_semester_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $options = $options . "<a href='" . route('krs.show', ['tahun_semester_id' => $data->id, 'mhs_id' => $mhs_id]) . "' class='btn btn-info mx-2'>Detail</a>";
 
             $data->options = $options;
         }
@@ -79,9 +102,10 @@ class KrsController extends Controller
             ->make(true);
     }
 
-    public function show($tahun_semester_id)
+    public function show($tahun_semester_id, $mhs_id = null)
     {
-        $validate = $this->krsController->validateTahunSemester($tahun_semester_id, Auth::user()->id);
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $validate = $this->krsController->validateTahunSemester($tahun_semester_id, $mhs_id);
 
         if (!$validate['status']) {
             abort(404);
@@ -94,11 +118,11 @@ class KrsController extends Controller
             ->first();
 
         $krs = DB::table('krs')
-            ->where('krs.mhs_id', Auth::user()->id)
+            ->where('krs.mhs_id', $mhs_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->first();
 
-        return view('mahasiswa.krs.show', compact('tahun_semester', 'krs'));
+        return view('mahasiswa.krs.show', compact('tahun_semester', 'krs', 'mhs_id'));
     }
 
 

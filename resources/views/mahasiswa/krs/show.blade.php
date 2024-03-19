@@ -17,7 +17,7 @@
                         $krs->tgl_mulai_revisi <= date('Y-m-d') &&
                         $krs->tgl_akhir_revisi >= date('Y-m-d') &&
                         $tahun_semester->status;
-                }else{
+                } else {
                     $validation = false;
                 }
             } else {
@@ -29,24 +29,40 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <a href="{{ route('krs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @if (Auth::user()->hasRole('mahasiswa'))
+                                <a href="{{ route('krs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @else
+                                <a href="{{ route('kelola-users.mahasiswa.show', $mhs_id) }}"><i
+                                        class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @endif
                             <h5 class="text-capitalize mb-0">KRS {{ $tahun_semester->nama }}</h5>
                         </div>
                         @if ($validation)
                             @if ($dataEmpty || ($krs->status == 'pending' || $krs->status == 'ditolak'))
                                 <div class="d-flex" style="gap: 1rem;">
                                     <button type="button" class="btn btn-primary"
-                                        onclick="addForm('{{ route('krs.store', $tahun_semester->id) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
+                                        onclick="addForm('{{ route('krs.store', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
                                         Tambah Mata Kuliah
                                     </button>
                                     @if ($dataEmpty || $krs->status == 'pending')
-                                        <form action="{{ route('krs.ajukan', $tahun_semester->id) }}" class="form-ajukan"
-                                            method="POST">
-                                            @csrf
-                                            <button type="button" class="btn btn-warning btn-ajukan">Ajukan KRS</button>
-                                        </form>
-                                        @elseif($krs->status == 'ditolak')
-                                        <form action="{{ route('krs.revisi', $tahun_semester->id) }}" method="post" class="form-revisi">
+                                        @if (Auth::user()->hasRole('mahasiswa'))
+                                            <form action="{{ route('krs.ajukan', $tahun_semester->id) }}"
+                                                class="form-ajukan" method="POST">
+                                                @csrf
+                                                <button type="button" class="btn btn-warning btn-ajukan">Ajukan
+                                                    KRS</button>
+                                            </form>
+                                        @else
+                                            <form
+                                                action="{{ route('krs.simpan', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}"
+                                                class="form-ajukan" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-warning">Simpan</button>
+                                            </form>
+                                        @endif
+                                    @elseif($krs->status == 'ditolak')
+                                        <form action="{{ route('krs.revisi', $tahun_semester->id) }}" method="post"
+                                            class="form-revisi">
                                             @csrf
                                             @method('patch')
                                             <button type="button" class="btn btn-warning btn-revisi">Revisi</button>
@@ -87,7 +103,7 @@
                             </div>
                         @endif
                         <div class="table-responsive">
-                            <table class="table table-matkul">
+                            <table class="table table-matkul w-100">
                                 <thead>
                                     <tr>
                                         <th>Kode</th>
@@ -113,7 +129,7 @@
         @include('krs.js', [
             'tahun_semester_id' => $tahun_semester->id,
             'jatah_sks' => $tahun_semester->jatah_sks,
-            'mhs_id' => Auth::user()->id,
+            'mhs_id' => $mhs_id,
             'check_tgl' => $validation,
         ])
         <script>

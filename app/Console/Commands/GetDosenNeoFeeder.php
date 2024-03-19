@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class GetDosenNeoFeeder extends Command
@@ -63,6 +64,8 @@ class GetDosenNeoFeeder extends Command
             $dataUser = $detailUser[$index];
 
             if ($dataUser['id_jenis_sdm'] == 12) {
+                $wilayah = DB::table('wilayahs')->where('id', $dataUser['id_wilayah'])->first();
+
                 $user = User::updateOrCreate([
                     'login_key' => $dataUser['nidn']
                 ],[
@@ -96,6 +99,7 @@ class GetDosenNeoFeeder extends Command
                         'rt' => $dataUser['rt'],
                         'rw' => $dataUser['rw'],
                         'kode_pos' => $dataUser['kode_pos'],
+                        'kewarganegaraan_id' => $wilayah->negara_id,
                         'wilayah_id' => $dataUser['id_wilayah'],
                         'telepon' => $dataUser['telepon'],
                         'handphone' => $dataUser['handphone'],
@@ -103,7 +107,10 @@ class GetDosenNeoFeeder extends Command
                         'tgl_mulai_pns' => Carbon::parse($dataUser['tanggal_mulai_pns'])->format('Y-m-d'),
                     ]);
                 } catch (\Throwable $th) {
-                    dd($th);
+                    if (!$resDetailUser['status']) {
+                        $this->error($th);
+                        return 1;
+                    }
                 }
             }
         }

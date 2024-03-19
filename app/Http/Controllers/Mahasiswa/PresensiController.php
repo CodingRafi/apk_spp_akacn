@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,9 +11,27 @@ use Illuminate\Support\Facades\DB;
 
 class PresensiController extends Controller
 {
+    private function validateMhsId()
+    {
+        $mhs_id = request('mhs_id');
+        $user = Auth::user();
+
+        if ($user->hasRole('mahasiswa')) {
+            $mhs_id = $user->id;
+        }
+
+        $user = User::findOrFail($mhs_id);
+
+        if ((!$user->hasRole('mahasiswa') && $mhs_id == null) || $user->mahasiswa == null) {
+            abort(404);
+        }
+
+        return $mhs_id;
+    }
+
     public function index()
     {
-        $user = Auth::user();
+        $user = User::findOrFail($this->validateMhsId());
         $mhs = $user->mahasiswa;
         $tahun_semester = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama')
@@ -26,7 +45,7 @@ class PresensiController extends Controller
 
     public function data()
     {
-        $user = Auth::user();
+        $user = User::findOrFail($this->validateMhsId());
         $tahunSemesterId = request('tahun_semester_id');
 
         $krs = DB::table('krs')

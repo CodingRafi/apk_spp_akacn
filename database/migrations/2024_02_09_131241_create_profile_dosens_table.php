@@ -38,7 +38,9 @@ return new class extends Migration
             $table->string('rt')->nullable();
             $table->string('rw')->nullable();
             $table->string('kode_pos')->nullable();
-            $table->uuid('wilayah_id')->nullable()  ;
+            $table->string('kewarganegaraan_id');
+            $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
+            $table->uuid('wilayah_id')->nullable();
             $table->foreign('wilayah_id')->references('id')->on('wilayahs')->onDelete('cascade');
             $table->string('telepon')->nullable();
             $table->string('handphone')->nullable();
@@ -48,6 +50,7 @@ return new class extends Migration
             $table->enum('mampu_handle_kebutuhan_braille',[0,1])->nullable();
             $table->enum('mampu_handle_kebutuhan_bahasa_isyarat',[0,1])->nullable();
             $table->string('nominal_tunjangan')->default('0');
+            $table->enum('source', ['neo_feeder', 'app'])->default('app');
             $table->timestamps();
         });
     }

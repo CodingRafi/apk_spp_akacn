@@ -116,6 +116,10 @@
         .select2-container {
             z-index: 9999;
         }
+
+        .select2{
+            width: 100%
+        }
     </style>
 </head>
 
@@ -343,16 +347,6 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2();
-        });
-    </script>
-    <script>
-        $("#tab-main .a-tab").on("click", function(e) {
-            e.preventDefault();
-            $(".nav-link-dropdown-main").parent().removeClass("active");
-            $("#tab-main a").removeClass("active");
-            $(".tab-pane").removeClass("active");
-            $(this).addClass("active");
-            $(`.tab-pane${$(this).attr("href")}`).addClass("active");
         });
     </script>
 

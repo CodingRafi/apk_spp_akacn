@@ -10,31 +10,31 @@
                 </div>
                 <div class="card-body">
                     <div id="tab-main">
-                        <ul class="nav nav-tabs">
+                        <ul class="nav nav-tabs" id="detail">
                             @can('view_semester')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <a class="nav-link a-tab active" href="#semester">Semester</a>
+                                    <button data-bs-toggle="tab" data-bs-target="#semester" class="nav-link a-tab active">Semester</button>
                                 </li>
                             @endcan
                             @can('view_kelola_pembayaran')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <a class="nav-link a-tab" href="#pembayaran-semester">Pembayaran Semester</a>
+                                    <button data-bs-toggle="tab" data-bs-target="#pembayaran-semester" class="nav-link a-tab">Pembayaran Semester</button>
                                 </li>
                             @endcan
                             @can('view_pembayaran_lainnya')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <a class="nav-link a-tab" href="#pembayaran-lainnya">Pembayaran Lainnya</a>
+                                    <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#pembayaran-lainnya">Pembayaran Lainnya</button>
                                 </li>
                             @endcan
                             @can('view_potongan')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <a class="nav-link a-tab" href="#potongan">Potongan</a>
+                                    <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#potongan">Potongan</button>
                                 </li>
                             @endcan
                         </ul>
                     </div>
 
-                    <div class="tab-content py-4 px-1">
+                    <div class="tab-content py-4 px-1" id="detailContent">
                         @can('view_semester')
                             @include('data_master.prodi.angkatan.partials.semester')
                         @endcan

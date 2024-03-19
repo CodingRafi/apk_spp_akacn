@@ -35,13 +35,21 @@ return new class extends Migration
             $table->date('tgl_akhir_aktif')->nullable();
             $table->timestamps();
         });
-
+        
         Schema::create('matkul_prodi', function (Blueprint $table) {
             $table->id();
             $table->uuid('matkul_id');
             $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+        });
+        
+        Schema::create('matkul_materi', function(Blueprint $table){
+            $table->id();
+            $table->uuid('matkul_id');
+            $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
+            $table->text('materi');
+            $table->timestamps();
         });
     }
 

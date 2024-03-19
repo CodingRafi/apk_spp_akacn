@@ -6,15 +6,21 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            {{-- @dd($data) --}}
-                            <a href="{{ route('pembayaran.index') }}"><i
-                                    class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                            <h5 class="text-capitalize mb-0">Pembayaran {{ $data->nama }}</h5>
+                            @if (Auth::user()->hasRole('mahasiswa'))
+                                <a href="{{ route('pembayaran.index') }}"><i
+                                        class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @else
+                                <a href="{{ route('kelola-users.mahasiswa.show', $mhs_id) }}"><i
+                                        class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @endif
+                            <h5 class="text-capitalize mb-0">Pembayaran</h5>
                         </div>
-                        @if ($data && $data->publish)
-                            <a href="{{ route('pembayaran.create', ['type' => request('type'), 'id' => request('id')]) }}"
-                                class="btn btn-primary text-capitalize">Bayar</a>
-                        @endif
+                        @can('add_pembayaran')
+                            @if ($data && $data->publish)
+                                <a href="{{ route('pembayaran.create', ['type' => request('type'), 'id' => request('id')]) }}"
+                                    class="btn btn-primary text-capitalize">Bayar</a>
+                            @endif
+                        @endcan
                     </div>
                     <div class="card-body">
                         @if ($data && $data->publish)
@@ -110,7 +116,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <table class="table">
+                        <table class="table w-100">
                             <thead>
                                 <tr>
                                     <th class="col-md-2">Nama</th>
@@ -141,7 +147,7 @@
                     processing: true,
                     serverSide: true,
                     responsive: true,
-                    ajax: '{{ route('pembayaran.dataPembayaran', ['type' => request('type'), 'id' => request('id')]) }}',
+                    ajax: '{{ route('pembayaran.dataPembayaran', ['type' => request('type'), 'id' => request('id'), 'mhs_id' => $mhs_id]) }}',
                     columns: [{
                             "data": "DT_RowIndex"
                         },

@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\{
     Pembayaran,
-    Semester
+    Semester,
+    User
 };
 use PDF;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +23,7 @@ class PembayaranController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view_pembayaran', ['only' => ['index', 'data', 'dataPembayaran', 'show', 'showPembayaran']]);
+        $this->middleware('permission:view_pembayaran', ['only' => ['index']]);
         $this->middleware('permission:add_pembayaran', ['only' => ['create', 'store']]);
         $this->middleware('permission:edit_pembayaran', ['only' => ['edit', 'update', 'revisi', 'storeRevisi']]);
         $this->middleware('permission:delete_pembayaran', ['only' => ['destroy']]);
@@ -33,14 +34,32 @@ class PembayaranController extends Controller
         return view('mahasiswa.pembayaran.index');
     }
 
-    public function data()
+    private function validateMhsId($mhs_id = null)
     {
-        $datas = Pembayaran::getPembayaranMahasiswa(Auth::user()->id);
+        $user = Auth::user();
+
+        if ($user->hasRole('mahasiswa')) {
+            $mhs_id = $user->id;
+        }
+
+        $user = User::findOrFail($mhs_id);
+
+        if ((!$user->hasRole('mahasiswa') && $mhs_id == null) || $user->mahasiswa == null) {
+            abort(404);
+        }
+
+        return $mhs_id;
+    }
+
+    public function data($mhs_id = null)
+    {
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $datas = Pembayaran::getPembayaranMahasiswa($mhs_id);
 
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('pembayaran.show', ['type' => $data->type, 'id' => $data->untuk]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $options = $options . "<a href='" . route('pembayaran.show', ['type' => $data->type, 'id' => $data->untuk, 'mhs_id' => $mhs_id]) . "' class='btn btn-info mx-2'>Detail</a>";
 
             $data->options = $options;
         }
@@ -57,10 +76,12 @@ class PembayaranController extends Controller
             ->make(true);
     }
 
-    public function dataPembayaran($type, $id)
+    public function dataPembayaran($type, $id, $mhs_id = null)
     {
+        $mhs_id = $this->validateMhsId($mhs_id);
+
         $datas = DB::table('pembayarans')
-            ->where('mhs_id', Auth::user()->id)
+            ->where('mhs_id', $mhs_id)
             ->when($type == 'semester', function ($q) use ($id) {
                 $q->where('tahun_semester_id', $id);
             })
@@ -72,13 +93,13 @@ class PembayaranController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('pembayaran.showPembayaran', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
+            $options = $options . "<a href='" . route('pembayaran.showPembayaran', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id, 'mhs_id' => $mhs_id]) . "' class='btn btn-primary mx-2'>Detail</a>";
 
-            if ($data->status == 'diterima') {
-                $options = $options . "<a href='" . route('pembayaran.print', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Kwitansi</a>";
-            }
 
             if (auth()->user()->can('edit_pembayaran')) {
+                if ($data->status == 'diterima') {
+                    $options = $options . "<a href='" . route('pembayaran.print', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Kwitansi</a>";
+                }
                 $options = $options . "<a href='" . route('pembayaran.edit', ['type' => $type, 'id' => $id, 'pembayaran_id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
@@ -146,8 +167,9 @@ class PembayaranController extends Controller
         }
     }
 
-    public function show($type, $id)
+    public function show($type, $id, $mhs_id = null)
     {
+        $mhs_id = $this->validateMhsId($mhs_id);
         $data = DB::table('rekap_pembayaran')
             ->when($type == 'semester', function ($q) {
                 $q->join('tahun_pembayaran', 'tahun_pembayaran.id', 'rekap_pembayaran.untuk')
@@ -160,7 +182,7 @@ class PembayaranController extends Controller
                     ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
                     ->select('rekap_pembayaran.*', 'tahun_pembayaran_lain.publish', 'tahun_pembayaran_lain.ket');
             })
-            ->where('rekap_pembayaran.user_id', Auth::user()->id)
+            ->where('rekap_pembayaran.user_id', $mhs_id)
             ->where('rekap_pembayaran.type', $type)
             ->where('rekap_pembayaran.untuk', $id)
             ->first();
@@ -169,7 +191,7 @@ class PembayaranController extends Controller
             ->select('potongans.nama', 'potongan_tahun_ajaran.type', 'potongan_tahun_ajaran.ket', 'potongan_tahun_ajaran.nominal')
             ->join('potongan_tahun_ajaran', 'potongan_tahun_ajaran.id', 'potongan_mhs.potongan_tahun_ajaran_id')
             ->join('potongans', 'potongans.id', 'potongan_tahun_ajaran.potongan_id')
-            ->where('potongan_mhs.mhs_id', Auth::user()->id)
+            ->where('potongan_mhs.mhs_id', $mhs_id)
             ->where('potongans.type', $type)
             ->when('type' == 'semester', function ($q) use ($id) {
                 return $q->where('potongan_tahun_ajaran.tahun_semester_id', $id);
@@ -179,18 +201,19 @@ class PembayaranController extends Controller
             })
             ->get();
 
-        return view('mahasiswa.pembayaran.show', compact('data', 'potongan'));
+        return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'mhs_id'));
     }
 
-    public function showPembayaran($type, $id, $pembayaran_id)
+    public function showPembayaran($type, $id, $pembayaran_id, $mhs_id = null)
     {
+        $mhs_id = $this->validateMhsId($mhs_id);
         $data = Pembayaran::findOrFail($pembayaran_id);
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
+        if ($data->mhs_id != $mhs_id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             abort(404);
         }
 
         $page = 'show';
-        return view('mahasiswa.pembayaran.form', compact('data', 'page'));
+        return view('mahasiswa.pembayaran.form', compact('data', 'page', 'mhs_id'));
     }
 
     public function edit($type, $id, $pembayaran_id)

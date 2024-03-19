@@ -22,6 +22,8 @@ class MatkulController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
+            $options .= "<a href='" . route('data-master.mata-kuliah.materi.index', $data->id) . "' class='btn btn-info mx-2'>Materi</a>";
+
             $options = $options . " <button class='btn btn-warning'
                         onclick='editForm(`" . route('data-master.mata-kuliah.show', $data->id) . "`, `Edit Mata Kuliah`, `#matkul`)' type='button'>
                         <i class='ti-pencil'></i>

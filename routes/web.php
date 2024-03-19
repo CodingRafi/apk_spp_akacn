@@ -7,6 +7,7 @@ use App\Http\Controllers\Kelola\{
     KrsController as KelolaKrsController,
     KuesionerController,
     KurikulumController,
+    MateriController,
     MatkulController,
     MutuController,
     NilaiController,
@@ -31,7 +32,8 @@ use App\Http\Controllers\{
     KrsController as ControllersKrsController,
     ProfileController,
     TemplateSuratController as ControllersTemplateSuratController,
-    WhitelistIPController
+    WhitelistIPController,
+    WilayahController
 };
 use App\Http\Controllers\Dosen\PresensiController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
@@ -88,6 +90,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{role}/exportPembayaran', [UserController::class, 'exportPembayaran'])->name('exportPembayaran');
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::get('{role}/{id}', [UserController::class, 'show'])->name('show');
         Route::resource('admin', AdminController::class)->only('update');
         Route::resource('mahasiswa', MahasiwaController::class)->except('index', 'create', 'edit');
         Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
@@ -160,6 +163,15 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/', [MatkulController::class, 'store'])->name('store');
             Route::get('/{matkul_id}', [MatkulController::class, 'show'])->name('show');
             Route::put('/{matkul_id}', [MatkulController::class, 'update'])->name('update');
+
+            Route::prefix('{matkul_id}/materi')->name('materi.')->group(function () {
+                Route::get('/', [MateriController::class, 'index'])->name('index');
+                Route::post('/', [MateriController::class, 'store'])->name('store');
+                Route::get('data', [MateriController::class, 'data'])->name('data');
+                Route::get('/{materi_id}', [MateriController::class, 'show'])->name('show');
+                Route::put('/{materi_id}', [MateriController::class, 'update'])->name('update');
+                Route::delete('/{materi_id}', [MateriController::class, 'destroy'])->name('destroy');
+            });
         });
 
         //? Prodi
@@ -318,6 +330,7 @@ Route::group(['middleware' => ['auth']], function () {
     
     Route::prefix('krs/{tahun_semester_id}')->name('krs.')->group(function () {
         Route::post('/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
+        Route::post('/simpan/{mhs_id?}', [ControllersKrsController::class, 'simpan'])->name('simpan');
         Route::get('/dataMatkul/{mhs_id?}', [ControllersKrsController::class, 'dataMatkul'])->name('dataMatkul');
         Route::get('/getMatkul/{mhs_id?}', [ControllersKrsController::class, 'getMatkul'])->name('getMatkul');
         Route::get('/getTotalSks/{mhs_id?}', [ControllersKrsController::class, 'getTotalSks'])->name('getTotalSks');
@@ -325,17 +338,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::delete('/{tahun_matkul_id}/{mhs_id?}', [ControllersKrsController::class, 'destroy'])->name('destroy');;
     });
 
-    Route::middleware(['role:mahasiswa'])->group(function () {
-        Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
-            Route::get('data', [MahasiswaPembayaranController::class, 'data'])->name('data');
-            Route::get('export', [MahasiswaPembayaranController::class, 'export'])->name('export');
-            Route::get('/', [MahasiswaPembayaranController::class, 'index'])->name('index');
-            Route::prefix('{type}/{id}')->middleware(['pembayaran.mhs'])->group(function () {
-                Route::get('/dataPembayaran', [MahasiswaPembayaranController::class, 'dataPembayaran'])->name('dataPembayaran');
+    Route::prefix('pembayaran')->name('pembayaran.')->group(function () {
+        Route::get('data/{mhs_id?}', [MahasiswaPembayaranController::class, 'data'])->name('data');
+        Route::get('export', [MahasiswaPembayaranController::class, 'export'])->name('export');
+        Route::get('/', [MahasiswaPembayaranController::class, 'index'])->name('index');
+
+        Route::prefix('{type}/{id}')->group(function () {
+            Route::middleware('pembayaran.mhs')->group(function () {
                 Route::get('/create', [MahasiswaPembayaranController::class, 'create'])->name('create');
                 Route::post('/', [MahasiswaPembayaranController::class, 'store'])->name('store');
-                Route::get('/', [MahasiswaPembayaranController::class, 'show'])->name('show');
-                Route::get('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
                 Route::get('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'revisi'])->name('revisi');
                 Route::patch('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'storeRevisi'])->name('storeRevisi');
                 Route::get('/{pembayaran_id}/edit', [MahasiswaPembayaranController::class, 'edit'])->name('edit');
@@ -343,35 +354,39 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
                 Route::get('/{pembayaran_id}/print', [MahasiswaPembayaranController::class, 'print'])->name('print');
             });
+            
+            Route::get('/dataPembayaran/{mhs_id?}', [MahasiswaPembayaranController::class, 'dataPembayaran'])->name('dataPembayaran');
+            Route::get('/{mhs_id?}', [MahasiswaPembayaranController::class, 'show'])->name('show');
+            Route::get('/{pembayaran_id}/{mhs_id?}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
         });
-
-        Route::prefix('krs')->name('krs.')->group(function () {
-            Route::get('/', [KrsController::class, 'index'])->name('index');
-            Route::get('dataSemester', [KrsController::class, 'dataSemester'])->name('dataSemester');
-            Route::get('/{tahun_semester_id}', [KrsController::class, 'show'])->name('show');
-            Route::patch('/{tahun_semester_id}/revisi', [KrsController::class, 'revisi'])->name('revisi');
-        });
-
-        Route::prefix('presensi')->name('presensi.')->group(function () {
-            Route::get('/', [MahasiswaPresensiController::class, 'index'])->name('index');
-            Route::get('/data', [MahasiswaPresensiController::class, 'data'])->name('data');
-            Route::post('/', [MahasiswaPresensiController::class, 'store'])->name('store');
-        });
-
-        Route::prefix('khs')->name('khs.')->group(function () {
-            Route::get('/', [KhsController::class, 'index'])->name('index');
-            Route::get('/dataSemester', [KhsController::class, 'dataSemester'])->name('dataSemester');
-            Route::get('/{tahun_semester_id}', [KhsController::class, 'show'])->name('show');
-            Route::get('/{tahun_semester_id}/data', [KhsController::class, 'data'])->name('data');
-        });
-
-        Route::prefix('transkip')->name('transkip.')->group(function () {
-            Route::get('/', [TranskipController::class, 'index'])->name('index');
-            Route::get('/data', [TranskipController::class, 'data'])->name('data');
-        });
-
-        Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
     });
+
+    Route::prefix('krs')->name('krs.')->group(function () {
+        Route::get('/', [KrsController::class, 'index'])->name('index');
+        Route::get('dataSemester/{mhs_id?}', [KrsController::class, 'dataSemester'])->name('dataSemester');
+        Route::get('/{tahun_semester_id}/{mhs_id?}', [KrsController::class, 'show'])->name('show');
+        Route::patch('/{tahun_semester_id}/revisi', [KrsController::class, 'revisi'])->name('revisi');
+    });
+
+    Route::prefix('presensi')->name('presensi.')->group(function () {
+        Route::get('/', [MahasiswaPresensiController::class, 'index'])->name('index');
+        Route::get('/data', [MahasiswaPresensiController::class, 'data'])->name('data');
+        Route::post('/', [MahasiswaPresensiController::class, 'store'])->name('store');
+    });
+
+    Route::prefix('khs')->name('khs.')->group(function () {
+        Route::get('/', [KhsController::class, 'index'])->name('index');
+        Route::get('/dataSemester', [KhsController::class, 'dataSemester'])->name('dataSemester');
+        Route::get('/{tahun_semester_id}', [KhsController::class, 'show'])->name('show');
+        Route::get('/{tahun_semester_id}/data', [KhsController::class, 'data'])->name('data');
+    });
+
+    Route::prefix('transkip')->name('transkip.')->group(function () {
+        Route::get('/', [TranskipController::class, 'index'])->name('index');
+        Route::get('/data', [TranskipController::class, 'data'])->name('data');
+    });
+
+    Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
 
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 
@@ -385,6 +400,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/{type}/data', [NeoFeederController::class, 'data'])->name('data');
         Route::get('/{type}/get', [NeoFeederController::class, 'get'])->name('get');
     });
+
+    Route::get('get-wilayah', [WilayahController::class, 'getWilayah'])->name('get-wilayah');
 });
 
 require __DIR__ . '/auth.php';

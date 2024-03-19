@@ -1,6 +1,7 @@
 @php
     $page = isset($page) ? $page : 'form';
     $role = $page == 'form' ? request('role') : getRole()->name;
+    $disabled = isset($disabled) ? $disabled : false;
 @endphp
 <div id="tab-main">
     <ul class="nav nav-tabs">
@@ -30,8 +31,10 @@
                 <div class="mb-3">
                     <label for="ttd" class="form-label">Tanda Tangan</label>
                     <div class="d-flex align-items-center" style="gap: 1rem;">
+                        @if (!$disabled)
                         <input class="form-control input-pp @error('ttd') is-invalid @enderror" type="file"
                             name="ttd" id="ttd" accept="image/*" />
+                        @endif
                         @if (Auth::user()->ttd)
                             <a href="{{ asset('storage/' . Auth::user()->ttd) }}" class="btn btn-primary"
                                 target="_blank">Lihat</a>
@@ -48,6 +51,8 @@
     </div>
 </div>
 
+@if (!$disabled)
 <div class="d-grid gap-2 d-md-flex justify-content-md-start">
     <button class="btn btn-primary" type="submit">Simpan</button>
 </div>
+@endif
