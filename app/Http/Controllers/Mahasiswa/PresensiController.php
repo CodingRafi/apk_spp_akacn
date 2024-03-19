@@ -49,7 +49,7 @@ class PresensiController extends Controller
         $tahunSemesterId = request('tahun_semester_id');
 
         $krs = DB::table('krs')
-            ->select('id')
+            ->select('id', 'status')
             ->where('mhs_id', $user->id)
             ->where('tahun_semester_id', $tahunSemesterId)
             ->where('status', 'diterima')
@@ -58,7 +58,13 @@ class PresensiController extends Controller
         if (!$krs) {
             return response()->json([
                 'message' => 'Tidak ada KRS ditemukan'
-            ], 200);
+            ], 400);
+        }
+
+        if ($krs->status != 'diterima') {
+            return response()->json([
+                'message' => 'KRS belum diterima'
+            ], 400);
         }
 
         $krsMatkul = DB::table('krs_matkul')
@@ -185,8 +191,7 @@ class PresensiController extends Controller
             ->where('mhs_id', Auth::user()->id)
             ->where('tahun_semester_id', $tahunSemesterAktif->id)
             ->first();
-
-        if (!$krs || ($krs && $krs == 'pending')) {
+        if (!$krs || ($krs && $krs->status != 'diterima')) {
             return response()->json([
                 'message' => 'Anda harus mengambil KRS terlebih dahulu'
             ], 400);
@@ -202,7 +207,7 @@ class PresensiController extends Controller
                 'message' => 'Kode tidak valid!'
             ], 400);
         }
-        
+
         //? Validasi hari
         $today = Carbon::now();
         Carbon::setLocale('id');
@@ -222,9 +227,9 @@ class PresensiController extends Controller
         }
 
         $cekSudahPresensi = DB::table('jadwal_presensi')
-                    ->where('jadwal_id', $data->id)
-                    ->where('mhs_id', Auth::user()->id)
-                    ->count();
+            ->where('jadwal_id', $data->id)
+            ->where('mhs_id', Auth::user()->id)
+            ->count();
 
         if ($cekSudahPresensi > 0) {
             return response()->json([

@@ -10,6 +10,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class KrsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_kelola_krs', ['only' => ['index', 'show']]);
+        $this->middleware('permission:add_kelola_krs', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_kelola_krs', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_kelola_krs', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         $prodis = DB::table('prodi')->get();

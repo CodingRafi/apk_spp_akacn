@@ -43,6 +43,21 @@ class PresensiController extends Controller
             ->make(true);
     }
 
+    public function getMateri($tahun_matkul_id)
+    {
+        $data = DB::table('tahun_matkul')
+            ->select('matkul_materi.*')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->join('matkul_materi', 'matkul_materi.matkul_id', '=', 'matkuls.id')
+            ->leftJoin('jadwal', 'jadwal.materi_id', 'matkul_materi.id')
+            ->whereNull('matkul_materi.id')
+            ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->get();
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
     public function getPengajar($tahun_ajaran_id, $tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
@@ -105,14 +120,9 @@ class PresensiController extends Controller
             'tahun_matkul_id' => 'required',
             'kode' => 'required|max:6|min:6',
             'type' => 'required',
-            'pengajar_id' => 'required'
+            'pengajar_id' => 'required',
+            'materi_id' => 'required'
         ];
-
-        if ($roleUser->name == 'dosen') {
-            $validate += [
-                'materi' => 'required'
-            ];
-        }
 
         $request->validate($validate);
 
@@ -193,9 +203,14 @@ class PresensiController extends Controller
             }
         }
 
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
+
         $data = [
             'tgl' => $tgl,
-            'materi' => $request->materi,
+            'materi_id' => $request->materi_id,
+            'materi' => $materi->materi,
             'tahun_matkul_id' => $request->tahun_matkul_id,
             'tahun_semester_id' => $getTahunSemesterAktif->id,
             'ket' => $request->ket,
@@ -226,11 +241,10 @@ class PresensiController extends Controller
     {
         $role = getRole();
         $tahunSemester = DB::table('tahun_semester')
-            ->select('tahun_semester.*', 'semesters.nama')
+            ->select('tahun_semester.id', 'semesters.nama')
             ->join('semesters', 'tahun_semester.semester_id', '=', 'semesters.id')
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-            ->get()
-            ->pluck('nama', 'id');
+            ->get();
 
         $tahunMatkul = DB::table('tahun_matkul')
             ->select(
@@ -253,34 +267,28 @@ class PresensiController extends Controller
     public function getJadwal($tahun_ajaran_id)
     {
         $role = getRole();
-        $tahunSemester = DB::table('tahun_semester')
-            ->where('tahun_ajaran_id', $tahun_ajaran_id)
-            ->first();
+        $jadwals = DB::table('jadwal')
+            ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
+            ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
+            ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
+            ->where('tahun_semester_id', request('tahun_semester_id'))
+            ->when($role->name == 'dosen', function ($q) {
+                $asdos = DB::table('users')
+                    ->select('users.id')
+                    ->join('profile_asdos', 'profile_asdos.user_id', 'users.id')
+                    ->where('profile_asdos.dosen_id', Auth::user()->id)
+                    ->get()
+                    ->pluck('id')
+                    ->toArray();
 
-        if ($tahunSemester) {
-            $jadwals = DB::table('jadwal')
-                ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
-                ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
-                ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
-                ->where('tahun_semester_id', $tahunSemester->id)
-                ->when($role->name == 'dosen', function($q){
-                    $asdos = DB::table('users')
-                                    ->select('users.id')
-                                    ->join('profile_asdos', 'profile_asdos.user_id', 'users.id')
-                                    ->where('profile_asdos.dosen_id', Auth::user()->id)
-                                    ->get()
-                                    ->pluck('id')
-                                    ->toArray();
-
-                    $q->where('pengajar_id', Auth::user()->id)
-                        ->orWhere('pengajar_id', $asdos);
-                })
-                ->when($role->name == 'asdos', function ($q) {
-                    $q->where('pengajar_id', Auth::user()->id);
-                })
-                ->orderBy('id', 'desc')
-                ->get();
-        }
+                $q->where('pengajar_id', Auth::user()->id)
+                    ->orWhere('pengajar_id', $asdos);
+            })
+            ->when($role->name == 'asdos', function ($q) {
+                $q->where('pengajar_id', Auth::user()->id);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
 
         $datas = isset($jadwals) ? $jadwals : [];
 

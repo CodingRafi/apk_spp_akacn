@@ -245,12 +245,13 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('/', [KelolaPresensiController::class, 'index'])->name('index');
             Route::get('/get-tahun-ajaran', [KelolaPresensiController::class, 'getTahunAjaran'])->name('getTahunAjaran');
             Route::get('/get-pengawas', [KelolaPresensiController::class, 'getPengawas'])->name('getPengawas');
+            Route::get('/{tahun_matkul_id}/get-materi', [KelolaPresensiController::class, 'getMateri'])->name('getMateri');
+            Route::get('/{tahun_ajaran_id}/get-jadwal', [KelolaPresensiController::class, 'getJadwal'])->name('getJadwal');
             Route::get('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'show'])->name('show');
             Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/total', [KelolaPresensiController::class, 'getTotalPelajaran'])->name('getTotalPelajaran');
             Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-pengajar', [KelolaPresensiController::class, 'getPengajar'])->name('getPengajar');
             Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-ujian', [KelolaPresensiController::class, 'getJenisUjian'])->name('getJenisUjian');
             Route::post('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'store'])->name('store');
-            Route::get('/{tahun_ajaran_id}/get-jadwal', [KelolaPresensiController::class, 'getJadwal'])->name('getJadwal');
             Route::get('/{tahun_ajaran_id}/{jadwal_id}', [KelolaPresensiController::class, 'showJadwal'])->name('showJadwal');
             Route::put('/{jadwal_id}', [KelolaPresensiController::class, 'updateJadwal'])->name('updateJadwal');
             Route::put('/{jadwal_id}/mulai', [KelolaPresensiController::class, 'mulaiJadwal'])->name('mulaiJadwal');

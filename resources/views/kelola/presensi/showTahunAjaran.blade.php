@@ -16,7 +16,15 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="col-md-4">
+                        <select name="tahun_semester_id" id="tahun_semester_id" class="form-select">
+                            <option value="">Pilih Semester</option>
+                            @foreach ($tahunSemester as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="table-responsive mt-3">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -47,7 +55,7 @@
                         <div class="div-alert"></div>
                         <div class="mb-3">
                             <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
-                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select">
+                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select" onchange="get_materi()">
                                 <option value="">Pilih Pelajaran</option>
                                 @foreach ($tahunMatkul as $matkul)
                                     <option value="{{ $matkul->id }}">{{ $matkul->nama }}
@@ -55,6 +63,12 @@
                                         {{ config('services.hari')[$matkul->hari] }}, {{ $matkul->jam_mulai }} -
                                         {{ $matkul->jam_akhir }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="materi_id" class="form-label">Materi</label>
+                            <select name="materi_id" id="materi_id" class="form-control">
+                                <option value="">Pilih Materi</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -84,17 +98,14 @@
                             <input type="hidden" name="type" value="pertemuan">
                             <input type="hidden" name="pengajar_id" value="{{ Auth::user()->id }}">
                             <div class="mb-3">
-                                <label for="materi" class="form-label">Materi</label>
-                                <input class="form-control" type="text" name="materi" />
-                            </div>
-                            <div class="mb-3">
                                 <label for="ket" class="form-label">Keterangan</label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket"></textarea>
                             </div>
                         @endif
                     </div>
                     <div class="modal-footer justify-content-start px-3">
-                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this, () => table.ajax.reload())">Simpan</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => table.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -125,7 +136,7 @@
         function generateCode() {
             $('#kode').val(generateRandomCode(6));
         }
-        
+
         function getTotal() {
             $('.div-alert').empty();
 
@@ -149,6 +160,27 @@
                     },
                     error: function(err) {
                         showAlert(err.responseJSON.message)
+                    }
+                })
+            }
+        }
+
+        function get_materi() {
+            $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
+
+            if ($('#tahun_matkul_id').val()) {
+                $.ajax({
+                    url: "{{ route('kelola-presensi.presensi.getMateri', ['tahun_matkul_id' => ':tahun_matkul_id']) }}"
+                        .replace(':tahun_matkul_id', $('#tahun_matkul_id').val()),
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(res) {
+                        $.each(res.data, function(i, e) {
+                            $('#materi_id').append(`<option value="${e.id}">${e.materi}</option>`)
+                        })
+                    },
+                    error: function(err) {
+                        alert('Gagal get materi');
                     }
                 })
             }
@@ -211,9 +243,10 @@
             }
         }
 
-        function getJenisUjian(tahun_matkul_id){
+        function getJenisUjian(tahun_matkul_id) {
             $.ajax({
-                url: '{{ route('kelola-presensi.presensi.getJenisUjian', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'.replace(':tahun_matkul_id', tahun_matkul_id),
+                url: '{{ route('kelola-presensi.presensi.getJenisUjian', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
+                    .replace(':tahun_matkul_id', tahun_matkul_id),
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
@@ -238,6 +271,9 @@
                 responsive: true,
                 ajax: {
                     url: '{{ route('kelola-presensi.presensi.getJadwal', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
+                    data: function(p) {
+                        p.tahun_semester_id = $('#tahun_semester_id').val();
+                    }
                 },
                 columns: [{
                         "data": "DT_RowIndex"
@@ -261,5 +297,10 @@
                 pageLength: 25,
             });
         });
+
+        $('#tahun_semester_id').on('change', function() {
+            console.log($('#tahun_semester_id').val())
+            table.ajax.reload();
+        })
     </script>
 @endpush

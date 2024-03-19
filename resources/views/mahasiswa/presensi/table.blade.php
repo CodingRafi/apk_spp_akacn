@@ -79,7 +79,8 @@
                 generate_table(res.data)
             },
             error: function(err) {
-                console.log('Gagal get presensi');
+                showAlert(err.responseJSON.message, 'error');
+                $('.table tbody').empty();
             }
         })
     }

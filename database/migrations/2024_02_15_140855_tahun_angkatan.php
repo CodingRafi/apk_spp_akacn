@@ -103,6 +103,7 @@ return new class extends Migration
             $table->enum('type', ['ujian', 'pertemuan'])->default('pertemuan');
             $table->string('kode')->unique();
             $table->foreignId('pengajar_id')->constrained('users');
+            $table->foreignId('materi_id')->constrained('matkul_materi');
             $table->timestamp('presensi_mulai')->nullable();
             $table->timestamp('presensi_selesai')->nullable();
             $table->date('tgl');
