@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nama');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+            $table->foreignId('jenis_kelas_id')->constrained();
             $table->timestamps();
         });
         

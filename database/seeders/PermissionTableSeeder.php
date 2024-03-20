@@ -98,6 +98,11 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_gaji',
             'delete_kelola_gaji',
 
+            'view_jenis_kelas',
+            'add_jenis_kelas',
+            'edit_jenis_kelas',
+            'delete_jenis_kelas',
+
             'view_setting',
             'edit_setting',
 

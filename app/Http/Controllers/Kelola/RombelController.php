@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\JenisKelas;
 use App\Models\Prodi;
 use App\Models\Rombel;
 use App\Models\TahunAjaran;
@@ -24,7 +25,8 @@ class RombelController extends Controller
     public function index()
     {
         $prodis = Prodi::where('status', "1")->get();
-        return view('data_master.rombel.index', compact('prodis'));
+        $jenisKelas = JenisKelas::all();
+        return view('data_master.rombel.index', compact('prodis', 'jenisKelas'));
     }
 
     public function data()
@@ -38,7 +40,7 @@ class RombelController extends Controller
 
             if (auth()->user()->can('edit_rombel')) {
                 $options = $options . " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.rombel.show', $data->id) . "`, `Edit Rombel`, `#rombel`)'>
+                        onclick='editForm(`" . route('data-master.rombel.show', $data->id) . "`, `Edit Rombel`, `#rombel`, editRombel)'>
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
@@ -65,12 +67,14 @@ class RombelController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'prodi_id' => 'required'
+            'prodi_id' => 'required',
+            'jenis_kelas_id' => 'required'
         ]);
 
         Rombel::create([
             'prodi_id' => $request->prodi_id,
-            'nama' => $request->nama
+            'nama' => $request->nama,
+            'jenis_kelas_id' => $request->jenis_kelas_id
         ]);
 
         return response()->json([
@@ -91,7 +95,8 @@ class RombelController extends Controller
     {
         $request->validate([
             'nama' => 'required',
-            'prodi_id' => 'required'
+            'prodi_id' => 'required',
+            'jenis_kelas_id' => 'required'
         ]);
 
         $rombel->update($request->all());

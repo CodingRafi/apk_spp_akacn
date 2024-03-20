@@ -29,6 +29,7 @@ use App\Http\Controllers\Kelola\{
 use App\Http\Controllers\{
     HomeController,
     DashboardController,
+    JenisKelasController,
     KrsController as ControllersKrsController,
     ProfileController,
     TemplateSuratController as ControllersTemplateSuratController,
@@ -143,6 +144,10 @@ Route::group(['middleware' => ['auth']], function () {
         //? Ruang
         Route::get('ruang/data', [RuangController::class, 'data'])->name('ruang.data');
         Route::resource('ruang', RuangController::class);
+
+        //? Jenis Kelas
+        Route::get('jenis-kelas/data', [JenisKelasController::class, 'data'])->name('jenis-kelas.data');
+        Route::resource('jenis-kelas', JenisKelasController::class);
 
         //? Template Surat
         Route::get('template-surat/data', [TemplateSuratController::class, 'data'])->name('template-surat.data');

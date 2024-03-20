@@ -71,6 +71,13 @@
                             </a>
                         </li>
                     @endcan
+                    @can('view_jenis_kelas')
+                        <li class="menu-item {{ Request::is('data-master/jenis-kelas*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.jenis-kelas.index') }}" class="menu-link">
+                                <div data-i18n="jenis-kelas">Jenis Kelas</div>
+                            </a>
+                        </li>
+                    @endcan
                     @can('view_kuesioner')
                         <li class="menu-item {{ Request::is('data-master/kuesioner*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.kuesioner.index') }}" class="menu-link">

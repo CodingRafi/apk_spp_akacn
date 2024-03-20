@@ -7,7 +7,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize mb-0">Rombel</h5>
                     @can('add_rombel')
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#rombel">
+                        <button type="button" class="btn btn-primary" onclick="addForm('{{ route('data-master.rombel.store') }}', 'Rombel', '#rombel', storeRombel)">
                             Tambah Rombel
                         </button>
                     @endcan
@@ -34,7 +34,7 @@
     <div class="modal fade" id="rombel" tabindex="-1" aria-labelledby="rombelLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('data-master.rombel.store') }}" method="get">
+                <form action="" method="get">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="rombelLabel">Tambah Rombel</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -48,10 +48,19 @@
                         </div>
                         <div class="mb-3">
                             <label for="prodi" class="form-label">Prodi</label>
-                            <select class="form-select" name="prodi_id">
+                            <select class="form-select" name="prodi_id" id="prodi_id">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="jenis_kelas_id" class="form-label">Jenis Kelas</label>
+                            <select class="form-select" name="jenis_kelas_id" id="jenis_kelas_id">
+                                <option value="">Pilih Jenis Kelas</option>
+                                @foreach ($jenisKelas as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -67,6 +76,14 @@
 
 @push('js')
     <script>
+        function storeRombel(){
+            $('#prodi_id, #jenis_kelas_id').removeAttr('disabled');
+        }
+
+        function editRombel(){
+            $('#prodi_id, #jenis_kelas_id').attr('disabled', 'disabled');
+        }
+
         let table;
         $(document).ready(function() {
             table = $('.table').DataTable({
