@@ -30,6 +30,7 @@ class MahasiswaRequest extends FormRequest
             'tgl_lahir' => 'required',
             'agama_id' => 'required',
             'kewarganegaraan_id' => 'required',
+            'wilayah_id' => 'required',
             'kelurahan' => 'required',
             'penerima_kps' => 'required',
             'wilayah_id' => 'required',
@@ -37,7 +38,7 @@ class MahasiswaRequest extends FormRequest
             'rw' => 'digits:3',
             'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
         ];
-        
+
         if ($role->name == 'admin') {
             $validate += [
                 'tahun_masuk_id' => 'required',
@@ -55,13 +56,13 @@ class MahasiswaRequest extends FormRequest
         } else {
             $mhs = DB::table('profile_mahasiswas')->where('user_id', $this->mahasiswa)->first();
             $validate += [
-                'nisn' => 'required|unique:profile_mahasiswas,nisn,'.$mhs->id,
-                'nik' => 'required|unique:profile_mahasiswas,nik,'.$mhs->id,
+                'nisn' => 'required|unique:profile_mahasiswas,nisn,' . $mhs->id,
+                'nik' => 'required|unique:profile_mahasiswas,nik,' . $mhs->id,
             ];
-            
+
             if ($role->name == 'admin') {
                 $validate += [
-                    'login_key' => 'required|unique:users,login_key,'.$this->mahasiswa,
+                    'login_key' => 'required|unique:users,login_key,' . $this->mahasiswa,
                 ];
             }
         }

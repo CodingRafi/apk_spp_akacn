@@ -20,6 +20,7 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     <th>Prodi</th>
+                                    <th>Jenis Kelas</th>
                                     @can('add_rombel')
                                         <th>Aksi</th>
                                     @endcan
@@ -99,6 +100,9 @@
                     },
                     {
                         "data": "prodi"
+                    },
+                    {
+                        "data": "jenis_kelas"
                     },
                     @can('edit_rombel', 'delete_rombel')
                         {

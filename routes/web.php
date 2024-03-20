@@ -135,6 +135,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/', [KelolaSemesterController::class, 'store'])->name('store');
             Route::get('/{semester_id}', [KelolaSemesterController::class, 'show'])->name('show');
             Route::put('/{semester_id}', [KelolaSemesterController::class, 'update'])->name('update');
+            Route::delete('/{semester_id}', [KelolaSemesterController::class, 'destroy'])->name('destroy');
         });
 
         //? Kurikulum
@@ -235,6 +236,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::get('{rombel_id}/dosen-pa/data', [RombelController::class, 'dataDosenPa'])->name('data');
             Route::get('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'showDosenPa'])->name('show');
             Route::put('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'updateDosenPa'])->name('update');
+            Route::delete('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
         });
         Route::resource('rombel', RombelController::class);
     });

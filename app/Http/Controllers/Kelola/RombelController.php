@@ -58,6 +58,9 @@ class RombelController extends Controller
             ->editColumn('prodi', function ($datas) {
                 return $datas->prodi->nama;
             })
+            ->editColumn('jenis_kelas', function ($datas) {
+                return $datas->jenisKelas->nama;
+            })
             ->addIndexColumn()
             ->rawColumns(['options'])
             ->make(true);
@@ -151,7 +154,7 @@ class RombelController extends Controller
             }
 
             if (auth()->user()->can('delete_rombel')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.dosen-pa.destroy', ['rombel_id' => $id, 'id' => $data->id]) . "`)' type='button'>
                                         Hapus
                                     </button>";
             }
@@ -233,7 +236,7 @@ class RombelController extends Controller
     public function getTahunAjaran()
     {
         $tahun_ajarans = TahunAjaran::select('tahun_ajarans.*')
-            ->leftJoin('rombel_tahun_ajarans', function($join){
+            ->leftJoin('rombel_tahun_ajarans', function ($join) {
                 $join->on('rombel_tahun_ajarans.tahun_masuk_id', '=', 'tahun_ajarans.id')
                     ->where('rombel_tahun_ajarans.rombel_id', request('rombel_id'));
             })
@@ -266,6 +269,37 @@ class RombelController extends Controller
 
         return response()->json([
             'data' => $data
+        ], 200);
+    }
+
+    public function deleteDosenPa($rombel_id, $id)
+    {
+        //?Validate Mahasiswa
+        $get = DB::table('rombel_tahun_ajarans')
+            ->select('rombels.prodi_id', 'rombel_tahun_ajarans.tahun_masuk_id')
+            ->join('rombels', 'rombels.id', 'rombel_tahun_ajarans.rombel_id')
+            ->where('rombel_tahun_ajarans.id', $id)
+            ->where('rombel_tahun_ajarans.rombel_id', $rombel_id)
+            ->first();
+
+        $cek = DB::table('profile_mahasiswas')
+            ->where('tahun_masuk_id', $get->tahun_masuk_id)
+            ->where('prodi_id', $get->prodi_id)
+            ->count();
+
+        if ($cek > 0) {
+            return response()->json([
+                'message' => 'Sudah ada mahasiswa, tidak bisa dihapus'
+            ], 400);
+        }
+
+        DB::table('rombel_tahun_ajarans')
+            ->where('id', $id)
+            ->where('rombel_id', $rombel_id)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Berhasil di hapus'
         ], 200);
     }
 }

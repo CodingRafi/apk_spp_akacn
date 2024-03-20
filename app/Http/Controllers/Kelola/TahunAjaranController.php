@@ -118,10 +118,14 @@ class TahunAjaranController extends Controller
         try {
             $tahunAjaran->delete();
             DB::commit();
-            return redirect()->back()->with('success', 'Berhasil dihapus');
+            return response()->json([
+                'message' => 'Berhasil dihapus'
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal dihapus');
+            return response()->json([
+                'message' => 'Gagal dihapus'
+            ], 400);
         }
     }
 }

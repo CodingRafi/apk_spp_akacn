@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+            $table->foreign('prodi_id')->references('id')->on('prodi') ;
             $table->foreignId('jenis_kelas_id')->constrained();
             $table->timestamps();
         });
@@ -26,7 +26,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('rombel_id')->constrained('rombels');
             $table->uuid('tahun_masuk_id');
-            $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans') ;
             $table->foreignId('dosen_pa_id')->constrained('users');
             $table->timestamps();
         });

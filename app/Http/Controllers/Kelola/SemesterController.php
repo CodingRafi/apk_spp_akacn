@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SemesterRequest;
 use App\Models\Semester;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +30,7 @@ class SemesterController extends Controller
                         Edit
                     </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.semester.destroy', ['semester_id' => $data->id]) . "`, () => {tableSemester.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -141,8 +142,20 @@ class SemesterController extends Controller
         }
     }
 
-    public function destroy(Matkul $matkul)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            Semester::where('id', $id)->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus'
+            ], 400);
+        }
     }
 }

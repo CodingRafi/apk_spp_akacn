@@ -14,4 +14,8 @@ class Rombel extends Model
     public function prodi(){
         return $this->belongsTo(Prodi::class, 'prodi_id', 'id');
     }
+
+    public function jenisKelas(){
+        return $this->belongsTo(JenisKelas::class, 'jenis_kelas_id', 'id');
+    }
 }

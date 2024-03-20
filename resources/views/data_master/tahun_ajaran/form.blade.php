@@ -142,7 +142,7 @@
 @push('js')
     <script>
         let status_next = false;
-        let tahun_ajaran;
+        let tahun_ajaran = "isset($data) ? request('tahun_ajaran') : ''";
         let tableSemester;
         let url_update = '{{ route('data-master.tahun-ajaran.update', [':id']) }}';
         let url_semester =
@@ -211,8 +211,7 @@
                 .attr('data-status', 'true')
                 .append('<input type="hidden" name="_method" value="patch">');
             $('[name="tahun_ajaran_id"]').val(data.id);
-            kurikulum = data;
-            console.log(status)
+            tahun_ajaran = data;
             if (status == 'false') {
                 $('.btn-selanjutnya-1').trigger('click');
             }
@@ -234,7 +233,11 @@
         function get() {
             $.LoadingOverlay("show");
             $.ajax({
-                url: '{{ route('data-master.semester.get-neo-feeder', ['tahun_ajaran_id' => request('tahun_ajaran')]) }}',
+                url: '{{ route('data-master.semester.get-neo-feeder', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}'
+                    .replace(
+                        ':tahun_ajaran_id',
+                        tahun_ajaran.id
+                    ),
                 success: function(res) {
                     showAlert(res.output, 'success')
                     $.LoadingOverlay("hide");

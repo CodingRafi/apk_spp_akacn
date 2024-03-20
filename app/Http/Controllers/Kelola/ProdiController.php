@@ -43,7 +43,7 @@ class ProdiController extends Controller
             }
 
             if (auth()->user()->can('delete_prodi')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.destroy', $data->id) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.destroy', $data->id) . "`)'>
                                         Hapus
                                     </button>";
             }
@@ -166,10 +166,14 @@ class ProdiController extends Controller
         try {
             $prodi->delete();
             DB::commit();
-            return redirect()->back()->with('success', 'Berhasil dihapus');
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Gagal dihapus');
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
         }
     }
 }

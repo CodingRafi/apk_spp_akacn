@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->string('id_level_wilayah');
             $table->string('negara_id');
-            $table->foreign('negara_id')->references('id')->on('kewarganegaraans')->onDelete('cascade');
+            $table->foreign('negara_id')->references('id')->on('kewarganegaraans') ;
             $table->string('nama');
             $table->string('id_induk_wilayah')->nullable();
             $table->timestamps();

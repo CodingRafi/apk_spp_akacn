@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('matkuls', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('kurikulum_id');
-            $table->foreign('kurikulum_id')->references('id')->on('kurikulums')->onDelete('cascade');
+            $table->foreign('kurikulum_id')->references('id')->on('kurikulums') ;
             $table->string('kode');
             $table->string('nama');
             $table->char('jenis_matkul', 1)->nullable();
@@ -39,15 +39,15 @@ return new class extends Migration
         Schema::create('matkul_prodi', function (Blueprint $table) {
             $table->id();
             $table->uuid('matkul_id');
-            $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
+            $table->foreign('matkul_id')->references('id')->on('matkuls') ;
             $table->uuid('prodi_id');
-            $table->foreign('prodi_id')->references('id')->on('prodi')->onDelete('cascade');
+            $table->foreign('prodi_id')->references('id')->on('prodi') ;
         });
         
         Schema::create('matkul_materi', function(Blueprint $table){
             $table->id();
             $table->uuid('matkul_id');
-            $table->foreign('matkul_id')->references('id')->on('matkuls')->onDelete('cascade');
+            $table->foreign('matkul_id')->references('id')->on('matkuls') ;
             $table->text('materi');
             $table->timestamps();
         });

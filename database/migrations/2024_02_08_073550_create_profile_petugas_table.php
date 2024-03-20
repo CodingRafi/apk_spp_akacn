@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('tgl_lahir');
             $table->enum('jk', ['l', 'p']);
             $table->uuid('agama_id');
-            $table->foreign('agama_id')->references('id')->on('agamas')->onDelete('cascade');
+            $table->foreign('agama_id')->references('id')->on('agamas') ;
             $table->enum('status', [0, 1]);
             $table->string('jalan')->nullable();
             $table->string('dusun')->nullable();
@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('rw')->nullable();
             $table->string('kode_pos')->nullable();
             $table->uuid('wilayah_id')->nullable();
-            $table->foreign('wilayah_id')->references('id')->on('wilayahs')->onDelete('cascade');
+            $table->foreign('wilayah_id')->references('id')->on('wilayahs') ;
             $table->string('mulai_asdos')->nullable();
             $table->string('telepon')->nullable();
             $table->string('handphone')->nullable();

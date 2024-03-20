@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('nama');
             $table->string('akreditas', 10);
             $table->uuid('jenjang_id');
-            $table->foreign('jenjang_id')->references('id')->on('jenjangs')->onDelete('cascade');
+            $table->foreign('jenjang_id')->references('id')->on('jenjangs') ;
             $table->enum('status', [0,1])->default(1);
             $table->timestamps();
         });

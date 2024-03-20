@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('semesters', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans') ;
             $table->string('nama');
             $table->string('semester');
             $table->enum('status', [0,1]);

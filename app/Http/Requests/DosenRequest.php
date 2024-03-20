@@ -32,6 +32,8 @@ class DosenRequest extends FormRequest
                 'tempat_lahir' => 'required',
                 'tgl_lahir' => 'required',
                 'agama_id' => 'required',
+                'kewarganegaraan_id' => 'required',
+                'wilayah_id' => 'required',
                 'nik' => 'unique:profile_dosens,nik',
                 'nip' => 'unique:profile_dosens,nip',
                 'npwp' => 'unique:profile_dosens,npwp',
@@ -56,6 +58,8 @@ class DosenRequest extends FormRequest
                 'npwp' => 'unique:profile_dosens,npwp,'.$dosen->id,
                 'rt' => 'digits:3',
                 'rw' => 'digits:3',
+                'kewarganegaraan_id' => 'required',
+                'wilayah_id' => 'required',
                 'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
             ];
         }

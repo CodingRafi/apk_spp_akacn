@@ -30,7 +30,9 @@ class AsdosRequest extends FormRequest
             'agama_id' => 'required',
             'rt' => 'digits:3',
             'rw' => 'digits:3',
-            'profile' => 'file|mimes:png,jpg,jpeg|max:1024'
+            'profile' => 'file|mimes:png,jpg,jpeg|max:1024',
+            'kewarganegaraan_id' => 'required',
+            'wilayah_id' => 'required',
         ];
 
         $role = getRole();

@@ -23,9 +23,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('biaya_lainnya_id')->contrained('biaya_lainnyas');
             $table->uuid('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans')->onDelete('cascade');
+            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans') ;
             $table->uuid('semester_id');
-            $table->foreign('semester_id')->references('id')->on('semesters')->onDelete('cascade');
+            $table->foreign('semester_id')->references('id')->on('semesters') ;
             $table->string('nominal');
             $table->text('ket');
             $table->enum('publish', [0,1]);

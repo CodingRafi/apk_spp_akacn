@@ -54,7 +54,7 @@ return new class extends Migration
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
             $table->foreignId('dosen_id')->constrained('users');
             $table->uuid('kurikulum_id');
-            $table->foreign('kurikulum_id')->references('id')->on('kurikulums')->onDelete('cascade');
+            $table->foreign('kurikulum_id')->references('id')->on('kurikulums') ;
             $table->uuid('matkul_id');
             $table->char('hari', 1);
             $table->time('jam_mulai');
