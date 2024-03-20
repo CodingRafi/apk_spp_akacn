@@ -170,7 +170,7 @@
 
             if ($('#tahun_matkul_id').val()) {
                 $.ajax({
-                    url: "{{ route('kelola-presensi.presensi.getMateri', ['tahun_matkul_id' => ':tahun_matkul_id']) }}"
+                    url: "{{ route('kelola-presensi.presensi.getMateri', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}"
                         .replace(':tahun_matkul_id', $('#tahun_matkul_id').val()),
                     type: 'GET',
                     dataType: 'json',

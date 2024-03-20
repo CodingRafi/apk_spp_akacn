@@ -43,14 +43,19 @@ class PresensiController extends Controller
             ->make(true);
     }
 
-    public function getMateri($tahun_matkul_id)
+    public function getMateri($tahun_ajaran_id, $tahun_matkul_id)
     {
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id);
+
         $data = DB::table('tahun_matkul')
             ->select('matkul_materi.*')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->join('matkul_materi', 'matkul_materi.matkul_id', '=', 'matkuls.id')
-            ->leftJoin('jadwal', 'jadwal.materi_id', 'matkul_materi.id')
-            ->whereNull('matkul_materi.id')
+            ->leftJoin('jadwal', function($q) use($getTahunSemesterAktif){
+                $q->on('jadwal.materi_id', 'matkul_materi.id')
+                    ->where('jadwal.tahun_semester_id', $getTahunSemesterAktif->id);
+            })
+            ->whereNull('jadwal.id')
             ->where('tahun_matkul.id', $tahun_matkul_id)
             ->get();
         return response()->json([
