@@ -126,6 +126,15 @@ class UserController extends Controller
             $return += [
                 'dosen' => $dosen
             ];
+        } elseif ($role == 'dosen') {
+            $lembagaPengangkat = DB::table('lembaga_pengangkats')
+                ->get();
+            $pangkatGolongan = DB::table('pangkat_golongans')
+                ->get();
+            $return += [
+                'lembagaPengangkat' => $lembagaPengangkat,
+                'pangkatGolongan' => $pangkatGolongan,
+            ];
         }
 
         return view('users.form', $return);
@@ -178,14 +187,23 @@ class UserController extends Controller
                 'countPembayaran' => $countPembayaran,
                 'countKrs' => $countKrs
             ];
-        } else if ($role == 'asdos') {
+        } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();
             $return += [
-                'dosen' => $dosen
+                'dosen' => $dosen,
+            ];
+        } elseif ($role == 'dosen') {
+            $lembagaPengangkat = DB::table('lembaga_pengangkats')
+                ->get();
+            $pangkatGolongan = DB::table('pangkat_golongans')
+                ->get();
+            $return += [
+                'lembagaPengangkat' => $lembagaPengangkat,
+                'pangkatGolongan' => $pangkatGolongan,
             ];
         }
 
@@ -327,7 +345,17 @@ class UserController extends Controller
             $return += [
                 'dosen' => $dosen
             ];
+        } elseif ($role == 'dosen') {
+            $lembagaPengangkat = DB::table('lembaga_pengangkats')
+                ->get();
+            $pangkatGolongan = DB::table('pangkat_golongans')
+                ->get();
+            $return += [
+                'lembagaPengangkat' => $lembagaPengangkat,
+                'pangkatGolongan' => $pangkatGolongan,
+            ];
         }
+
         return view('users.' . $role . '.show', $return);
     }
 }

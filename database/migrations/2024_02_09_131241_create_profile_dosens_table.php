@@ -31,8 +31,9 @@ return new class extends Migration
             $table->string('no_sk_pengangkatan')->nullable();
             $table->date('mulai_sk_pengangkatan')->nullable();
             $table->string('lembaga_pengangkat_id')->nullable();
-            $table->foreign('lembaga_pengangkat_id')->references('id')->on('lembaga_pengangkats') ;
-            $table->string('nama_pangkat_golongan')->nullable();
+            $table->foreign('lembaga_pengangkat_id')->references('id')->on('lembaga_pengangkats');
+            $table->string('pangkat_golongan_id')->nullable();
+            $table->foreign('pangkat_golongan_id')->references('id')->on('pangkat_golongans');
             $table->string('jalan')->nullable();
             $table->string('dusun')->nullable();
             $table->string('rt')->nullable();

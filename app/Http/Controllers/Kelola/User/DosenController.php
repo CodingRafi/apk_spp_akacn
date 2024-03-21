@@ -75,7 +75,7 @@ class DosenController extends Controller
             }
             $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
             $user->dosen()->update($dataRequest);
-
+            
             DB::commit();
             if ($role->name == 'admin') {
                 return redirect()->route('kelola-users.index', ['role' => 'dosen'])->with('success', 'Berhasil diubah');
