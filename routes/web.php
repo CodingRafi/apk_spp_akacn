@@ -76,7 +76,7 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('index');
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');

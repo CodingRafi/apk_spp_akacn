@@ -159,6 +159,12 @@ class UserController extends Controller
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
             $jenisKelas = JenisKelas::all();
+            $countPembayaran = DB::table('pembayarans')
+                ->where('mhs_id', $data->id)
+                ->count();
+            $countKrs = DB::table('krs')
+                ->where('mhs_id', $data->id)
+                ->count();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -168,7 +174,9 @@ class UserController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans,
-                'jenisKelas' => $jenisKelas
+                'jenisKelas' => $jenisKelas,
+                'countPembayaran' => $countPembayaran,
+                'countKrs' => $countKrs
             ];
         } else if ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -293,11 +301,11 @@ class UserController extends Controller
             $jenisKelas = JenisKelas::all();
             $mhs = $data->mahasiswa;
             $tahun_semester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
-            ->where('tahun_semester.prodi_id', $mhs->prodi_id)
-            ->get();
+                ->select('tahun_semester.id', 'semesters.nama')
+                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
+                ->where('tahun_semester.prodi_id', $mhs->prodi_id)
+                ->get();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,

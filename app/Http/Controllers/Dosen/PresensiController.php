@@ -75,49 +75,7 @@ class PresensiController extends Controller
             ->rawColumns(['options'])
             ->make(true);
     }
-
-    public function store(Request $request, $tahun_ajaran_id)
-    {
-        $request->validate([
-            'tahun_matkul_id' => 'required',
-            'materi' => 'required',
-            'kode' => 'required|max:6|min:6',
-        ]);
-
-
-        $getTahunMatkul = DB::table('tahun_matkul')
-            ->where('id', $request->tahun_matkul_id)
-            ->first();
-
-        if (!$getTahunMatkul) {
-            return response()->json([
-                'message' => 'Tidak ada jadwal mata kuliah'
-            ], 400);
-        }
-
-        
-        
-
-        
-
-        DB::table('jadwal')->insert([
-            'pengajar_id' => Auth::user()->id,
-            'presensi_mulai' => now(),
-            'tgl' => now(),
-            'materi' => $request->materi,
-            'tahun_matkul_id' => $request->tahun_matkul_id,
-            'tahun_semester_id' => $getTahunSemesterAktif->id,
-            'ket' => $request->ket,
-            'kode' => $request->kode,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        return response()->json([
-            'message' => 'Berhasil disimpan'
-        ], 200);
-    }
-
+    
     public function show($tahun_ajaran_id)
     {
         $tahunMatkul = DB::table('tahun_matkul')

@@ -126,6 +126,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jadwal_id')->constrained('jadwal');
             $table->foreignId('mhs_id')->constrained('users');
+            $table->foreignId('created_id')->constrained('users');
             $table->string('status');
             $table->timestamps();
         });

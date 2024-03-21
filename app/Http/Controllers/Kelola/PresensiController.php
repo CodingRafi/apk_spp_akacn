@@ -171,7 +171,11 @@ class PresensiController extends Controller
 
         //? Validasi sudah dibikin belum
         $tgl = $roleUser->name == 'admin' ? $request->tgl : Carbon::now()->format('Y-m-d');
-        $cekJadwalHari = DB::table('jadwal')->where('tgl', $tgl)->count();
+        $cekJadwalHari = DB::table('jadwal')
+            ->where('tahun_matkul_id', $request->tahun_matkul_id)
+            ->where('tgl', $tgl)
+            ->count();
+            
         if ($cekJadwalHari > 0) {
             return response()->json([
                 'message' => 'Sudah ada jadwal hari ini'
@@ -282,6 +286,9 @@ class PresensiController extends Controller
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->where('tahun_semester_id', request('tahun_semester_id'))
+            ->when(request('tahun_matkul_id'), function ($q) {
+                $q->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'));
+            })
             ->when($role->name == 'dosen', function ($q) {
                 $asdos = DB::table('users')
                     ->select('users.id')
@@ -483,16 +490,50 @@ class PresensiController extends Controller
             'status' => 'required'
         ]);
 
-        $data = [
-            'jadwal_id' => $jadwal_id,
-            'mhs_id' => $mhs_id,
-            'status' => $request->status
-        ];
+        $getJadwal = DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->first();
 
-        DB::table('jadwal_presensi')->updateOrInsert(
-            ['jadwal_id' => $jadwal_id, 'mhs_id' => $mhs_id],
-            $data
-        );
+        if (!$getJadwal) {
+            return response()->json([
+                'message' => 'Jadwal tidak ditemukan'
+            ], 400);
+        }
+
+        if (!Auth::user()->hasRole('admin') && $getJadwal->presensi_selesai) {
+            return response()->json([
+                'message' => 'Jadwal sudah diselesaikan, tidak bisa merubah presensi'
+            ], 400);
+        }
+
+        $get = DB::table('jadwal_presensi')
+            ->where('jadwal_id', $jadwal_id)
+            ->where('mhs_id', $mhs_id)
+            ->first();
+
+        if ($get) {
+            if (Auth::user()->hasRole('admin') || $get->created_id == Auth::user()->id) {
+                DB::table('jadwal_presensi')
+                    ->where('id', $get->id)
+                    ->update([
+                        'status' => $request->status,
+                        'updated_at' => Carbon::now()
+                    ]);
+            }else{
+                return response()->json([
+                    'message' => 'Tidak bisa merubah presensi'
+                ], 400);
+            }
+        }else{
+            DB::table('jadwal_presensi')->insert([
+                'jadwal_id' => $jadwal_id,
+                'mhs_id' => $mhs_id,
+                'status' => $request->status,
+                'created_id' => Auth::user()->id,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
+        }
 
         return response()->json([
             'message' => 'Berhasil disimpan'

@@ -16,13 +16,23 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    <div class="col-md-4">
-                        <select name="tahun_semester_id" id="tahun_semester_id" class="form-select">
-                            <option value="">Pilih Semester</option>
-                            @foreach ($tahunSemester as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                            @endforeach
-                        </select>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <select name="tahun_semester_id" id="tahun_semester_id" class="form-select">
+                                <option value="">Pilih Semester</option>
+                                @foreach ($tahunSemester as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <select name="tahun_matkul_id" id="filter-tahun_matkul" class="form-select">
+                                <option value="">Pilih Mata Kuliah</option>
+                                @foreach ($tahunMatkul as $matkul)
+                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                     <div class="table-responsive mt-3">
                         <table class="table">
@@ -273,6 +283,7 @@
                     url: '{{ route('kelola-presensi.presensi.getJadwal', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
                     data: function(p) {
                         p.tahun_semester_id = $('#tahun_semester_id').val();
+                        p.tahun_matkul_id = $('#tahun_matkul_id').val();
                     }
                 },
                 columns: [{
@@ -298,8 +309,7 @@
             });
         });
 
-        $('#tahun_semester_id').on('change', function() {
-            console.log($('#tahun_semester_id').val())
+        $('#tahun_semester_id, #filter-tahun_matkul').on('change', function() {
             table.ajax.reload();
         })
     </script>

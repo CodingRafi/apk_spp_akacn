@@ -2,6 +2,8 @@
     $page = isset($page) ? $page : 'form';
     $role = $page == 'form' ? (isset($role) ? $role : request('role')) : getRole()->name;
     $disabled = isset($disabled) ? $disabled : false;
+    $countPembayaran = isset($countPembayaran) ? $countPembayaran : 0;
+    $countKrs = isset($countKrs) ? $countKrs : 0;
 @endphp
 
 <ul class="nav nav-tabs" id="profile">
@@ -139,7 +141,7 @@
                     <label for="tahun_masuk_id" class="form-label">Tahun Masuk</label>
                     <select class="form-select select2 @error('tahun_masuk_id') is-invalid @enderror"
                         name="tahun_masuk_id" id="tahun_masuk_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Tahun Masuk</option>
                         @foreach ($tahun_ajarans as $tahun_ajaran)
                             <option value="{{ $tahun_ajaran->id }}"
@@ -157,7 +159,7 @@
                 <div class="mb-3">
                     <label for="prodi_id" class="form-label">Prodi</label>
                     <select class="form-select @error('prodi_id') is-invalid @enderror" name="prodi_id"
-                        id="prodi_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                        id="prodi_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Prodi</option>
                         @foreach ($prodis as $prodi)
                             <option value="{{ $prodi->id }}"
@@ -174,11 +176,11 @@
                 <div class="mb-3">
                     <label for="jenis_kelas_id" class="form-label">Jenis Kelas</label>
                     <select class="form-select @error('jenis_kelas_id') is-invalid @enderror" name="jenis_kelas_id"
-                        id="jenis_kelas_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                        id="jenis_kelas_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Kelas</option>
                         @foreach ($jenisKelas as $item)
                             <option value="{{ $item->id }}"
-                                {{ isset($data) ? ($data->mahasiswa->prodi_id == $item->id ? 'selected' : '') : (old('prodi_id') == $item->id ? 'selected' : '') }}>
+                                {{ isset($data) ? ($data->mahasiswa->jenis_kelas_id == $item->id ? 'selected' : '') : (old('jenis_kelas_id') == $item->id ? 'selected' : '') }}>
                                 {{ $item->nama }}</option>
                         @endforeach
                     </select>
@@ -191,7 +193,7 @@
                 <div class="mb-3">
                     <label for="rombel_id" class="form-label">Rombel</label>
                     <select class="form-select @error('rombel_id') is-invalid @enderror" name="rombel_id"
-                        id="rombel_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                        id="rombel_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Rombel</option>
                     </select>
                     @error('rombel_id')

@@ -48,6 +48,12 @@ class PresensiController extends Controller
         $user = User::findOrFail($this->validateMhsId());
         $tahunSemesterId = request('tahun_semester_id');
 
+        if (!$tahunSemesterId) {
+            return response()->json([
+                'data' => []
+            ]);
+        }
+
         $krs = DB::table('krs')
             ->select('id', 'status')
             ->where('mhs_id', $user->id)
@@ -233,13 +239,14 @@ class PresensiController extends Controller
 
         if ($cekSudahPresensi > 0) {
             return response()->json([
-                'message' => 'Anda sudah melakukan presensi!'
+                'message' => 'sudah ada presensi pada jadwal ini'
             ], 400);
         }
 
         DB::table('jadwal_presensi')->insert([
             'jadwal_id' => $data->id,
             'mhs_id' => Auth::user()->id,
+            'created_id' => Auth::user()->id,
             'status' => 'H',
             'created_at' => now(),
             'updated_at' => now()
