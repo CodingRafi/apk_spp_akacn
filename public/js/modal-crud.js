@@ -34,6 +34,7 @@ function submitForm(originalForm, selector = "", func) {
                 let content = editor.getContent();
                 data.set($(this).attr("name"), content);
             }
+            editor.remove();
         }
     });
 

@@ -8,12 +8,12 @@ use App\Models\{
     Semester,
     User
 };
-use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Exports\PembayaranMhsExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Mail\PembayaranMail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -344,9 +344,32 @@ class PembayaranController extends Controller
     public function print($type, $id, $pembayaran_id)
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status != 'diterima') {
+
+        if (
+            $data->mhs_id != Auth::user()->id
+            || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status != 'diterima'
+        ) {
             abort(404);
         }
-        return PDF::loadView('mahasiswa.pembayaran.print', compact('data'))->setPaper([0, 0, 600, 550])->stream('kwitansi.pdf');
+
+        if ($data->tahun_semester_id) {
+            $getNama = DB::table('tahun_semester')
+                ->select('semesters.nama')
+                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                ->where('tahun_semester.id', $data->tahun_semester_id)
+                ->first();
+        } else {
+            $getNama = DB::table('tahun_pembayaran_lain')
+                ->select('pembayaran_lainnyas.nama')
+                ->join('pembayaran_lainnyas', 'pembayaran_lainnyas.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+                ->where('tahun_pembayaran_lain.id', $data->tahun_pembayaran_lain_id)
+                ->first();
+        }
+
+        $data->nama = $getNama->nama;
+
+        return PDF::loadView('mahasiswa.pembayaran.print', compact('data'))
+            ->setPaper([0, 0, 600, 550])
+            ->stream('kwitansi.pdf');
     }
 }

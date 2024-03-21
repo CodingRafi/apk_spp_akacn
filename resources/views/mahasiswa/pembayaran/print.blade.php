@@ -6,6 +6,7 @@
         * {
             margin: 0;
             padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
@@ -127,15 +128,15 @@
 </head>
 
 <body>
-    <table style="width: 100%">
+    <table style="width: 100%" aria-hidden="true">
         <tbody>
             <tr>
                 <td style="width: fit-content;" style="width: 5%">
                     <img src="{{ public_path() . '/image/logo.png' }}" width="100">
                 </td>
                 <td style="text-align: center;">
-                    <h1 style="font-size: 2rem;font-weight:bold;">BUKTI PEMBAYARAN BIAYA KULIAH</h1>
-					<small style="font-size: 1.4rem;font-weight: 200;color:#363636">Akademi kimia analis caraka nusantara</small>
+                    <h1 style="font-size: 1.8rem;font-weight:bold;">BUKTI PEMBAYARAN BIAYA KULIAH</h1>
+					<small style="font-size: 1.4rem;font-weight: 300;color:#363636">Akademi kimia analis caraka nusantara</small>
                 </td>
             </tr>
         </tbody>
@@ -144,10 +145,10 @@
     <hr class="mt-05" style="border: 1px solid #b7b7b7;">
 
     <div class="mt-05">
-        <table>
+        <table aria-hidden="true">
             <tr>
                 <td style="width: 29.5rem">
-                    <table class="table table-bordered" style="font-size: 1.2rem">
+                    <table class="table table-bordered" style="font-size: 1.2rem" aria-hidden="true">
                         <tr>
                             <td style="padding-right: 2rem;">Nama</td>
                             <td style="padding-right: .5rem">:</td>
@@ -163,15 +164,11 @@
                             <td style="padding-right: .5rem">:</td>
                             <td><strong>{{ $data->mahasiswa->mahasiswa->prodi->nama }}</strong></td>
                         </tr>
-                        @if ($data->tahun_semester_id)
                         <tr>
-                            <td style="padding-right: 2rem;">Semester</td>
+                            <td style="padding-right: 2rem;">{{ $data->tahun_semester_id ? 'Semester' : 'Pembayaran' }}</td>
                             <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->semester->nama }}</strong></td>
+                            <td><strong>{{ $data->nama }}</strong></td>
                         </tr>
-                        @else
-                            
-                        @endif
                         <tr>
                             <td style="padding-right: 2rem;">Nominal</td>
                             <td style="padding-right: .5rem">:</td>
@@ -195,11 +192,11 @@
     </div>
 
     <div class="mt-05">
-        <table>
+        <table aria-hidden="true">
             <tr>
                 <td style="width: 30rem"></td>
                 <td>
-                    <img src="{{ public_path() . '/storage/' . $data->verify->petugas->ttd }}" alt="" style="width: 10rem">
+                    <img src="{{ public_path() . '/storage/' . $data->verify->ttd }}" alt="" style="width: 9rem;height:9rem;">
                     <br>
                     <p style="font-size: 1rem;text-align: center;">{{ $data->verify->name }}</p>
                 </td>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\Kuesioner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class KuesionerController extends Controller
@@ -81,12 +82,23 @@ class KuesionerController extends Controller
 
     public function show(Kuesioner $kuesioner)
     {
-        //
+        return response()->json([
+            'data' => $kuesioner
+        ], 200);
     }
 
     public function update(Request $request, Kuesioner $kuesioner)
     {
-        //
+        $request->validate([
+            'type' => 'required|in:input,choice',
+            'pertanyaan' => 'required',
+        ]);
+
+        $kuesioner->update($request->except('_token', '_method'));
+
+        return response()->json([
+            'message' => 'Berhasil diubah'
+        ], 200);
     }
 
     /**
@@ -97,6 +109,18 @@ class KuesionerController extends Controller
      */
     public function destroy(Kuesioner $kuesioner)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $kuesioner->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
+        }
     }
 }

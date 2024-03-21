@@ -9,17 +9,13 @@
 @endsection
 
 @section('container')
-
     <div class="content-wrapper">
-        <!-- Content -->
-
         <div class="container-xxl flex-grow-1 container-p-y">
-
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <h5 class="">Roles</h5>
                 </div>
-                <div class="container" style="height: 65vh;overflow: auto;">
+                <div class="container-fluid" style="height: 65vh;overflow: auto;">
                     <div id="accordionIcon" class="accordion mt-3 accordion-without-arrow">
                         @foreach ($roles as $key => $role)
                             <div class="accordion-item card mb-3">
@@ -62,8 +58,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
-        <!-- / Content -->
     </div>
 @endsection

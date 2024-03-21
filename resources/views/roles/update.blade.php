@@ -16,51 +16,28 @@
                                 <a href="{{ route('roles.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                                 <h5 class="mb-0">Ubah Role</h5>
                             </div>
+                            
                             <div class="card-body">
-                                @if (isset($data))
-                                <div class="mb-3 row">
-                                    <label for="html5-text-input" class="col-md-2 col-form-label">Name Role</label>
-                                    <div class="col-md-10">
-                                        <input style="text-transform: capitalize;" class="form-control @error('name') is-invalid @enderror" type="text"
-                                            value="{{ str_replace("_", " ", $role->name), old('name') }}" id="html5-text-input"
-                                            placeholder="Name Role" name="name"  />
-                                        @error('name')
-                                            <div class="invalid-feedback d-block">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                @endif
-                                @foreach ($permissions as $permission)
-                                    @if (in_array($permission->id, $rolePermissions))
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox" value="{{ $permission->id }}"
-                                                id="{{ $permission->name }}" name="permission[]" checked/>
-                                            <label class="form-check-label"
-                                                for="{{ $permission->name }}">{{ str_replace('_', ' ', $permission->name) }}</label>
+                                <div class="mb-3">
+                                    <label for="permission" class="form-label">Permission</label>
+                                    <select name="permission[]" id="permission" class="select2" multiple>
+                                        @foreach ($permissions as $permission)
+                                            <option value="{{ $permission->id }}" {{ in_array($permission->id, $rolePermissions) ? 'selected' : '' }}>
+                                                {{ str_replace('_', ' ', $permission->name) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('permission')
+                                        <div class="invalid-feedback d-block">
+                                            {{ $message }}
                                         </div>
-                                    @else
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox" value="{{ $permission->id }}"
-                                                id="{{ $permission->name }}" name="permission[]" />
-                                            <label class="form-check-label"
-                                                for="{{ $permission->name }}">{{ str_replace('_', ' ', $permission->name) }}</label>
-                                        </div>
-                                    @endif
-                                @endforeach
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button class="btn btn-primary" type="submit">Simpan Perubahan</button>
+                                    @enderror
                                 </div>
+                                <button class="btn btn-primary" type="submit">Simpan</button>
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>
         </div>
-        <!-- / Content -->
-
-        <div class="content-backdrop fade"></div>
     </div>
 @endsection
