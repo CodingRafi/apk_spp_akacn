@@ -28,7 +28,7 @@ class PembayaranMhsMiddleware
             abort(404);
         }
 
-        $mhs = DB::table('mahasiswa')->where('user_id', $mhs_id)->first();
+        $mhs = DB::table('profile_mahasiswas')->where('user_id', $mhs_id)->first();
         
         if (!$mhs) {
             abort(403);

@@ -4,6 +4,7 @@
     @php
         $page = isset($page) ? $page : 'form';
         $revisi = isset($revisi) ? $revisi : false;
+        $mhs_id = isset($mhs_id) ? $mhs_id : null;
     @endphp
     <div class="content-wrapper">
 

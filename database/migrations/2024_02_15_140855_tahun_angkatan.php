@@ -52,7 +52,6 @@ return new class extends Migration
             $table->id();
             $table->string('tahun_ajaran_id');
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
-            $table->foreignId('dosen_id')->constrained('users');
             $table->uuid('kurikulum_id');
             $table->foreign('kurikulum_id')->references('id')->on('kurikulums') ;
             $table->uuid('matkul_id');
@@ -63,17 +62,24 @@ return new class extends Migration
             $table->enum('cek_ip', [0, 1]);
             $table->timestamps();
         });
+        
+        Schema::create('tahun_matkul_dosen', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul')->onDelete('cascade');
+            $table->foreignId('dosen_id')->constrained('users');
+            $table->timestamps();
+        });
 
         Schema::create('tahun_matkul_ruang', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul')->onDelete('cascade');
             $table->foreignId('ruang_id')->constrained('ruangs');
             $table->timestamps();
         });
 
         Schema::create('tahun_matkul_rombel', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul')->onDelete('cascade');
             $table->foreignId('rombel_id')->constrained('rombels');
             $table->timestamps();
         });
@@ -85,6 +91,7 @@ return new class extends Migration
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->enum('status', ['pengajuan', 'diterima', 'ditolak', 'pending'])->default('pending');
             $table->string('jml_sks_diambil')->default(0);
+            $table->enum('lock', [0, 1]);
             $table->text('ket')->nullable();
             $table->date('tgl_mulai_revisi')->nullable();
             $table->date('tgl_akhir_revisi')->nullable();

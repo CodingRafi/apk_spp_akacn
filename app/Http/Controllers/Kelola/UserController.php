@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\{
     Agama,
     AlatTransportasi,
+    JenisKelas,
     JenisTinggal,
     Jenjang,
     Kewarganegaraan,
@@ -104,6 +105,7 @@ class UserController extends Controller
             $pekerjaans = Pekerjaan::all();
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
+            $jenisKelas = JenisKelas::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -112,7 +114,8 @@ class UserController extends Controller
                 'alat_transportasi' => $alat_transportasi,
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
-                'penghasilans' => $penghasilans
+                'penghasilans' => $penghasilans,
+                'jenisKelas' => $jenisKelas
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -155,6 +158,7 @@ class UserController extends Controller
             $pekerjaans = Pekerjaan::all();
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
+            $jenisKelas = JenisKelas::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -163,7 +167,8 @@ class UserController extends Controller
                 'alat_transportasi' => $alat_transportasi,
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
-                'penghasilans' => $penghasilans
+                'penghasilans' => $penghasilans,
+                'jenisKelas' => $jenisKelas
             ];
         } else if ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -285,6 +290,7 @@ class UserController extends Controller
             $pekerjaans = Pekerjaan::all();
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
+            $jenisKelas = JenisKelas::all();
             $mhs = $data->mahasiswa;
             $tahun_semester = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama')
@@ -301,7 +307,8 @@ class UserController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans,
-                'tahun_semester' => $tahun_semester
+                'tahun_semester' => $tahun_semester,
+                'jenisKelas' => $jenisKelas
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')

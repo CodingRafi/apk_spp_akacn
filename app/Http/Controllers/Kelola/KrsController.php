@@ -25,6 +25,37 @@ class KrsController extends Controller
         return view('kelola.krs.index', compact('prodis', 'tahun_ajarans'));
     }
 
+    public function updateLock(Request $request, $tahun_semester_id, $mhs_id)
+    {
+        if (!Auth::user()->hasRole('admin')) {
+            abort(403);
+        }
+
+        $cek = DB::table('krs')
+            ->where('mhs_id', $mhs_id)
+            ->where('tahun_semester_id', $tahun_semester_id)
+            ->count();
+
+        if ($cek > 0) {
+            DB::table('krs')
+                ->where('mhs_id', $mhs_id)
+                ->where('tahun_semester_id', $tahun_semester_id)
+                ->update([
+                    'lock' => $request->lock
+                ]);
+        } else {
+            DB::table('krs')->insert([
+                'mhs_id' => $mhs_id,
+                'tahun_semester_id' => $tahun_semester_id,
+                'status' => 'pending',
+                'jml_sks_diambil' => 0,
+                'lock' => $request->lock
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Data Berhasil Di update');
+    }
+
     public function data()
     {
         $datas = DB::table('krs')
@@ -98,7 +129,7 @@ class KrsController extends Controller
     }
 
     public function store(Request $request, $krs_id)
-    {   
+    {
         $request->validate([
             'status' => 'required|in:diterima,ditolak',
             'tgl_mulai' => 'required_if:status,ditolak',

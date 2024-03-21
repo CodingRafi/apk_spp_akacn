@@ -68,7 +68,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="dosen_id" class="form-label">Dosen</label>
-                            <select class="form-select" name="dosen_id" id="dosen_id">
+                            <select class="form-select select2" style="width: 100%;" name="dosen_id[]" multiple id="dosen_id">
                                 @foreach ($dosens as $d)
                                     <option value="{{ $d->id }}">{{ $d->name }} ({{ $d->login_key }})
                                     </option>

@@ -30,7 +30,7 @@ class KurikulumController extends Controller
 
             $options = $options . "<a href='" . route('data-master.kurikulum.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroy', $data->id) . "`)' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -113,6 +113,18 @@ class KurikulumController extends Controller
 
     public function destroy(Kurikulum $kurikulum)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $kurikulum->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
+        }
     }
 }

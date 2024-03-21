@@ -124,6 +124,7 @@ Route::group(['middleware' => ['auth']], function () {
                 Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
                 Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
                 Route::put('/{matkul_id}', [AngkatanMatkulController::class, 'update'])->name('update');
+                Route::delete('/{matkul_id}', [AngkatanMatkulController::class, 'destroy'])->name('destroy');
             });
         });
 
@@ -169,6 +170,7 @@ Route::group(['middleware' => ['auth']], function () {
             Route::post('/', [MatkulController::class, 'store'])->name('store');
             Route::get('/{matkul_id}', [MatkulController::class, 'show'])->name('show');
             Route::put('/{matkul_id}', [MatkulController::class, 'update'])->name('update');
+            Route::delete('/{matkul_id}', [MatkulController::class, 'destroy'])->name('destroy');
 
             Route::prefix('{matkul_id}/materi')->name('materi.')->group(function () {
                 Route::get('/', [MateriController::class, 'index'])->name('index');
@@ -339,6 +341,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('krs/{tahun_semester_id}')->name('krs.')->group(function () {
         Route::post('/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
         Route::post('/simpan/{mhs_id?}', [ControllersKrsController::class, 'simpan'])->name('simpan');
+        Route::patch('/update-lock/{mhs_id}', [KelolaKrsController::class, 'updateLock'])->name('updateLock');
         Route::get('/dataMatkul/{mhs_id?}', [ControllersKrsController::class, 'dataMatkul'])->name('dataMatkul');
         Route::get('/getMatkul/{mhs_id?}', [ControllersKrsController::class, 'getMatkul'])->name('getMatkul');
         Route::get('/getTotalSks/{mhs_id?}', [ControllersKrsController::class, 'getTotalSks'])->name('getTotalSks');

@@ -4,14 +4,17 @@
         @php
             $validation = true;
             $dataEmpty = true;
+            $lock = true;
 
             if ($krs) {
+                $lock = $krs->lock == '1' ? false : true;
                 $dataEmpty = false;
                 if ($krs->status == 'pending') {
                     $validation =
                         $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
                         $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
-                        $tahun_semester->status;
+                        $tahun_semester->status &&
+                        $lock;
                 } elseif ($krs->status == 'ditolak') {
                     $validation =
                         $krs->tgl_mulai_revisi <= date('Y-m-d') &&
@@ -21,8 +24,9 @@
                     $validation = false;
                 }
             } else {
-                $validation = $tahun_semester->status;
+                $validation = $tahun_semester->status && $validationPembayaran['status'];
             }
+
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -68,16 +72,43 @@
                                             <button type="button" class="btn btn-warning btn-revisi">Revisi</button>
                                         </form>
                                     @endif
+                                    @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '0') || $lock))
+                                        <form
+                                            action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
+                                            method="post">
+                                            @csrf
+                                            @method('patch')
+                                            <input type="hidden" name="lock" value="1" aria-hidden="true">
+                                            <button type="submit" class="btn btn-danger">lock</button>
+                                        </form>
+                                    @endif
                                 </div>
+                            @endif
+                        @else
+                            @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1') || !$lock))
+                                <form
+                                    action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
+                                    method="post">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="lock" value="0" aria-hidden="true">
+                                    <button type="submit" class="btn btn-danger">unlock</button>
+                                </form>
                             @endif
                         @endif
                     </div>
                     <div class="card-body">
                         @if ($dataEmpty || $krs->status == 'pending')
                             @if (!$validation)
-                                <div class="alert alert-danger">
-                                    Bukan waktu pengisian KRS
-                                </div>
+                                @if (!$validationPembayaran['status'])
+                                    <div class="alert alert-danger">
+                                        {{ $validationPembayaran['message'] }}
+                                    </div>
+                                @else
+                                    <div class="alert alert-danger">
+                                        Bukan waktu pengisian KRS
+                                    </div>
+                                @endif
                             @else
                                 <div class="alert alert-info">
                                     Silahkan pilih mata kuliah yang ingin diambil. Maximal

@@ -102,6 +102,47 @@ class KrsController extends Controller
             ->make(true);
     }
 
+    public function validatePembayaran($tahun_semester_id, $mhs_id){
+        $pembayaran = DB::table('tahun_pembayaran')
+                        ->where('tahun_semester_id', $tahun_semester_id)
+                        ->first();
+
+        if (!$pembayaran) {
+            return [
+                'status' => false,
+                'code' => 1,
+                'message' => 'Pembayaran Belum Dibuat, bukan waktu pengisian KRS!'
+            ];
+        }
+
+        if ($pembayaran->publish == 0) {
+            return [
+                'status' => false,
+                'code' => 2,
+                'message' => 'Pembayaran Belum dipublish, bukan waktu pengisian KRS!'
+            ];
+        }
+        
+        $cekPembayaran = DB::table('rekap_pembayaran')
+                        ->where('type', 'semester')
+                        ->where('untuk', $tahun_semester_id)
+                        ->where('user_id', $mhs_id)
+                        ->first();
+
+        if ($cekPembayaran->sisa > 0) {
+            return [
+                'status' => false,
+                'code' => 3,
+                'message' => 'Pembayaran Belum Lunas, belum bisa isi KRS!'
+            ];
+        }
+
+        return [
+            'status' => true,
+            'code' => 0
+        ];
+    }
+
     public function show($tahun_semester_id, $mhs_id = null)
     {
         $mhs_id = $this->validateMhsId($mhs_id);
@@ -110,6 +151,8 @@ class KrsController extends Controller
         if (!$validate['status']) {
             abort(404);
         }
+
+        $validationPembayaran = $this->validatePembayaran($tahun_semester_id, $mhs_id);
 
         $tahun_semester = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'tahun_semester.status')
@@ -122,12 +165,18 @@ class KrsController extends Controller
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->first();
 
-        return view('mahasiswa.krs.show', compact('tahun_semester', 'krs', 'mhs_id'));
+        return view('mahasiswa.krs.show', compact('tahun_semester', 'krs', 'mhs_id', 'validationPembayaran'));
     }
 
 
     public function ajukan($tahun_semester_id)
     {
+        $validationPembayaran = $this->validatePembayaran($tahun_semester_id, Auth::user()->id);
+
+        if (!$validationPembayaran['status']) {
+            return redirect()->back()->with('error', $validationPembayaran['message']);
+        }
+
         DB::table('krs')
             ->where('mhs_id', Auth::user()->id)
             ->where('tahun_semester_id', $tahun_semester_id)->update([

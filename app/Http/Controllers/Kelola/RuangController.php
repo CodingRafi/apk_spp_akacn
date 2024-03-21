@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\Ruang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class RuangController extends Controller
@@ -94,8 +95,18 @@ class RuangController extends Controller
 
     public function destroy($id)
     {
-        $data = Ruang::findOrFail($id);
-        $data->delete();
-        return redirect()->back()->with('success', 'Berhasil dihapus');
+        DB::beginTransaction();
+        try {
+            Ruang::where('id', $id)->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
+        }
     }
 }

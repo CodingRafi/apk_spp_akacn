@@ -51,7 +51,7 @@ class PresensiController extends Controller
             ->select('matkul_materi.*')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->join('matkul_materi', 'matkul_materi.matkul_id', '=', 'matkuls.id')
-            ->leftJoin('jadwal', function($q) use($getTahunSemesterAktif){
+            ->leftJoin('jadwal', function ($q) use ($getTahunSemesterAktif) {
                 $q->on('jadwal.materi_id', 'matkul_materi.id')
                     ->where('jadwal.tahun_semester_id', $getTahunSemesterAktif->id);
             })
@@ -261,8 +261,13 @@ class PresensiController extends Controller
             )
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->when($role->name == 'dosen', function ($q) {
-                $q->where('dosen_id', Auth::user()->id);
+            ->when($role->name == 'dosen', function ($query) {
+                $query->whereExists(function ($subquery) {
+                    $subquery->select(DB::raw(1))
+                        ->from('tahun_matkul_dosen')
+                        ->whereColumn('tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+                        ->where('tahun_matkul_dosen.dosen_id', Auth::id());
+                });
             })
             ->get();
 

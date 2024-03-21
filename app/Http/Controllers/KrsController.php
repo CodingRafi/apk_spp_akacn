@@ -109,11 +109,10 @@ class KrsController extends Controller
         }
 
         $datas = DB::table('krs')
-            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama as matkul', 'users.name as dosen', 'matkuls.sks_mata_kuliah', 'tahun_matkul.id as tahun_matkul_id')
+            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama as matkul', 'matkuls.sks_mata_kuliah', 'tahun_matkul.id as tahun_matkul_id')
             ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('users', 'users.id', 'tahun_matkul.dosen_id')
             ->where('krs.mhs_id', $mhs_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->get();
@@ -141,6 +140,18 @@ class KrsController extends Controller
                 }
 
                 return $ruangParse;
+            })
+            ->addColumn('dosen', function ($datas) {
+                $dosen = DB::table('tahun_matkul_dosen')
+                    ->select('user.name')
+                    ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
+                    ->select('users.name')
+                    ->where('tahun_matkul_dosen.tahun_matkul_id', $datas->tahun_matkul_id)
+                    ->get()
+                    ->pluck('name')
+                    ->toArray();
+
+                return implode(', ', $dosen);
             })
             ->rawColumns(['options', 'ruang'])
             ->make(true);
@@ -178,16 +189,23 @@ class KrsController extends Controller
             ->pluck('tahun_matkul_id')
             ->toArray();
 
-        $matkul = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.nama', 'users.name as dosen', 'matkuls.kode', 'matkuls.sks_mata_kuliah')
+        $getMatkul = DB::table('tahun_matkul')
+            ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode', 'matkuls.sks_mata_kuliah', 'users.name as dosen')
             ->join('tahun_matkul_rombel', function ($join) use ($mhs) {
                 $join->on('tahun_matkul_rombel.tahun_matkul_id', '=', 'tahun_matkul.id')
                     ->where('tahun_matkul_rombel.rombel_id', '=', $mhs->rombel_id);
             })
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('users', 'users.id', 'tahun_matkul.dosen_id')
+            ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+            ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
             ->whereNotIn('tahun_matkul.id', $krsMatkul)
             ->get();
+
+        $matkul = $getMatkul->groupBy('id')->map(function ($group) {
+            $firstItem = $group->first();
+            $firstItem->dosen = implode(', ', $group->pluck('dosen')->toArray());
+            return $firstItem;
+        })->values()->toArray();
 
         return response()->json([
             'data' => $matkul

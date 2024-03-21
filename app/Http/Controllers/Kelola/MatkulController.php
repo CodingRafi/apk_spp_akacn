@@ -30,7 +30,7 @@ class MatkulController extends Controller
                         Edit
                     </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -110,8 +110,22 @@ class MatkulController extends Controller
         }
     }
 
-    public function destroy(Matkul $matkul)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            DB::table('matkuls')
+                ->where('id', $id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 400);
+        }
     }
 }

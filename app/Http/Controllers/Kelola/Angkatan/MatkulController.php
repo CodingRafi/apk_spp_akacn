@@ -56,8 +56,7 @@ class MatkulController extends Controller
     public function data($tahun_ajaran_id)
     {
         $datas = DB::table('tahun_matkul')
-            ->select('users.name as dosen', 'matkuls.nama as matkul', 'kurikulums.nama as kurikulum', 'matkuls.kode', 'tahun_matkul.id')
-            ->join('users', 'users.id', 'tahun_matkul.dosen_id')
+            ->select('matkuls.nama as matkul', 'kurikulums.nama as kurikulum', 'matkuls.kode', 'tahun_matkul.id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
             ->join('kurikulums', 'kurikulums.id', 'matkuls.kurikulum_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
@@ -74,11 +73,11 @@ class MatkulController extends Controller
                     </button>";
             }
 
-            // if (auth()->user()->can('delete_matkul')) {
-            //     $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.matkul.destroy', $data->id) . "`)' type='button'>
-            //                             Hapus
-            //                         </button>";
-            // }
+            if (auth()->user()->can('delete_matkul')) {
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.tahun-ajaran.matkul.destroy', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`)' type='button'>
+                                        Hapus
+                                    </button>";
+            }
 
             $data->options = $options;
         }
@@ -93,6 +92,15 @@ class MatkulController extends Controller
                     ->pluck('rombel');
                 return implode(', ', $rombel->toArray());
             })
+            ->addColumn('dosen', function ($datas) {
+                $dosen = DB::table('tahun_matkul_dosen')
+                    ->select('users.name as dosen')
+                    ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
+                    ->where('tahun_matkul_dosen.tahun_matkul_id', $datas->id)
+                    ->get()
+                    ->pluck('dosen');
+                return implode(', ', $dosen->toArray());
+            })
             ->addIndexColumn()
             ->rawColumns(['options'])
             ->make(true);
@@ -102,10 +110,17 @@ class MatkulController extends Controller
     {
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token', 'rombel_id', 'ruang_id');
+            $requestParse = $request->except('_method', '_token', 'rombel_id', 'ruang_id', 'dosen_id');
             $requestParse['tahun_ajaran_id'] = $tahun_ajaran_id;
             DB::table('tahun_matkul')->insert($requestParse);
             $tahun_matkul_id = DB::getPdo()->lastInsertId();
+
+            foreach ($request->dosen_id as $dosen_id) {
+                DB::table('tahun_matkul_dosen')->insert([
+                    'tahun_matkul_id' => $tahun_matkul_id,
+                    'dosen_id' => $dosen_id
+                ]);
+            }
 
             foreach ($request->rombel_id as $rombel_id) {
                 DB::table('tahun_matkul_rombel')->insert([
@@ -138,6 +153,11 @@ class MatkulController extends Controller
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
             ->where('tahun_matkul.id', $id)
             ->first();
+
+        $data->dosen_id = DB::table('tahun_matkul_dosen')
+            ->where('tahun_matkul_dosen.tahun_matkul_id', $id)
+            ->pluck('dosen_id')
+            ->toArray();
 
         $data->ruang_id = DB::table('tahun_matkul_ruang')
             ->where('tahun_matkul_ruang.tahun_matkul_id', $id)
@@ -176,11 +196,22 @@ class MatkulController extends Controller
 
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token', 'ruang_id', 'rombel_id');
+            $requestParse = $request->except('_method', '_token', 'ruang_id', 'rombel_id', 'dosen_id');
             DB::table('tahun_matkul')
                 ->where('id', $id)
                 ->where('tahun_ajaran_id', $tahun_ajaran_id)
                 ->update($requestParse);
+
+            DB::table('tahun_matkul_dosen')
+                ->where('tahun_matkul_id', $id)
+                ->delete();
+
+            foreach (($request->dosen_id ?? []) as $dosen_id) {
+                DB::table('tahun_matkul_dosen')->insert([
+                    'tahun_matkul_id' => $id,
+                    'dosen_id' => $dosen_id
+                ]);
+            }
 
             DB::table('tahun_matkul_rombel')
                 ->where('tahun_matkul_id', $id)
@@ -192,11 +223,11 @@ class MatkulController extends Controller
                     'rombel_id' => $rombel_id
                 ]);
             }
-            
+
             DB::table('tahun_matkul_ruang')
-            ->where('tahun_matkul_id', $id)
-            ->delete();
-            
+                ->where('tahun_matkul_id', $id)
+                ->delete();
+
             foreach (($request->ruang_id ?? []) as $ruang_id) {
                 DB::table('tahun_matkul_ruang')->insert([
                     'tahun_matkul_id' => $id,
@@ -211,6 +242,26 @@ class MatkulController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
+            ], 400);
+        }
+    }
+
+    public function destroy($tahun_ajaran_id, $id)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('tahun_matkul')
+                ->where('id', $id)
+                ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
             ], 400);
         }
     }
