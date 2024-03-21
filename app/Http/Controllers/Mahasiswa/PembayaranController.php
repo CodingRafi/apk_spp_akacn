@@ -329,16 +329,7 @@ class PembayaranController extends Controller
 
     public function export()
     {
-        $mhs = Auth::user()->mahasiswa;
-        $semester = DB::table('semesters')
-            ->where('prodi_id', $mhs->prodi_id)
-            ->get();
-
-        if (count($semester) < 1) {
-            return redirect()->back()->with('error', 'Tidak ada semester');
-        }
-
-        return Excel::download(new PembayaranMhsExport($semester), 'pembayaran.xlsx');
+        return Excel::download(new PembayaranMhsExport, 'pembayaran.xlsx');
     }
 
     public function print($type, $id, $pembayaran_id)

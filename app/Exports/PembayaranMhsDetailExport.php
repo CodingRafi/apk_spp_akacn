@@ -4,28 +4,29 @@ namespace App\Exports;
 
 use App\Models\Pembayaran;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromView;
-use Auth;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
 class PembayaranMhsDetailExport implements FromView, WithTitle
 {
-    protected $semester;
+    protected $data;
 
-    public function __construct($semester)
+    public function __construct($data)
     {
-        $this->semester = $semester;
+        $this->data = $data;
     }
 
     public function title(): string
     {
-        return $this->semester->nama;
+        return $this->data->nama;
     }
 
     public function view(): View
     {
         $datas = Pembayaran::where('mhs_id', Auth::user()->id)
-                    ->where('semester_id', $this->semester->id)
+                    ->where('tahun_semester_id', $this->data->untuk)
+                    ->orWhere('tahun_pembayaran_lain', $this->data->untuk)
                     ->get();
 
         return view('pembayaran.export', compact('datas'));

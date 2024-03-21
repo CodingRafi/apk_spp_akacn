@@ -2,26 +2,19 @@
 
 namespace App\Exports;
 
-use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-use Maatwebsite\Excel\Sheet;
-use Maatwebsite\Excel\Concerns\Exportable;
-use DB, Auth;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\FromView;
 
-class PembayaranMhsExport implements WithMultipleSheets
+class PembayaranMhsExport implements FromView
 {
-    private $semester;
-
-    public function __construct($semester){
-        $this->semester = $semester;
-    }
-
-    public function sheets(): array
+    public function view(): View
     {
-        $sheets = [];
+        $datas = DB::table('rekap_pembayaran')
+            ->where('user_id', Auth::user()->id)
+            ->get();
 
-        foreach ($this->semester as $row) {
-            $sheets[] = new PembayaranMhsDetailExport($row);
-        }
-        return $sheets;
+        return view('pembayaran.export', compact('datas'));
     }
 }
