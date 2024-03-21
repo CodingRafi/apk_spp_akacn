@@ -225,7 +225,7 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Harap pilih filter prodi dan tahun Masuk');
         }
 
-        return Excel::download(new UserPembayaranExport($role), 'pembayaran.xlsx');
+        return Excel::download(new UserPembayaranExport, 'pembayaran.xlsx');
     }
 
     public function printPembayaran($role, $user_id)

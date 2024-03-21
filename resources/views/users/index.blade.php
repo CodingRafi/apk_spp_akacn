@@ -5,63 +5,57 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header">
-                    <div class="row justify-content-between align-items-center">
-                        <div class="col-md-2">
-                            <h5 class="text-capitalize">{{ request('role') }}</h5>
-                        </div>
-                        <div class="col-md-10">
-                            @can('add_users')
-                                <div class="row justify-content-end align-items-center pe-3" style="gap: 1rem">
-                                    @if (request('role') == 'mahasiswa')
-                                        <div class="col-md-3 px-0">
-                                            <select class="form-select" id="filter-prodi">
-                                                <option value="" selected>Pilih Prodi</option>
-                                                @foreach ($prodis as $prodi)
-                                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 px-0">
-                                            <select class="form-select" id="filter-tahun-ajaran">
-                                                <option value="" selected>Pilih Tahun Masuk</option>
-                                                @foreach ($tahun_ajarans as $tahun_ajaran)
-                                                    <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3 px-0">
-                                            <select class="form-select" id="filter-rombel">
-                                                <option value="" selected>Pilih Rombel</option>
-                                                @foreach ($rombels as $rombel)
-                                                    <option value="{{ $rombel->id }}">{{ $rombel->nama }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2 px-0">
-                                            <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}" class="form-export">
-                                                <input type="hidden" name="prodi">
-                                                <input type="hidden" name="tahun_ajaran">
-                                                <button type="button"
-                                                    class="btn btn-primary w-100">Export Pembayaran</button>
-                                            </form>
-                                        </div>
-                                        {{-- <div class="col-md-1 px-0">
-                                            <a href="{{ route('users.import', request('role')) }}"
-                                                class="btn btn-primary d-block">Import</a>
-                                        </div> --}}
-                                    @endif
-                                    <div class="col-md-2 px-0">
-                                        <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
-                                            class="btn btn-primary d-block text-capitalize">Tambah</a>
-                                    </div>
-                                </div>
-                            @endcan
-                        </div>
-                    </div>
+                    <h5 class="text-capitalize">{{ request('role') }}</h5>
                 </div>
                 <div class="card-body">
+                    @can('add_users')
+                        <div class="row">
+                            @if (request('role') == 'mahasiswa')
+                                <div class="col-md-2 mb-3">
+                                    <select class="form-select" id="filter-prodi">
+                                        <option value="" selected>Pilih Prodi</option>
+                                        @foreach ($prodis as $prodi)
+                                            <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <select class="form-select" id="filter-tahun-ajaran">
+                                        <option value="" selected>Pilih Tahun Masuk</option>
+                                        @foreach ($tahun_ajarans as $tahun_ajaran)
+                                            <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <select class="form-select" id="filter-rombel">
+                                        <option value="" selected>Pilih Rombel</option>
+                                        @foreach ($rombels as $rombel)
+                                            <option value="{{ $rombel->id }}">{{ $rombel->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}"
+                                        class="form-export">
+                                        <input type="hidden" name="rombel">
+                                        <input type="hidden" name="prodi">
+                                        <input type="hidden" name="tahun_ajaran">
+                                        <button type="button" class="btn btn-primary w-100">Export Pembayaran</button>
+                                    </form>
+                                </div>
+                                <div class="col-md-2 mb-3">
+                                    <a href="" class="btn btn-primary d-block">Import</a>
+                                </div>
+                            @endif
+                            <div class="col-md-2 mb-3">
+                                <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
+                                    class="btn btn-primary d-block text-capitalize">Tambah</a>
+                            </div>
+                        </div>
+                    @endcan
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" aria-label="table user">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -122,7 +116,6 @@
                     @endcan
                 ],
                 pageLength: 25,
-                responsive: true,
             });
         });
     </script>

@@ -38,7 +38,7 @@ class PembayaranController extends Controller
             })->when(request('prodi'), function ($q) {
                 $q->where('c.prodi_id', request('prodi'));
             })->when(request('tahun_ajaran'), function ($q) {
-                $q->where('c.tahun_ajaran_id', request('tahun_ajaran'));
+                $q->where('c.tahun_masuk_id', request('tahun_ajaran'));
             })->get();
 
         foreach ($datas as $data) {
