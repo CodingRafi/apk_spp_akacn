@@ -44,18 +44,24 @@
                             ])
                         </div>
                         <div class="tab-pane fade show" id="pembayaran" role="tabpanel" tabindex="0">
+                            <h5 class="card-title">Pembayaran</h5>
                             @include('mahasiswa.pembayaran.table', [
-                                'mhs_id' => $data->id
+                                'mhs_id' => $data->id,
+                            ])
+
+                            <h5 class="card-title">Potongan</h5>
+                            @include('users.mahasiswa.potongan.index', [
+                                'mhs_id' => $data->id,
                             ])
                         </div>
                         <div class="tab-pane fade show" id="krs" role="tabpanel" tabindex="0">
                             @include('mahasiswa.krs.table', [
-                                'mhs_id' => $data->id
+                                'mhs_id' => $data->id,
                             ])
                         </div>
                         <div class="tab-pane fade show" id="presensi" role="tabpanel" tabindex="0">
                             @include('mahasiswa.presensi.table', [
-                                'mhs_id' => $data->id
+                                'mhs_id' => $data->id,
                             ])
                         </div>
                         <div class="tab-pane fade show" id="nilai" role="tabpanel" tabindex="0">

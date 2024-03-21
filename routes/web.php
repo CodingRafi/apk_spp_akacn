@@ -101,7 +101,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::prefix('{role}/potongan')->name('potongan.')->group(function () {
             Route::get('/{user_id}/get', [MahasiswaPotonganController::class, 'get'])->name('get');
             Route::get('/{user_id}/data', [MahasiswaPotonganController::class, 'data'])->name('data');
-            Route::get('/{user_id}', [MahasiswaPotonganController::class, 'index'])->name('index');
+            // Route::get('/{user_id}', [MahasiswaPotonganController::class, 'index'])->name('index');
             Route::post('/{user_id}', [MahasiswaPotonganController::class, 'store'])->name('store');
             Route::delete('/{user_id}/{potongan_id}', [MahasiswaPotonganController::class, 'destroy'])->name('destroy');
         });

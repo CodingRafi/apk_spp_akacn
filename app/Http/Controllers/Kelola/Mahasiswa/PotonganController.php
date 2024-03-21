@@ -12,12 +12,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PotonganController extends Controller
 {
-    // public function __construct()
-    // {
-    //     if (request('role') != 'mahasiswa') {
-    //         abort(404);
-    //     }
-    // }
 
     public function get($role, $user_id)
     {
@@ -108,7 +102,7 @@ class PotonganController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-users.potongan.destroy', ['role' => request('role'), 'user_id' => $user_id, 'potongan_id' => $data->id]) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-users.potongan.destroy', ['role' => request('role'), 'user_id' => $user_id, 'potongan_id' => $data->id]) . "`, () => {tablePotongan.ajax.reload()})' type='button'>
                                                     Hapus
                                                 </button>";
             $data->options = $options;
