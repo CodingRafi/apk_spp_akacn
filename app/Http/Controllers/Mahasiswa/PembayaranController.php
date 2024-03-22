@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\{
     Pembayaran,
+    PembayaranTambahan,
     Semester,
     User
 };
@@ -201,7 +202,15 @@ class PembayaranController extends Controller
             })
             ->get();
 
-        return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'mhs_id'));
+        $tambahan = PembayaranTambahan::select('pembayaran_tambahans.*', 'semesters.nama as semester', 'pembayaran_lainnyas.nama as lainnya')
+            ->leftJoin('tahun_semester', 'pembayaran_tambahans.tahun_semester_id', '=', 'tahun_semester.id')
+            ->leftJoin('semesters', 'tahun_semester.semester_id', '=', 'semesters.id')
+            ->leftJoin('tahun_pembayaran_lain', 'pembayaran_tambahans.tahun_pembayaran_lain_id', '=', 'tahun_pembayaran_lain.id')
+            ->leftJoin('pembayaran_lainnyas', 'tahun_pembayaran_lain.pembayaran_lainnya_id', '=', 'pembayaran_lainnyas.id')
+            ->where('pembayaran_tambahans.mhs_id', $mhs_id)
+            ->get();
+
+        return view('mahasiswa.pembayaran.show', compact('data', 'potongan', 'mhs_id', 'tambahan'));
     }
 
     public function showPembayaran($type, $id, $pembayaran_id, $mhs_id = null)

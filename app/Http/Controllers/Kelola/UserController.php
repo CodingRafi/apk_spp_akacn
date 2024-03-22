@@ -324,6 +324,14 @@ class UserController extends Controller
                 ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
                 ->where('tahun_semester.prodi_id', $mhs->prodi_id)
                 ->get();
+
+            $tahunPembayaranLain = DB::table('tahun_pembayaran_lain')
+                ->select('tahun_pembayaran_lain.id', 'b.nama')
+                ->join('pembayaran_lainnyas as b', 'b.id', 'tahun_pembayaran_lain.pembayaran_lainnya_id')
+                ->where('tahun_pembayaran_lain.prodi_id', $mhs->prodi_id)
+                ->where('tahun_pembayaran_lain.tahun_ajaran_id', $mhs->tahun_masuk_id)
+                ->get();
+
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -334,7 +342,8 @@ class UserController extends Controller
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans,
                 'tahun_semester' => $tahun_semester,
-                'jenisKelas' => $jenisKelas
+                'jenisKelas' => $jenisKelas,
+                'tahunPembayaranLain' => $tahunPembayaranLain,
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')

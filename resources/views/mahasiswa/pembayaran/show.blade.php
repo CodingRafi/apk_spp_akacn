@@ -24,8 +24,8 @@
                     </div>
                     <div class="card-body">
                         @if ($data && $data->publish)
-                            <div class="row mb-4">
-                                <div class="col-md-3">
+                            <div class="row mb-2">
+                                <div class="col-md-3 mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
@@ -39,7 +39,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
@@ -53,7 +53,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 mb-3">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h5 class="card-title">
+                                                    Biaya Tambahan
+                                                </h5>
+                                                <button class="bg-transparent p-0 border-0 text-secondary"
+                                                    data-bs-toggle="modal" data-bs-target="#tambahan">Detail</button>
+                                            </div>
+                                            <p class="card-text">{{ formatRupiah($data->tambahan) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">Sudah dibayar</h5>
@@ -61,7 +75,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-3 mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <h5 class="card-title">Belum dibayar</h5>
@@ -130,6 +144,37 @@
                                         <td class="col-md-2">{{ $item->nama }}</td>
                                         <td class="col-md-2">{{ formatRupiah($item->nominal) }}</td>
                                         <td class="col-md-8">{{ $item->ket }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="tambahan" tabindex="-1" aria-labelledby="tambahanLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="tambahanLabel">Detail Tambahan</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table w-100">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-2">Nama</th>
+                                    <th class="col-md-2">Untuk</th>
+                                    <th class="col-md-2">Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($tambahan as $item)
+                                    <tr>
+                                        <td class="col-md-2">{{ $item->nama }}</td>
+                                        <td class="col-md-2">{{ $item->semester ?? $item->lainnya }}</td>
+                                        <td class="col-md-2">{{ formatRupiah($item->nominal) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

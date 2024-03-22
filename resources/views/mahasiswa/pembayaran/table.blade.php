@@ -17,8 +17,9 @@
 </div>
 
 <script>
+    let tablePembayaran;
     $(document).ready(function() {
-        $('.table-pembayaran').DataTable({
+        tablePembayaran = $('.table-pembayaran').DataTable({
             processing: true,
             serverSide: true,
             responsive: true,

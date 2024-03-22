@@ -49,7 +49,12 @@
                                 'mhs_id' => $data->id,
                             ])
 
-                            <h5 class="card-title">Potongan</h5>
+                            <h5 class="card-title mt-3">Pembayaran Tambahan</h5>
+                            @include('users.mahasiswa.pembayaran_tambahan.index', [
+                                'mhs_id' => $data->id,
+                            ])
+
+                            <h5 class="card-title mt-3">Potongan</h5>
                             @include('users.mahasiswa.potongan.index', [
                                 'mhs_id' => $data->id,
                             ])

@@ -5,7 +5,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="text-capitalize">{{ request('role') }}</h5>
+                    <h5 class="text-capitalize mb-0">{{ request('role') }}</h5>
                 </div>
                 <div class="card-body">
                     @can('add_users')
