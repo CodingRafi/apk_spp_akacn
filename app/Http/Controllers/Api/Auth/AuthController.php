@@ -32,7 +32,7 @@ class AuthController extends Controller
         }
 
         $user = $request->user();
-        $
+        $user->tokens()->delete();
         $tokenResult = $user->createToken('token');
         $token = $tokenResult->plainTextToken;
 

@@ -58,5 +58,14 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('admin');
+
+        $adminPmb = User::create([
+            'name' => 'Admin PMB',
+            'login_key' => 'adminpmb@gmail.com',
+            'email' => 'adminpmb@gmail.com',
+            'password' => bcrypt('SOrwb9jwJnEIAxMjRyiKPSs9peob7r[Wx/U!dleIjlpEc0HRaE')
+        ]);
+
+        $adminPmb->assignRole('admin');
     }
 }
