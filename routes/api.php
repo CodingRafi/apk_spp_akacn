@@ -37,5 +37,5 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('tahun-ajaran', [ReferensiController::class, 'tahunAjaran']);
     });
 
-    Route::post('mahasiswa/storeOrUpdate', [MahasiswaController::class, 'storeOrUpdate']);
+    Route::post('mahasiswa/store', [MahasiswaController::class, 'store']);
 });

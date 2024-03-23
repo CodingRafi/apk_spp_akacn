@@ -23,12 +23,17 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tgl_lahir');
             $table->enum('jk', ['l', 'p']);
+            $table->string('kewarganegaraan_id');
+            $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans');
+            $table->string('wilayah_id');
+            $table->foreign('wilayah_id')->references('id')->on('wilayahs');
             $table->string('jalan');
             $table->string('rt');
             $table->string('rw');
             $table->string('dusun');
             $table->string('kelurahan');
             $table->string('kode_pos');
+
             $table->string('nama_ayah')->nullable();
             $table->string('tgl_lahir_ayah')->nullable();
             $table->string('nik_ayah')->nullable();
@@ -38,6 +43,7 @@ return new class extends Migration
             $table->foreign('pekerjaan_ayah_id')->references('id')->on('pekerjaans');
             $table->uuid('penghasilan_ayah_id')->nullable();
             $table->foreign('penghasilan_ayah_id')->references('id')->on('penghasilans');
+            
             $table->string('nama_ibu')->nullable();
             $table->string('tgl_lahir_ibu')->nullable();
             $table->string('nik_ibu')->nullable();
@@ -47,6 +53,7 @@ return new class extends Migration
             $table->foreign('pekerjaan_ibu_id')->references('id')->on('pekerjaans');
             $table->uuid('penghasilan_ibu_id')->nullable();
             $table->foreign('penghasilan_ibu_id')->references('id')->on('penghasilans');
+            
             $table->string('nama_wali')->nullable();
             $table->string('tgl_lahir_wali')->nullable();
             $table->string('nik_wali')->nullable();
@@ -56,6 +63,7 @@ return new class extends Migration
             $table->foreign('pekerjaan_wali_id')->references('id')->on('pekerjaans');
             $table->uuid('penghasilan_wali_id')->nullable();
             $table->foreign('penghasilan_wali_id')->references('id')->on('penghasilans');
+            
             $table->string('telepon')->nullable();
             $table->string('handphone')->nullable();
             $table->enum('penerima_kps', [0,1])->default(0);
@@ -66,10 +74,6 @@ return new class extends Migration
             $table->foreignId('rombel_id')->constrained('rombels');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi');
-            $table->string('kewarganegaraan_id');
-            $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans');
-            $table->string('wilayah_id');
-            $table->foreign('wilayah_id')->references('id')->on('wilayahs');
             $table->string('jenis_tinggal_id')->nullable();
             $table->foreign('jenis_tinggal_id')->references('id')->on('jenis_tinggals');
             $table->string('alat_transportasi_id')->nullable();
@@ -81,6 +85,7 @@ return new class extends Migration
             $table->uuid('tahun_masuk_id');
             $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans');
             $table->foreignId('jenis_kelas_id')->constrained('jenis_kelas');
+            $table->enum('source', ['neo_feeder', 'app', 'pmb'])->default('app');
             $table->timestamps();
         });
     }

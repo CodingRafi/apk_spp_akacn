@@ -8,7 +8,7 @@
                     <h5 class="text-capitalize">Prodi</h5>
                     @can('add_prodi')
                         <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
-                            <button class="btn btn-primary" onclick="get()">Get Neo Feeder</button>
+                            <button class="btn btn-primary" onclick="getNeoFeeder('{{ route('neo-feeder.get', ['type' => 'prodi']) }}')">Get Neo Feeder</button>
                             <a href="{{ route('data-master.prodi.create') }}" class="btn btn-primary text-capitalize">Tambah
                                 Prodi</a>
                         </div>
@@ -67,21 +67,5 @@
                 responsive: true,
             });
         });
-
-        function get() {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: '{{ route('neo-feeder.get', ['type' => 'prodi']) }}',
-                success: function(res) {
-                    showAlert(res.output, 'success')
-                    $.LoadingOverlay("hide");
-                    table.ajax.reload();
-                },
-                error: function(err) {
-                    $.LoadingOverlay("hide");
-                    showAlert(err.responseJSON.output, 'error')
-                }
-            })
-        }
     </script>
 @endpush

@@ -47,7 +47,6 @@
         });
 
         function get() {
-            console.log('oke')
             $.LoadingOverlay("show");
             $.ajax({
                 url: '{{ route('neo-feeder.get', ['type' => 'wilayah']) }}',

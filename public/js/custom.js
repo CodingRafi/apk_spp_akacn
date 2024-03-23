@@ -10,3 +10,19 @@ function generateRandomCode(length) {
 
     return result;
 }
+
+function getNeoFeeder(url, tableData) {
+    $.LoadingOverlay("show");
+    $.ajax({
+        url: url,
+        success: function(res) {
+            showAlert(res.output, 'success')
+            $.LoadingOverlay("hide");
+            tableData.ajax.reload();
+        },
+        error: function(err) {
+            $.LoadingOverlay("hide");
+            showAlert(err.responseJSON.output, 'error')
+        }
+    })
+}
