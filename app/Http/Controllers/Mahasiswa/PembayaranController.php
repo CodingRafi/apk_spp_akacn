@@ -23,7 +23,7 @@ use Yajra\DataTables\Facades\DataTables;
 class PembayaranController extends Controller
 {
     public function __construct()
-    {
+    {   
         $this->middleware('permission:view_pembayaran', ['only' => ['index']]);
         $this->middleware('permission:add_pembayaran', ['only' => ['create', 'store']]);
         $this->middleware('permission:edit_pembayaran', ['only' => ['edit', 'update', 'revisi', 'storeRevisi']]);
@@ -84,7 +84,7 @@ class PembayaranController extends Controller
         $datas = DB::table('pembayarans')
             ->where('mhs_id', $mhs_id)
             ->when($type == 'semester', function ($q) use ($id) {
-                $q->where('tahun_semester_id', $id);
+                $q->where('tahun_pembayaran_id', $id);
             })
             ->when($type == 'lainnya', function ($q) use ($id) {
                 $q->where('tahun_pembayaran_lain_id', $id);
@@ -153,7 +153,7 @@ class PembayaranController extends Controller
                 'ket_mhs' => $request->ket_mhs,
             ];
 
-            $requestParse[($type == 'semester' ? 'tahun_semester_id' : 'tahun_pembayaran_lain_id')] = $id;
+            $requestParse[($type == 'semester' ? 'tahun_pembayaran_id' : 'tahun_pembayaran_lain_id')] = $id;
             $pembayaran = Pembayaran::create($requestParse);
 
             $admin = DB::table('users')->find(1);
@@ -187,6 +187,10 @@ class PembayaranController extends Controller
             ->where('rekap_pembayaran.type', $type)
             ->where('rekap_pembayaran.untuk', $id)
             ->first();
+            
+        if (!$data) {
+            abort(404);
+        }
 
         $potongan = DB::table('potongan_mhs')
             ->select('potongans.nama', 'potongan_tahun_ajaran.type', 'potongan_tahun_ajaran.ket', 'potongan_tahun_ajaran.nominal')
@@ -217,7 +221,7 @@ class PembayaranController extends Controller
     {
         $mhs_id = $this->validateMhsId($mhs_id);
         $data = Pembayaran::findOrFail($pembayaran_id);
-        if ($data->mhs_id != $mhs_id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
+        if ($data->mhs_id != $mhs_id || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             abort(404);
         }
 
@@ -229,7 +233,7 @@ class PembayaranController extends Controller
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -244,7 +248,7 @@ class PembayaranController extends Controller
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -278,7 +282,7 @@ class PembayaranController extends Controller
     {
         $pembayaran = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($pembayaran->mhs_id != Auth::user()->id || ($type == 'semester' ? $pembayaran->tahun_semester_id != $id : $pembayaran->tahun_pembayaran_lain_id != $id)) {
+        if ($pembayaran->mhs_id != Auth::user()->id || ($type == 'semester' ? $pembayaran->tahun_pembayaran_id != $id : $pembayaran->tahun_pembayaran_lain_id != $id)) {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -347,16 +351,17 @@ class PembayaranController extends Controller
 
         if (
             $data->mhs_id != Auth::user()->id
-            || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status != 'diterima'
+            || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status != 'diterima'
         ) {
             abort(404);
         }
 
-        if ($data->tahun_semester_id) {
-            $getNama = DB::table('tahun_semester')
+        if ($data->tahun_pembayaran_id) {
+            $getNama = DB::table('tahun_pembayaran')
                 ->select('semesters.nama')
+                ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
                 ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-                ->where('tahun_semester.id', $data->tahun_semester_id)
+                ->where('tahun_pembayaran.id', $data->tahun_pembayaran_id)
                 ->first();
         } else {
             $getNama = DB::table('tahun_pembayaran_lain')

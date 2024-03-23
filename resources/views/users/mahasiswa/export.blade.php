@@ -21,6 +21,7 @@
                 @foreach ($data as $item)
                     <td>
                         Harus dibayar : {{ formatRupiah($item->harus) }} <br>
+                        Biaya Tambahan : {{ formatRupiah($item->tambahan) }} <br>
                         Total pembayaran: {{ formatRupiah($item->total_pembayaran) }} <br>
                         Potongan : {{ formatRupiah($item->potongan) }} <br>
                         Sisa : {{ formatRupiah($item->sisa) }}

@@ -35,10 +35,11 @@ class PembayaranMhsMiddleware
         }
 
         if ($request->type == 'semester') {
-            $cek = DB::table('tahun_semester')
-                ->where('prodi_id', $mhs->prodi_id)
-                ->where('tahun_ajaran_id', $mhs->tahun_masuk_id)
-                ->where('id', $request->id)
+            $cek = DB::table('tahun_pembayaran')
+                ->join('tahun_semester', 'tahun_semester.id', '=', 'tahun_pembayaran.tahun_semester_id')
+                ->where('tahun_semester.prodi_id', $mhs->prodi_id)
+                ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
+                ->where('tahun_pembayaran.id', $request->id)
                 ->first();
             if (!$cek) {
                 abort(404);

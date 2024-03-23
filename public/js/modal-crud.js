@@ -11,6 +11,7 @@ function addForm(url, title = "Tambah", modal = "#modal-form", func) {
     $(`${modal} [name=_method]`).val("post");
 
     resetForm(`${modal} form`);
+    initTinyMCE();
 
     if (func != undefined) {
         func();
@@ -223,10 +224,8 @@ function loopForm(originalForm, modal) {
     for (field in originalForm) {
         if ($(`${modal} [name=${field}]`).attr("type") != "file") {
             if ($(`${modal} [name=${field}]`).hasClass("textarea-tinymce")) {
-                let editor = tinymce.get($(`${modal} [name=${field}]`).attr('id'));
-                if (editor) {
-                    editor.setContent(originalForm[field]);
-                }
+                tinymce.remove();
+                initTinyMCE(`#${$(`${modal} [name=${field}]`).attr('id')}`, originalForm[field]);
             } else if ($(`${modal} [name=${field}]`).attr("type") == "radio") {
                 // radio
                 $(`${modal} [name=${field}]`)

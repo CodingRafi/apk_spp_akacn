@@ -73,11 +73,12 @@ class PembayaranController extends Controller
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->tahun_semester_id) {
-            $data->type = DB::table('tahun_semester')
+        if ($data->tahun_pembayaran_id) {
+            $data->type = DB::table('tahun_pembayaran')
                 ->select('semesters.nama')
+                ->join('tahun_semester', 'tahun_semester.id', 'tahun_pembayaran.tahun_semester_id')
                 ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
-                ->where('tahun_semester.id', $data->tahun_semester_id)
+                ->where('tahun_pembayaran.id', $data->tahun_pembayaran_id)
                 ->first();
         } else {
             $mhs = DB::table('profile_mahasiswas')

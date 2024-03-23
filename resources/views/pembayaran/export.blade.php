@@ -3,6 +3,7 @@
         <tr>
             <th>Nama</th>
             <th>Harus Dibayar</th>
+            <th>Biaya Tambahan</th>
             <th>Total Pembayaran</th>
             <th>Potongan</th>
             <th>Sisa</th>
@@ -14,6 +15,7 @@
         <tr>
             <td>{{ $data->nama }}</td>
             <td>{{ $data->harus }}</td>
+            <td>{{ $data->tambahan }}</td>
             <td>{{ $data->total_pembayaran }}</td>
             <td>{{ $data->potongan }}</td>
             <td>{{ $data->sisa }}</td>

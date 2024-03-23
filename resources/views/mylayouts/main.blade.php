@@ -117,7 +117,7 @@
             z-index: 9999;
         }
 
-        .select2{
+        .select2 {
             width: 100%
         }
     </style>
@@ -184,42 +184,9 @@
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
     </script>
 
+
     <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="{{ asset('js/fstdropdown.js') }}"></script>
-    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
-    <script src="{{ asset('js/modal-crud.js') }}"></script>
-    <script src="{{ asset('js/custom.js') }}"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script>
-        setFstDropdown();
-    </script>
-    <script>
-        function showAlert(message, type) {
-            if (type == 'success') {
-                iziToast.success({
-                    title: 'Success',
-                    message: message,
-                    position: 'topRight'
-                });
-            } else {
-                iziToast.error({
-                    title: 'Failed',
-                    message: message,
-                    position: 'topRight'
-                });
-            }
-        }
-        @if (session()->has('success'))
-            showAlert("{{ session('success') }}", 'success')
-        @elseif (session()->has('error')) showAlert("{{ session('error') }}", 'error')
-        @endif
-    </script>
     <script>
         const upload_file = (blobInfo, progress) => new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -264,85 +231,126 @@
 
             xhr.send(formData);
         });
-
-        tinymce.init({
-            selector: '.textarea-tinymce',
-            plugins: ` advlist anchor autosave image link lists media searchreplace table template visualblocks wordcount`,
-            toolbar: 'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck code',
-            a11ychecker_level: 'aaa',
-            convert_urls: false,
-            style_formats: [{
-                    title: 'Heading 1',
-                    block: 'h1'
+    </script>
+    <script>
+        function initTinyMCE(selector, valueTinyMCE = '') {
+            tinymce.init({
+                selector: (selector ?? '.textarea-tinymce'),
+                plugins: ` advlist anchor autosave image link lists media searchreplace table template visualblocks wordcount`,
+                toolbar: 'undo redo | styles | bold italic underline strikethrough | align | table link image media pageembed | bullist numlist outdent indent | spellcheckdialog a11ycheck code',
+                a11ychecker_level: 'aaa',
+                convert_urls: false,
+                style_formats: [{
+                        title: 'Heading 1',
+                        block: 'h1'
+                    },
+                    {
+                        title: 'Heading 2',
+                        block: 'h2'
+                    },
+                    {
+                        title: 'Paragraph',
+                        block: 'p'
+                    },
+                    {
+                        title: 'Blockquote',
+                        block: 'blockquote'
+                    },
+                    {
+                        title: 'Image formats'
+                    },
+                    {
+                        title: 'Medium',
+                        selector: 'img',
+                        classes: 'medium'
+                    },
+                ],
+                object_resizing: false,
+                valid_classes: {
+                    'img': 'medium',
+                    'div': 'related-content'
                 },
-                {
-                    title: 'Heading 2',
-                    block: 'h2'
+                setup: function(editor) {
+                    editor.on('init', function() {
+                        editor.setContent(valueTinyMCE); // Setel konten saat inisialisasi
+                    });
                 },
-                {
-                    title: 'Paragraph',
-                    block: 'p'
+                image_caption: true,
+                images_upload_url: '{{ route('upload_file') }}',
+                images_upload_handler: upload_file,
+                templates: [{
+                    title: 'Related content',
+                    description: 'This template inserts a related content block',
+                    content: '<div class="related-content"><h3>Related content</h3><p><strong>{$rel_lede}</strong> {$rel_body}</p></div>'
+                }],
+                template_replace_values: {
+                    rel_lede: 'Lorem ipsum',
+                    rel_body: 'dolor sit amet...',
                 },
-                {
-                    title: 'Blockquote',
-                    block: 'blockquote'
+                template_preview_replace_values: {
+                    rel_lede: 'Lorem ipsum',
+                    rel_body: 'dolor sit amet...',
                 },
-                {
-                    title: 'Image formats'
-                },
-                {
-                    title: 'Medium',
-                    selector: 'img',
-                    classes: 'medium'
-                },
-            ],
-            object_resizing: false,
-            valid_classes: {
-                'img': 'medium',
-                'div': 'related-content'
-            },
-            image_caption: true,
-            images_upload_url: '{{ route('upload_file') }}',
-            images_upload_handler: upload_file,
-            templates: [{
-                title: 'Related content',
-                description: 'This template inserts a related content block',
-                content: '<div class="related-content"><h3>Related content</h3><p><strong>{$rel_lede}</strong> {$rel_body}</p></div>'
-            }],
-            template_replace_values: {
-                rel_lede: 'Lorem ipsum',
-                rel_body: 'dolor sit amet...',
-            },
-            template_preview_replace_values: {
-                rel_lede: 'Lorem ipsum',
-                rel_body: 'dolor sit amet...',
-            },
-            noneditable_class: 'related-content',
-            content_langs: [{
-                    title: 'English (US)',
-                    code: 'en_US'
-                },
-                {
-                    title: 'French',
-                    code: 'fr'
-                }
-            ],
-            branding: false,
-            height: 540,
-            promotion: false,
-            content_style: `
-       img {
-         height: auto;
-         margin: auto;
-         padding: 10px;
-         display: block;
-       }
-       img.medium {
-         max-width: 25%;
-       }
-     `
-
-        });
+                noneditable_class: 'related-content',
+                content_langs: [{
+                        title: 'English (US)',
+                        code: 'en_US'
+                    },
+                    {
+                        title: 'French',
+                        code: 'fr'
+                    }
+                ],
+                branding: false,
+                height: 540,
+                promotion: false,
+                content_style: `
+        img {
+            height: auto;
+            margin: auto;
+            padding: 10px;
+            display: block;
+        }
+        img.medium {
+            max-width: 25%;
+        }
+        `
+            });
+        }
+    </script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="{{ asset('js/fstdropdown.js') }}"></script>
+    <script src="//cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('js/modal-crud.js') }}"></script>
+    <script src="{{ asset('js/custom.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script>
+        setFstDropdown();
+    </script>
+    <script>
+        function showAlert(message, type) {
+            if (type == 'success') {
+                iziToast.success({
+                    title: 'Success',
+                    message: message,
+                    position: 'topRight'
+                });
+            } else {
+                iziToast.error({
+                    title: 'Failed',
+                    message: message,
+                    position: 'topRight'
+                });
+            }
+        }
+        @if (session()->has('success'))
+            showAlert("{{ session('success') }}", 'success')
+        @elseif (session()->has('error')) showAlert("{{ session('error') }}", 'error')
+        @endif
     </script>
     <script>
         $(document).ready(function() {

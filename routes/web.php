@@ -215,6 +215,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::post('/', [PembayaranSemesterController::class, 'store'])->name('store');
                 Route::get('/{id}', [PembayaranSemesterController::class, 'show'])->name('show');
                 Route::put('/{id}', [PembayaranSemesterController::class, 'update'])->name('update');
+                Route::delete('/{id}', [PembayaranSemesterController::class, 'destroy'])->name('destroy');
             });
 
             //? Prodi - Pembayaran lainnya

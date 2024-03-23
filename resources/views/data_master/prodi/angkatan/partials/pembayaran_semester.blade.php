@@ -49,7 +49,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="ket" class="form-label">Keterangan</label>
-                            <textarea class="form-control textarea-tinymce" id="textarea-pembayaran-semester" rows="3" name="ket"></textarea>
+                            <textarea class="form-control textarea-tinymce" id="textarea_pembayaran_semester" rows="3" name="ket"></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="publish" class="form-label">Publish</label>

@@ -23,12 +23,12 @@ return new class extends Migration
         //? VIEW REKAP PEMBAYARAN SEMESTER
         DB::statement("
             CREATE VIEW rekap_pembayaran_semester AS
-            SELECT u.id as user_id, sum(p.nominal) total, p.tahun_semester_id
+            SELECT u.id as user_id, sum(p.nominal) total, p.tahun_pembayaran_id
             FROM users as u
             inner join pembayarans p on p.mhs_id = u.id
             where p.status = 'diterima'
-            and p.tahun_semester_id is not null
-            group by u.id, p.tahun_semester_id;
+            and p.tahun_pembayaran_id is not null
+            group by u.id, p.tahun_pembayaran_id;
         ");
 
         // //? VIEW REKAP PEMBAYARAN LAINNYA
@@ -70,7 +70,7 @@ return new class extends Migration
                 u.id as user_id,
                 s.nama,
                 'semester' as type,
-                ts.id as untuk,
+                tp.id as untuk,
                 COALESCE(tp.nominal , 0) as harus,
                 COALESCE(rps.total, 0) as total_pembayaran,
                 COALESCE(rp.total, 0) AS potongan,
@@ -81,7 +81,7 @@ return new class extends Migration
             inner join tahun_semester as ts on ts.prodi_id = pm.prodi_id and ts.tahun_ajaran_id = pm.tahun_masuk_id
             inner join semesters s on ts.semester_id = s.id
             inner join tahun_pembayaran tp on ts.id = tp.tahun_semester_id
-            left join rekap_pembayaran_semester rps on rps.user_id = u.id and rps.tahun_semester_id = ts.id
+            left join rekap_pembayaran_semester rps on rps.user_id = u.id and rps.tahun_pembayaran_id = tp.id
             left join rekap_potongan rp on rp.id = u.id and rp.tahun_semester_id = ts.id
             left join rekap_pembayaran_tambahan rpt on rpt.user_id = u.id and rpt.tahun_semester_id = ts.id
             union

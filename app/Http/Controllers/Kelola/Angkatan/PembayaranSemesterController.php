@@ -47,7 +47,7 @@ class PembayaranSemesterController extends Controller
                         Edit
                     </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.pembayaran.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, () => {tablePembayaranSemester.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -129,6 +129,23 @@ class PembayaranSemesterController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil diubah'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
+    }
+
+    public function destroy($prodi_id, $tahun_ajaran_id, $id){
+        DB::beginTransaction();
+        try {
+            DB::table('tahun_pembayaran')
+                ->where('id', $id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
