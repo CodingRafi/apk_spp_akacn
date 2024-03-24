@@ -225,6 +225,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::post('/', [PembayaranLainnyaController::class, 'store'])->name('store');
                 Route::get('/{id}', [PembayaranLainnyaController::class, 'show'])->name('show');
                 Route::put('/{id}', [PembayaranLainnyaController::class, 'update'])->name('update');
+                Route::delete('/{id}', [PembayaranLainnyaController::class, 'destroy'])->name('destroy');
             });
 
             //? Prodi - Potongan

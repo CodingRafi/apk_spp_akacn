@@ -33,7 +33,7 @@ class PembayaranLainnyaController extends Controller
             ->where('tahun_pembayaran_lain.prodi_id', $prodi_id)
             ->where('tahun_pembayaran_lain.tahun_ajaran_id', $tahun_ajaran_id)
             ->get();
-            
+
         foreach ($datas as $data) {
             $options = '';
 
@@ -43,7 +43,7 @@ class PembayaranLainnyaController extends Controller
                         Edit
                     </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.rombel.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.pembayaran-lainnya.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) . "`, () => {tablePembayaranLainnya.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
             $data->options = $options;
@@ -128,6 +128,24 @@ class PembayaranLainnyaController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil diubah'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
+    }
+
+    public function destroy($prodi_id, $tahun_ajaran_id, $id)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('tahun_pembayaran_lain')
+                ->where('id', $id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
