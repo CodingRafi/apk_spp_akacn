@@ -418,6 +418,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         });
 
         Route::get('/{type}', [NeoFeederController::class, 'index'])->name('index');
+        Route::post('/', [NeoFeederController::class, 'store'])->name('store');
         Route::get('/{type}/data', [NeoFeederController::class, 'data'])->name('data');
         Route::get('/{type}/get', [NeoFeederController::class, 'get'])->name('get');
     });

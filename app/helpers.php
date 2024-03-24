@@ -64,12 +64,25 @@ if (!function_exists('getUrlNeoFeeder')) {
     }
 }
 
+if (!function_exists('encryptString')) {
+
+    function encryptString($string)
+    {
+        $key = '123';
+        $iv_length = openssl_cipher_iv_length('aes-256-cbc');
+        $iv = openssl_random_pseudo_bytes($iv_length);
+        $encrypted = openssl_encrypt($string, 'aes-256-cbc', $key, OPENSSL_RAW_DATA, $iv);
+        $encrypted = base64_encode($iv . $encrypted);
+        return $encrypted;
+    }
+}
+
 if (!function_exists('getDataNeoFeeder')) {
 
     function getDataNeoFeeder($raw)
     {
         $url = getUrlNeoFeeder();
-        
+
         if ($url == '') {
             return [
                 'status' => false,
@@ -80,8 +93,8 @@ if (!function_exists('getDataNeoFeeder')) {
         //? Get Token
         $resToken = Http::post($url, [
             "act" => "GetToken",
-            "username" => "034095",
-            "password" => "034095akacaraka"
+            "username" => config('services.neo_feeder.USERNAME'),
+            "password" => config('services.neo_feeder.PASSWORD')
         ]);
 
         if ($resToken->status() != 200) {

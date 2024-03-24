@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <h5 class="text-capitalize mb-0">{{ request('type') }}</h5>
-                    <button class="btn btn-primary" onclick="get()">Get Data Neo Feeder</button>
+                    <button class="btn btn-primary" onclick="getData(configNeoFeeder.{{ request('type') }}.raw)">Get Data Neo Feeder</button>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -25,6 +25,10 @@
 @endsection
 
 @push('js')
+    @if (Auth::user()->hasRole('admin'))
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index')
+    @endif
     <script>
         let table;
         $(document).ready(function() {
@@ -42,21 +46,5 @@
                 responsive: true,
             });
         });
-
-        function get() {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: '{{ route('neo-feeder.get', ['type' => request('type')]) }}',
-                success: function(res) {
-                    showAlert(res.output, 'success')
-                    $.LoadingOverlay("hide");
-                    table.ajax.reload();
-                },
-                error: function(err) {
-                    $.LoadingOverlay("hide");
-                    showAlert(err.responseJSON.output, 'error')
-                }
-            })
-        }
     </script>
 @endpush

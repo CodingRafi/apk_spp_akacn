@@ -41,7 +41,6 @@
     <link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/south-street/jquery-ui.css"
         rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="https://keith-wood.name/css/jquery.signature.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css">
 
     {{-- Tambahan Css --}}
@@ -183,7 +182,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js">
     </script>
-
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script src="{{ asset('tinymce/tinymce.min.js') }}"></script>
