@@ -1,61 +1,51 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+@include('neo_feeder')
 <script>
-    // let username = '{{ encryptString(config('services.neo_feeder.USERNAME')) }}';
-    // let password = '{{ encryptString(config('services.neo_feeder.PASSWORD')) }}';
-    let kode = "{{ base64_encode(config('services.neo_feeder.KEY_ENCRYPT')) }}";
-    let url = "{{ $url->value }}/ws/live2.php";
-    let username = "{{ config('services.neo_feeder.USERNAME') }}";
-    let password = "{{ config('services.neo_feeder.PASSWORD') }}";
+    const configData = configNeoFeeder.{{ $type }};
 
-    async function getToken() {
-        if (!url) {
-            showAlert('Url tidak ditemukan', 'error');
-            return false;
+    async function getData() {
+        if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
+            if (!url) {
+                showAlert('Url tidak ditemukan', 'error');
+            }
+            
+            let token = await getToken()
+
+            if (token === null) {
+                showAlert('GAGAL GET TOKEN', 'error');
+                return false;
+            }
+
+            $.LoadingOverlay("show");
+            let raw = configData.raw;
+            raw.token = token.data.token;
+
+            var settings = {
+                "url": url,
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "data": JSON.stringify(raw),
+            };
+
+            $.ajax(settings).done(function(response) {
+                $.LoadingOverlay("hide");
+                if (configData.changeFormat) {
+                    storeData(changeFormatData(response.data))
+                } else {
+                    storeData(response.data)
+                }
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                $.LoadingOverlay("hide");
+                console.error("AJAX Error:", textStatus, errorThrown);
+            });
         }
-
-        var settings = {
-            "url": url,
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "data": JSON.stringify({
-                "act": "GetToken",
-                "username": username,
-                "password": password
-            }),
-        };
-
-        return $.ajax(settings)
-    }
-
-    async function getData(raw) {
-        if (!url) {
-            showAlert('Url tidak ditemukan', 'error');
-        }
-
-        let token = await getToken()
-
-        raw.token = token.data.token;
-
-        var settings = {
-            "url": url,
-            "method": "POST",
-            "timeout": 0,
-            "headers": {
-                "Content-Type": "application/json"
-            },
-            "data": JSON.stringify(raw),
-        };
-
-        $.ajax(settings).done(function(response) {
-            storeData(changeFormatData(response.data))
-        });
     }
 
     function changeFormatData(data) {
-        let format = configNeoFeeder.{{ request('type') }}.format;
+        $.LoadingOverlay("show");
+        let format = configData.format;
         let newData = [];
 
         $.each(data, function(key, value) {
@@ -67,24 +57,32 @@
 
             newData.push(newFormat)
         })
-
+        $.LoadingOverlay("hide");
         return newData;
     }
 
-    function storeData(data) {
+    function storeData(data, func) {
+        $.LoadingOverlay("show");
         $.ajax({
-            url: '{{ route('neo-feeder.store') }}',
+            url: '{{ $urlStoreData }}',
             type: 'POST',
             data: {
-                tbl: configNeoFeeder.{{ request('type') }}.tbl,
+                tbl: configData.tbl,
                 data
             },
             dataType: 'json',
             success: function(res) {
                 showAlert(res.message, 'success')
+                table.ajax.reload()
+
+                if (func != undefined) {
+                    func(response.data);
+                }
+                $.LoadingOverlay("hide");
             },
             error: function(err) {
-                console.log(err)
+                showAlert(err.responseJSON.message, 'error')
+                $.LoadingOverlay("hide");
             }
         })
     }

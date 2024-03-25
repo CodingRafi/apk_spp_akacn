@@ -52,6 +52,11 @@
                                 <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
                                     class="btn btn-primary d-block text-capitalize">Tambah</a>
                             </div>
+                            @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
+                                <div class="col-md-2 mb-3">
+                                    <button class="btn btn-primary d-block w-100" type="button" onclick="getData()">Get list data</button>
+                                </div>
+                            @endif
                         </div>
                     @endcan
                     <div class="table-responsive">
@@ -81,6 +86,13 @@
 @endsection
 
 @push('js')
+    @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => request('role'),
+            'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
+        ])
+    @endif
     <script>
         let table;
     </script>

@@ -44,6 +44,8 @@ use App\Http\Controllers\Kelola\Angkatan\PotonganController;
 use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\Mahasiswa\PembayaranTambahanController;
 use App\Http\Controllers\Kelola\Mahasiswa\PotonganController as MahasiswaPotonganController;
+use App\Http\Controllers\Kelola\NeoFeeder\DosenController as NeoFeederDosenController;
+use App\Http\Controllers\Kelola\NeoFeeder\MahasiswaController;
 use App\Http\Controllers\Kelola\User\{
     AdminController,
     AsdosController,
@@ -112,6 +114,17 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::post('/{user_id}', [PembayaranTambahanController::class, 'store'])->name('store');
             Route::put('/{user_id}/{id}', [PembayaranTambahanController::class, 'update'])->name('update');
             Route::delete('/{user_id}/{id}', [PembayaranTambahanController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
+            Route::prefix('dosen')->name('dosen.')->group(function () {
+                Route::post('store', [NeoFeederDosenController::class, 'store'])->name('store');
+            });
+
+            Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+                Route::get('{user_id}', [MahasiswaController::class, 'show'])->name('show');
+                Route::post('store', [MahasiswaController::class, 'store'])->name('store');
+            });
         });
     });
 

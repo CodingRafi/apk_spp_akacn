@@ -13,16 +13,13 @@ class NeoFeederController extends Controller
 {
     public function index($type)
     {
-        $url = DB::table('settings')
-            ->where('id', 2)
-            ->first();
-        return view('data_master_neo_feeder.index', compact('type', 'url'));
+        return view('data_master_neo_feeder.index', compact('type'));
     }
 
     public function store(Request $request)
     {
         foreach ($request->data as $data) {
-            DB::table('agamas')->updateOrInsert([
+            DB::table($request->tbl)->updateOrInsert([
                 'id' => $data['id'],
             ], [
                 'nama' => $data['nama'],
