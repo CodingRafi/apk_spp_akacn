@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi');
-            $table->string('tahun_ajaran_id');
-            $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
+            $table->string('periode_masuk_id');
+            $table->foreign('periode_masuk_id')->references('id')->on('semesters');
             $table->string('semester_id');
             $table->foreign('semester_id')->references('id')->on('semesters');
             $table->string('jatah_sks');

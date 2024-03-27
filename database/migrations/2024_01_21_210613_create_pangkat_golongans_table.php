@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('pangkat_golongans', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->string('kode');
+            $table->string('kode')->nullable();
             $table->string('nama');
             $table->timestamps();
         });

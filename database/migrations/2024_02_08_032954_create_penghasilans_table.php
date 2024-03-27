@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('penghasilans', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
+            $table->string('nama')->nullable();
             $table->timestamps();
         });
     }

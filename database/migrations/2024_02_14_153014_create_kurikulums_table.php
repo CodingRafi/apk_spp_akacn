@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('jml_sks_lulus');
             $table->string('jml_sks_wajib');
             $table->string('jml_sks_pilihan');
+            $table->string('tahun_semester_id');
+            $table->foreign('tahun_semester_id')->references('id')->on('semesters');
             $table->timestamps();
         });
     }

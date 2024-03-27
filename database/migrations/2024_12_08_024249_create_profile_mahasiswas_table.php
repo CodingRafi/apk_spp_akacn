@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('profile_mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('id_neo_feeder')->nullable();
+            $table->string('neo_feeder_id_mahasiswa')->nullable();
+            $table->string('neo_feeder_id_registrasi_mahasiswa')->nullable();
             $table->enum('sync_neo_feeder', [0,1])->default(0);
             $table->string('nisn');
             $table->string('nik');
@@ -82,8 +83,10 @@ return new class extends Migration
             $table->enum('mhs_kebutuhan_khusus', [0,1])->default(0);
             $table->enum('ayah_kebutuhan_khusus', [0,1])->default(0);
             $table->enum('ibu_kebutuhan_khusus', [0,1])->default(0);
-            $table->uuid('tahun_masuk_id');
-            $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans');
+            $table->string('periode_masuk_id');
+            $table->foreign('periode_masuk_id')->references('id')->on('semesters');
+            $table->uuid('jenis_keluar_id');
+            $table->foreign('jenis_keluar_id')->references('id')->on('jenis_keluars');
             $table->foreignId('jenis_kelas_id')->constrained('jenis_kelas');
             $table->enum('source', ['neo_feeder', 'app', 'pmb'])->default('app');
             $table->timestamps();

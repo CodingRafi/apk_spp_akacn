@@ -10,6 +10,7 @@
             },
             tbl: 'agamas',
             changeFormat: true,
+            unique: ['id'],
             format: {
                 id_agama: 'id',
                 nama_agama: 'nama'
