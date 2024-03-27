@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\KrsController as ControllersKrsController;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -52,7 +53,7 @@ class KrsController extends Controller
         $datas = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'krs.jml_sks_diambil', 'krs.status')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->leftJoin('krs', function ($join) use($mhs_id) {
+            ->leftJoin('krs', function ($join) use ($mhs_id) {
                 $join->on('krs.tahun_semester_id', 'tahun_semester.id')
                     ->where('krs.mhs_id', $mhs_id);
             })
@@ -102,10 +103,11 @@ class KrsController extends Controller
             ->make(true);
     }
 
-    public function validatePembayaran($tahun_semester_id, $mhs_id){
+    public function validatePembayaran($tahun_semester_id, $mhs_id)
+    {
         $pembayaran = DB::table('tahun_pembayaran')
-                        ->where('tahun_semester_id', $tahun_semester_id)
-                        ->first();
+            ->where('tahun_semester_id', $tahun_semester_id)
+            ->first();
 
         if (!$pembayaran) {
             return [
@@ -122,12 +124,12 @@ class KrsController extends Controller
                 'message' => 'Pembayaran Belum dipublish, bukan waktu pengisian KRS!'
             ];
         }
-        
+
         $cekPembayaran = DB::table('rekap_pembayaran')
-                        ->where('type', 'semester')
-                        ->where('untuk', $tahun_semester_id)
-                        ->where('user_id', $mhs_id)
-                        ->first();
+            ->where('type', 'semester')
+            ->where('untuk', $tahun_semester_id)
+            ->where('user_id', $mhs_id)
+            ->first();
 
         if ($cekPembayaran->sisa > 0) {
             return [
@@ -214,5 +216,76 @@ class KrsController extends Controller
             ]);
 
         return redirect()->back()->with('success', 'Berhasil direvisi!');
+    }
+
+    public function print($tahun_semester_id)
+    {
+        $krs = DB::table('krs')
+            ->select(
+                'krs.*',
+                'users.name',
+                'prodi.nama as prodi',
+                'semesters.nama as semester',
+                'users.login_key as nim',
+                'dosenPa.name as dosenPa'
+            )
+            ->join('tahun_semester', 'krs.tahun_semester_id', 'tahun_semester.id')
+            ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
+            ->join('users', 'krs.mhs_id', 'users.id')
+            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+            ->join('prodi', 'profile_mahasiswas.prodi_id', 'prodi.id')
+            ->join('rombels', 'profile_mahasiswas.rombel_id', 'rombels.id')
+            ->join('rombel_tahun_ajarans', function ($q) {
+                $q->on('rombels.id', 'rombel_tahun_ajarans.rombel_id')
+                    ->on('rombel_tahun_ajarans.tahun_masuk_id', 'profile_mahasiswas.tahun_masuk_id');
+            })
+            ->join('users as dosenPa', 'dosenPa.id', 'rombel_tahun_ajarans.dosen_pa_id')
+            ->where('krs.mhs_id', Auth::user()->id)
+            ->where('krs.tahun_semester_id', $tahun_semester_id)
+            ->first();
+
+        if (!$krs) {
+            abort(404);
+        }
+
+        $krsMatkul = DB::table('krs_matkul')
+            ->select(
+                'tahun_matkul.id',
+                'matkuls.nama as matkul',
+                'tahun_matkul.hari',
+                'tahun_matkul.jam_mulai',
+                'tahun_matkul.jam_akhir',
+                'matkuls.sks_mata_kuliah'
+            )
+            ->join('tahun_matkul', 'krs_matkul.tahun_matkul_id', 'tahun_matkul.id')
+            ->join('matkuls', 'tahun_matkul.matkul_id', 'matkuls.id')
+            ->where('krs_matkul.krs_id', $krs->id)
+            ->get()
+            ->map(function ($data) {
+                $dosen = DB::table('tahun_matkul_dosen')
+                    ->select('users.name')
+                    ->join('users', 'tahun_matkul_dosen.dosen_id', 'users.id')
+                    ->where('tahun_matkul_dosen.tahun_matkul_id', $data->id)
+                    ->get()
+                    ->pluck('name')
+                    ->implode(', ');
+                $data->dosen = $dosen;
+
+                $ruang = DB::table('tahun_matkul_ruang')
+                    ->select('ruangs.nama')
+                    ->join('ruangs', 'tahun_matkul_ruang.ruang_id', 'ruangs.id')
+                    ->where('tahun_matkul_ruang.tahun_matkul_id', $data->id)
+                    ->get()
+                    ->pluck('nama')
+                    ->implode(', ');
+
+                $data->ruang = $ruang;
+                return $data;
+            });
+
+        $admin = DB::table('users')->first();
+
+        return Pdf::loadView('mahasiswa.krs.print', compact('krs', 'krsMatkul', 'admin'))
+            ->stream('krs.pdf');
     }
 }

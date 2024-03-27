@@ -36,7 +36,20 @@
                             <div class="mb-3">
                                 <label for="jml_sks_pilihan" class="form-label">Jumlah SKS Pilihan</label>
                                 <input class="form-control" type="number" id="jml_sks_pilihan" name="jml_sks_pilihan"
-                                    value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
+                                value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="tahun_semester_id" class="form-label">Semeste Mulai</label>
+                                <select name="tahun_semester_id" id="tahun_semester_id" class="form-control">
+                                    <option value="">Pilih Tahun Semester</option>
+                                    @foreach ($tahunSemesters as $tahunSemester)
+                                        <option
+                                            value="{{ $tahunSemester->id }}"
+                                            {{ isset($data) && $data->tahun_semester_id == $tahunSemester->id ? 'selected' : '' }}>
+                                            {{ $tahunSemester->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start f1-buttons">
                                 <button class="btn btn-primary btn-next btn-selanjutnya-1" type="button"

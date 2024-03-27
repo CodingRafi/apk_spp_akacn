@@ -132,7 +132,7 @@
         <tbody>
             <tr>
                 <td style="width: fit-content;" style="width: 5%">
-                    <img src="{{ public_path() . '/image/logo.png' }}" width="100">
+                    <img src="{{ public_path() . '/image/logo.png' }}" width="90">
                 </td>
                 <td style="text-align: center;">
                     <h1 style="font-size: 1.8rem;font-weight:bold;">BUKTI PEMBAYARAN BIAYA KULIAH</h1>

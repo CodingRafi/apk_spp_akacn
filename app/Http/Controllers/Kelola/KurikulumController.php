@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\Kurikulum;
 use App\Models\Prodi;
+use App\Models\Semester;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -19,7 +20,8 @@ class KurikulumController extends Controller
     public function create()
     {
         $prodis = Prodi::all();
-        return view('data_master.kurikulum.form', compact('prodis'));
+        $tahunSemesters = Semester::all();
+        return view('data_master.kurikulum.form', compact('prodis', 'tahunSemesters'));
     }
 
     public function data(){
@@ -52,6 +54,7 @@ class KurikulumController extends Controller
             'jml_sks_lulus' => 'required',
             'jml_sks_wajib' => 'required',
             'jml_sks_pilihan' => 'required',
+            'tahun_semester_id' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -62,6 +65,7 @@ class KurikulumController extends Controller
                 'jml_sks_lulus' => $request->jml_sks_lulus,
                 'jml_sks_wajib' => $request->jml_sks_wajib,
                 'jml_sks_pilihan' => $request->jml_sks_pilihan,
+                'tahun_semester_id' => $request->tahun_semester_id
             ]);
             DB::commit();
             return response()->json([
@@ -90,6 +94,7 @@ class KurikulumController extends Controller
             'jml_sks_lulus' => 'required',
             'jml_sks_wajib' => 'required',
             'jml_sks_pilihan' => 'required',
+            'tahun_semester_id' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -99,6 +104,7 @@ class KurikulumController extends Controller
                 'jml_sks_lulus' => $request->jml_sks_lulus,
                 'jml_sks_wajib' => $request->jml_sks_wajib,
                 'jml_sks_pilihan' => $request->jml_sks_pilihan,
+                'tahun_semester_id' => $request->tahun_semester_id
             ]);
             DB::commit();
             return response()->json([

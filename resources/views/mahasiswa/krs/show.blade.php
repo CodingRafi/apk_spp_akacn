@@ -96,6 +96,10 @@
                                 </form>
                             @endif
                         @endif
+
+                        @if (Auth::user()->hasRole('mahasiswa') && $krs && $krs->status == 'diterima')
+                            <a href="{{ route('krs.print', request('tahun_semester_id')) }}" class="btn btn-primary">Download KRS</a>
+                        @endif
                     </div>
                     <div class="card-body">
                         @if ($dataEmpty || $krs->status == 'pending')

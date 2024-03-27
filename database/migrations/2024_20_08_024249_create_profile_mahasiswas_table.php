@@ -83,9 +83,15 @@ return new class extends Migration
             $table->enum('mhs_kebutuhan_khusus', [0,1])->default(0);
             $table->enum('ayah_kebutuhan_khusus', [0,1])->default(0);
             $table->enum('ibu_kebutuhan_khusus', [0,1])->default(0);
-            $table->string('periode_masuk_id');
-            $table->foreign('periode_masuk_id')->references('id')->on('semesters');
-            $table->uuid('jenis_keluar_id');
+            $table->uuid('tahun_masuk_id');
+            $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans');
+            $table->uuid('jenis_pembiayaan_id')->nullable();
+            $table->foreign('jenis_pembiayaan_id')->references('id')->on('jenis_pembiayaans');
+            $table->uuid('jenis_daftar_id')->nullable();
+            $table->foreign('jenis_daftar_id')->references('id')->on('jenis_daftars');
+            $table->uuid('jalur_masuk_id')->nullable();
+            $table->foreign('jalur_masuk_id')->references('id')->on('jalur_masuks');
+            $table->uuid('jenis_keluar_id')->nullable();
             $table->foreign('jenis_keluar_id')->references('id')->on('jenis_keluars');
             $table->foreignId('jenis_kelas_id')->constrained('jenis_kelas');
             $table->enum('source', ['neo_feeder', 'app', 'pmb'])->default('app');

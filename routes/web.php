@@ -398,6 +398,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::prefix('krs')->name('krs.')->group(function () {
         Route::get('/', [KrsController::class, 'index'])->name('index');
         Route::get('dataSemester/{mhs_id?}', [KrsController::class, 'dataSemester'])->name('dataSemester');
+        Route::get('/{tahun_semester_id}/print', [KrsController::class, 'print'])->name('print');
         Route::get('/{tahun_semester_id}/{mhs_id?}', [KrsController::class, 'show'])->name('show');
         Route::patch('/{tahun_semester_id}/revisi', [KrsController::class, 'revisi'])->name('revisi');
     });
