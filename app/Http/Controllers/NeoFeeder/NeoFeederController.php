@@ -19,13 +19,7 @@ class NeoFeederController extends Controller
     public function store(Request $request)
     {
         foreach ($request->data as $data) {
-            DB::table($request->tbl)->updateOrInsert([
-                'id' => $data['id'],
-            ], [
-                'nama' => $data['nama'],
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+            DB::table($request->tbl)->updateOrInsert($data[0], $data[1]);
         }
 
         return response()->json([
@@ -37,11 +31,7 @@ class NeoFeederController extends Controller
     {
         $table = str_replace("-", "_", $type);
         $datas = DB::table("{$table}s")->get();
-
-        return DataTables::of($datas)
-            ->addIndexColumn()
-            ->rawColumns(['options'])
-            ->make(true);
+        return response()->json($datas, 200);
     }
 
     public function get($type)

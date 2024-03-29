@@ -19,6 +19,7 @@ return new class extends Migration
         DB::statement("DROP VIEW IF EXISTS rekap_potongan");
         DB::statement("DROP VIEW IF EXISTS rekap_pembayaran_tambahan");
         DB::statement("DROP VIEW IF EXISTS rekap_pembayaran");
+        DB::statement("DROP VIEW IF EXISTS rekap_krs_matkul");
 
         //? VIEW REKAP PEMBAYARAN SEMESTER
         DB::statement("
@@ -103,6 +104,34 @@ return new class extends Migration
             left join rekap_potongan rp on rp.id = u.id and rp.tahun_pembayaran_lain_id  = tpl.id
             left join rekap_pembayaran_tambahan rpt on rpt.user_id = u.id and rpt.tahun_pembayaran_lain_id = tpl.id
         ");
+
+        // //? VIEW KRS MATKUL
+        DB::statement("
+         create view rekap_krs_matkul as
+         SELECT
+            krs.mhs_id,
+            krs.tahun_semester_id,
+            km.tahun_matkul_id,
+            COALESCE(mn.jml_sks, 0) as jml_sks,
+            m.nama as mutu,
+            COALESCE(mn.nilai_mutu, 0) as nilai_mutu,
+            CASE
+                WHEN COALESCE(mn.jml_sks, 0) = 0 THEN 0
+                ELSE COALESCE(mn.nilai_mutu, 0) * COALESCE(mn.jml_sks, 0) / NULLIF(mn.jml_sks, 0)
+            END AS bobot_x_sks,
+            tk.id as kuesioner,
+            mn.publish as status
+        FROM
+            krs
+        INNER JOIN krs_matkul km ON km.krs_id = krs.id
+        LEFT JOIN mhs_nilai mn ON mn.mhs_id = krs.mhs_id
+            AND mn.tahun_semester_id = krs.tahun_semester_id
+            AND mn.tahun_matkul_id = km.tahun_matkul_id
+        left join mutu m on m.id = mn.mutu_id
+        left join t_kuesioners tk on tk.mhs_id = krs.mhs_id
+            and tk.tahun_semester_id = krs.tahun_semester_id
+            and tk.tahun_matkul_id = km.tahun_matkul_id
+     ");
     }
 
     /**
@@ -117,5 +146,6 @@ return new class extends Migration
         DB::statement("DROP VIEW IF EXISTS rekap_potongan");
         DB::statement("DROP VIEW IF EXISTS rekap_pembayaran");
         DB::statement("DROP VIEW IF EXISTS rekap_pembayaran_tambahan");
+        DB::statement("DROP VIEW IF EXISTS rekap_krs_matkul");
     }
 };

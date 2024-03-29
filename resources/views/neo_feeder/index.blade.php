@@ -7,7 +7,7 @@
             if (!url) {
                 showAlert('Url tidak ditemukan', 'error');
             }
-            
+
             let token = await getToken()
 
             if (token === null) {
@@ -45,18 +45,24 @@
 
     function changeFormatData(data) {
         $.LoadingOverlay("show");
-        let format = configData.format;
-        let newData = [];
+        const format = configData.format;
+        const newData = data.map(value => {
+            const parseUniq = {};
+            const parseValue = {};
 
-        $.each(data, function(key, value) {
-            let newFormat = {};
+            configData.unique.forEach(i => {
+                parseUniq[format[i]] = value[i];
+            });
 
-            for (const key in value) {
-                newFormat[format[key]] = value[key];
-            }
+            Object.entries(value).forEach(([key, val]) => {
+                if (!configData.unique.includes(key)) {
+                    parseValue[format[key]] = val;
+                }
+            });
 
-            newData.push(newFormat)
-        })
+            return [parseUniq, parseValue];
+        });
+        console.log(newData)
         $.LoadingOverlay("hide");
         return newData;
     }
@@ -74,7 +80,7 @@
             dataType: 'json',
             success: function(res) {
                 showAlert(res.message, 'success')
-                table.ajax.reload()
+                fetchDataAndUpdateTable()
 
                 if (func != undefined) {
                     func(response.data);
@@ -86,5 +92,48 @@
                 $.LoadingOverlay("hide");
             }
         })
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    let table;
+    let columns = [];
+    
+    $(document).ready(function() {
+        $('.table thead tr').empty();
+
+        const format = configData.format;
+        const uniq = configData.unique;
+
+        for (let key in format) {
+            if (!uniq.includes(key)) {
+                columns.push({
+                    data: format[key],
+                    title: capitalize(format[key].replace(/_/g, ' ')),
+                });
+            }
+        }
+
+        for (const i in columns) {
+            $('.table thead tr').append(`<th>${columns[i].title}</th>`);
+        }
+
+        fetchDataAndUpdateTable()
+    })
+
+    function fetchDataAndUpdateTable() {
+        fetch('{{ route('neo-feeder.data', ['type' => $type]) }}')
+            .then(response => response.json())
+            .then(data => {
+                $('.table').DataTable().destroy();
+
+                $('.table').DataTable({
+                    columns: columns,
+                    data: data,
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
     }
 </script>

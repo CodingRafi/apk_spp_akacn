@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -55,48 +56,68 @@ class KhsController extends Controller
     public function data($tahun_semester_id)
     {
         $user = Auth::user();
-        $khs = DB::table('krs')
-            ->select('matkuls.kode as kode_mk', 'matkuls.nama as matkul', 'mhs_nilai.jml_sks as sks', 'mutu.nama as nilai', 'mhs_nilai.nilai_mutu as bobot', 't_kuesioners.id as kuesioner', 'mhs_nilai.publish as status', 'tahun_matkul.id as tahun_matkul_id')
-            ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
-            ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
-            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->leftJoin('mhs_nilai', function ($q) use ($user, $tahun_semester_id) {
-                $q->on('mhs_nilai.tahun_matkul_id', 'krs_matkul.tahun_matkul_id')
-                    ->where('mhs_nilai.mhs_id', $user->id)
-                    ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id);
-            })
-            ->leftJoin('t_kuesioners', function ($q) use ($user, $tahun_semester_id) {
-                $q->on('t_kuesioners.tahun_matkul_id', 'krs_matkul.tahun_matkul_id')
-                    ->where('t_kuesioners.tahun_semester_id', $tahun_semester_id)
-                    ->where('t_kuesioners.mhs_id', $user->id);
-            })
-            ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-            ->where('krs.mhs_id', $user->id)
-            ->where('krs.tahun_semester_id', $tahun_semester_id)
+        $tahunSemester = DB::table('tahun_semester')
+            ->select('id')
+            ->where('id', '<=', $tahun_semester_id)
+            ->where('prodi_id', $user->mahasiswa->prodi_id)
+            ->where('tahun_ajaran_id', $user->mahasiswa->tahun_masuk_id)
             ->get()
-            ->map(function ($data) {
-                //? Menghitung bobot x sks
-                $mutu = $data->bobot ?? 0;
-                $kredit = ((int) $data->sks ?? 0);
+            ->pluck('id')
+            ->toArray();
 
-                if ($mutu !== 0 && $kredit !== 0) {
-                    $data->bobot_x_sks = $mutu * $kredit / $kredit;
-                } else {
-                    $data->bobot_x_sks = 0;
-                }
+        $ipk = DB::table('rekap_krs_matkul')
+            ->select(DB::raw('SUM("bobot_x_sks") as bobot_x_sks'), DB::raw('SUM("jml_sks") as jml_sks'))
+            ->whereIn('tahun_semester_id', $tahunSemester)
+            ->first();
 
-                if (($data->status != null && $data->status == 0) || $data->kuesioner == null) {
-                    $data->sks = null;
-                    $data->nilai = null;
-                    $data->bobot = null;
-                    $data->bobot_x_sks = 0;
-                }
-
-                return $data;
-            });
+        $khs = DB::table('rekap_krs_matkul as a')
+            ->select('a.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_mk')
+            ->join('tahun_matkul', 'tahun_matkul.id', 'a.tahun_matkul_id')
+            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->where('a.tahun_semester_id', $tahun_semester_id)
+            ->where('a.mhs_id', $user->id)
+            ->get();
 
         return response()->json([
-            'data' => $khs
+            'data' => $khs,
+            'ipk' => $ipk
         ], 200);
+    }
+
+    public function print($tahun_semester_id)
+    {
+        $data = DB::table('users')
+            ->select('users.name', 'users.login_key as nim', 'dosen.name as dosenPa', 'prodi.nama as prodi')
+            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+            ->join('rombels', 'rombels.id', 'profile_mahasiswas.rombel_id')
+            ->join('rombel_tahun_ajarans', function ($q) {
+                $q->on('rombel_tahun_ajarans.rombel_id', 'rombels.id')
+                    ->on('rombel_tahun_ajarans.tahun_masuk_id', 'profile_mahasiswas.tahun_masuk_id');
+            })
+            ->join('users as dosen', 'dosen.id', 'rombel_tahun_ajarans.dosen_pa_id')
+            ->join('prodi', 'prodi.id', 'profile_mahasiswas.prodi_id')
+            ->where('users.id', Auth::user()->id)
+            ->first();
+
+        $khs = DB::table('rekap_krs_matkul as a')
+            ->select('a.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_mk')
+            ->join('tahun_matkul', 'tahun_matkul.id', 'a.tahun_matkul_id')
+            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->where('a.tahun_semester_id', $tahun_semester_id)
+            ->where('a.mhs_id', Auth::user()->id)
+            ->get();
+
+        $tahunSemester = DB::table('tahun_semester')
+            ->select('semesters.nama')
+            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->where('tahun_semester.id', $tahun_semester_id)
+            ->first();
+
+        $admin = DB::table('users')
+            ->where('id', '1')
+            ->first();
+
+        return Pdf::loadView('mahasiswa.khs.print', compact('data', 'khs', 'tahunSemester', 'admin'))
+            ->stream('khs.pdf');
     }
 }

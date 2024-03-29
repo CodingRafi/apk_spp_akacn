@@ -126,7 +126,8 @@
                         'jenis_pembiayaan',
                         'jenis_daftar',
                         'jalur_masuk',
-                        'jenis_keluar'
+                        'jenis_keluar',
+                        'wilayah'
                     ];
                 @endphp
 
@@ -138,11 +139,6 @@
                             </a>
                         </li>
                     @endforeach
-                    <li class="menu-item {{ Request::is('neo-feeder/wilayah*') ? 'active' : '' }}">
-                        <a href="{{ route('neo-feeder.wilayah.index') }}" class="menu-link">
-                            <div data-i18n="wilayah" class="text-capitalize">Wilayah</div>
-                        </a>
-                    </li>
                 </ul>
             </li>
         @endcanany

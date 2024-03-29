@@ -412,6 +412,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::prefix('khs')->name('khs.')->group(function () {
         Route::get('/', [KhsController::class, 'index'])->name('index');
         Route::get('/dataSemester', [KhsController::class, 'dataSemester'])->name('dataSemester');
+        Route::get('/{tahun_semester_id}/print', [KhsController::class, 'print'])->name('print');
         Route::get('/{tahun_semester_id}', [KhsController::class, 'show'])->name('show');
         Route::get('/{tahun_semester_id}/data', [KhsController::class, 'data'])->name('data');
     });
@@ -426,10 +427,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 
     Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
-        Route::prefix('wilayah')->name('wilayah.')->group(function () {
-            Route::get('/', [NeoFeederController::class, 'indexWilayah'])->name('index');
-            Route::get('/data', [NeoFeederController::class, 'dataWilayah'])->name('data');
-        });
+        // Route::prefix('wilayah')->name('wilayah.')->group(function () {
+        //     Route::get('/', [NeoFeederController::class, 'indexWilayah'])->name('index');
+        //     Route::get('/data', [NeoFeederController::class, 'dataWilayah'])->name('data');
+        // });
 
         Route::get('/{type}', [NeoFeederController::class, 'index'])->name('index');
         Route::post('/', [NeoFeederController::class, 'store'])->name('store');

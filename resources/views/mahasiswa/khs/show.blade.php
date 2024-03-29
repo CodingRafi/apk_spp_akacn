@@ -9,6 +9,7 @@
                             <a href="{{ route('khs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                             <h5 class="text-capitalize mb-0">Kartu Hasil Studi {{ $tahun_semester->nama }}</h5>
                         </div>
+                        <a href="{{ route('khs.print', request('tahun_semester_id')) }}" class="btn btn-primary">Download KHS</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -92,13 +93,12 @@
         <script>
             let tahun_semester_id = '{{ request('tahun_semester_id') }}';
 
-            function generate_table(data) {
+            function generate_table(data, ipk) {
                 let table = '';
                 let total_sks = 0;
                 let bobot_x_sks = 0;
 
                 $.each(data, (i, e) => {
-                    console.log(e.status)
                     if (e.status == null || e.status == 0) {
                         table +=
                             `<tr>
@@ -128,8 +128,8 @@
                             </tr>`;
                     }
 
-                    total_sks += e.sks ?? 0;
-                    bobot_x_sks += e.bobot_x_sks ?? 0;
+                    total_sks += parseInt(e.jml_sks) ?? 0;
+                    bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
                 })
 
                 table += `
@@ -142,7 +142,12 @@
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
                     <td colspan="3" class="fw-bold">Index Prestasi Semester</td>
-                    <td colspan="2">${(bobot_x_sks / total_sks).toFixed(2)}</td>
+                    <td colspan="2">${(bobot_x_sks > 0 || total_sks > 0 ? (bobot_x_sks / total_sks).toFixed(2) : 0)}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-bottom:0;"></td>
+                    <td colspan="3" class="fw-bold">Index Prestasi Kumulatif</td>
+                    <td colspan="2">${(ipk.bobot_x_sks > 0 || ipk.total_sks > 0 ? (ipk.bobot_x_sks / ipk.total_sks).toFixed(2) : 0)}</td>
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
@@ -166,7 +171,7 @@
                     url: "{{ route('khs.data', ['tahun_semester_id' => $tahun_semester->id]) }}",
                     dataType: "json",
                     success: function(res) {
-                        let table = generate_table(res.data)
+                        let table = generate_table(res.data, res.ipk)
                         $('.table-matkul tbody').empty().append(table);
                     },
                     error: function(err) {

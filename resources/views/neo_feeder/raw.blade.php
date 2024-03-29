@@ -10,7 +10,7 @@
             },
             tbl: 'agamas',
             changeFormat: true,
-            unique: ['id'],
+            unique: ['id_agama'],
             format: {
                 id_agama: 'id',
                 nama_agama: 'nama'
@@ -26,6 +26,7 @@
             },
             tbl: 'jenis_tinggals',
             changeFormat: true,
+            unique: ['id_jenis_tinggal'],
             format: {
                 id_jenis_tinggal: 'id',
                 nama_jenis_tinggal: 'nama'
@@ -41,6 +42,7 @@
             },
             tbl: 'alat_transportasis',
             changeFormat: true,
+            unique: ['id_alat_transportasi'],
             format: {
                 id_alat_transportasi: 'id',
                 nama_alat_transportasi: 'nama'
@@ -56,6 +58,7 @@
             },
             tbl: 'jenjangs',
             changeFormat: true,
+            unique: ['id_jenjang_didik'],
             format: {
                 id_jenjang_didik: 'id',
                 nama_jenjang_didik: 'nama'
@@ -71,6 +74,7 @@
             },
             tbl: 'kewarganegaraans',
             changeFormat: true,
+            unique: ['id_negara'],
             format: {
                 id_negara: 'id',
                 nama_negara: 'nama'
@@ -85,6 +89,7 @@
                 "offset": "0"
             },
             tbl: 'lembaga_pengangkats',
+            unique: ['id_lembaga_angkat'],
             changeFormat: true,
             format: {
                 id_lembaga_angkat: 'id',
@@ -100,6 +105,7 @@
                 "offset": "0"
             },
             tbl: 'pekerjaans',
+            unique: ['id_pekerjaan'],
             changeFormat: true,
             format: {
                 id_pekerjaan: 'id',
@@ -115,6 +121,7 @@
                 "offset": "0"
             },
             tbl: 'penghasilans',
+            unique: ['id_penghasilan'],
             changeFormat: true,
             format: {
                 id_penghasilan: 'id',
@@ -131,6 +138,7 @@
             },
             tbl: 'pangkat_golongans',
             changeFormat: true,
+            unique: ['id_pangkat_golongan'],
             format: {
                 id_pangkat_golongan: 'id',
                 nama_pangkat: 'nama',
@@ -147,6 +155,7 @@
             },
             tbl: 'wilayahs',
             changeFormat: true,
+            unique: ['id_wilayah'],
             format: {
                 id_wilayah: 'id',
                 nama_wilayah: 'nama',
@@ -247,6 +256,7 @@
             },
             tbl: 'jenis_pembiayaans',
             changeFormat: true,
+            unique: ['id_pembiayaan'],
             format: {
                 id_pembiayaan: 'id',
                 nama_pembiayaan: 'nama'
@@ -260,6 +270,7 @@
                 "limit": "50",
                 "offset": "0"
             },
+            unique: ['id_jenis_daftar'],
             tbl: 'jenis_daftars',
             changeFormat: true,
             format: {
@@ -277,6 +288,7 @@
                 "offset": "0"
             },
             tbl: 'jalur_masuks',
+            unique: ['id_jalur_masuk'],
             changeFormat: true,
             format: {
                 id_jalur_masuk: 'id',
@@ -293,6 +305,7 @@
             },
             tbl: 'jenis_keluars',
             changeFormat: true,
+            unique: ['id_jenis_keluar'],
             format: {
                 id_jenis_keluar: 'id',
                 jenis_keluar: 'jenis',

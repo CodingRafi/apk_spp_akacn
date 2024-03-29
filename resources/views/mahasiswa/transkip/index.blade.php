@@ -73,8 +73,8 @@
                                 <td>${e.nilai ?? ''}</td>
                             </tr>`;
                     }
-                    total_sks += e.sks ?? 0;
-                    bobot_x_sks += e.bobot_x_sks ?? 0;
+                    total_sks += parseInt(e.jml_sks) ?? 0;
+                    bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
                 })
             })
 
@@ -93,7 +93,7 @@
                             </tr>
                             <tr>
                                 <th>IPK</th>
-                                <td>${(bobot_x_sks / total_sks).toFixed(2)}</td>
+                                <td>${ bobot_x_sks > 0 || total_sks > 0 ? (bobot_x_sks / total_sks).toFixed(2) : 0}</td>
                             </tr>
                             <tr>
                                 <th>SKS Dipeloreh</th>

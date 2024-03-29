@@ -29,25 +29,7 @@
         @include('neo_feeder.raw')
         @include('neo_feeder.index', [
             'type' => request('type'),
-            'urlStoreData' => route('neo-feeder.store')
+            'urlStoreData' => route('neo-feeder.store'),
         ])
     @endif
-    <script>
-        let table;
-        $(document).ready(function() {
-            table = $('.table').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                ajax: {
-                    url: '{{ route('neo-feeder.data', ['type' => request('type')]) }}',
-                },
-                columns: [{
-                    "data": "nama"
-                }],
-                pageLength: 25,
-                responsive: true,
-            });
-        });
-    </script>
 @endpush
