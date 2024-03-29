@@ -36,25 +36,28 @@
                             <div class="mb-3">
                                 <label for="jml_sks_pilihan" class="form-label">Jumlah SKS Pilihan</label>
                                 <input class="form-control" type="number" id="jml_sks_pilihan" name="jml_sks_pilihan"
-                                value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
                             </div>
                             <div class="mb-3">
-                                <label for="jml_sks_mata_kuliah_wajib" class="form-label">Jumlah SKS Mata Kuliah Wajib</label>
-                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_wajib" name="jml_sks_mata_kuliah_wajib"
-                                value="{{ isset($data) ? $data->jml_sks_mata_kuliah_wajib : old('jml_sks_mata_kuliah_wajib') }}" />
+                                <label for="jml_sks_mata_kuliah_wajib" class="form-label">Jumlah SKS Mata Kuliah
+                                    Wajib</label>
+                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_wajib"
+                                    name="jml_sks_mata_kuliah_wajib"
+                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_wajib : old('jml_sks_mata_kuliah_wajib') }}" />
                             </div>
                             <div class="mb-3">
-                                <label for="jml_sks_mata_kuliah_pilihan" class="form-label">Jumlah SKS Mata Kuliah Pilihan</label>
-                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_pilihan" name="jml_sks_mata_kuliah_pilihan"
-                                value="{{ isset($data) ? $data->jml_sks_mata_kuliah_pilihan : old('jml_sks_mata_kuliah_pilihan') }}" />
+                                <label for="jml_sks_mata_kuliah_pilihan" class="form-label">Jumlah SKS Mata Kuliah
+                                    Pilihan</label>
+                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_pilihan"
+                                    name="jml_sks_mata_kuliah_pilihan"
+                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_pilihan : old('jml_sks_mata_kuliah_pilihan') }}" />
                             </div>
                             <div class="mb-3">
                                 <label for="semester_id" class="form-label">Semester Mulai</label>
                                 <select name="semester_id" id="semester_id" class="select2">
                                     <option value="">Pilih Tahun Semester</option>
                                     @foreach ($semesters as $semester)
-                                        <option
-                                            value="{{ $semester->id }}"
+                                        <option value="{{ $semester->id }}"
                                             {{ isset($data) && $data->semester_id == $semester->id ? 'selected' : '' }}>
                                             {{ $semester->nama }}
                                         </option>
@@ -66,8 +69,7 @@
                                 <select name="prodi_id" id="prodi_id" class="form-control">
                                     <option value="">Pilih Program Studi</option>
                                     @foreach ($prodis as $item)
-                                        <option
-                                            value="{{ $item->id }}"
+                                        <option value="{{ $item->id }}"
                                             {{ isset($data) && $data->prodi_id == $item->id ? 'selected' : '' }}>
                                             {{ $item->nama }}
                                         </option>
@@ -84,7 +86,7 @@
                             <div class="d-flex justify-content-between mb-3">
                                 <h5>Mata Kuliah</h5>
                                 <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('data-master.mata-kuliah.store') }}', 'Tambah', '#matkul')">
+                                    onclick="addForm('{{ route('data-master.kurikulum.storeMatkul') }}', 'Tambah Mata Kuliah', '#matkul', getMatkul)">
                                     Tambah
                                 </button>
                             </div>
@@ -112,185 +114,26 @@
         </div>
     </div>
     <div class="modal fade" id="matkul" tabindex="-1" aria-labelledby="matkulLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <form action="">
-                    @method('post')
+        <div class="modal-dialog">
+            <form action="">
+                <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="matkulLabel">Tambah Matkul</h1>
+                        <h1 class="modal-title fs-5" id="matkulLabel">Mata Kuliah</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="kurikulum_id">
                         <div class="mb-3">
-                            <label for="prodi_id" class="form-label">Prodi</label>
-                            <select class="form-select select2" multiple name="prodi_id[]" id="prodi_id" style="width: 100%">
-                                @foreach ($prodis as $prodi)
-                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
-                                @endforeach
+                            <label for="matkul_id" class="form-label">Mata Kuliah</label>
+                            <select name="matkul_id[]" id="matkul_id" class="select2" multiple style="width: 100%">
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kode" class="form-label">Kode</label>
-                            <input class="form-control" type="text" id="kode" name="kode" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input class="form-control" type="text" id="nama" name="nama" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="jenis_matkul" class="form-label">Jenis Matkul</label>
-                            <select class="form-select" name="jenis_matkul" id="jenis_matkul">
-                                <option value="">Pilih Jenis Matkul</option>
-                                @foreach (config('services.matkul.jenis') as $key => $item)
-                                    <option value="{{ $key }}">{{ $item }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kel_matkul" class="form-label">Kelompok Matkul</label>
-                            <select class="form-select" name="kel_matkul" id="kel_matkul">
-                                <option value="">Pilih Kelompok Matkul</option>
-                                @foreach (config('services.matkul.kelompok') as $key => $item)
-                                    <option value="{{ $key }}">{{ $item }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks_mata_kuliah" class="form-label">SKS Mata Kuliah</label>
-                            <input class="form-control" type="number" id="sks_mata_kuliah" name="sks_mata_kuliah"
-                                value="0" min="0" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks_tatap_muka" class="form-label">SKS Tatap Muka</label>
-                            <input class="form-control" type="number" id="sks_tatap_muka" name="sks_tatap_muka"
-                                value="0" min="0" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks_praktek" class="form-label">SKS Praktek</label>
-                            <input class="form-control" type="number" id="sks_praktek" name="sks_praktek"
-                                value="0" min="0" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks_praktek_lapangan" class="form-label">SKS Praktek Lapangan</label>
-                            <input class="form-control" type="number" id="sks_praktek_lapangan"
-                                name="sks_praktek_lapangan" value="0" min="0" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="sks_simulasi" class="form-label">SKS Simulasi</label>
-                            <input class="form-control" type="number" id="sks_simulasi" name="sks_simulasi"
-                                value="0" min="0" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="ada_sap" class="form-label">ada SAP?</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_sap" value="1"
-                                        id="ada_sap_1">
-                                    <label class="form-check-label" for="ada_sap_1">
-                                        Ya
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_sap" value="0"
-                                        id="ada_sap_0" checked>
-                                    <label class="form-check-label" for="ada_sap_0">
-                                        Tidak
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="ada_silabus" class="form-label">ada Silabus?</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_silabus" value="1"
-                                        id="ada_silabus_1">
-                                    <label class="form-check-label" for="ada_silabus_1">
-                                        Ya
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_silabus" value="0"
-                                        id="ada_silabus_0" checked>
-                                    <label class="form-check-label" for="ada_silabus_0">
-                                        Tidak
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="ada_bahan_ajar" class="form-label">ada bahan ajar?</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_bahan_ajar" value="1"
-                                        id="ada_bahan_ajar_1">
-                                    <label class="form-check-label" for="ada_bahan_ajar_1">
-                                        Ya
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_bahan_ajar" value="0"
-                                        id="ada_bahan_ajar_0" checked>
-                                    <label class="form-check-label" for="ada_bahan_ajar_0">
-                                        Tidak
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="ada_acara_praktek" class="form-label">ada acara praktek?</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_acara_praktek"
-                                        value="1" id="ada_acara_praktek_1">
-                                    <label class="form-check-label" for="ada_acara_praktek_1">
-                                        Ya
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_acara_praktek"
-                                        value="0" id="ada_acara_praktek_0" checked>
-                                    <label class="form-check-label" for="ada_acara_praktek_0">
-                                        Tidak
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="ada_diklat" class="form-label">ada acara diklat?</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_diklat" value="1"
-                                        id="ada_diklat_1">
-                                    <label class="form-check-label" for="ada_diklat_1">
-                                        Ya
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="ada_diklat" value="0"
-                                        id="ada_diklat_0" checked>
-                                    <label class="form-check-label" for="ada_diklat_0">
-                                        Tidak
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="tgl_mulai_aktif" class="form-label">Tanggal mulai aktif</label>
-                            <input class="form-control" type="date" id="tgl_mulai_aktif" name="tgl_mulai_aktif" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="tgl_akhir_aktif" class="form-label">Tanggal akhir aktif</label>
-                            <input class="form-control" type="date" id="tgl_akhir_aktif" name="tgl_akhir_aktif" />
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => tableMatkul.ajax.reload())">Simpan</button>
+                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this, () => {tableMatkul.ajax.reload()})">Tambah</button>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </div>
     </div>
 @endsection
@@ -300,15 +143,33 @@
         let kurikulum;
         let tableMatkul;
         let url_update = '{{ route('data-master.kurikulum.update', [':id']) }}';
-        let url_matkul = '{{ isset($data) ? route('data-master.mata-kuliah.data', $data->id) : route('data-master.mata-kuliah.data', [':id']) }}'
+        let url_get_matkul = '{{ isset($data) ? route('data-master.kurikulum.getMatkul', $data->id) : route('data-master.kurikulum.getMatkul', [':id']) }}';
+        let url_data_matkul = '{{ isset($data) ? route('data-master.kurikulum.dataMatkul', $data->id) : route('data-master.kurikulum.dataMatkul', [':id']) }}';
+
+        function getMatkul(){
+            $('#matkul_id').empty();
+            $.ajax({
+                url: url_get_matkul,
+                method: 'GET',
+                success: function(res) {
+                    $.each(res.data, function(key, value) {
+                        $('#matkul_id').append(`<option value="${value.id}">${value.kode} - ${value.nama}</option>`);
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get matkul')
+                }
+            })
+        }
 
         tableMatkul = $('.table-matkul').DataTable({
             processing: true,
             autoWidth: false,
             ajax: {
-                url: url_matkul,
+                url: url_data_matkul,
             },
-            columns: [{
+            columns: [
+                {
                     data: 'kode'
                 },
                 {
@@ -341,8 +202,9 @@
             }
 
             // Matkul
-            url_matkul = url_matkul.replace(':id', data.id);
-            tableMatkul.ajax.url(url_matkul);
+            url_get_matkul = url_get_matkul.replace(':id', data.id);
+            url_data_matkul = url_data_matkul.replace(':id', data.id);
+            tableMatkul.ajax.url(url_data_matkul);
             tableMatkul.ajax.reload()
 
             $(".form-control, .custom-select, [type=radio], [type=checkbox], [type=file], .select2, .note-editor")

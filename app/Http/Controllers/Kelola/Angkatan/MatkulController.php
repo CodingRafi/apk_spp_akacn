@@ -14,7 +14,7 @@ class MatkulController extends Controller
 {
     public function index()
     {
-        $kurikulums = Kurikulum::all();
+        $prodis = DB::table('prodi')->get();
         $ruangs = DB::table('ruangs')->get();
         $dosens = User::role('dosen')
             ->select('users.*')
@@ -22,32 +22,37 @@ class MatkulController extends Controller
             ->where('profile_dosens.status', '1')
             ->get();
 
-        return view('data_master.prodi.angkatan.partials.matkul', compact('kurikulums', 'ruangs', 'dosens'));
+        return view('data_master.prodi.angkatan.partials.matkul', compact('prodis', 'ruangs', 'dosens'));
+    }
+
+    public function getKurikulum($tahun_ajaran_id, $prodi_id)
+    {
+        $kurikulum = Kurikulum::where('prodi_id', $prodi_id)
+            ->get();
+
+        return response()->json([
+            'data' => $kurikulum
+        ], 200);
     }
 
     public function getMatkul($tahun_ajaran_id, $kurikulum_id)
     {
-        $matkuls = DB::table('matkuls')->where('kurikulum_id', $kurikulum_id)->get();
-        foreach ($matkuls as $matkul) {
-            $prodi = DB::table('matkul_prodi')
-                ->select('prodi.nama')
-                ->join('prodi', 'prodi.id', 'matkul_prodi.prodi_id')
-                ->where('matkul_prodi.matkul_id', $matkul->id)
-                ->get()
-                ->pluck('nama')
-                ->toArray();
-            $matkul->prodi = implode(', ', $prodi);
-        }
+        $matkuls = Kurikulum::findOrFail($kurikulum_id)
+            ->matkul()
+            ->with('prodi')
+            ->get();
 
         return response()->json([
             'data' => $matkuls
         ], 200);
     }
 
-    public function getRombel($tahun_ajaran_id, $matkul_id)
+    public function getRombel($tahun_ajaran_id, $prodi_id)
     {
-        $matkul_prodi = DB::table('matkul_prodi')->select('prodi_id')->where('matkul_id', $matkul_id)->get()->pluck('prodi_id')->toArray();
-        $rombel = DB::table('rombels')->whereIn('prodi_id', $matkul_prodi)->get();
+        $rombel = DB::table('rombels')
+            ->where('prodi_id', $prodi_id)
+            ->get();
+
         return response()->json([
             'data' => $rombel
         ], 200);
@@ -58,8 +63,11 @@ class MatkulController extends Controller
         $datas = DB::table('tahun_matkul')
             ->select('matkuls.nama as matkul', 'kurikulums.nama as kurikulum', 'matkuls.kode', 'tahun_matkul.id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('kurikulums', 'kurikulums.id', 'matkuls.kurikulum_id')
+            ->join('kurikulums', 'kurikulums.id', 'tahun_matkul.kurikulum_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->when(request('prodi_id'), function($q){
+                $q->where('tahun_matkul.prodi_id', request('prodi_id'));
+            })
             ->get();
 
         foreach ($datas as $data) {
@@ -67,14 +75,14 @@ class MatkulController extends Controller
 
             if (auth()->user()->can('edit_matkul')) {
                 $options = $options . " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.tahun-ajaran.matkul.show', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`, `Edit Mata Kuliah`, `#Matkul`, get_matkul)'>
+                        onclick='editForm(`" . route('data-master.tahun-ajaran.matkul.show', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`, `Edit Mata Kuliah`, `#Matkul`, get_kurikulum)'>
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
             }
 
             if (auth()->user()->can('delete_matkul')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.tahun-ajaran.matkul.destroy', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`)' type='button'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.tahun-ajaran.matkul.destroy', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
                                         Hapus
                                     </button>";
             }

@@ -14,7 +14,7 @@ class Kurikulum extends Model
     protected $guarded = [];
 
     public function matkul(){
-        return $this->hasMany(Matkul::class, 'kurikulum_id', 'id');
+        return $this->belongsToMany(Matkul::class, 'kurikulum_matkul', 'kurikulum_id', 'matkul_id');
     }
 
     public function prodi(){

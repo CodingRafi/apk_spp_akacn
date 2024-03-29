@@ -4,6 +4,7 @@
 @endphp
 <script>
     const configData = configNeoFeeder.{{ $type }};
+    
 
     async function getData() {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {

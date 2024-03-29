@@ -14,37 +14,13 @@ class MatkulController extends Controller
 {
     public function index()
     {
-        return view('data_master.matkul.index');
+        $prodis = DB::table('prodi')->get();
+        return view('data_master.matkul.index', compact('prodis'));
     }
 
     public function dataMatkul()
     {
-        $datas = Matkul::all();
-
-        foreach ($datas as $data) {
-            $options = '';
-            $data->options = $options;
-        }
-
-        return DataTables::of($datas)
-            ->addIndexColumn()
-            ->addColumn('prodi', function ($datas) {
-                return implode(', ', $datas->prodi->pluck('nama')->toArray());
-            })
-            ->editColumn('sync', function($data){
-                return $data->sync ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
-            })
-            ->rawColumns(['options', 'sync'])
-            ->make(true);
-    }
-
-    public function data($kurikulum_id)
-    {
-        if ($kurikulum_id != ':id') {
-            $datas = Matkul::where('kurikulum_id', $kurikulum_id)->get();
-        } else {
-            $datas = [];
-        }
+        $datas = Matkul::with('prodi')->get();
 
         foreach ($datas as $data) {
             $options = '';
@@ -60,16 +36,19 @@ class MatkulController extends Controller
             $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
                                                 Hapus
                                             </button>";
+
             $data->options = $options;
         }
 
         return DataTables::of($datas)
             ->addIndexColumn()
             ->addColumn('prodi', function ($datas) {
-                $prodi = implode(', ', $datas->prodi->pluck('nama')->toArray());
-                return $prodi;
+                return $datas->prodi->nama;
             })
-            ->rawColumns(['options'])
+            ->editColumn('sync', function ($data) {
+                return $data->sync ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'sync'])
             ->make(true);
     }
 
@@ -77,11 +56,9 @@ class MatkulController extends Controller
     {
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('prodi_id', '_method', '_token');
+            $requestParse = $request->except('_method', '_token');
             $requestParse['id'] = generateUuid();
             $data = Matkul::create($requestParse);
-
-            $data->prodi()->sync($request->prodi_id);
 
             DB::commit();
             return response()->json([
@@ -97,7 +74,6 @@ class MatkulController extends Controller
     public function show($id)
     {
         $data = Matkul::find($id);
-        $data['prodi_id'] = $data->prodi->pluck('id');
         return response()->json([
             'data' => $data
         ], 200);
@@ -106,30 +82,15 @@ class MatkulController extends Controller
     public function update(MatkulRequest $request, $id)
     {
         $matkul = Matkul::find($id);
-        //? Validasi Prodi
-        $oldProdi = $matkul->prodi->pluck('id')->toArray();
-        $cek = array_diff($oldProdi, $request->prodi_id);
-
-        if (count($cek) > 0) {
-            foreach ($cek as $item) {
-                $cekUseMatkul = DB::table('tahun_matkul')->where('matkul_id', $item)->count();
-                if ($cekUseMatkul > 0) {
-                    return response()->json([
-                        'message' => 'Tidak bisa mengubah prodi, karena sudah ada yang menggunakan'
-                    ], 200);
-                }
-            }
-        }
 
         DB::beginTransaction();
         try {
-            $requestParse = $request->except('_method', '_token', 'prodi_id');
+            $requestParse = $request->except('_method', '_token');
             $data = $matkul->update($requestParse);
-            $matkul->prodi()->sync($request->prodi_id);
             DB::commit();
             return response()->json([
                 'data' => $data,
-                'message' => 'Berhasil ditambahkan'
+                'message' => 'Berhasil diubah'
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -164,6 +125,7 @@ class MatkulController extends Controller
                 ->exists();
 
             $dataParse = [
+                'prodi_id' => $data['id_prodi'],
                 'kode' => $data['kode_mata_kuliah'],
                 'nama' => $data['nama_mata_kuliah'],
                 'jenis_matkul' => $data['id_jenis_mata_kuliah'],
@@ -192,9 +154,6 @@ class MatkulController extends Controller
                 $dataParse['id_neo_feeder'] = $data['id_matkul'];
                 Matkul::create($dataParse);
             }
-            
-            $matkul = Matkul::where('id_neo_feeder', $data['id_matkul'])->first();
-            $matkul->prodi()->syncWithoutDetaching($data['id_prodi']);
         }
 
         return response()->json([

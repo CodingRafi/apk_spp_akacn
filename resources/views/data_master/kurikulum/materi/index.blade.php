@@ -5,7 +5,12 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize mb-0">Materi</h5>
+                    <div class="d-flex align-items-center justify-content-center">
+                        <a href="{{ route('data-master.mata-kuliah.index') }}">
+                            <i class="menu-icon tf-icons bx bx-chevron-left"></i>
+                        </a>
+                        <h5 class="text-capitalize mb-0">Materi</h5>
+                    </div>
                     @can('add_materi')
                         <button type="button" class="btn btn-primary"
                             onclick="addForm('{{ route('data-master.mata-kuliah.materi.store', ['matkul_id' => request('matkul_id')]) }}', 'Materi', '#materi')">

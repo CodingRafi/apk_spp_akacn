@@ -50,6 +50,8 @@ return new class extends Migration
 
         Schema::create('tahun_matkul', function (Blueprint $table) {
             $table->id();
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi');
             $table->string('tahun_ajaran_id');
             $table->foreign('tahun_ajaran_id')->references('id')->on('tahun_ajarans');
             $table->uuid('kurikulum_id');

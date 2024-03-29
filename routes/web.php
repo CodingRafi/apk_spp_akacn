@@ -45,7 +45,7 @@ use App\Http\Controllers\Kelola\Angkatan\SemesterController;
 use App\Http\Controllers\Kelola\Mahasiswa\PembayaranTambahanController;
 use App\Http\Controllers\Kelola\Mahasiswa\PotonganController as MahasiswaPotonganController;
 use App\Http\Controllers\Kelola\NeoFeeder\DosenController as NeoFeederDosenController;
-use App\Http\Controllers\Kelola\NeoFeeder\MahasiswaController;
+use App\Http\Controllers\Kelola\NeoFeeder\MahasiswaController as NeoFeederMahasiswaController;
 use App\Http\Controllers\Kelola\User\{
     AdminController,
     AsdosController,
@@ -122,8 +122,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             });
 
             Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-                Route::get('{user_id}', [MahasiswaController::class, 'show'])->name('show');
-                Route::post('store', [MahasiswaController::class, 'store'])->name('store');
+                Route::get('{user_id}', [NeoFeederMahasiswaController::class, 'show'])->name('show');
+                Route::post('store', [NeoFeederMahasiswaController::class, 'store'])->name('store');
             });
         });
     });
@@ -140,8 +140,9 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::prefix('tahun-ajaran')->name('tahun-ajaran.')->group(function () {
             Route::prefix('{id}/matkul')->name('matkul.')->group(function () {
                 Route::get('/', [AngkatanMatkulController::class, 'index'])->name('index');
+                Route::get('/{prodi_id}/get-kurikulum', [AngkatanMatkulController::class, 'getKurikulum'])->name('getKurikulum');
+                Route::get('/{prodi_id}/get-rombel', [AngkatanMatkulController::class, 'getRombel'])->name('getRombel');
                 Route::get('/{kurikulum_id}/get-matkul', [AngkatanMatkulController::class, 'getMatkul'])->name('getMatkul');
-                Route::get('/{matkul_id}/get-rombel', [AngkatanMatkulController::class, 'getRombel'])->name('getRombel');
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
                 Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
                 Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
@@ -163,8 +164,14 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         });
 
         //? Kurikulum
-        Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');
-        Route::post('neo-feeder', [KurikulumController::class, 'storeNeoFeeder'])->name('kurikulum.storeNeoFeeder');
+        Route::prefix('kurikulum')->name('kurikulum.')->group(function () {
+            Route::get('data', [KurikulumController::class, 'data'])->name('data');
+            Route::post('store-matkul', [KurikulumController::class, 'storeMatkul'])->name('storeMatkul');
+            Route::post('neo-feeder', [KurikulumController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+            Route::get('{kurikulum_id}/mata-kuliah', [KurikulumController::class, 'getMatkul'])->name('getMatkul');
+            Route::get('{kurikulum_id}/data-matkul', [KurikulumController::class, 'dataMatkul'])->name('dataMatkul');
+            Route::delete('{kurikulum_id}/{matkul_id}', [KurikulumController::class, 'destroyMatkul'])->name('destroyMatkul');
+        });
         Route::resource('kurikulum', KurikulumController::class);
 
         //? Ruang
@@ -193,7 +200,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('/', [MatkulController::class, 'index'])->name('index');
             Route::post('/neo-feeder', [MatkulController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
             Route::get('/data', [MatkulController::class, 'dataMatkul'])->name('dataMatkul');
-            Route::get('{kurikulum_id}/data', [MatkulController::class, 'data'])->name('data');
             Route::post('/', [MatkulController::class, 'store'])->name('store');
             Route::get('/{matkul_id}', [MatkulController::class, 'show'])->name('show');
             Route::put('/{matkul_id}', [MatkulController::class, 'update'])->name('update');
@@ -283,6 +289,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('/', [KelolaPresensiController::class, 'index'])->name('index');
             Route::get('/get-tahun-ajaran', [KelolaPresensiController::class, 'getTahunAjaran'])->name('getTahunAjaran');
             Route::get('/get-pengawas', [KelolaPresensiController::class, 'getPengawas'])->name('getPengawas');
+            Route::get('/{prodi_id}/get-semester', [KelolaPresensiController::class, 'getSemester'])->name('getSemester');
+            Route::get('/{prodi_id}/get-matkul', [KelolaPresensiController::class, 'getMatkul'])->name('getMatkul');
             Route::get('/{tahun_ajaran_id}/get-jadwal', [KelolaPresensiController::class, 'getJadwal'])->name('getJadwal');
             Route::get('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'show'])->name('show');
             Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-materi', [KelolaPresensiController::class, 'getMateri'])->name('getMateri');

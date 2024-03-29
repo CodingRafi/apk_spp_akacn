@@ -13,10 +13,11 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PresensiController extends Controller
 {
-    private function getSemesterAktif($tahun_ajaran_id)
+    private function getSemesterAktif($tahun_ajaran_id, $prodi_id)
     {
         return DB::table('tahun_semester')
             ->where('tahun_ajaran_id', $tahun_ajaran_id)
+            ->where('prodi_id', $prodi_id)
             ->where('status', '1')
             ->orderBy('id', 'desc')
             ->first();
@@ -45,7 +46,18 @@ class PresensiController extends Controller
 
     public function getMateri($tahun_ajaran_id, $tahun_matkul_id)
     {
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id);
+        $tahun_matkul = DB::table('tahun_matkul')
+            ->select('prodi_id')
+            ->where('id', $tahun_matkul_id)
+            ->first();
+
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
+
+        if (!$getTahunSemesterAktif) {
+            return response()->json([
+                'message' => 'Tidak ada semester aktif'
+            ], 400);
+        }
 
         $data = DB::table('tahun_matkul')
             ->select('matkul_materi.*')
@@ -99,7 +111,12 @@ class PresensiController extends Controller
 
     public function getTotalPelajaran($tahun_ajaran_id, $tahun_matkul_id)
     {
-        $semesterAktif = $this->getSemesterAktif($tahun_ajaran_id);
+        $tahun_matkul = DB::table('tahun_matkul')
+            ->select('prodi_id')
+            ->where('id', $tahun_matkul_id)
+            ->first();
+
+        $semesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
 
         if (!$semesterAktif) {
             return response()->json([
@@ -114,6 +131,34 @@ class PresensiController extends Controller
 
         return response()->json([
             'total' => $totalJadwal
+        ], 200);
+    }
+
+    public function getSemester($prodi_id){
+        $data = DB::table('tahun_semester')
+                ->select('tahun_semester.id', 'semesters.nama')
+                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                ->where('tahun_semester.prodi_id', $prodi_id)
+                ->get();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function getMatkul($prodi_id){
+        $data = DB::table('tahun_matkul')
+            ->select('matkuls.nama', 'tahun_matkul.id')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.prodi_id', $prodi_id)
+            ->when(Auth::user()->hasRole('dosen'), function ($q) {
+                $q->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+                    ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+            })
+            ->get();
+
+        return response()->json([
+            'data' => $data
         ], 200);
     }
 
@@ -150,7 +195,12 @@ class PresensiController extends Controller
             }
         }
 
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id);
+        $tahun_matkul = DB::table('tahun_matkul')
+            ->select('prodi_id')
+            ->where('id', $request->tahun_matkul_id)
+            ->first();
+
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
 
         //? Validasi tahun semester
         if (!$getTahunSemesterAktif) {
@@ -175,7 +225,7 @@ class PresensiController extends Controller
             ->where('tahun_matkul_id', $request->tahun_matkul_id)
             ->where('tgl', $tgl)
             ->count();
-            
+
         if ($cekJadwalHari > 0) {
             return response()->json([
                 'message' => 'Sudah ada jadwal hari ini'
@@ -249,10 +299,14 @@ class PresensiController extends Controller
     public function show($tahun_ajaran_id)
     {
         $role = getRole();
-        $tahunSemester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('semesters', 'tahun_semester.semester_id', '=', 'semesters.id')
-            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+        $prodis = DB::table('tahun_matkul')
+            ->select('prodi.*')
+            ->join('prodi', 'prodi.id', 'tahun_matkul.prodi_id')
+            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->when(Auth::user()->hasRole('dosen'), function ($q) {
+                $q->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+                    ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+            })
             ->get();
 
         $tahunMatkul = DB::table('tahun_matkul')
@@ -275,7 +329,7 @@ class PresensiController extends Controller
             })
             ->get();
 
-        return view('kelola.presensi.showTahunAjaran', compact('tahun_ajaran_id', 'tahunSemester', 'tahunMatkul'));
+        return view('kelola.presensi.showTahunAjaran', compact('prodis', 'role', 'tahunMatkul'));
     }
 
     public function getJadwal($tahun_ajaran_id)
@@ -285,7 +339,12 @@ class PresensiController extends Controller
             ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
-            ->where('tahun_semester_id', request('tahun_semester_id'))
+            ->when(request('prodi_id'), function ($q) {
+                $q->where('tahun_matkul.prodi_id', request('prodi_id'));
+            })
+            ->when(request('tahun_semester_id'), function ($q) {
+                $q->where('jadwal.tahun_semester_id', request('tahun_semester_id'));
+            })
             ->when(request('tahun_matkul_id'), function ($q) {
                 $q->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'));
             })
@@ -519,12 +578,12 @@ class PresensiController extends Controller
                         'status' => $request->status,
                         'updated_at' => Carbon::now()
                     ]);
-            }else{
+            } else {
                 return response()->json([
                     'message' => 'Tidak bisa merubah presensi'
                 ], 400);
             }
-        }else{
+        } else {
             DB::table('jadwal_presensi')->insert([
                 'jadwal_id' => $jadwal_id,
                 'mhs_id' => $mhs_id,

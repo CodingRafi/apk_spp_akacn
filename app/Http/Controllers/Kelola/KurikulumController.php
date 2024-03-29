@@ -24,6 +24,79 @@ class KurikulumController extends Controller
         return view('data_master.kurikulum.form', compact('prodis', 'semesters'));
     }
 
+    public function getMatkul($kurikulum_id)
+    {
+        $kurikulum = DB::table('kurikulums')
+            ->where('id', $kurikulum_id)
+            ->first();
+
+        $datas = DB::table('matkuls')
+            ->leftJoin('kurikulum_matkul', function ($q) {
+                $q->on('kurikulum_matkul.matkul_id', '=', 'matkuls.id')
+                    ->where('kurikulum_matkul.kurikulum_id', '=', request('kurikulum_id'));
+            })
+            ->whereNull('kurikulum_matkul.matkul_id')
+            ->where('matkuls.prodi_id', $kurikulum->prodi_id)
+            ->select('matkuls.*')
+            ->get();
+
+        return response()->json([
+            'data' => $datas
+        ], 200);
+    }
+
+    public function storeMatkul(Request $request)
+    {
+        $request->validate([
+            'kurikulum_id' => 'required'
+        ]);
+
+        foreach ($request->matkul_id as $matkul_id) {
+            DB::table('kurikulum_matkul')->insert([
+                'kurikulum_id' => $request->kurikulum_id,
+                'matkul_id' => $matkul_id
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil ditambahkan'
+        ], 200);
+    }
+
+    public function dataMatkul($kurikulum_id)
+    {
+        if ($kurikulum_id != ':id') {
+            $datas = Kurikulum::find($kurikulum_id)->matkul()->with('prodi')->get();
+        } else {
+            $datas = [];
+        }
+        foreach ($datas as $data) {
+            $data->options = "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroyMatkul', ['kurikulum_id' => $kurikulum_id, 'matkul_id' => $data->id]) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
+                        Hapus
+                    </button>";
+        }
+
+        return DataTables::of($datas)
+            ->addIndexColumn()
+            ->addColumn('prodi', function ($datas) {
+                return $datas->prodi->nama;
+            })
+            ->rawColumns(['options'])
+            ->make(true);
+    }
+
+    public function destroyMatkul($kurikulum_id, $matkul_id)
+    {
+        DB::table('kurikulum_matkul')
+            ->where('kurikulum_id', $kurikulum_id)
+            ->where('matkul_id', $matkul_id)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Berhasil dihapus'
+        ], 200);
+    }
+
     public function data()
     {
         $datas = Kurikulum::all();
@@ -47,7 +120,7 @@ class KurikulumController extends Controller
             ->addColumn('semester', function ($data) {
                 return $data->semester->nama;
             })
-            ->editColumn('sync', function($data){
+            ->editColumn('sync', function ($data) {
                 return $data->sync ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
             })
             ->rawColumns(['options', 'sync'])
@@ -174,7 +247,7 @@ class KurikulumController extends Controller
             if ($cek) {
                 $dataReq['updated_at'] = now();
                 Kurikulum::where('id_neo_feeder', $data['id_kurikulum'])->update($dataReq);
-            }else{
+            } else {
                 $dataReq['id'] = generateUuid();
                 $dataReq['id_neo_feeder'] = $data['id_kurikulum'];
                 Kurikulum::create($dataReq);

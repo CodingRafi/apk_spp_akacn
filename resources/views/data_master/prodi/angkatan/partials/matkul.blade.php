@@ -5,7 +5,7 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card mb-4">
                 <div class="card-header">
-                    <div class="d-flex justify-content-between mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
                         <h5>Mata Kuliah</h5>
                         @can('add_matkul')
                             <button type="button" class="btn btn-primary"
@@ -16,6 +16,14 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <div class="col-md-4">
+                        <select id="filter-prodi" class="form-control mb-3">
+                            <option value="">Pilih Prodi</option>
+                            @foreach ($prodis as $prodi)
+                                <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-matkul">
                             <thead>
@@ -52,23 +60,31 @@
                     <div class="modal-body">
                         <div class="div-alert"></div>
                         <div class="mb-3">
-                            <label for="kurikulum_id" class="form-label">Kurikulum</label>
-                            <select class="form-select" name="kurikulum_id" id="kurikulum_id" onchange="get_matkul()">
-                                <option value="">Pilih Kurikulum</option>
-                                @foreach ($kurikulums as $kurikulum)
-                                    <option value="{{ $kurikulum->id }}">{{ $kurikulum->nama }}</option>
+                            <label for="prodi_id" class="form-label">Prodi</label>
+                            <select class="form-select" name="prodi_id" id="prodi_id"
+                                onchange="get_kurikulum(); get_rombel();">
+                                <option value="">Pilih Prodi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label for="kurikulum_id" class="form-label">Kurikulum</label>
+                            <select class="form-select" name="kurikulum_id" id="kurikulum_id" onchange="get_matkul()">
+                                <option value="">Pilih Kurikulum</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="matkul_id" class="form-label">Mata Kuliah</label>
-                            <select class="form-select" name="matkul_id" id="matkul_id" onchange="get_rombel()">
+                            <select class="form-select" name="matkul_id" id="matkul_id">
                                 <option value="">Pilih Mata Kuliah</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="dosen_id" class="form-label">Dosen</label>
-                            <select class="form-select select2" style="width: 100%;" name="dosen_id[]" multiple id="dosen_id">
+                            <select class="form-select select2" style="width: 100%;" name="dosen_id[]" multiple
+                                id="dosen_id">
                                 @foreach ($dosens as $d)
                                     <option value="{{ $d->id }}">{{ $d->name }} ({{ $d->login_key }})
                                     </option>
@@ -138,6 +154,32 @@
 
 @push('js')
     <script>
+        function get_kurikulum(data = {}) {
+            let id = $('#prodi_id').val();
+            console.log(id)
+            $('#kurikulum_id').empty().append('<option value="">Pilih Kurikulum</option>')
+            $.ajax({
+                url: "{{ route('data-master.tahun-ajaran.matkul.getKurikulum', ['id' => request('id'), 'prodi_id' => ':id']) }}"
+                    .replace(':id', id),
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(key, value) {
+                        $('#kurikulum_id').append(`<option value="${value.id}">${value.nama}</option>`);
+                    })
+
+                    if (data.kurikulum_id) {
+                        $('#kurikulum_id').val(data.kurikulum_id);
+                        get_matkul(data)
+                        get_rombel(data)
+                    }
+                },
+                error: function(err) {
+                    alert('Gagal get matkul')
+                }
+            })
+        }
+
         function get_matkul(data = {}) {
             let id = $('#kurikulum_id').val();
             $('#matkul_id').empty().append(
@@ -154,8 +196,7 @@
                     })
 
                     if (data.matkul_id) {
-                        $('#matkul_id').val(data.matkul_id);
-                        get_rombel(data)
+                        $('#matkul_id').val(data.matkul_id)
                     }
                 },
                 error: function(err) {
@@ -165,19 +206,19 @@
         }
 
         function get_rombel(data = {}) {
-            let id = $('#matkul_id').val();
+            let id = $('#prodi_id').val();
             $('#rombel_id').empty();
 
             if (id && id !== '') {
                 $.ajax({
-                    url: "{{ route('data-master.tahun-ajaran.matkul.getRombel', ['id' => request('id'), 'matkul_id' => ':id']) }}"
+                    url: "{{ route('data-master.tahun-ajaran.matkul.getRombel', ['id' => request('id'), 'prodi_id' => ':id']) }}"
                         .replace(':id', id),
                     type: 'GET',
                     dataType: 'json',
                     success: function(res) {
                         $.each(res.data, function(key, value) {
                             $('#rombel_id').append(
-                            `<option value="${value.id}">${value.nama}</option>`);
+                                `<option value="${value.id}">${value.nama}</option>`);
                         })
 
                         if (data.rombel_id) {
@@ -199,6 +240,9 @@
                 autoWidth: false,
                 ajax: {
                     url: '{{ route('data-master.tahun-ajaran.matkul.data', request('id')) }}',
+                    data: function(d) {
+                        d.prodi_id = $('#filter-prodi').val();
+                    }
                 },
                 columns: [{
                         "data": "DT_RowIndex"
@@ -226,6 +270,10 @@
                 ],
                 pageLength: 25,
             });
+        });
+
+        $('#filter-prodi').on('change', function() {
+            tableMatkul.ajax.reload();
         });
     </script>
 @endpush

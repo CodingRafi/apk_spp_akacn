@@ -24,7 +24,6 @@ class MatkulRequest extends FormRequest
     public function rules()
     {
         return [
-            'kurikulum_id' => 'required',
             'prodi_id' => 'required',
             'kode' => 'required',
             'nama' => 'required',

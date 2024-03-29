@@ -18,19 +18,21 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 mb-3">
-                            <select name="tahun_semester_id" id="tahun_semester_id" class="form-select">
-                                <option value="">Pilih Semester</option>
-                                @foreach ($tahunSemester as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                            <select id="filter-prodi" class="form-select" onchange="getSemester();getMatkul();">
+                                <option value="">Pilih Prodi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <select name="tahun_matkul_id" id="filter-tahun_matkul" class="form-select">
+                            <select id="filter-tahun-semester" class="form-select">
+                                <option value="">Pilih Semester</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <select id="filter-tahun-matkul" class="form-select">
                                 <option value="">Pilih Mata Kuliah</option>
-                                @foreach ($tahunMatkul as $matkul)
-                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -196,6 +198,44 @@
             }
         }
 
+        function getSemester() {
+            let prodi_id = $('#filter-prodi').val();
+            $('#filter-tahun-semester').empty().append(`<option value="">Pilih Semester</option>`);
+            $.ajax({
+                url: '{{ route('kelola-presensi.presensi.getSemester', ":prodi_id") }}'.replace(':prodi_id',
+                    prodi_id),
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#filter-tahun-semester').append(`<option value="${e.id}">${e.nama}</option>`)
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get semester');
+                }
+            })
+        }
+
+        function getMatkul() {
+            let prodi_id = $('#filter-prodi').val();
+            $('#filter-tahun-matkul').empty().append(`<option value="">Pilih Matkul</option>`);
+            $.ajax({
+                url: '{{ route('kelola-presensi.presensi.getMatkul', ['prodi_id' => ":prodi_id"]) }}'
+                    .replace(':prodi_id', prodi_id),
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#filter-tahun-matkul').append(`<option value="${e.id}">${e.nama}</option>`)
+                    })
+                },
+                error: function(err) {
+                    alert('Gagal get matkul');
+                }
+            })
+        }
+
         function getPengajar(tahun_matkul_id) {
             $.ajax({
                 url: '{{ route('kelola-presensi.presensi.getPengajar', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
@@ -282,8 +322,9 @@
                 ajax: {
                     url: '{{ route('kelola-presensi.presensi.getJadwal', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}',
                     data: function(p) {
-                        p.tahun_semester_id = $('#tahun_semester_id').val();
-                        p.tahun_matkul_id = $('#tahun_matkul_id').val();
+                        p.prodi_id = $('#filter-prodi').val();
+                        p.tahun_semester_id = $('#filter-tahun-semester').val();
+                        p.tahun_matkul_id = $('#filter-tahun-matkul').val();
                     }
                 },
                 columns: [{
@@ -309,7 +350,7 @@
             });
         });
 
-        $('#tahun_semester_id, #filter-tahun_matkul').on('change', function() {
+        $('#filter-tahun-semester, #filter-tahun-matkul, #filter-prodi').on('change', function() {
             table.ajax.reload();
         })
     </script>

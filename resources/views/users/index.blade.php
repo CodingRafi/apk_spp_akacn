@@ -54,7 +54,8 @@
                             </div>
                             @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
                                 <div class="col-md-2 mb-3">
-                                    <button class="btn btn-primary d-block w-100" type="button" onclick="getData()">Get list data</button>
+                                    <button class="btn btn-primary d-block w-100" type="button" onclick="getData()">Get list
+                                        data</button>
                                 </div>
                             @endif
                         </div>
@@ -86,12 +87,16 @@
 @endsection
 
 @push('js')
-    @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
-        @include('neo_feeder.raw')
-        @include('neo_feeder.index', [
-            'type' => request('role'),
-            'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
-        ])
+    @if (Auth::user()->hasRole('admin') && (request('role') == 'dosen' || request('role') == 'mahasiswa'))
+        @if (request('role') == 'dosen')
+            @include('neo_feeder.raw')
+            @include('neo_feeder.index', [
+                'type' => request('role'),
+                'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
+            ])
+        @else
+            @include('')
+        @endif
     @endif
     <script>
         let table;
