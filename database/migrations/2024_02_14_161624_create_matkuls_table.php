@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('matkuls', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('kurikulum_id');
-            $table->foreign('kurikulum_id')->references('id')->on('kurikulums') ;
+            $table->uuid('id_neo_feeder')->nullable();
             $table->string('kode');
             $table->string('nama');
             $table->char('jenis_matkul', 1)->nullable();
@@ -33,6 +32,7 @@ return new class extends Migration
             $table->enum('ada_diklat', [0,1])->default(0);
             $table->date('tgl_mulai_aktif')->nullable();
             $table->date('tgl_akhir_aktif')->nullable();
+            $table->enum('sync', [0,1])->default(0);
             $table->timestamps();
         });
         

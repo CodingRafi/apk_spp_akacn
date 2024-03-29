@@ -70,34 +70,51 @@
         return newData;
     }
 
+    function chunkArray(arr, chunkSize) {
+        if (arr.length <= chunkSize) {
+            return [arr];
+        } else {
+            return [arr.slice(0, chunkSize), ...chunkArray(arr.slice(chunkSize), chunkSize)];
+        }
+    }
+
     function storeData(data, func) {
-        $.LoadingOverlay("show");
-        $.ajax({
-            url: '{{ $urlStoreData }}',
-            type: 'POST',
-            data: {
-                tbl: configData.tbl,
-                data
-            },
-            dataType: 'json',
-            success: function(res) {
-                showAlert(res.message, 'success')
+        const chunks = chunkArray(data, 30)
+        let loop = 0;
 
-                if (typeof table !== "undefined") {
-                    table.ajax.reload();
-                } else {
-                    fetchDataAndUpdateTable()
-                }
+        chunks.forEach((chunk, index) => {
+            $.LoadingOverlay("show");
+            $.ajax({
+                url: '{{ $urlStoreData }}',
+                type: 'POST',
+                data: {
+                    tbl: configData.tbl,
+                    data
+                },
+                dataType: 'json',
+                success: function(res) {
+                    showAlert(`Batch ${index+1} Berhasil disimpan`, 'success')
 
-                if (func != undefined) {
-                    func(response.data);
+                    if (typeof table !== "undefined") {
+                        table.ajax.reload();
+                    } else {
+                        fetchDataAndUpdateTable()
+                    }
+
+                    if (func != undefined) {
+                        func(response.data);
+                    }
+                    
+                    loop += 1;
+                    if (loop == chunks.length) {
+                        $.LoadingOverlay("hide");
+                    }
+                },
+                error: function(err) {
+                    showAlert(err.responseJSON.message, 'error')
+                    $.LoadingOverlay("hide");
                 }
-                $.LoadingOverlay("hide");
-            },
-            error: function(err) {
-                showAlert(err.responseJSON.message, 'error')
-                $.LoadingOverlay("hide");
-            }
+            })
         })
     }
 

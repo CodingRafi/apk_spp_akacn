@@ -155,10 +155,11 @@ class KurikulumController extends Controller
     public function storeNeoFeeder(Request $request)
     {
         foreach ($request->data as $data) {
-            DB::table('kurikulums')->updateOrInsert([
-                'id_neo_feeder' => $data['id_kurikulum'],
-            ], [
-                'id' => $data['id_kurikulum'],
+            $cek = DB::table('kurikulums')
+                ->where('id_neo_feeder', $data['id_kurikulum'])
+                ->exists();
+
+            $dataReq = [
                 'nama' => $data['nama_kurikulum'],
                 'prodi_id' => $data['id_prodi'],
                 'semester_id' => $data['id_semester'],
@@ -168,9 +169,16 @@ class KurikulumController extends Controller
                 'jml_sks_mata_kuliah_wajib' => $data['jumlah_sks_mata_kuliah_wajib'],
                 'jml_sks_mata_kuliah_pilihan' => $data['jumlah_sks_mata_kuliah_pilihan'],
                 'sync' => "1",
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+            ];
+
+            if ($cek) {
+                $dataReq['updated_at'] = now();
+                Kurikulum::where('id_neo_feeder', $data['id_kurikulum'])->update($dataReq);
+            }else{
+                $dataReq['id'] = generateUuid();
+                $dataReq['id_neo_feeder'] = $data['id_kurikulum'];
+                Kurikulum::create($dataReq);
+            }
         }
 
         return response()->json([

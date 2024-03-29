@@ -293,6 +293,19 @@
                 jenis_keluar: 'jenis',
                 apa_mahasiswa: 'apa_mahasiswa'
             }
+        },
+        matkul:{
+            raw: {
+                "act": "GetDetailMataKuliah",
+                "filter": "",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'matkuls',
+            changeFormat: false,
+            unique: [],
+            format: {}
         }
     }
 </script>

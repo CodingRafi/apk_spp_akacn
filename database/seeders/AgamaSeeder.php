@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Agama;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AgamaSeeder extends Seeder
 {
@@ -15,9 +16,12 @@ class AgamaSeeder extends Seeder
      */
     public function run()
     {
-        Agama::create([
-            'id' => '1',
-            'nama' => 'Islam'
+        DB::table('agamas')->updateOrInsert([
+            'id' => 98,
+        ], [
+            'nama' => 'Tidak diisi',
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
     }
 }

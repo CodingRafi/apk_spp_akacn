@@ -190,6 +190,9 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
         //? Mata Kuliah
         Route::prefix('mata-kuliah')->name('mata-kuliah.')->group(function () {
+            Route::get('/', [MatkulController::class, 'index'])->name('index');
+            Route::post('/neo-feeder', [MatkulController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+            Route::get('/data', [MatkulController::class, 'dataMatkul'])->name('dataMatkul');
             Route::get('{kurikulum_id}/data', [MatkulController::class, 'data'])->name('data');
             Route::post('/', [MatkulController::class, 'store'])->name('store');
             Route::get('/{matkul_id}', [MatkulController::class, 'show'])->name('show');
