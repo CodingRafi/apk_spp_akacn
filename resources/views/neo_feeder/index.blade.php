@@ -1,4 +1,7 @@
 @include('neo_feeder')
+@php
+    $type = isset($type) ? $type : request('type');
+@endphp
 <script>
     const configData = configNeoFeeder.{{ $type }};
 
@@ -62,11 +65,10 @@
 
             return [parseUniq, parseValue];
         });
-        console.log(newData)
+
         $.LoadingOverlay("hide");
         return newData;
     }
-
 
     function storeData(data, func) {
         $.LoadingOverlay("show");
@@ -80,7 +82,12 @@
             dataType: 'json',
             success: function(res) {
                 showAlert(res.message, 'success')
-                fetchDataAndUpdateTable()
+
+                if (typeof table !== "undefined") {
+                    table.ajax.reload();
+                } else {
+                    fetchDataAndUpdateTable()
+                }
 
                 if (func != undefined) {
                     func(response.data);
@@ -98,29 +105,31 @@
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    let table;
     let columns = [];
-    
+
     $(document).ready(function() {
-        $('.table thead tr').empty();
+        if (typeof table !== "undefined") {
+            table.ajax.reload();
+        } else {
+            $('.table thead tr').empty();
 
-        const format = configData.format;
-        const uniq = configData.unique;
+            const format = configData.format;
+            const uniq = configData.unique;
 
-        for (let key in format) {
-            if (!uniq.includes(key)) {
-                columns.push({
-                    data: format[key],
-                    title: capitalize(format[key].replace(/_/g, ' ')),
-                });
+            for (let key in format) {
+                if (!uniq.includes(key)) {
+                    columns.push({
+                        data: format[key],
+                        title: capitalize(format[key].replace(/_/g, ' ')),
+                    });
+                }
             }
-        }
 
-        for (const i in columns) {
-            $('.table thead tr').append(`<th>${columns[i].title}</th>`);
+            for (const i in columns) {
+                $('.table thead tr').append(`<th>${columns[i].title}</th>`);
+            }
+            fetchDataAndUpdateTable()
         }
-
-        fetchDataAndUpdateTable()
     })
 
     function fetchDataAndUpdateTable() {

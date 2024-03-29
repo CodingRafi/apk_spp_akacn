@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TahunAjaranRequest;
 use App\Models\TahunAjaran;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -38,11 +39,6 @@ class TahunAjaranController extends Controller
                 $options = $options . "<a href='" . route('data-master.tahun-ajaran.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
 
-            if (auth()->user()->can('delete_tahun_ajaran')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.tahun-ajaran.destroy', $data->id) . "`)'>
-                                        Hapus
-                                    </button>";
-            }
             $data->options = $options;
         }
 
@@ -107,7 +103,7 @@ class TahunAjaranController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Berhasil diubah',
+            'message' => 'Berhasil disimpan',
             'data' => $tahunAjaran
         ]);
     }
@@ -127,5 +123,25 @@ class TahunAjaranController extends Controller
                 'message' => 'Gagal dihapus'
             ], 400);
         }
+    }
+
+    public function storeNeoFeeder(Request $request)
+    {
+        foreach ($request->data as $data) {
+            DB::table('tahun_ajarans')->updateOrInsert([
+                'id' => $data['id_tahun_ajaran'],
+            ], [
+                'nama' => $data['nama_tahun_ajaran'],
+                'status' => $data['a_periode_aktif'],
+                'tgl_mulai' => Carbon::parse($data['tanggal_mulai'])->format('Y-m-d'),
+                'tgl_selesai' => Carbon::parse($data['tanggal_selesai'])->format('Y-m-d'),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 }

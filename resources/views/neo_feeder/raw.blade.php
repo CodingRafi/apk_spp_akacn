@@ -173,33 +173,22 @@
                 "offset": "0"
             },
             tbl: 'tahun_ajarans',
-            changeFormat: true,
-            format: {
-                id_tahun_ajaran: 'id',
-                nama_tahun_ajaran: 'nama',
-                a_periode_aktif: 'status',
-                tanggal_mulai: 'tgl_mulai',
-                tanggal_selesai: 'tgl_selesai',
-            }
+            changeFormat: false,
+            unique: [],
+            format: {}
         },
-        //? perlu dicoba semester
         semester: {
             raw: {
                 "act": "GetSemester",
-                "filter": "",
+                "filter": "id_tahun_ajaran='{{ request('tahun_ajaran') }}'",
                 "order": "",
                 "limit": "1000",
                 "offset": "0"
             },
             tbl: 'semesters',
-            changeFormat: true,
-            format: {
-                id_semester: 'id',
-                nama_semester: 'nama',
-                a_periode_aktif: 'status',
-                tanggal_mulai: 'tgl_mulai',
-                tanggal_selesai: 'tgl_selesai',
-            }
+            changeFormat: false,
+            unique: [],
+            format: {}
         },
         prodi: {
             raw: {

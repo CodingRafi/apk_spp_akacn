@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SemesterRequest;
 use App\Models\Semester;
 use App\Models\TahunAjaran;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -157,5 +158,26 @@ class SemesterController extends Controller
                 'message' => 'Gagal dihapus'
             ], 400);
         }
+    }
+
+    public function storeNeoFeeder(Request $request){
+        foreach ($request->data as $data) {
+            DB::table('semesters')->updateOrInsert([
+                'id' => $data['id_semester'],
+            ], [
+                'tahun_ajaran_id' => $data['id_tahun_ajaran'],
+                'nama' => $data['nama_semester'],
+                'semester' => $data['semester'],
+                'status' => $data['a_periode_aktif'],
+                'tgl_mulai' => Carbon::parse($data['tanggal_mulai'])->format('Y-m-d'),
+                'tgl_selesai' => Carbon::parse($data['tanggal_selesai'])->format('Y-m-d'),
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 }

@@ -132,6 +132,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
     Route::prefix('data-master')->name('data-master.')->group(function () {
         //? Tahun ajaran
+        Route::post('tahun-ajaran/neo-feeder', [TahunAjaranController::class, 'storeNeoFeeder'])->name('tahun-ajaran.storeNeoFeeder');
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
@@ -158,6 +159,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('/{semester_id}', [KelolaSemesterController::class, 'show'])->name('show');
             Route::put('/{semester_id}', [KelolaSemesterController::class, 'update'])->name('update');
             Route::delete('/{semester_id}', [KelolaSemesterController::class, 'destroy'])->name('destroy');
+            Route::post('/neo-feeder', [KelolaSemesterController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
         });
 
         //? Kurikulum
@@ -427,11 +429,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 
     Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
-        // Route::prefix('wilayah')->name('wilayah.')->group(function () {
-        //     Route::get('/', [NeoFeederController::class, 'indexWilayah'])->name('index');
-        //     Route::get('/data', [NeoFeederController::class, 'dataWilayah'])->name('data');
-        // });
-
         Route::get('/{type}', [NeoFeederController::class, 'index'])->name('index');
         Route::post('/', [NeoFeederController::class, 'store'])->name('store');
         Route::get('/{type}/data', [NeoFeederController::class, 'data'])->name('data');

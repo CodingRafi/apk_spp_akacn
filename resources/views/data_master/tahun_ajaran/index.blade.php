@@ -8,7 +8,7 @@
                     <h5 class="text-capitalize">Tahun Ajaran</h5>
                     <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
                         @can('add_tahun_ajaran')
-                            <button class="btn btn-primary" onclick="get()">Get NEO Feeder</button>
+                            <button class="btn btn-primary" onclick="getData()">Get NEO Feeder</button>
                             <a href="{{ route('data-master.tahun-ajaran.create') }}"
                                 class="btn btn-primary text-capitalize">Tambah
                                 Tahun Ajaran</a>
@@ -72,21 +72,12 @@
                 responsive: true,
             });
         });
-
-        function get() {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: '{{ route('neo-feeder.get', ['type' => 'tahun-ajaran']) }}',
-                success: function(res) {
-                    showAlert(res.output, 'success')
-                    $.LoadingOverlay("hide");
-                    table.ajax.reload();
-                },
-                error: function(err) {
-                    $.LoadingOverlay("hide");
-                    showAlert(err.responseJSON.output, 'error')
-                }
-            })
-        }
     </script>
+    @if (Auth::user()->hasRole('admin'))
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => 'tahun_ajaran',
+            'urlStoreData' => route('data-master.tahun-ajaran.storeNeoFeeder'),
+        ])
+    @endif
 @endpush

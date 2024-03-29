@@ -63,7 +63,7 @@
                             <div class="d-flex justify-content-between mb-3">
                                 <h5>Semester</h5>
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
-                                    <button class="btn btn-primary" type="button" onclick="get()">Get NEO Feeder</button>
+                                    <button class="btn btn-primary" type="button" onclick="getData()">Get NEO Feeder</button>
                                     <button type="button" class="btn btn-primary"
                                         onclick="addForm('{{ route('data-master.semester.store') }}', 'Tambah', '#semester', getLastSemester)">
                                         Tambah
@@ -131,7 +131,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => tableSemester.ajax.reload())">Simpan</button>
+                            onclick="submitForm(this.form, this, () => table.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -143,7 +143,7 @@
     <script>
         let status_next = false;
         let tahun_ajaran = "isset($data) ? request('tahun_ajaran') : ''";
-        let tableSemester;
+        let table;
         let url_update = '{{ route('data-master.tahun-ajaran.update', [':id']) }}';
         let url_semester =
             '{{ isset($data) ? route('data-master.semester.data', $data->id) : route('data-master.semester.data', [':id']) }}'
@@ -174,7 +174,7 @@
         }
 
         $(document).ready(function() {
-            tableSemester = $('.table-semester').DataTable({
+            table = $('.table-semester').DataTable({
                 processing: true,
                 autoWidth: false,
                 ajax: {
@@ -218,8 +218,8 @@
 
             // Semester
             url_semester = url_semester.replace(':id', data.id);
-            tableSemester.ajax.url(url_semester);
-            tableSemester.ajax.reload()
+            table.ajax.url(url_semester);
+            table.ajax.reload()
 
             $(".form-control, .custom-select, [type=radio], [type=checkbox], [type=file], .select2, .note-editor")
                 .removeClass("is-invalid");
@@ -229,26 +229,13 @@
         $('.btn-selesai').on('click', function() {
             window.location.href = '{{ route('data-master.tahun-ajaran.index') }}'
         })
-
-        function get() {
-            $.LoadingOverlay("show");
-            $.ajax({
-                url: '{{ route('data-master.semester.get-neo-feeder', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}'
-                    .replace(
-                        ':tahun_ajaran_id',
-                        tahun_ajaran.id
-                    ),
-                success: function(res) {
-                    showAlert(res.output, 'success')
-                    $.LoadingOverlay("hide");
-                    tableSemester.ajax.reload();
-                },
-                error: function(err) {
-                    $.LoadingOverlay("hide");
-                    showAlert(err.responseJSON.output, 'error')
-                }
-            })
-        }
     </script>
     @include('mypartials.tab', ['form' => '.form-tahun-ajaran'])
+    @if (Auth::user()->hasRole('admin'))
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => 'semester',
+            'urlStoreData' => route('data-master.semester.storeNeoFeeder'),
+        ])
+    @endif
 @endpush
