@@ -9,9 +9,6 @@
                     <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
                         @can('add_tahun_ajaran')
                             <button class="btn btn-primary" onclick="getData()">Get NEO Feeder</button>
-                            <a href="{{ route('data-master.tahun-ajaran.create') }}"
-                                class="btn btn-primary text-capitalize">Tambah
-                                Tahun Ajaran</a>
                         @endcan
                     </div>
                 </div>

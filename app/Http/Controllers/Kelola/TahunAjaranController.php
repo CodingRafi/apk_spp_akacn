@@ -58,6 +58,7 @@ class TahunAjaranController extends Controller
 
     public function store(TahunAjaranRequest $request)
     {
+        abort(404);
         if ($request->status && getTahunAjaranActive()) {
             return response()->json([
                 'message' => 'ada tahun ajaran yang sedang aktif'
@@ -86,6 +87,7 @@ class TahunAjaranController extends Controller
 
     public function update(TahunAjaranRequest $request, TahunAjaran $tahunAjaran)
     {
+        abort(404);
         if ($request->status) {
             $tahun_active = getTahunAjaranActive();
             if ($tahun_active && $tahun_active->id !== $tahunAjaran->id) {
@@ -110,6 +112,7 @@ class TahunAjaranController extends Controller
 
     public function destroy(TahunAjaran $tahunAjaran)
     {
+        abort(404);
         DB::beginTransaction();
         try {
             $tahunAjaran->delete();

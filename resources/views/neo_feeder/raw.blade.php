@@ -212,11 +212,9 @@
                 "offset": "0"
             },
             tbl: 'kurikulums',
-            changeFormat: true,
-            format: {
-                id_kurikulum: 'id',
-                nama_kurikulum: 'nama'
-            }
+            changeFormat: false,
+            unique: [],
+            format: {}
         },
         dosen: {
             raw: {

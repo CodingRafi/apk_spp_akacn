@@ -16,4 +16,12 @@ class Kurikulum extends Model
     public function matkul(){
         return $this->hasMany(Matkul::class, 'kurikulum_id', 'id');
     }
+
+    public function prodi(){
+        return $this->belongsTo(Prodi::class, 'prodi_id', 'id');
+    }
+
+    public function semester(){
+        return $this->belongsTo(Semester::class, 'semester_id', 'id');
+    }
 }

@@ -55,7 +55,7 @@
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start">
                                 <button class="btn btn-primary btn-next btn-selanjutnya-1" type="button"
-                                    onclick="submitForm(this.form, this, setTahunAjaran)">Simpan dan lanjutkan</button>
+                                    onclick="setTahunAjaran()">Selanjutnya</button>
                             </div>
                         </fieldset>
 
@@ -64,10 +64,6 @@
                                 <h5>Semester</h5>
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
                                     <button class="btn btn-primary" type="button" onclick="getData()">Get NEO Feeder</button>
-                                    <button type="button" class="btn btn-primary"
-                                        onclick="addForm('{{ route('data-master.semester.store') }}', 'Tambah', '#semester', getLastSemester)">
-                                        Tambah
-                                    </button>
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -79,7 +75,6 @@
                                             <th>Status</th>
                                             <th>Tanggal Mulai</th>
                                             <th>Tanggal Akhir</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -194,11 +189,6 @@
                     },
                     {
                         data: 'tgl_selesai'
-                    },
-                    {
-                        data: 'options',
-                        searchable: false,
-                        sortable: false
                     },
                 ]
             });

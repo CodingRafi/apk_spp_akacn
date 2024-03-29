@@ -164,6 +164,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
         //? Kurikulum
         Route::get('kurikulum/data', [KurikulumController::class, 'data'])->name('kurikulum.data');
+        Route::post('neo-feeder', [KurikulumController::class, 'storeNeoFeeder'])->name('kurikulum.storeNeoFeeder');
         Route::resource('kurikulum', KurikulumController::class);
 
         //? Ruang

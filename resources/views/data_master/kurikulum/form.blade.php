@@ -39,14 +39,37 @@
                                 value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
                             </div>
                             <div class="mb-3">
-                                <label for="tahun_semester_id" class="form-label">Semeste Mulai</label>
-                                <select name="tahun_semester_id" id="tahun_semester_id" class="form-control">
+                                <label for="jml_sks_mata_kuliah_wajib" class="form-label">Jumlah SKS Mata Kuliah Wajib</label>
+                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_wajib" name="jml_sks_mata_kuliah_wajib"
+                                value="{{ isset($data) ? $data->jml_sks_mata_kuliah_wajib : old('jml_sks_mata_kuliah_wajib') }}" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="jml_sks_mata_kuliah_pilihan" class="form-label">Jumlah SKS Mata Kuliah Pilihan</label>
+                                <input class="form-control" type="number" id="jml_sks_mata_kuliah_pilihan" name="jml_sks_mata_kuliah_pilihan"
+                                value="{{ isset($data) ? $data->jml_sks_mata_kuliah_pilihan : old('jml_sks_mata_kuliah_pilihan') }}" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="semester_id" class="form-label">Semester Mulai</label>
+                                <select name="semester_id" id="semester_id" class="select2">
                                     <option value="">Pilih Tahun Semester</option>
-                                    @foreach ($tahunSemesters as $tahunSemester)
+                                    @foreach ($semesters as $semester)
                                         <option
-                                            value="{{ $tahunSemester->id }}"
-                                            {{ isset($data) && $data->tahun_semester_id == $tahunSemester->id ? 'selected' : '' }}>
-                                            {{ $tahunSemester->nama }}
+                                            value="{{ $semester->id }}"
+                                            {{ isset($data) && $data->semester_id == $semester->id ? 'selected' : '' }}>
+                                            {{ $semester->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prodi_id" class="form-label">Program Studi</label>
+                                <select name="prodi_id" id="prodi_id" class="form-control">
+                                    <option value="">Pilih Program Studi</option>
+                                    @foreach ($prodis as $item)
+                                        <option
+                                            value="{{ $item->id }}"
+                                            {{ isset($data) && $data->prodi_id == $item->id ? 'selected' : '' }}>
+                                            {{ $item->nama }}
                                         </option>
                                     @endforeach
                                 </select>

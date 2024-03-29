@@ -20,11 +20,12 @@ class KurikulumController extends Controller
     public function create()
     {
         $prodis = Prodi::all();
-        $tahunSemesters = Semester::all();
-        return view('data_master.kurikulum.form', compact('prodis', 'tahunSemesters'));
+        $semesters = Semester::all();
+        return view('data_master.kurikulum.form', compact('prodis', 'semesters'));
     }
 
-    public function data(){
+    public function data()
+    {
         $datas = Kurikulum::all();
 
         foreach ($datas as $data) {
@@ -40,10 +41,16 @@ class KurikulumController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->addColumn('jml_matkul', function($datas){
-                return DB::table('matkuls')->where('kurikulum_id', $datas->id)->count();
+            ->addColumn('prodi', function ($data) {
+                return $data->prodi->nama;
             })
-            ->rawColumns(['options'])
+            ->addColumn('semester', function ($data) {
+                return $data->semester->nama;
+            })
+            ->editColumn('sync', function($data){
+                return $data->sync ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'sync'])
             ->make(true);
     }
 
@@ -54,7 +61,8 @@ class KurikulumController extends Controller
             'jml_sks_lulus' => 'required',
             'jml_sks_wajib' => 'required',
             'jml_sks_pilihan' => 'required',
-            'tahun_semester_id' => 'required',
+            'semester_id' => 'required',
+            'prodi_id' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -65,7 +73,11 @@ class KurikulumController extends Controller
                 'jml_sks_lulus' => $request->jml_sks_lulus,
                 'jml_sks_wajib' => $request->jml_sks_wajib,
                 'jml_sks_pilihan' => $request->jml_sks_pilihan,
-                'tahun_semester_id' => $request->tahun_semester_id
+                'semester_id' => $request->semester_id,
+                'prodi_id' => $request->prodi_id,
+                'jml_sks_mata_kuliah_wajib' => $request->jml_sks_mata_kuliah_wajib,
+                'jml_sks_mata_kuliah_pilihan' => $request->jml_sks_mata_kuliah_pilihan,
+                'sync' => '0'
             ]);
             DB::commit();
             return response()->json([
@@ -81,9 +93,11 @@ class KurikulumController extends Controller
     public function edit(Kurikulum $kurikulum)
     {
         $prodis = Prodi::all();
+        $semesters = Semester::all();
         return view('data_master.kurikulum.form', [
             'prodis' => $prodis,
-            'data' => $kurikulum
+            'data' => $kurikulum,
+            'semesters' => $semesters
         ]);
     }
 
@@ -93,8 +107,8 @@ class KurikulumController extends Controller
             'nama' => 'required',
             'jml_sks_lulus' => 'required',
             'jml_sks_wajib' => 'required',
-            'jml_sks_pilihan' => 'required',
-            'tahun_semester_id' => 'required',
+            'semester_id' => 'required',
+            'prodi_id' => 'required',
         ]);
 
         DB::beginTransaction();
@@ -104,7 +118,11 @@ class KurikulumController extends Controller
                 'jml_sks_lulus' => $request->jml_sks_lulus,
                 'jml_sks_wajib' => $request->jml_sks_wajib,
                 'jml_sks_pilihan' => $request->jml_sks_pilihan,
-                'tahun_semester_id' => $request->tahun_semester_id
+                'semester_id' => $request->semester_id,
+                'prodi_id' => $request->prodi_id,
+                'jml_sks_mata_kuliah_wajib' => $request->jml_sks_mata_kuliah_wajib,
+                'jml_sks_mata_kuliah_pilihan' => $request->jml_sks_mata_kuliah_pilihan,
+                'sync' => '0'
             ]);
             DB::commit();
             return response()->json([
@@ -132,5 +150,31 @@ class KurikulumController extends Controller
                 'message' => 'Gagal dihapus',
             ], 400);
         }
+    }
+
+    public function storeNeoFeeder(Request $request)
+    {
+        foreach ($request->data as $data) {
+            DB::table('kurikulums')->updateOrInsert([
+                'id_neo_feeder' => $data['id_kurikulum'],
+            ], [
+                'id' => $data['id_kurikulum'],
+                'nama' => $data['nama_kurikulum'],
+                'prodi_id' => $data['id_prodi'],
+                'semester_id' => $data['id_semester'],
+                'jml_sks_lulus' => $data['jumlah_sks_lulus'],
+                'jml_sks_wajib' => $data['jumlah_sks_wajib'],
+                'jml_sks_pilihan' => $data['jumlah_sks_pilihan'],
+                'jml_sks_mata_kuliah_wajib' => $data['jumlah_sks_mata_kuliah_wajib'],
+                'jml_sks_mata_kuliah_pilihan' => $data['jumlah_sks_mata_kuliah_pilihan'],
+                'sync' => "1",
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 }

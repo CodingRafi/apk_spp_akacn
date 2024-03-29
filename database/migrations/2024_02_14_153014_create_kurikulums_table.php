@@ -15,12 +15,18 @@ return new class extends Migration
     {
         Schema::create('kurikulums', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->uuid('id_neo_feeder')->nullable();
             $table->string('nama');
-            $table->string('jml_sks_lulus');
-            $table->string('jml_sks_wajib');
-            $table->string('jml_sks_pilihan');
-            $table->string('tahun_semester_id');
-            $table->foreign('tahun_semester_id')->references('id')->on('semesters');
+            $table->integer('jml_sks_lulus');
+            $table->integer('jml_sks_wajib');
+            $table->integer('jml_sks_pilihan');
+            $table->integer('jml_sks_mata_kuliah_wajib')->nullable();
+            $table->integer('jml_sks_mata_kuliah_pilihan')->nullable();
+            $table->uuid('prodi_id');
+            $table->foreign('prodi_id')->references('id')->on('prodi');
+            $table->string('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters');
+            $table->enum('sync', [0,1])->default(0);
             $table->timestamps();
         });
     }

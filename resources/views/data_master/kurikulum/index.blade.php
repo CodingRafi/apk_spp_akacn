@@ -7,8 +7,11 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize">Kurikulum</h5>
                     @can('add_kurikulum')
-                        <a href="{{ route('data-master.kurikulum.create') }}" class="btn btn-primary text-capitalize">Tambah
-                            Kurikulum</a>
+                        <div class="d-flex justify-content-center align-items-center" style="gap: 1rem">
+                            <button class="btn btn-primary" onclick="getData()">Get NEO Feeder</button>
+                            <a href="{{ route('data-master.kurikulum.create') }}" class="btn btn-primary text-capitalize">Tambah
+                                Kurikulum</a>
+                        </div>
                     @endcan
                 </div>
                 <div class="card-body">
@@ -18,7 +21,9 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Nama</th>
-                                    <th>Jumlah Matkul</th>
+                                    <th>Prodi</th>
+                                    <th>Mulai Berlaku</th>
+                                    <th>Sync Neo Feeder</th>
                                     @can('edit_kurikulum', 'delete_kurikulum')
                                         <th>Aksi</th>
                                     @endcan
@@ -48,7 +53,13 @@
                         "data": "nama"
                     },
                     {
-                        "data": "jml_matkul"
+                        "data": "prodi"
+                    },
+                    {
+                        "data": "semester"
+                    },
+                    {
+                        "data": "sync"
                     },
                     @can('edit_kurikulum', 'hapus_kurikulum')
                         {
@@ -61,4 +72,11 @@
             });
         });
     </script>
+    @if (Auth::user()->hasRole('admin'))
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => 'kurikulum',
+            'urlStoreData' => route('data-master.kurikulum.storeNeoFeeder'),
+        ])
+    @endif
 @endpush
