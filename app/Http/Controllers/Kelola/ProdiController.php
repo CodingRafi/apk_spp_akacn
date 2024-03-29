@@ -52,7 +52,7 @@ class ProdiController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->addColumn('jenjang', function($datas){
+            ->addColumn('jenjang', function ($datas) {
                 return $datas->jenjang->nama;
             })
             ->editCOlumn('status', function ($datas) {
@@ -76,7 +76,7 @@ class ProdiController extends Controller
             'akreditas' => 'required',
             'jenjang_id' => 'required',
         ]);
-        
+
         Prodi::create([
             'id' => generateUuid(),
             'kode' => $request->kode,
@@ -87,7 +87,7 @@ class ProdiController extends Controller
         ]);
 
         return redirect()->route('data-master.prodi.index')
-        ->with('success', 'Berhasil ditambahkan');
+            ->with('success', 'Berhasil ditambahkan');
     }
 
     public function show(Prodi $prodi)
@@ -175,5 +175,25 @@ class ProdiController extends Controller
                 'message' => 'Gagal dihapus',
             ], 400);
         }
+    }
+
+    public function storeNeoFeeder(Request $request)
+    {
+        foreach ($request->data as $data) {
+            DB::table('prodi')->updateOrInsert([
+                'id' => $data['id_prodi'],
+            ], [
+                'kode' => $data['kode_program_studi'],
+                'nama' => $data['nama_program_studi'],
+                'akreditas' => $data['status'],
+                'jenjang_id' => $data['id_jenjang_pendidikan'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 }

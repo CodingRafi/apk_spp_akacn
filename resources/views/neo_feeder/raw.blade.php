@@ -199,14 +199,9 @@
                 "offset": "0"
             },
             tbl: 'prodi',
-            changeFormat: true,
-            format: {
-                id_prodi: 'id',
-                kode_program_studi: 'kode',
-                nama_program_studi: 'nama',
-                status: 'akreditas',
-                id_jenjang_pendidikan: 'jenjang_id'
-            }
+            changeFormat: false,
+            unique: [],
+            format: {}
         },
         kurikulum: {
             raw: {

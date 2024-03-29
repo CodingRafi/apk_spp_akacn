@@ -207,7 +207,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
         //? Prodi
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
-        Route::get('prodi/get-neo-feeder', [ProdiController::class, 'getNeoFeeder'])->name('prodi.getNeoFeeder');
+        Route::post('prodi/neo-feeder', [ProdiController::class, 'storeNeoFeeder'])->name('prodi.storeNeoFeeder');
         Route::get('prodi/{prodi_id}/angkatan', [ProdiController::class, 'angkatan'])->name('prodi.angkatan');
         Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}', [ProdiController::class, 'angkatanDetail'])->name('prodi.angkatan.detail');
         Route::resource('prodi', ProdiController::class);
