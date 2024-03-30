@@ -15,24 +15,23 @@ return new class extends Migration
     {
         Schema::create('matkuls', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('id_neo_feeder')->nullable();
             $table->string('kode');
             $table->string('nama');
             $table->char('jenis_matkul', 1)->nullable();
             $table->char('kel_matkul', 1)->nullable();
-            $table->integer('sks_mata_kuliah')->default(0);
-            $table->integer('sks_tatap_muka')->default(0);
-            $table->integer('sks_praktek')->default(0);
-            $table->integer('sks_praktek_lapangan')->default(0);
-            $table->integer('sks_simulasi')->default(0);
-            $table->enum('ada_sap', [0,1])->default(0);
-            $table->enum('ada_silabus', [0,1])->default(0);
-            $table->enum('ada_bahan_ajar', [0,1])->default(0);
-            $table->enum('ada_acara_praktek', [0,1])->default(0);
-            $table->enum('ada_diklat', [0,1])->default(0);
+            $table->integer('sks_mata_kuliah')->nullable();
+            $table->integer('sks_tatap_muka')->nullable();
+            $table->integer('sks_praktek')->nullable();
+            $table->integer('sks_praktek_lapangan')->nullable();
+            $table->integer('sks_simulasi')->nullable();
+            $table->enum('ada_sap', [0,1])->nullable();
+            $table->enum('ada_silabus', [0,1])->nullable();
+            $table->enum('ada_bahan_ajar', [0,1])->nullable();
+            $table->enum('ada_acara_praktek', [0,1])->nullable();
+            $table->enum('ada_diklat', [0,1])->nullable();
             $table->date('tgl_mulai_aktif')->nullable();
             $table->date('tgl_akhir_aktif')->nullable();
-            $table->enum('sync', [0,1])->default(0);
+            $table->enum('sync', [0,1])->nullable();
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi') ;
             $table->timestamps();
@@ -43,6 +42,7 @@ return new class extends Migration
             $table->foreign('kurikulum_id')->references('id')->on('kurikulums');
             $table->uuid('matkul_id');
             $table->foreign('matkul_id')->references('id')->on('matkuls');
+            $table->enum('wajib', [0,1]);
         });
         
         Schema::create('matkul_materi', function(Blueprint $table){

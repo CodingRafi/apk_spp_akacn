@@ -168,6 +168,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('data', [KurikulumController::class, 'data'])->name('data');
             Route::post('store-matkul', [KurikulumController::class, 'storeMatkul'])->name('storeMatkul');
             Route::post('neo-feeder', [KurikulumController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+            Route::post('neo-feeder/matkul', [KurikulumController::class, 'storeMatkulNeoFeeder'])->name('storeMatkulNeoFeeder');
             Route::get('{kurikulum_id}/mata-kuliah', [KurikulumController::class, 'getMatkul'])->name('getMatkul');
             Route::get('{kurikulum_id}/data-matkul', [KurikulumController::class, 'dataMatkul'])->name('dataMatkul');
             Route::delete('{kurikulum_id}/{matkul_id}', [KurikulumController::class, 'destroyMatkul'])->name('destroyMatkul');

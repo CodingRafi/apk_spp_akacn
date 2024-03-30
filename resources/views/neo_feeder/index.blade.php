@@ -5,7 +5,7 @@
 <script>
     const configData = configNeoFeeder.{{ $type }};
 
-    async function getData() {
+    async function getData(rawParams = null) {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
             $.LoadingOverlay("show");
             if (!url) {
@@ -21,7 +21,7 @@
             }
 
             try {
-                let raw = configData.raw;
+                let raw = rawParams ?? configData.raw;
                 raw.token = token.data.token;
 
                 const limit = 500;
@@ -46,14 +46,14 @@
 
                     const response = await $.ajax(settings);
 
-                    if (response.jumlah === 0) {
-                        keepRunning = false;
-                    } else {
+                    if (response.data.length > 0) {
                         if (configData.changeFormat) {
                             storeData(changeFormatData(response.data));
                         } else {
                             storeData(response.data);
                         }
+                    }else{
+                        keepRunning = false;
                     }
 
                     loop++;
@@ -98,7 +98,7 @@
     }
 
     function storeData(data, func) {
-        const chunks = chunkArray(data, 100)
+        const chunks = chunkArray(data, 50)
         let loop = 0;
 
         chunks.forEach((chunk, index) => {
@@ -107,15 +107,15 @@
                 type: 'POST',
                 data: {
                     tbl: configData.tbl,
-                    data
+                    data: chunk
                 },
                 dataType: 'json',
                 success: function(res) {
-                    if (typeof table !== "undefined") {
-                        table.ajax.reload();
-                    } else {
-                        fetchDataAndUpdateTable()
-                    }
+                    // if (typeof table !== "undefined") {
+                    //     table.ajax.reload();
+                    // } else {
+                    //     fetchDataAndUpdateTable()
+                    // }
 
                     if (func != undefined) {
                         func(response.data);

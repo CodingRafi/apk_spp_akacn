@@ -8,8 +8,7 @@
                     <h5 class="text-capitalize">Prodi</h5>
                     @can('add_prodi')
                         <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
-                            <button class="btn btn-primary"
-                                onclick="getData('{{ route('neo-feeder.get', ['type' => 'prodi']) }}')">Get Neo
+                            <button class="btn btn-primary" onclick="getData()">Get Neo
                                 Feeder</button>
                             <a href="{{ route('data-master.prodi.create') }}" class="btn btn-primary text-capitalize">Tambah
                                 Prodi</a>

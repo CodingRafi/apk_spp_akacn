@@ -214,6 +214,19 @@
             unique: [],
             format: {}
         },
+        kurikulum_matkul: {
+            raw: {
+                "act": "GetMatkulKurikulum",
+                "filter": "",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'kurikulum_matkul',
+            changeFormat: false,
+            unique: [],
+            format: {}
+        },
         dosen: {
             raw: {
                 "act": "DetailBiodataDosen",

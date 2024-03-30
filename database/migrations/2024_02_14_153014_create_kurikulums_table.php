@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('kurikulums', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('id_neo_feeder')->nullable();
             $table->string('nama');
             $table->integer('jml_sks_lulus');
             $table->integer('jml_sks_wajib');

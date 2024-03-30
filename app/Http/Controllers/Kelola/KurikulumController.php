@@ -228,11 +228,9 @@ class KurikulumController extends Controller
     public function storeNeoFeeder(Request $request)
     {
         foreach ($request->data as $data) {
-            $cek = DB::table('kurikulums')
-                ->where('id_neo_feeder', $data['id_kurikulum'])
-                ->exists();
-
-            $dataReq = [
+            DB::table('kurikulums')->updateOrInsert([
+                'id' => $data['id_kurikulum'],
+            ], [
                 'nama' => $data['nama_kurikulum'],
                 'prodi_id' => $data['id_prodi'],
                 'semester_id' => $data['id_semester'],
@@ -242,16 +240,23 @@ class KurikulumController extends Controller
                 'jml_sks_mata_kuliah_wajib' => $data['jumlah_sks_mata_kuliah_wajib'],
                 'jml_sks_mata_kuliah_pilihan' => $data['jumlah_sks_mata_kuliah_pilihan'],
                 'sync' => "1",
-            ];
+            ]);
+        }
 
-            if ($cek) {
-                $dataReq['updated_at'] = now();
-                Kurikulum::where('id_neo_feeder', $data['id_kurikulum'])->update($dataReq);
-            } else {
-                $dataReq['id'] = generateUuid();
-                $dataReq['id_neo_feeder'] = $data['id_kurikulum'];
-                Kurikulum::create($dataReq);
-            }
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
+    }
+
+    public function storeMatkulNeoFeeder(Request $request)
+    {
+        foreach ($request->data as $data) {
+            DB::table('kurikulum_matkul')->updateOrInsert([
+                'kurikulum_id' => $data['id_kurikulum'],
+                'matkul_id' => $data['id_matkul'],
+            ], [
+                'wajib' => $data['apakah_wajib']
+            ]);
         }
 
         return response()->json([

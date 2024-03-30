@@ -120,11 +120,9 @@ class MatkulController extends Controller
     public function storeNeoFeeder(Request $request)
     {
         foreach ($request->data as $data) {
-            $check = DB::table('matkuls')
-                ->where('id_neo_feeder', $data['id_matkul'])
-                ->exists();
-
-            $dataParse = [
+            DB::table('matkuls')->updateOrInsert([
+                'id' => $data['id_matkul'],
+            ], [
                 'prodi_id' => $data['id_prodi'],
                 'kode' => $data['kode_mata_kuliah'],
                 'nama' => $data['nama_mata_kuliah'],
@@ -143,17 +141,7 @@ class MatkulController extends Controller
                 'tgl_mulai_aktif' => Carbon::parse($data['tanggal_mulai_efektif'])->format('Y-m-d'),
                 'tgl_akhir_aktif' => Carbon::parse($data['tanggal_selesai_efektif'])->format('Y-m-d'),
                 'sync' => '1',
-            ];
-
-            if ($check) {
-                $dataParse['updated_at'] = Carbon::now();
-                Matkul::where('id_neo_feeder', $data['id_matkul'])
-                    ->update($dataParse);
-            } else {
-                $dataParse['id'] = generateUuid();
-                $dataParse['id_neo_feeder'] = $data['id_matkul'];
-                Matkul::create($dataParse);
-            }
+            ]);
         }
 
         return response()->json([

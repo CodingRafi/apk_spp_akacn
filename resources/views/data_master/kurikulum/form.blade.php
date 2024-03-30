@@ -85,10 +85,13 @@
                         <fieldset data-id="2">
                             <div class="d-flex justify-content-between mb-3">
                                 <h5>Mata Kuliah</h5>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="addForm('{{ route('data-master.kurikulum.storeMatkul') }}', 'Tambah Mata Kuliah', '#matkul', getMatkul)">
-                                    Tambah
-                                </button>
+                                <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
+                                    <button type="button" class="btn btn-primary" onclick="getNeoFeeder()">Get Neo Feeder</button>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="addForm('{{ route('data-master.kurikulum.storeMatkul') }}', 'Tambah Mata Kuliah', '#matkul', getMatkul)">
+                                        Tambah
+                                    </button>
+                                </div>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-matkul">
@@ -130,7 +133,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this, () => {tableMatkul.ajax.reload()})">Tambah</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => {tableMatkul.ajax.reload()})">Tambah</button>
                     </div>
                 </div>
             </form>
@@ -143,17 +147,20 @@
         let kurikulum;
         let tableMatkul;
         let url_update = '{{ route('data-master.kurikulum.update', [':id']) }}';
-        let url_get_matkul = '{{ isset($data) ? route('data-master.kurikulum.getMatkul', $data->id) : route('data-master.kurikulum.getMatkul', [':id']) }}';
-        let url_data_matkul = '{{ isset($data) ? route('data-master.kurikulum.dataMatkul', $data->id) : route('data-master.kurikulum.dataMatkul', [':id']) }}';
+        let url_get_matkul =
+            '{{ isset($data) ? route('data-master.kurikulum.getMatkul', $data->id) : route('data-master.kurikulum.getMatkul', [':id']) }}';
+        let url_data_matkul =
+            '{{ isset($data) ? route('data-master.kurikulum.dataMatkul', $data->id) : route('data-master.kurikulum.dataMatkul', [':id']) }}';
 
-        function getMatkul(){
+        function getMatkul() {
             $('#matkul_id').empty();
             $.ajax({
                 url: url_get_matkul,
                 method: 'GET',
                 success: function(res) {
                     $.each(res.data, function(key, value) {
-                        $('#matkul_id').append(`<option value="${value.id}">${value.kode} - ${value.nama}</option>`);
+                        $('#matkul_id').append(
+                            `<option value="${value.id}">${value.kode} - ${value.nama}</option>`);
                     })
                 },
                 error: function(err) {
@@ -168,8 +175,7 @@
             ajax: {
                 url: url_data_matkul,
             },
-            columns: [
-                {
+            columns: [{
                     data: 'kode'
                 },
                 {
@@ -217,4 +223,19 @@
         })
     </script>
     @include('mypartials.tab', ['form' => '.form-kurikulum'])
+    @if (Auth::user()->hasRole('admin'))
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => 'kurikulum_matkul',
+            'urlStoreData' => route('data-master.kurikulum.storeMatkulNeoFeeder'),
+        ])
+    @endif
+    <script>
+        const rawKurikulumMatkul = configNeoFeeder.kurikulum_matkul.raw;
+
+        function getNeoFeeder(){
+            rawKurikulumMatkul.filter = `id_kurikulum='${kurikulum.id}'`;
+            getData(rawKurikulumMatkul);
+        }
+    </script>
 @endpush
