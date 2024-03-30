@@ -4,10 +4,10 @@
 @endphp
 <script>
     const configData = configNeoFeeder.{{ $type }};
-    
 
     async function getData() {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
+            $.LoadingOverlay("show");
             if (!url) {
                 showAlert('Url tidak ditemukan', 'error');
             }
@@ -16,39 +16,58 @@
 
             if (token === null) {
                 showAlert('GAGAL GET TOKEN', 'error');
+                $.LoadingOverlay("hide");
                 return false;
             }
 
-            $.LoadingOverlay("show");
-            let raw = configData.raw;
-            raw.token = token.data.token;
+            try {
+                let raw = configData.raw;
+                raw.token = token.data.token;
 
-            var settings = {
-                "url": url,
-                "method": "POST",
-                "timeout": 0,
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "data": JSON.stringify(raw),
-            };
+                const limit = 500;
+                let loop = 0;
+                let keepRunning = true;
 
-            $.ajax(settings).done(function(response) {
-                $.LoadingOverlay("hide");
-                if (configData.changeFormat) {
-                    storeData(changeFormatData(response.data))
-                } else {
-                    storeData(response.data)
+                while (keepRunning) {
+                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+
+                    raw.limit = limit;
+                    raw.offset = loop * limit;
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const response = await $.ajax(settings);
+
+                    if (response.jumlah === 0) {
+                        keepRunning = false;
+                    } else {
+                        if (configData.changeFormat) {
+                            storeData(changeFormatData(response.data));
+                        } else {
+                            storeData(response.data);
+                        }
+                    }
+
+                    loop++;
                 }
-            }).fail(function(jqXHR, textStatus, errorThrown) {
                 $.LoadingOverlay("hide");
-                console.error("AJAX Error:", textStatus, errorThrown);
-            });
+            } catch (error) {
+                $.LoadingOverlay("hide");
+                console.error("AJAX Error:", error);
+                showAlert('Terjadi kesalahan saat mengambil data', 'error');
+            }
         }
     }
 
     function changeFormatData(data) {
-        $.LoadingOverlay("show");
         const format = configData.format;
         const newData = data.map(value => {
             const parseUniq = {};
@@ -67,7 +86,6 @@
             return [parseUniq, parseValue];
         });
 
-        $.LoadingOverlay("hide");
         return newData;
     }
 
@@ -80,11 +98,10 @@
     }
 
     function storeData(data, func) {
-        const chunks = chunkArray(data, 30)
+        const chunks = chunkArray(data, 100)
         let loop = 0;
 
         chunks.forEach((chunk, index) => {
-            $.LoadingOverlay("show");
             $.ajax({
                 url: '{{ $urlStoreData }}',
                 type: 'POST',
@@ -94,8 +111,6 @@
                 },
                 dataType: 'json',
                 success: function(res) {
-                    showAlert(`Batch ${index+1} Berhasil disimpan`, 'success')
-
                     if (typeof table !== "undefined") {
                         table.ajax.reload();
                     } else {
@@ -104,11 +119,6 @@
 
                     if (func != undefined) {
                         func(response.data);
-                    }
-                    
-                    loop += 1;
-                    if (loop == chunks.length) {
-                        $.LoadingOverlay("hide");
                     }
                 },
                 error: function(err) {

@@ -150,8 +150,6 @@
                 "act": "GetWilayah",
                 "filter": "",
                 "order": "",
-                "limit": "5000",
-                "offset": "0"
             },
             tbl: 'wilayahs',
             changeFormat: true,

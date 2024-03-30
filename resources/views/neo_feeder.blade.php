@@ -26,14 +26,11 @@
                 "password": password
             }),
         };
-        $.LoadingOverlay("show");
         try {
             let response = await $.ajax(settings);
-            $.LoadingOverlay("hide");
             return response;
         } catch (error) {
             console.error('Error:', error);
-            $.LoadingOverlay("hide");
             return null;
         }
     }
