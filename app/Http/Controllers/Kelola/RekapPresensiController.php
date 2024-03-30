@@ -12,24 +12,8 @@ class RekapPresensiController extends Controller
 {
     public function index($tahun_ajaran_id)
     {
-        $roleUser = getRole();
-
-        $tahun_semester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('semesters', 'semesters.id', '=', 'tahun_semester.semester_id')
-            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-            ->get();
-
-        $tahun_matkul = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
-            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
-            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->when($roleUser->name == 'dosen', function($q){
-                $q->where('tahun_matkul.dosen_id', auth()->user()->id);
-            })
-            ->get();
-
-        return view('kelola.rekap_presensi.index', compact('tahun_semester', 'tahun_matkul'));
+        $prodis = DB::table('prodi')->get();
+        return view('kelola.rekap_presensi.index', compact('prodis'));
     }
 
     public function getRombel(){

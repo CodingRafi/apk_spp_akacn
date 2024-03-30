@@ -15,26 +15,25 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-4">
-                            <select id="tahun_matkul_id" class="form-control mb-3" onchange="get_rombel()">
-                                <option value="">Pilih Mata Kuliah</option>
-                                @foreach ($tahun_matkul as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }} ({{ $item->kode }})</option>
-                                @endforeach
+                        <div class="col-md-3">
+                            <select id="prodi_id" class="form-control mb-3" onchange="get_rombel()">
+                                <option value="">Pilih Prodi</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <select id="tahun_matkul_id" class="form-control mb-3" onchange="get_rombel()">
+                                <option value="">Pilih Mata Kuliah</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <select id="rombel_id" class="form-control mb-3" onchange="get_presensi()">
                                 <option value="">Pilih Rombel</option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <select name="tahun_semester_id" id="tahun_semester_id" class="form-control mb-3"
                                 onchange="get_presensi()">
                                 <option value="">Pilih Semester</option>
-                                @foreach ($tahun_semester as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
