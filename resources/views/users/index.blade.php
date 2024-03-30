@@ -95,6 +95,7 @@
                 'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
             ])
         @else
+            @include('users.mahasiswa.neo_feeder')
         @endif
     @endif
     <script>

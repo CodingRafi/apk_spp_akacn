@@ -34,4 +34,12 @@
             return null;
         }
     }
+
+    function chunkArray(arr, chunkSize) {
+        if (arr.length <= chunkSize) {
+            return [arr];
+        } else {
+            return [arr.slice(0, chunkSize), ...chunkArray(arr.slice(chunkSize), chunkSize)];
+        }
+    }
 </script>

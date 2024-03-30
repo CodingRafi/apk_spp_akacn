@@ -89,14 +89,6 @@
         return newData;
     }
 
-    function chunkArray(arr, chunkSize) {
-        if (arr.length <= chunkSize) {
-            return [arr];
-        } else {
-            return [arr.slice(0, chunkSize), ...chunkArray(arr.slice(chunkSize), chunkSize)];
-        }
-    }
-
     function storeData(data, func) {
         const chunks = chunkArray(data, 50)
         let loop = 0;

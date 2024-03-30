@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('neo_feeder_id_mahasiswa')->nullable();
             $table->string('neo_feeder_id_registrasi_mahasiswa')->nullable();
             $table->enum('sync_neo_feeder', [0,1])->default(0);
-            $table->string('nisn');
-            $table->string('nik');
+            $table->string('nisn')->nullable();
+            $table->string('nik')->nullable();
             $table->string('tempat_lahir');
             $table->date('tgl_lahir');
             $table->enum('jk', ['l', 'p']);
@@ -28,12 +28,12 @@ return new class extends Migration
             $table->foreign('kewarganegaraan_id')->references('id')->on('kewarganegaraans');
             $table->string('wilayah_id');
             $table->foreign('wilayah_id')->references('id')->on('wilayahs');
-            $table->string('jalan');
-            $table->string('rt');
-            $table->string('rw');
-            $table->string('dusun');
-            $table->string('kelurahan');
-            $table->string('kode_pos');
+            $table->string('jalan')->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
+            $table->string('dusun')->nullable();
+            $table->string('kelurahan')->nullable();
+            $table->string('kode_pos')->nullable();
 
             $table->string('nama_ayah')->nullable();
             $table->string('tgl_lahir_ayah')->nullable();
@@ -72,7 +72,7 @@ return new class extends Migration
             $table->string('npwp')->nullable();
             $table->uuid('agama_id');
             $table->foreign('agama_id')->references('id')->on('agamas');
-            $table->foreignId('rombel_id')->constrained('rombels');
+            $table->foreignId('rombel_id')->nullable()->constrained('rombels');
             $table->uuid('prodi_id');
             $table->foreign('prodi_id')->references('id')->on('prodi');
             $table->string('jenis_tinggal_id')->nullable();
@@ -85,6 +85,8 @@ return new class extends Migration
             $table->enum('ibu_kebutuhan_khusus', [0,1])->default(0);
             $table->uuid('tahun_masuk_id');
             $table->foreign('tahun_masuk_id')->references('id')->on('tahun_ajarans');
+            $table->string('semester_id');
+            $table->foreign('semester_id')->references('id')->on('semesters');
             $table->uuid('jenis_pembiayaan_id')->nullable();
             $table->foreign('jenis_pembiayaan_id')->references('id')->on('jenis_pembiayaans');
             $table->uuid('jenis_daftar_id')->nullable();
@@ -93,7 +95,7 @@ return new class extends Migration
             $table->foreign('jalur_masuk_id')->references('id')->on('jalur_masuks');
             $table->uuid('jenis_keluar_id')->nullable();
             $table->foreign('jenis_keluar_id')->references('id')->on('jenis_keluars');
-            $table->foreignId('jenis_kelas_id')->constrained('jenis_kelas');
+            $table->foreignId('jenis_kelas_id')->nullable()->constrained('jenis_kelas');
             $table->enum('source', ['neo_feeder', 'app', 'pmb'])->default('app');
             $table->timestamps();
         });

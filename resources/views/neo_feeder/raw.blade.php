@@ -239,6 +239,18 @@
             changeFormat: false,
             format: {}
         },
+        mahasiswa: {
+            raw: {
+                "act": "GetDataLengkapMahasiswaProdi",
+                "filter": "",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'mahasiswas',
+            changeFormat: false,
+            format: {}
+        },
         jenis_pembiayaan: {
             raw: {
                 "act": "GetPembiayaan",
