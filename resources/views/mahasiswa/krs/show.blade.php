@@ -11,22 +11,24 @@
                 $dataEmpty = false;
                 if ($krs->status == 'pending') {
                     $validation =
-                        $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
-                        $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
+                        (Auth::user()->hasRole('admin')
+                            ? true
+                            : $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                                $tahun_semester->tgl_akhir_krs >= date('Y-m-d')) &&
                         $tahun_semester->status &&
-                        $lock;
+                        ($lock == '1' ? true : $validationPembayaran['status']);
                 } elseif ($krs->status == 'ditolak') {
                     $validation =
-                        $krs->tgl_mulai_revisi <= date('Y-m-d') &&
-                        $krs->tgl_akhir_revisi >= date('Y-m-d') &&
-                        $tahun_semester->status;
+                        (Auth::user()->hasRole('admin')
+                            ? true
+                            : $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                                $tahun_semester->tgl_akhir_krs >= date('Y-m-d')) && $tahun_semester->status;
                 } else {
                     $validation = false;
                 }
             } else {
                 $validation = $tahun_semester->status && $validationPembayaran['status'];
             }
-
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -85,7 +87,7 @@
                                 </div>
                             @endif
                         @else
-                            @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1') || !$lock))
+                            @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1') || $lock))
                                 <form
                                     action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                     method="post">
@@ -98,16 +100,23 @@
                         @endif
 
                         @if (Auth::user()->hasRole('mahasiswa') && $krs && $krs->status == 'diterima')
-                            <a href="{{ route('krs.print', request('tahun_semester_id')) }}" class="btn btn-primary">Download KRS</a>
+                            <a href="{{ route('krs.print', request('tahun_semester_id')) }}"
+                                class="btn btn-primary">Download KRS</a>
                         @endif
                     </div>
                     <div class="card-body">
                         @if ($dataEmpty || $krs->status == 'pending')
                             @if (!$validation)
                                 @if (!$validationPembayaran['status'])
-                                    <div class="alert alert-danger">
-                                        {{ $validationPembayaran['message'] }}
-                                    </div>
+                                    @if ($lock)
+                                        <div class="alert alert-danger">
+                                            Bukan tanggal pengisian KRS, pengisian {{ parseDate($tahun_semester->tgl_mulai_krs) }} - {{ parseDate($tahun_semester->tgl_akhir_krs) }}
+                                        </div>
+                                    @else
+                                        <div class="alert alert-danger">
+                                            {{ $validationPembayaran['message'] }}
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="alert alert-danger">
                                         Bukan waktu pengisian KRS
