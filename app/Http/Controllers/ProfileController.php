@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agama;
 use App\Models\AlatTransportasi;
+use App\Models\JenisKelas;
 use App\Models\JenisTinggal;
 use App\Models\Jenjang;
 use App\Models\Kewarganegaraan;
@@ -15,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Wilayah;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
@@ -24,22 +26,21 @@ class ProfileController extends Controller
         $role = getRole()->name;
         $data = Auth::user();
         $agamas = Agama::all();
-        $wilayah = Wilayah::all();
+        $kewarganegaraan = Kewarganegaraan::all();
         $return = [
             'agamas' => $agamas,
-            'wilayah' => $wilayah,
-            'data' => $data
+            'kewarganegaraan' => $kewarganegaraan
         ];
 
         if ($role == 'mahasiswa') {
             $tahun_ajarans = TahunAjaran::all();
             $prodis = Prodi::where('status', '1')->get();
-            $kewarganegaraan = Kewarganegaraan::all();
             $jenis_tinggal = JenisTinggal::all();
             $alat_transportasi = AlatTransportasi::all();
             $pekerjaans = Pekerjaan::all();
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
+            $jenisKelas = JenisKelas::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -48,7 +49,8 @@ class ProfileController extends Controller
                 'alat_transportasi' => $alat_transportasi,
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
-                'penghasilans' => $penghasilans
+                'penghasilans' => $penghasilans,
+                'jenisKelas' => $jenisKelas
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -58,6 +60,15 @@ class ProfileController extends Controller
                 ->get();
             $return += [
                 'dosen' => $dosen
+            ];
+        } elseif ($role == 'dosen') {
+            $lembagaPengangkat = DB::table('lembaga_pengangkats')
+                ->get();
+            $pangkatGolongan = DB::table('pangkat_golongans')
+                ->get();
+            $return += [
+                'lembagaPengangkat' => $lembagaPengangkat,
+                'pangkatGolongan' => $pangkatGolongan,
             ];
         }
 
