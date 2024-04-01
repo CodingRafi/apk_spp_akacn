@@ -140,9 +140,15 @@
                         <td>{{ $item->kode_mk }}</td>
                         <td>{{ $item->matkul }}</td>
                         <td>{{ $item->jml_sks }}</td>
+                        @if ($item->kuesioner != null)
                         <td>{{ $item->mutu }}</td>
                         <td>{{ $item->nilai_mutu }}</td>
                         <td>{{ $item->bobot_x_sks }}</td>
+                        @else
+                            <td colspan="3">
+                                BELUM ISI KUESIONER
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             </tbody>

@@ -128,8 +128,10 @@
                             </tr>`;
                     }
 
-                    total_sks += parseInt(e.jml_sks) ?? 0;
-                    bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
+                    if (e.kuesioner != null) {
+                        total_sks += parseInt(e.jml_sks) ?? 0;
+                        bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
+                    }
                 })
 
                 table += `
