@@ -117,14 +117,14 @@
                                 <div class="mb-3">
                                     <label for="jam_mulai" class="form-label">Jam Mulai</label>
                                     <input class="form-control" type="time" id="jam_mulai" placeholder="Jam Mulai"
-                                        name="jam_mulai" />
+                                        name="jam_mulai" min="00:00" max="24:00" />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="jam_akhir" class="form-label">Jam Akhir</label>
                                     <input class="form-control" type="time" id="jam_akhir" placeholder="Jam akhir"
-                                        name="jam_akhir" />
+                                        name="jam_akhir" min="00:00" max="24:00" />
                                 </div>
                             </div>
                         </div>
