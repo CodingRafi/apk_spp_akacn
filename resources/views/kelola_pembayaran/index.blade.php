@@ -33,12 +33,12 @@
                             </select>
                         </div>
                         <div class="col-md-1 mb-3">
-                            {{-- <form action="{{ route('kelola.pembayaran.export') }}" method="get" class="form-export">
+                            <form action="{{ route('kelola-pembayaran.pembayaran.export') }}" method="get" class="form-export">
                                 <input type="hidden" name="status">
                                 <input type="hidden" name="prodi">
                                 <input type="hidden" name="tahun_ajaran">
                                 <button type="button" class="btn btn-primary">Export</button>
-                            </form> --}}
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -112,10 +112,14 @@
             });
 
             $('.form-export button').on('click', function() {
-                $('.form-export input[name="status"]').val($('#filter-status').val());
-                $('.form-export input[name="prodi"]').val($('#filter-prodi').val());
-                $('.form-export input[name="tahun-ajaran"]').val($('#filter-tahun_ajaran').val());
-                $('.form-export').submit();
+                if ($('#filter-status').val() && $('#filter-prodi').val() && $('#filter-tahun-ajaran').val()) {
+                    $('.form-export input[name="status"]').val($('#filter-status').val());
+                    $('.form-export input[name="prodi"]').val($('#filter-prodi').val());
+                    $('.form-export input[name="tahun-ajaran"]').val($('#filter-tahun-ajaran').val());
+                    $('.form-export').submit();
+                } else {
+                    showAlert('Harap pilih semua filter', 'danger')
+                }
             })
         });
     </script>

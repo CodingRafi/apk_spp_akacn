@@ -5,7 +5,7 @@
             <th>NIM</th>
             <th>Nama Mahasiswa</th>
             <th>Prodi</th>
-            <th>Semester</th>
+            <th>Untuk</th>
             <th>Tahun Ajaran</th>
             <th>Tanggal Bayar</th>
             <th>Nominal</th>
@@ -23,7 +23,7 @@
             <td>{{ $data->nim }}</td>
             <td>{{ $data->nama_mhs }}</td>
             <td>{{ $data->prodi }}</td>
-            <td>{{ $data->semester }}</td>
+            <td>{{ $data->tahun_pembayaran_id ? $data->semester : $data->lainnya }}</td>
             <td>{{ $data->tahun_ajaran }}</td>
             <td>{{ date("d F Y", strtotime($data->tgl_bayar)) }}</td>
             <td>{{ formatRupiah($data->nominal) }}</td>
