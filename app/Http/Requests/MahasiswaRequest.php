@@ -40,11 +40,17 @@ class MahasiswaRequest extends FormRequest
         ];
 
         if ($role->name == 'admin') {
-            $validate += [
-                'tahun_masuk_id' => 'required',
-                'prodi_id' => 'required',
-                'rombel_id' => 'required',
-            ];
+            $isPostMethod = $this->method() == 'POST';
+            $countPembayaran = DB::table('pembayarans')->where('mhs_id', $this->mahasiswa)->count();
+            $countKrs = DB::table('krs')->where('mhs_id', $this->mahasiswa)->count();
+        
+            if ($isPostMethod || ($countPembayaran == 0 && $countKrs == 0)) {
+                $validate += [
+                    'tahun_masuk_id' => 'required',
+                    'prodi_id' => 'required',
+                    'rombel_id' => 'required',
+                ];
+            }
         }
 
         if ($this->method() == 'POST') {
@@ -55,6 +61,7 @@ class MahasiswaRequest extends FormRequest
             ];
         } else {
             $mhs = DB::table('profile_mahasiswas')->where('user_id', $this->mahasiswa)->first();
+
             $validate += [
                 'nisn' => 'required|unique:profile_mahasiswas,nisn,' . $mhs->id,
                 'nik' => 'required|unique:profile_mahasiswas,nik,' . $mhs->id,
