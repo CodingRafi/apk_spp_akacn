@@ -435,6 +435,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::prefix('transkip')->name('transkip.')->group(function () {
         Route::get('/', [TranskipController::class, 'index'])->name('index');
         Route::get('/data', [TranskipController::class, 'data'])->name('data');
+        Route::get('/print', [TranskipController::class, 'print'])->name('print');
     });
 
     Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');

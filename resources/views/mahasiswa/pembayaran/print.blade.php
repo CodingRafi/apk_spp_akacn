@@ -157,7 +157,7 @@
                         <tr>
                             <td style="padding-right: 2rem;">NIM</td>
                             <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->mahasiswa->email }}</strong></td>
+                            <td><strong>{{ $data->mahasiswa->login_key }}</strong></td>
                         </tr>
                         <tr>
                             <td style="padding-right: 2rem;">Prodi</td>

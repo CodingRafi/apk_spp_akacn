@@ -6,6 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize">Transkip Nilai</h5>
+                    <a href="{{ route('transkip.print') }}" class="btn btn-primary">Download Transkip</a>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -69,8 +70,8 @@
                             `<tr>
                                 <td>${e.kode_mk}</td>
                                 <td>${e.matkul}</td>
-                                <td>${e.sks ?? ''}</td>
-                                <td>${e.nilai ?? ''}</td>
+                                <td>${e.jml_sks ?? ''}</td>
+                                <td>${e.mutu ?? ''}</td>
                             </tr>`;
                     }
                     total_sks += parseInt(e.jml_sks) ?? 0;

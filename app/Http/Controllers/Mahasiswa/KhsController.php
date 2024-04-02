@@ -66,8 +66,11 @@ class KhsController extends Controller
             ->toArray();
 
         $ipk = DB::table('rekap_krs_matkul')
-            ->select(DB::raw('SUM("bobot_x_sks") as bobot_x_sks'), DB::raw('SUM("jml_sks") as jml_sks'))
+            ->select(DB::raw('SUM(bobot_x_sks) as bobot_x_sks'), DB::raw('SUM(jml_sks) as jml_sks'))
             ->whereIn('tahun_semester_id', $tahunSemester)
+            ->where('mhs_id', $user->id)
+            ->whereNotNull('kuesioner')
+            ->where('status', '1')
             ->first();
 
         $khs = DB::table('rekap_krs_matkul as a')
@@ -113,11 +116,28 @@ class KhsController extends Controller
             ->where('tahun_semester.id', $tahun_semester_id)
             ->first();
 
+        $tahunSemesterIpk = DB::table('tahun_semester')
+            ->select('id')
+            ->where('id', '<=', $tahun_semester_id)
+            ->where('prodi_id', Auth::user()->mahasiswa->prodi_id)
+            ->where('tahun_ajaran_id', Auth::user()->mahasiswa->tahun_masuk_id)
+            ->get()
+            ->pluck('id')
+            ->toArray();
+
+        $ipk = DB::table('rekap_krs_matkul')
+            ->select(DB::raw('SUM(bobot_x_sks) as bobot_x_sks'), DB::raw('SUM(jml_sks) as jml_sks'))
+            ->whereIn('tahun_semester_id', $tahunSemesterIpk)
+            ->where('mhs_id', Auth::user()->id)
+            ->whereNotNull('kuesioner')
+            ->where('status', '1')
+            ->first();
+
         $admin = DB::table('users')
             ->where('id', '1')
             ->first();
 
-        return Pdf::loadView('mahasiswa.khs.print', compact('data', 'khs', 'tahunSemester', 'admin'))
+        return Pdf::loadView('mahasiswa.khs.print', compact('data', 'khs', 'tahunSemester', 'admin', 'ipk'))
             ->stream('khs.pdf');
     }
 }

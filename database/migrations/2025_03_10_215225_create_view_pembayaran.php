@@ -117,7 +117,7 @@ return new class extends Migration
             COALESCE(mn.nilai_mutu, 0) as nilai_mutu,
             CASE
                 WHEN COALESCE(mn.jml_sks, 0) = 0 THEN 0
-                ELSE COALESCE(mn.nilai_mutu, 0) * COALESCE(mn.jml_sks, 0) / NULLIF(mn.jml_sks, 0)
+                ELSE COALESCE(mn.nilai_mutu, 0) * COALESCE(mn.jml_sks, 0)
             END AS bobot_x_sks,
             tk.id as kuesioner,
             mn.publish as status

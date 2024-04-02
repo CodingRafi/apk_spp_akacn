@@ -1,11 +1,12 @@
 <html>
 
 <head>
-    <title>KWITANSI</title>
+    <title>Transkip</title>
     <style>
         * {
             margin: 0;
             padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         body {
@@ -14,58 +15,6 @@
             margin-right: 13mm;
             margin-bottom: 11mm;
             font-size: 9pt;
-        }
-
-        .pt-o4 {
-            padding-top: .4rem;
-        }
-
-        .mt-05 {
-            margin-top: .9rem;
-        }
-
-        .mt-1 {
-            margin-top: 1rem;
-        }
-
-        .mt-2 {
-            margin-top: 2rem;
-        }
-
-        .mt-3 {
-            margin-top: 3rem;
-        }
-
-        .mt-4 {
-            margin-top: 4rem;
-        }
-
-        .mt-5 {
-            margin-top: 5rem;
-        }
-
-        .d-block {
-            display: block;
-        }
-
-        .text-left {
-            text-align: left !important;
-        }
-
-        .text-center {
-            text-align: center !important;
-        }
-
-        .text-right {
-            text-align: right !important;
-        }
-
-        .text-justify {
-            text-align: justify !important;
-        }
-
-        .page-break {
-            page-break-after: always;
         }
 
         .content tr>td:first-child {
@@ -99,7 +48,7 @@
 
         table.bordered th,
         table.bordered td {
-            border: 1px solid #000;
+            border: 1px solid #a09e9e;
             margin: 0;
             padding: .25rem;
         }
@@ -111,98 +60,122 @@
         table.no-padding td {
             padding: 0px;
         }
-
-        [type="radio"] {
-            margin-left: -3px;
-        }
-
-        .va-top {
-            vertical-align: top;
-        }
-
-        .page-break {
-            page-break-after: always;
-        }
     </style>
 </head>
 
 <body>
-    <table style="width: 100%">
+    <table style="width: 100%" aria-hidden="true">
         <tbody>
             <tr>
                 <td style="width: fit-content;" style="width: 5%">
                     <img src="{{ public_path() . '/image/logo.png' }}" width="100">
                 </td>
                 <td style="text-align: center;">
-                    <h1 style="font-size: 2rem;font-weight:bold;">BUKTI PEMBAYARAN BIAYA KULIAH</h1>
-					<small style="font-size: 1.4rem;font-weight: 200;color:#363636">Akademi kimia analis caraka nusantara</small>
+                    <h1 style="font-size: 1.4rem;font-weight: 600;text-transform: uppercase;">Akademi kimia analis caraka
+                        nusantara</h1>
                 </td>
             </tr>
         </tbody>
     </table>
 
-    <hr class="mt-05" style="border: 1px solid #b7b7b7;">
+    <hr style="border: 1px solid #b7b7b7;margin-top: 10px;">
 
-    <div class="mt-05">
-        <table>
+    <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">REKAPITULASI NILAI AKADEMIK</h2>
+
+    <div style="margin-top: 2rem;">
+        <table aria-hidden="true">
             <tr>
-                <td style="width: 29.5rem">
-                    <table class="table table-bordered" style="font-size: 1.2rem">
+                <td style="width: 7rem">NIM</td>
+                <td>:</td>
+                <td style="font-weight: bold">{{ $data->nim }}</td>
+            </tr>
+            <tr>
+                <td style="width: 7rem">Nama Mahasiswa</td>
+                <td>:</td>
+                <td style="font-weight: bold">{{ $data->name }}</td>
+            </tr>
+            <tr>
+                <td style="width: 7rem">Angkatan</td>
+                <td>:</td>
+                <td style="font-weight: bold">{{ $data->angkatan }}</td>
+            </tr>
+            <tr>
+                <td style="width: 7rem">Dosen PA</td>
+                <td>:</td>
+                <td style="font-weight: bold">{{ $data->dosenPa }}</td>
+            </tr>
+            <tr>
+                <td style="width: 7rem">Prodi</td>
+                <td>:</td>
+                <td style="font-weight: bold">{{ $data->prodi }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="clear: both;"></div>
+
+    <div style="margin-top: 2rem;">
+        <table aria-label="table-matkul" class="bordered" style="width: 100%;text-align:center">
+            <thead>
+                <tr>
+                    <th style="padding: 8px;">#</th>
+                    <th style="padding: 8px;">Kode</th>
+                    <th style="padding: 8px;">Mata Kuliah</th>
+                    <th style="padding: 8px;">SKS</th>
+                    <th style="padding: 8px;">Nilai</th>
+                </tr>
+            </thead>
+            <tbody>
+                @php
+                    $jml_sks = 0;
+                    $bobot_x_sks = 0;
+                @endphp
+                @foreach ($rekap as $semester => $row)
+                    <tr>
+                        <td colspan="5" style="text-align: left;">{{ $semester }}</td>
+                    </tr>
+                    @foreach ($row as $item)
                         <tr>
-                            <td style="padding-right: 2rem;">Nama</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->mahasiswa->name }}</strong></td>
+                            <td style="padding: 5px;">{{ $loop->parent->iteration }}</td>
+                            <td style="padding: 5px;">{{ $item->kode_mk }}</td>
+                            <td style="padding: 5px;">{{ $item->matkul }}</td>
+                            @if ($item->kuesioner != null)
+                                @php
+                                    $jml_sks += $item->jml_sks;
+                                    $bobot_x_sks += $item->bobot_x_sks;
+                                @endphp
+                                <td style="padding: 5px;">{{ $item->jml_sks }}</td>
+                                <td style="padding: 5px;">{{ $item->mutu }}</td>
+                            @else
+                                <td colspan="2" style="padding: 5px;">BELUM ISI KUESIONER</td>
+                            @endif
                         </tr>
-                        <tr>
-                            <td style="padding-right: 2rem;">NIM</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->mahasiswa->email }}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="padding-right: 2rem;">Prodi</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->mahasiswa->mahasiswa->prodi->nama }}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="padding-right: 2rem;">Semester</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ $data->semester->nama }}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="padding-right: 2rem;">Nominal</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ formatRupiah($data->nominal) }}</strong></td>
-                        </tr>
-                        <tr>
-                            <td style="padding-right: 2rem;">Tgl. Bayar</td>
-                            <td style="padding-right: .5rem">:</td>
-                            <td><strong>{{ date("d F Y", strtotime($data->tgl_bayar)) }}</strong></td>
-                        </tr>
-                    </table>
+                    @endforeach
+                @endforeach
+            </tbody>
+        </table>
+
+        <table aria-hidden="true" style="margin-top: 1rem;">
+            <tr>
+                <th style="text-align: left;">Total SKS Lulus</th>
+                <td>:</td>
+                <td>{{ $jml_sks }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">Total Mutu</th>
+                <td>:</td>
+                <td>{{ $bobot_x_sks }}</td>
+            </tr>
+            <tr>
+                <th style="text-align: left;">IPK</th>
+                <td>:</td>
+                <td>{{ ($bobot_x_sks > 0 || $jml_sks > 0) ? number_format($bobot_x_sks / $jml_sks, 2) : 0 }}
                 </td>
             </tr>
         </table>
     </div>
 
-    <hr class="mt-05" style="border: 1px solid #b7b7b7;">
-
-    <div class="mt-05">
-        <p style="font-size: 1.2rem;">Berkas cetak ini merupakan bukti resmi status pembayaran biaya kuliah mahasiswa.</p>
-    </div>
-
-    <div class="mt-05">
-        <table>
-            <tr>
-                <td style="width: 30rem"></td>
-                <td>
-                    <img src="{{ public_path() . '/storage/' . $data->verify->petugas->ttd }}" alt="" style="width: 10rem">
-                    <br>
-                    <p style="font-size: 1rem;text-align: center;">{{ $data->verify->name }}</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <br>
+    </table>
 
 </body>
 

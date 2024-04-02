@@ -120,9 +120,9 @@
                             `<tr>
                             <td>${e.kode_mk}</td>
                             <td>${e.matkul}</td>
-                            <td>${e.sks ?? ''}</td>
-                            <td>${e.nilai ?? ''}</td>
-                            <td>${e.bobot ?? ''}</td>
+                            <td>${e.jml_sks ?? ''}</td>
+                            <td>${e.mutu ?? ''}</td>
+                            <td>${e.nilai_mutu ?? ''}</td>
                             <td>${e.bobot_x_sks}</td>
                             <td><div class="badge bg-success text-white">SUDAH DIISI</div></td>
                             </tr>`;
@@ -134,6 +134,8 @@
                     }
                 })
 
+                let ipk_bobot_x_sks = Number(ipk.bobot_x_sks);
+                let ipk_total_sks = Number(ipk.jml_sks);
                 table += `
                 <tr class="py-4">
                     <td colspan="2" style="text-align: right;font-weight: bold;border-bottom:0;">Total</td>
@@ -149,7 +151,7 @@
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
                     <td colspan="3" class="fw-bold">Index Prestasi Kumulatif</td>
-                    <td colspan="2">${(ipk.bobot_x_sks > 0 || ipk.total_sks > 0 ? (ipk.bobot_x_sks / ipk.total_sks).toFixed(2) : 0)}</td>
+                    <td colspan="2">${(ipk_bobot_x_sks > 0 || ipk_total_sks > 0 ? (ipk_bobot_x_sks / ipk_total_sks).toFixed(2) : 0)}</td>
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
@@ -173,6 +175,7 @@
                     url: "{{ route('khs.data', ['tahun_semester_id' => $tahun_semester->id]) }}",
                     dataType: "json",
                     success: function(res) {
+                        console.log(res)
                         let table = generate_table(res.data, res.ipk)
                         $('.table-matkul tbody').empty().append(table);
                     },

@@ -29,7 +29,8 @@ class ProfileController extends Controller
         $kewarganegaraan = Kewarganegaraan::all();
         $return = [
             'agamas' => $agamas,
-            'kewarganegaraan' => $kewarganegaraan
+            'kewarganegaraan' => $kewarganegaraan,
+            'data' => $data
         ];
 
         if ($role == 'mahasiswa') {
