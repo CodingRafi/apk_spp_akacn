@@ -32,18 +32,33 @@ class UpdateWilyahCommand extends Command
 
         foreach ($getWilayah->where('id_level_wilayah', '0') as $row) {
             $cek = $getWilayah
-                ->where('id_induk_wilayah', $row->id)
+                ->where('negara_id', $row->negara_id)
                 ->pluck('id_level_wilayah')
                 ->unique();
-
-            dd($cek);
             
             if (count($cek) > 1) {
                 $data = $getWilayah->where('id_level_wilayah', $cek->last());
-                dd($data);
-                foreach ($data as $key => $row) {
-                    $parent = $getWilayah->where('id', $row->id_induk_wilayah)->first();
-                    $data[$key]->nama = $parent->nama . ' - ' . $row->nama;
+                
+                foreach ($data as $row) {
+                    $nama = $row->nama;
+                    $id_induk_wilayah = null;
+
+                    while (true) {
+                        try {
+                            $parent = $getWilayah->where('id', ($id_induk_wilayah ?? $row->id_induk_wilayah))->first();
+                            $id_induk_wilayah = $parent->id_induk_wilayah;
+                            $nama = $parent->nama . ' - ' . $nama;
+                        } catch (\Throwable $th) {
+                            dd($parent);
+                        }
+
+                        if ($id_induk_wilayah == null) {
+                            break;
+                        }
+                    }
+
+                    $row->fullNama = $nama;
+                    $row->save();
                 }
             }
         }
