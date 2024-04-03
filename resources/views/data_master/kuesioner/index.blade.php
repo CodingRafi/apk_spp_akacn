@@ -5,10 +5,10 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize mb-0">Kuesioner</h5>
+                    <h5 class="text-capitalize mb-0">Template Kuesioner</h5>
                     @can('add_ruang')
                         <button type="button" class="btn btn-primary"
-                            onclick="addForm('{{ route('data-master.kuesioner.store') }}', 'Kuesioner', '#kuesioner')">
+                            onclick="addForm('{{ route('kelola-kuesioner.template.store') }}', 'Kuesioner', '#kuesioner')">
                             Tambah
                         </button>
                     @endcan
@@ -37,7 +37,7 @@
     <div class="modal fade" id="kuesioner" tabindex="-1" aria-labelledby="kuesionerLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="{{ route('data-master.kuesioner.store') }}" method="get">
+                <form action="{{ route('kelola-kuesioner.template.store') }}" method="get">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="kuesionerLabel">Tambah Kuesioner</h1>
@@ -81,7 +81,7 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('data-master.kuesioner.data') }}',
+                ajax: '{{ route('kelola-kuesioner.template.data') }}',
                 columns: [{
                         "data": "DT_RowIndex"
                     },

@@ -55,6 +55,7 @@ use App\Http\Controllers\Kelola\User\{
 };
 
 use App\Http\Controllers\Kelola\UserController;
+use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\Mahasiswa\KhsController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\KuesionerController as MahasiswaKuesionerController;
@@ -191,11 +192,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('mutu/data', [MutuController::class, 'data'])->name('mutu.data');
         Route::resource('mutu', MutuController::class);
 
-        //? Kuesioner
-        Route::get('kuesioner/{id}/change-status', [KuesionerController::class, 'change_status'])->name('kuesioner.change-status');
-        Route::get('kuesioner/data', [KuesionerController::class, 'data'])->name('kuesioner.data');
-        Route::resource('kuesioner', KuesionerController::class);
-
         //? Mata Kuliah
         Route::prefix('mata-kuliah')->name('mata-kuliah.')->group(function () {
             Route::get('/', [MatkulController::class, 'index'])->name('index');
@@ -277,6 +273,13 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::delete('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
         });
         Route::resource('rombel', RombelController::class);
+    });
+
+    Route::prefix('kelola-kuesioner')->name('kelola-kuesioner.')->group(function () {
+         //? Kuesioner
+         Route::get('template/{id}/change-status', [KuesionerController::class, 'change_status'])->name('template.change-status');
+         Route::get('template/data', [KuesionerController::class, 'data'])->name('template.data');
+         Route::resource('template', KuesionerController::class);
     });
 
     Route::prefix('kelola-presensi')->name('kelola-presensi.')->group(function () {
@@ -436,6 +439,13 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/', [TranskipController::class, 'index'])->name('index');
         Route::get('/data', [TranskipController::class, 'data'])->name('data');
         Route::get('/print', [TranskipController::class, 'print'])->name('print');
+    });
+
+    Route::prefix('bimbingan')->name('bimbingan.')->group(function () {
+        Route::get('/', [BimbinganController::class, 'index'])->name('index');
+        Route::get('/data/{mhs_id?}', [BimbinganController::class, 'data'])->name('data');
+        Route::get('/{tahun_semester_id}/{mhs_id?}', [BimbinganController::class, 'show'])->name('show');
+        Route::put('/{tahun_semester_id}/{mhs_id?}', [BimbinganController::class, 'storeOrUpdate'])->name('storeOrUpdate');
     });
 
     Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');

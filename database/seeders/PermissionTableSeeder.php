@@ -131,6 +131,9 @@ class PermissionTableSeeder extends Seeder
             'view_gaji',
             'view_template_surat',
 
+            'view_bimbingan',
+            'edit_bimbingan',
+
             'view_presensi',
             'add_presensi',
             'edit_presensi',

@@ -22,7 +22,8 @@
                                 type="button">Pembayaran</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#krs" type="button">KRS</button>
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#krs" type="button">
+                                KRS</button>
                         </li>
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#presensi"
@@ -31,6 +32,10 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nilai"
                                 type="button">Nilai</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#bimbingan_akademik"
+                                type="button">Bimbingan Akademik</button>
                         </li>
                     </ul>
 
@@ -70,6 +75,11 @@
                             ])
                         </div>
                         <div class="tab-pane fade show" id="nilai" role="tabpanel" tabindex="0">
+                        </div>
+                        <div class="tab-pane fade show" id="bimbingan_akademik" role="tabpanel" tabindex="0">
+                            @include('mahasiswa.bimbingan.table', [
+                                'mhs_id' => $data->id,
+                            ])
                         </div>
                     </div>
                 </div>

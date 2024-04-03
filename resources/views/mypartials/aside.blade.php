@@ -27,6 +27,45 @@
             </li>
         @endcan
 
+        @canany(['view_neo_feeder'])
+            <li class="menu-item {{ Request::is('neo-feeder*') ? 'active open' : '' }}">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                    <i class="menu-icon tf-icons bx bx-archive"></i>
+                    <div data-i18n="Layouts">Data Master Neo Feeder</div>
+                </a>
+
+                @php
+                    $type = [
+                        'agama',
+                        'jenis_tinggal',
+                        'alat_transportasi',
+                        'jenjang',
+                        'kewarganegaraan',
+                        'lembaga_pengangkat',
+                        'pekerjaan',
+                        'penghasilan',
+                        'pangkat_golongan',
+                        'jenis_pembiayaan',
+                        'jenis_daftar',
+                        'jalur_masuk',
+                        'jenis_keluar',
+                        'wilayah',
+                    ];
+                @endphp
+
+                <ul class="menu-sub">
+                    @foreach ($type as $item)
+                        <li class="menu-item {{ Request::is('neo-feeder/' . $item . '*') ? 'active' : '' }}">
+                            <a href="{{ route('neo-feeder.index', ['type' => $item]) }}" class="menu-link">
+                                <div data-i18n="{{ $item }}" class="text-capitalize">
+                                    {{ str_replace('_', ' ', $item) }}</div>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+        @endcanany
+
         @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner', 'view_ruang',
             'view_kelola_template_surat', 'view_kelola_mutu'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
@@ -85,13 +124,6 @@
                             </a>
                         </li>
                     @endcan
-                    @can('view_kuesioner')
-                        <li class="menu-item {{ Request::is('data-master/kuesioner*') ? 'active' : '' }}">
-                            <a href="{{ route('data-master.kuesioner.index') }}" class="menu-link">
-                                <div data-i18n="kuesioner">Kuesioner</div>
-                            </a>
-                        </li>
-                    @endcan
                     @can('view_mutu')
                         <li class="menu-item {{ Request::is('data-master/mutu*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.mutu.index') }}" class="menu-link">
@@ -112,40 +144,21 @@
             </li>
         @endcanany
 
-        @canany(['view_neo_feeder'])
-            <li class="menu-item {{ Request::is('neo-feeder*') ? 'active open' : '' }}">
+        @canany(['view_kuesioner'])
+            <li class="menu-item {{ Request::is('kelola-kuesioner*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
-                    <div data-i18n="Layouts">Data Master Neo Feeder</div>
+                    <div data-i18n="Layouts">Kelola Kuesioner</div>
                 </a>
 
-                @php
-                    $type = [
-                        'agama',
-                        'jenis_tinggal',
-                        'alat_transportasi',
-                        'jenjang',
-                        'kewarganegaraan',
-                        'lembaga_pengangkat',
-                        'pekerjaan',
-                        'penghasilan',
-                        'pangkat_golongan',
-                        'jenis_pembiayaan',
-                        'jenis_daftar',
-                        'jalur_masuk',
-                        'jenis_keluar',
-                        'wilayah'
-                    ];
-                @endphp
-
                 <ul class="menu-sub">
-                    @foreach ($type as $item)
-                        <li class="menu-item {{ Request::is('neo-feeder/' . $item . '*') ? 'active' : '' }}">
-                            <a href="{{ route('neo-feeder.index', ['type' => $item]) }}" class="menu-link">
-                                <div data-i18n="{{ $item }}" class="text-capitalize">{{ str_replace('_', ' ', $item) }}</div>
+                    @can('view_kuesioner')
+                        <li class="menu-item {{ Request::is('kelola-kuesioner/template*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-kuesioner.template.index') }}" class="menu-link">
+                                <div data-i18n="Template" class="text-capitalize">Template</div>
                             </a>
                         </li>
-                    @endforeach
+                    @endcan
                 </ul>
             </li>
         @endcanany
@@ -303,22 +316,31 @@
         @endcan
 
         @can('view_khs')
-        <li class="menu-item {{ Request::is('khs*') ? 'active' : '' }}">
-            <a href="{{ route('khs.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Analytics">Kartu Hasil Studi</div>
-            </a>
-        </li>
+            <li class="menu-item {{ Request::is('khs*') ? 'active' : '' }}">
+                <a href="{{ route('khs.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Kartu Hasil Studi</div>
+                </a>
+            </li>
         @endcan
-    
+
         @can('view_transkrip')
-        <li class="menu-item {{ Request::is('transkip*') ? 'active' : '' }}">
-            <a href="{{ route('transkip.index') }}" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Analytics">Transkip Nilai</div>
-            </a>
-        </li>
+            <li class="menu-item {{ Request::is('transkip*') ? 'active' : '' }}">
+                <a href="{{ route('transkip.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Transkip Nilai</div>
+                </a>
+            </li>
         @endcan
+
+        @if (Auth::user()->hasRole('mahasiswa'))
+            <li class="menu-item {{ Request::is('bimbingan*') ? 'active' : '' }}">
+                <a href="{{ route('bimbingan.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Bimbingan Akademik</div>
+                </a>
+            </li>
+        @endif
 
         @can('view_template_surat')
             @if (getRole()->name != 'admin')

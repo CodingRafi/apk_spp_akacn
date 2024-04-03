@@ -147,6 +147,14 @@ return new class extends Migration
             $table->enum('publish', [0,1])->default(0);
             $table->timestamps();
         });
+
+        Schema::create('bimbingan_akademik', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('mhs_id')->constrained('users');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->text('catatan');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -165,5 +173,6 @@ return new class extends Migration
         Schema::dropIfExists('krs_matkul');
         Schema::dropIfExists('jadwal');
         Schema::dropIfExists('jadwal_presensi');
+        Schema::dropIfExists('mhs_nilai');
     }
 };

@@ -24,14 +24,14 @@ class KuesionerController extends Controller
 
             if (auth()->user()->can('edit_kuesioner')) {
                 $options .= " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.kuesioner.show', $data->id) . "`, `Edit Kuesioner`, `#kuesioner`)'>
+                        onclick='editForm(`" . route('kelola-kuesioner.template.show', $data->id) . "`, `Edit Kuesioner`, `#kuesioner`)'>
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
             }
 
             if (auth()->user()->can('delete_kuesioner')) {
-                $options .= "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kuesioner.destroy', $data->id) . "`)' type='button'>
+                $options .= "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-kuesioner.template.destroy', $data->id) . "`)' type='button'>
                                         Hapus
                                     </button>";
             }
@@ -43,7 +43,7 @@ class KuesionerController extends Controller
             ->editColumn('status', function ($datas) {
                 return "<div class='form-check form-switch'>
                             <input class='form-check-input' type='checkbox' role='switch' name='status' value='1' " . ($datas->status ? 'checked' : '') . "
-                                id='status' onclick='change_status(this, `" . route('data-master.kuesioner.change-status', $datas->id) . "`)'>
+                                id='status' onclick='change_status(this, `" . route('kelola-kuesioner.template.change-status', $datas->id) . "`)'>
                         </div>";
             })
             ->editColumn('pertanyaan', function ($datas) {
@@ -80,20 +80,22 @@ class KuesionerController extends Controller
         ], 200);
     }
 
-    public function show(Kuesioner $kuesioner)
+    public function show($id)
     {
+        $kuesioner = Kuesioner::findOrFail($id);
         return response()->json([
             'data' => $kuesioner
         ], 200);
     }
 
-    public function update(Request $request, Kuesioner $kuesioner)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'type' => 'required|in:input,choice',
             'pertanyaan' => 'required',
         ]);
 
+        $kuesioner = Kuesioner::findOrFail($id);
         $kuesioner->update($request->except('_token', '_method'));
 
         return response()->json([
@@ -107,10 +109,11 @@ class KuesionerController extends Controller
      * @param  \App\Models\Kuesioner  $kuesioner
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Kuesioner $kuesioner)
+    public function destroy($id)
     {
         DB::beginTransaction();
         try {
+            $kuesioner = Kuesioner::findOrFail($id);
             $kuesioner->delete();
             DB::commit();
             return response()->json([
