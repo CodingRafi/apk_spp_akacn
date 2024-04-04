@@ -37,7 +37,7 @@
     <div class="modal fade" id="kuesioner" tabindex="-1" aria-labelledby="kuesionerLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="{{ route('kelola-kuesioner.template.store') }}" method="get">
+                <form action="{{ route('kelola-kuesioner.template.store') }}" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="kuesionerLabel">Tambah Kuesioner</h1>

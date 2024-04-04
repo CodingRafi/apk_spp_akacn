@@ -57,7 +57,7 @@
     <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="{{ route('kelola-presensi.whitelist-ip.store') }}" method="get">
+                <form action="{{ route('kelola-presensi.whitelist-ip.store') }}" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="jadwalLabel"></h1>

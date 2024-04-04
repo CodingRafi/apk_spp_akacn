@@ -148,7 +148,7 @@
             for (const i in columns) {
                 $('.table thead tr').append(`<th>${columns[i].title}</th>`);
             }
-            fetchDataAndUpdateTable()
+            // fetchDataAndUpdateTable()
         }
     })
 

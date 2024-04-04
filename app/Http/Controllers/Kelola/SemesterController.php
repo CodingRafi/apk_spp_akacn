@@ -52,6 +52,13 @@ class SemesterController extends Controller
             ->make(true);
     }
 
+    public function get($tahun_ajaran_id){
+        $data = Semester::where('tahun_ajaran_id', $tahun_ajaran_id)->get();
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
     public function store(SemesterRequest $request)
     {
         $idSemester = ($request->tahun_ajaran_id . $request->semester);

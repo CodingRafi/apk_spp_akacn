@@ -37,7 +37,7 @@
     <div class="modal fade" id="mutu" tabindex="-1" aria-labelledby="mutuLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="mutuLabel">Tambah Mutu</h1>

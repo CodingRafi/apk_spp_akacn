@@ -47,6 +47,7 @@ class MahasiswaRequest extends FormRequest
             if ($isPostMethod || ($countPembayaran == 0 && $countKrs == 0)) {
                 $validate += [
                     'tahun_masuk_id' => 'required',
+                    'semester_id' => 'required',
                     'prodi_id' => 'required',
                     'rombel_id' => 'required',
                 ];

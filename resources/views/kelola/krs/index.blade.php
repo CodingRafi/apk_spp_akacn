@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <h5 class="text-capitalize">Verifikasi KRS</h5>
                         </div>
                         <div class="col-md-3 mb-3">

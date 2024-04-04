@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Kelola;
 
+use App\Exports\TemplateNilaiExport;
 use App\Http\Controllers\Controller;
+use App\Imports\NilaiImport;
 use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class NilaiController extends Controller
@@ -20,7 +23,11 @@ class NilaiController extends Controller
         $datas = TahunAjaran::all();
 
         foreach ($datas as $data) {
-            $data->options = "<a href='" . route('kelola-nilai.show', ['tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $data->options = "<a href='" .
+                route(
+                    'kelola-nilai.show',
+                    ['tahun_ajaran_id' => $data->id]
+                ) . "' class='btn btn-info mx-2'>Detail</a>";
         }
 
         return DataTables::of($datas)
@@ -72,7 +79,15 @@ class NilaiController extends Controller
         }
 
         foreach ($datas as $data) {
-            $data->options = "<a href='" . route('kelola-nilai.detailRombel', ['tahun_ajaran_id' => $tahun_ajaran_id, 'rombel_id' => $data->id, 'tahun_semester_id' => request('tahun_semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) . "' class='btn btn-info mx-2'>Detail</a>";
+            $data->options = "<a href='" . route(
+                'kelola-nilai.detailRombel',
+                [
+                    'tahun_ajaran_id' => $tahun_ajaran_id,
+                    'rombel_id' => $data->id,
+                    'tahun_semester_id' => request('tahun_semester_id'),
+                    'tahun_matkul_id' => request('tahun_matkul_id')
+                ]
+            ) . "' class='btn btn-info mx-2'>Detail</a>";
         }
 
         return DataTables::of($datas)
@@ -83,7 +98,9 @@ class NilaiController extends Controller
 
     public function detailRombel()
     {
-        $mutu = DB::table('mutu')->get();
+        $mutu = DB::table('mutu')
+            ->where('status', '1')
+            ->get();
         return view('kelola.nilai.mhs', compact('mutu'));
     }
 
@@ -107,7 +124,18 @@ class NilaiController extends Controller
     public function dataMhs($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
     {
         $datas = DB::table('users')
-            ->select('users.id', 'users.name', 'users.login_key', 'mhs_nilai.presensi', 'mhs_nilai.uts', 'mhs_nilai.uas', 'mhs_nilai.nilai_mutu', 'mutu.nama as mutu', 'mhs_nilai.publish', 'mhs_nilai.jml_sks')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.login_key',
+                'mhs_nilai.presensi',
+                'mhs_nilai.uts',
+                'mhs_nilai.uas',
+                'mhs_nilai.nilai_mutu',
+                'mutu.nama as mutu',
+                'mhs_nilai.publish',
+                'mhs_nilai.jml_sks'
+            )
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
             ->join('krs', 'krs.mhs_id', 'users.id')
             ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
@@ -127,16 +155,25 @@ class NilaiController extends Controller
 
         foreach ($datas as $data) {
             $data->options = " <button class='btn btn-warning'
-            onclick='editForm(`" . route('kelola-nilai.getNilai', ['tahun_semester_id' => $tahun_semester_id, 'tahun_matkul_id' => $tahun_matkul_id, 'mhs_id' => $data->id]) . "`, `Edit Nilai`, `#nilai`)'>
+            onclick='editForm(`" .
+                route(
+                    'kelola-nilai.getNilai',
+                    [
+                        'tahun_semester_id' => $tahun_semester_id,
+                        'tahun_matkul_id' => $tahun_matkul_id,
+                        'mhs_id' => $data->id
+                    ]
+                ) . "`, `Edit Nilai`, `#nilai`)'>
             <i class='ti-pencil'></i>
             Edit
-        </button>";;
+        </button>";
         }
 
         return DataTables::of($datas)
             ->addIndexColumn()
             ->editCOlumn('publish', function ($datas) {
-                return $datas->publish ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+                return $datas->publish ? "<i class='bx bx-check text-success'></i>" :
+                    "<i class='bx bx-x text-danger'></i>";
             })
             ->rawColumns(['options', 'publish'])
             ->make(true);
@@ -151,10 +188,10 @@ class NilaiController extends Controller
         }
 
         $matkul = DB::table('tahun_matkul')
-                    ->select('matkuls.sks_mata_kuliah')
-                    ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
-                    ->where('tahun_matkul.id', $tahun_matkul_id)
-                    ->first();
+            ->select('matkuls.sks_mata_kuliah')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->first();
 
         DB::table('mhs_nilai')
             ->updateOrInsert([
@@ -175,5 +212,40 @@ class NilaiController extends Controller
         return response()->json([
             'message' => 'Berhasil disimpan'
         ], 200);
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new TemplateNilaiExport, 'template.xlsx');
+    }
+
+    public function importNilai($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
+    {
+        $matkul = DB::table('tahun_matkul')
+            ->select('matkuls.sks_mata_kuliah')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.id', request('tahun_matkul_id'))
+            ->first();
+
+        $mutu = DB::table('mutu')
+            ->where('status', '1')
+            ->get();
+
+        try {
+            Excel::import(new NilaiImport(
+                $matkul,
+                $mutu,
+                $tahun_semester_id,
+                $tahun_matkul_id
+            ), request()->file('file'));
+
+            return response()->json([
+                'message' => 'Berhasil disimpan'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
     }
 }

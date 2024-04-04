@@ -15,7 +15,7 @@
 </div>
 <div class="modal fade" id="pembayaranTambahan" tabindex="-1" aria-labelledby="pembayaranTambahanLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
-        <form action="" method="get">
+        <form action="" method="post">
             @method('post')
             <div class="modal-content">
                 <div class="modal-header">

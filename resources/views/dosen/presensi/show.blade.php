@@ -38,7 +38,7 @@
     <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="jadwalLabel">Tambah Jadwal</h1>
@@ -84,7 +84,7 @@
     <div class="modal fade" id="detailJadwal" tabindex="-1" aria-labelledby="detailJadwalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="detailJadwalLabel">Tambah Jadwal</h1>

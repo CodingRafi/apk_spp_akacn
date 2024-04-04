@@ -157,9 +157,23 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label for="semester_id" class="form-label">Semester</label>
+                    <select class="form-select select2 @error('semester_id') is-invalid @enderror" name="semester_id"
+                        id="semester_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        <option value="">Pilih Semester</option>
+                    </select>
+                    @error('semester_id')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label for="prodi_id" class="form-label">Prodi</label>
                     <select class="form-select @error('prodi_id') is-invalid @enderror" name="prodi_id"
-                        id="prodi_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        id="prodi_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Prodi</option>
                         @foreach ($prodis as $prodi)
                             <option value="{{ $prodi->id }}"
@@ -176,7 +190,8 @@
                 <div class="mb-3">
                     <label for="jenis_kelas_id" class="form-label">Jenis Kelas</label>
                     <select class="form-select @error('jenis_kelas_id') is-invalid @enderror" name="jenis_kelas_id"
-                        id="jenis_kelas_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        id="jenis_kelas_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Kelas</option>
                         @foreach ($jenisKelas as $item)
                             <option value="{{ $item->id }}"
@@ -193,7 +208,8 @@
                 <div class="mb-3">
                     <label for="rombel_id" class="form-label">Rombel</label>
                     <select class="form-select @error('rombel_id') is-invalid @enderror" name="rombel_id"
-                        id="rombel_id" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        id="rombel_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
                         <option value="">Pilih Rombel</option>
                     </select>
                     @error('rombel_id')
@@ -290,6 +306,7 @@
 
 <script>
     function getRombel() {
+        $('#rombel_id').empty().append(`<option value="">Pilih Rombel</option>`);
         return $.ajax({
             type: "GET",
             url: "{{ route('data-master.rombel.getDosenPa') }}",
@@ -299,7 +316,6 @@
                 jenis_kelas_id: $('#jenis_kelas_id').val()
             },
             success: function(res) {
-                $('#rombel_id').empty().append(`<option value="">Pilih Rombel</option>`);
                 $.each(res.data, function(i, e) {
                     $('#rombel_id').append(
                         `<option value="${e.id}">${e.nama} (${e.dosen_pa}|${e.nip_pa})</option>`
@@ -312,6 +328,28 @@
         })
     }
 
+    function getSemester() {
+        $('#semester_id').empty().append(`<option value="">Pilih Semester</option>`);
+        if ($('#tahun_masuk_id').val()) {
+            return $.ajax({
+                type: "GET",
+                url: "{{ route('data-master.semester.get', ':tahun_ajaran_id') }}".replace(':tahun_ajaran_id',
+                    $('#tahun_masuk_id').val()),
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#semester_id').append(
+                            `<option value="${e.id}">${e.nama}</option>`
+                        );
+                    })
+                },
+                error: function(err) {
+                    console.error('Gagal get semester')
+                }
+            })
+        }
+    }
+    
+    $('#tahun_masuk_id').on('change', getSemester);
     $('#tahun_masuk_id, #prodi_id, #jenis_kelas_id').on('change', getRombel)
 </script>
 
@@ -319,6 +357,11 @@
     <script>
         getRombel().done(() => {
             $('#rombel_id').val('{{ isset($data) ? $data->mahasiswa->rombel_id : old('rombel_id') }}').trigger(
+                'change')
+        })
+
+        getSemester().done(() => {
+            $('#semester_id').val('{{ isset($data) ? $data->mahasiswa->semester_id : old('semester_id') }}').trigger(
                 'change')
         })
     </script>

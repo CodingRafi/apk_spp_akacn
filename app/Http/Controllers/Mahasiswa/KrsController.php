@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\KrsController as ControllersKrsController;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -51,7 +50,15 @@ class KrsController extends Controller
         $mhs_id = $this->validateMhsId($mhs_id);
         $mhs = User::findOrFail($mhs_id)->mahasiswa;
         $datas = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'krs.jml_sks_diambil', 'krs.status')
+            ->select(
+                'tahun_semester.id',
+                'semesters.nama',
+                'tahun_semester.jatah_sks',
+                'tahun_semester.tgl_mulai_krs',
+                'tahun_semester.tgl_akhir_krs',
+                'krs.jml_sks_diambil',
+                'krs.status'
+            )
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->leftJoin('krs', function ($join) use ($mhs_id) {
                 $join->on('krs.tahun_semester_id', 'tahun_semester.id')
@@ -157,7 +164,14 @@ class KrsController extends Controller
         $validationPembayaran = $this->validatePembayaran($tahun_semester_id, $mhs_id);
 
         $tahun_semester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama', 'tahun_semester.jatah_sks', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'tahun_semester.status')
+            ->select(
+                'tahun_semester.id',
+                'semesters.nama',
+                'tahun_semester.jatah_sks',
+                'tahun_semester.tgl_mulai_krs',
+                'tahun_semester.tgl_akhir_krs',
+                'tahun_semester.status'
+            )
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.id', $tahun_semester_id)
             ->first();
@@ -285,7 +299,23 @@ class KrsController extends Controller
 
         $admin = DB::table('users')->first();
 
-        return Pdf::loadView('mahasiswa.krs.print', compact('krs', 'krsMatkul', 'admin'))
-            ->stream('krs.pdf');
+        // $footerView = view('components.footer-pdf')->render();
+        $pdf = Pdf::loadView('mahasiswa.krs.print', compact('krs', 'krsMatkul', 'admin'));
+        // $pdf->getDomPDF()->setHttpContext(stream_context_create([
+        //     'ssl' => [
+        //         'allow_self_signed'=> TRUE,
+        //         'verify_peer' => FALSE,
+        //         'verify_peer_name' => FALSE,
+        //     ]
+        // ]));
+        // $pdf->getDomPDF()->loadHtml('<h1>Isi PDF</h1>'); // Ganti dengan konten PDF Anda
+        // $pdf->getDomPDF()->setPaper('A4', 'portrait');
+        // $pdf->getDomPDF()->render();
+        // $canvas = $pdf->getDomPDF()->getCanvas();
+        // $canvas->page_text(72, 18, "Halaman {PAGE_NUM} dari {PAGE_COUNT}", null, 10, array(0,0,0)); // Tambahkan nomor halaman
+        // $canvas->page_script($footerView); // Tambahkan footer
+    
+        // Unduh PDF
+        return $pdf->stream('nama_file.pdf');
     }
 }

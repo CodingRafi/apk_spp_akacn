@@ -1,89 +1,8 @@
-@php
-    $configHari = config('services.hari');
-@endphp
+@extends('components.template-pdf')
 
-<html>
+@section('title', 'Kartu Hasil Studi')
 
-<head>
-    <title>KHS</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        body {
-            margin-top: 11mm;
-            margin-left: 13mm;
-            margin-right: 13mm;
-            margin-bottom: 11mm;
-            font-size: 9pt;
-        }
-
-        .content tr>td:first-child {
-            text-align: justify;
-        }
-
-        .content tr td:last-child {
-            font-size: 15px;
-            line-height: 15px;
-        }
-
-        .content td {
-            border-bottom: 0px dotted #E4E4E4;
-            line-height: 20px;
-            font-size: 14px;
-            padding: 2px 0;
-            display: table-cell;
-            vertical-align: text-top;
-
-        }
-
-        .content td:first-child::after {
-            content: "";
-            display: inline-block;
-            width: 100%;
-        }
-
-        table.bordered {
-            border-collapse: collapse;
-        }
-
-        table.bordered th,
-        table.bordered td {
-            border: 1px solid #a09e9e;
-            margin: 0;
-            padding: .25rem;
-        }
-
-        table td {
-            padding: 5px;
-        }
-
-        table.no-padding td {
-            padding: 0px;
-        }
-    </style>
-</head>
-
-<body>
-    <table style="width: 100%" aria-hidden="true">
-        <tbody>
-            <tr>
-                <td style="width: fit-content;" style="width: 5%">
-                    <img src="{{ public_path() . '/image/logo.png' }}" width="100">
-                </td>
-                <td style="text-align: center;">
-                    <h1 style="font-size: 1.4rem;font-weight: 600;text-transform: uppercase;">Akademi kimia analis caraka
-                        nusantara</h1>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr style="border: 1px solid #b7b7b7;margin-top: 10px;">
-
+@section('content')
     <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">KARTU RENCANA STUDI</h2>
 
     <div style="margin-top: 2rem;">
@@ -94,7 +13,7 @@
                 <td style="font-weight: bold">{{ $data->nim }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Nama Mahasiswa</td>
+                <td style="width: 7rem">Nama</td>
                 <td>:</td>
                 <td style="font-weight: bold">{{ $data->name }}</td>
             </tr>
@@ -183,11 +102,12 @@
                 <table aria-hidden="true" style="font-size: 1.05rem">
                     <tr>
                         <th style="text-align: left;">Indeks Prestasi Semester</th>
-                        <td>{{ ($bobot_x_sks > 0 || $jml_sks > 0) ? number_format($bobot_x_sks / $jml_sks, 2) : 0 }}</td>
+                        <td>{{ $bobot_x_sks > 0 || $jml_sks > 0 ? number_format($bobot_x_sks / $jml_sks, 2) : 0 }}</td>
                     </tr>
                     <tr>
                         <th style="text-align: left;">Indeks Prestasi Kumulatif</th>
-                        <td>{{ ($ipk->bobot_x_sks > 0 || $ipk->jml_sks > 0) ? number_format($ipk->bobot_x_sks / $ipk->jml_sks, 2) : 0 }}</td>
+                        <td>{{ $ipk->bobot_x_sks > 0 || $ipk->jml_sks > 0 ? number_format($ipk->bobot_x_sks / $ipk->jml_sks, 2) : 0 }}
+                        </td>
                     </tr>
                     <tr>
                         <th style="text-align: left;">Total SKS Lulus</th>
@@ -197,7 +117,4 @@
             </td>
         </tr>
     </table>
-
-</body>
-
-</html>
+@endsection

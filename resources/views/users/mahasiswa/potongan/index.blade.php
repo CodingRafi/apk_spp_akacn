@@ -15,7 +15,7 @@
 </div>
 <div class="modal fade" id="addPotongan" tabindex="-1" aria-labelledby="addPotonganLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form action="" method="get">
+        <form action="" method="post">
             @method('post')
             <div class="modal-content">
                 <div class="modal-header">

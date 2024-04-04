@@ -20,7 +20,7 @@
     <div class="modal fade" id="presensi" tabindex="-1" aria-labelledby="presensiLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="presensiLabel">Presensi</h1>

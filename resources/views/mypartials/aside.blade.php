@@ -18,14 +18,12 @@
 
     <ul class="menu-inner py-1" style="overflow-y: auto;overflow-x: hidden">
 
-        @can('view_kelola_pembayaran')
-            <li class="menu-item {{ Request::is('dashboard') ? 'active' : '' }}">
-                <a href="/dashboard" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                    <div data-i18n="Analytics">Dashboard</div>
-                </a>
-            </li>
-        @endcan
+        <li class="menu-item {{ Request::is('dashboard') ? 'active' : '' }}">
+            <a href="/dashboard" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
 
         @canany(['view_neo_feeder'])
             <li class="menu-item {{ Request::is('neo-feeder*') ? 'active open' : '' }}">

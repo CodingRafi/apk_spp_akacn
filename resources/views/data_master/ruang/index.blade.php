@@ -36,7 +36,7 @@
     <div class="modal fade" id="ruang" tabindex="-1" aria-labelledby="ruangLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="ruangLabel">Tambah Ruang</h1>

@@ -19,7 +19,8 @@ class WilayahSeeder extends Seeder
             'id' => '1',
             'negara_id' => 'ID',
             'nama' => 'Kab. Aceh Besar',
-            'id_level_wilayah' => 1
+            'id_level_wilayah' => 3,
+            'fullNama' => 'Kab. Aceh Besar',
         ]);
     }
 }

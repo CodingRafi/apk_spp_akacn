@@ -35,7 +35,7 @@
     <div class="modal fade" id="rombel" tabindex="-1" aria-labelledby="rombelLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="rombelLabel">Tambah Rombel</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

@@ -133,7 +133,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
     Route::prefix('data-master')->name('data-master.')->group(function () {
         //? Tahun ajaran
-        Route::post('tahun-ajaran/neo-feeder', [TahunAjaranController::class, 'storeNeoFeeder'])->name('tahun-ajaran.storeNeoFeeder');
+        Route::post(
+            'tahun-ajaran/neo-feeder',
+            [TahunAjaranController::class, 'storeNeoFeeder']
+        )->name('tahun-ajaran.storeNeoFeeder');
         Route::get('tahun-ajaran/data', [TahunAjaranController::class, 'data'])->name('tahun-ajaran.data');
         Route::resource('tahun-ajaran', TahunAjaranController::class);
 
@@ -141,9 +144,18 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::prefix('tahun-ajaran')->name('tahun-ajaran.')->group(function () {
             Route::prefix('{id}/matkul')->name('matkul.')->group(function () {
                 Route::get('/', [AngkatanMatkulController::class, 'index'])->name('index');
-                Route::get('/{prodi_id}/get-kurikulum', [AngkatanMatkulController::class, 'getKurikulum'])->name('getKurikulum');
-                Route::get('/{prodi_id}/get-rombel', [AngkatanMatkulController::class, 'getRombel'])->name('getRombel');
-                Route::get('/{kurikulum_id}/get-matkul', [AngkatanMatkulController::class, 'getMatkul'])->name('getMatkul');
+                Route::get(
+                    '/{prodi_id}/get-kurikulum',
+                    [AngkatanMatkulController::class, 'getKurikulum']
+                )->name('getKurikulum');
+                Route::get(
+                    '/{prodi_id}/get-rombel',
+                    [AngkatanMatkulController::class, 'getRombel']
+                )->name('getRombel');
+                Route::get(
+                    '/{kurikulum_id}/get-matkul',
+                    [AngkatanMatkulController::class, 'getMatkul']
+                )->name('getMatkul');
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
                 Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
                 Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
@@ -155,8 +167,15 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Semester
         Route::prefix('semester')->name('semester.')->group(function () {
             Route::get('{tahun_ajaran_id}/data', [KelolaSemesterController::class, 'data'])->name('data');
-            Route::get('{tahun_ajaran_id}/getLastSemester', [KelolaSemesterController::class, 'getLastSemester'])->name('getLastSemester');
-            Route::get('{tahun_ajaran_id}/get-neo-feeder', [KelolaSemesterController::class, 'getNeoFeeder'])->name('get-neo-feeder');
+            Route::get(
+                '{tahun_ajaran_id}/getLastSemester',
+                [KelolaSemesterController::class, 'getLastSemester']
+            )->name('getLastSemester');
+            Route::get(
+                '{tahun_ajaran_id}/get-neo-feeder',
+                [KelolaSemesterController::class, 'getNeoFeeder']
+            )->name('get-neo-feeder');
+            Route::get('{tahun_ajaran_id}/get', [KelolaSemesterController::class, 'get'])->name('get');
             Route::post('/', [KelolaSemesterController::class, 'store'])->name('store');
             Route::get('/{semester_id}', [KelolaSemesterController::class, 'show'])->name('show');
             Route::put('/{semester_id}', [KelolaSemesterController::class, 'update'])->name('update');
@@ -169,10 +188,16 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('data', [KurikulumController::class, 'data'])->name('data');
             Route::post('store-matkul', [KurikulumController::class, 'storeMatkul'])->name('storeMatkul');
             Route::post('neo-feeder', [KurikulumController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
-            Route::post('neo-feeder/matkul', [KurikulumController::class, 'storeMatkulNeoFeeder'])->name('storeMatkulNeoFeeder');
+            Route::post(
+                'neo-feeder/matkul',
+                [KurikulumController::class, 'storeMatkulNeoFeeder']
+            )->name('storeMatkulNeoFeeder');
             Route::get('{kurikulum_id}/mata-kuliah', [KurikulumController::class, 'getMatkul'])->name('getMatkul');
             Route::get('{kurikulum_id}/data-matkul', [KurikulumController::class, 'dataMatkul'])->name('dataMatkul');
-            Route::delete('{kurikulum_id}/{matkul_id}', [KurikulumController::class, 'destroyMatkul'])->name('destroyMatkul');
+            Route::delete(
+                '{kurikulum_id}/{matkul_id}',
+                [KurikulumController::class, 'destroyMatkul']
+            )->name('destroyMatkul');
         });
         Route::resource('kurikulum', KurikulumController::class);
 
@@ -216,7 +241,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('prodi/data', [ProdiController::class, 'data'])->name('prodi.data');
         Route::post('prodi/neo-feeder', [ProdiController::class, 'storeNeoFeeder'])->name('prodi.storeNeoFeeder');
         Route::get('prodi/{prodi_id}/angkatan', [ProdiController::class, 'angkatan'])->name('prodi.angkatan');
-        Route::get('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}', [ProdiController::class, 'angkatanDetail'])->name('prodi.angkatan.detail');
+        Route::get(
+            'prodi/{prodi_id}/angkatan/{tahun_ajaran_id}',
+            [ProdiController::class, 'angkatanDetail']
+        )->name('prodi.angkatan.detail');
         Route::resource('prodi', ProdiController::class);
 
         Route::prefix('prodi/{prodi_id}/angkatan/{tahun_ajaran_id}')->name('prodi.')->group(function () {
@@ -262,7 +290,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
         //? Rombel
         Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
-        Route::get('rombel/get-tahun-ajaran', [RombelController::class, 'getTahunAjaran'])->name('rombel.getTahunAjaran');
+        Route::get(
+            'rombel/get-tahun-ajaran',
+            [RombelController::class, 'getTahunAjaran']
+        )->name('rombel.getTahunAjaran');
         Route::get('rombel/get-dosen-pa', [RombelController::class, 'getDosenPa'])->name('rombel.getDosenPa');
         Route::prefix('rombel/')->name('rombel.dosen-pa.')->group(function () {
             Route::get('{rombel_id}/dosen-pa', [RombelController::class, 'indexDosenPa'])->name('index');
@@ -276,10 +307,13 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('kelola-kuesioner')->name('kelola-kuesioner.')->group(function () {
-         //? Kuesioner
-         Route::get('template/{id}/change-status', [KuesionerController::class, 'change_status'])->name('template.change-status');
-         Route::get('template/data', [KuesionerController::class, 'data'])->name('template.data');
-         Route::resource('template', KuesionerController::class);
+        //? Kuesioner
+        Route::get(
+            'template/{id}/change-status',
+            [KuesionerController::class, 'change_status']
+        )->name('template.change-status');
+        Route::get('template/data', [KuesionerController::class, 'data'])->name('template.data');
+        Route::resource('template', KuesionerController::class);
     });
 
     Route::prefix('kelola-presensi')->name('kelola-presensi.')->group(function () {
@@ -291,24 +325,78 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Presensi
         Route::prefix('presensi')->name('presensi.')->group(function () {
             Route::get('/', [KelolaPresensiController::class, 'index'])->name('index');
-            Route::get('/get-tahun-ajaran', [KelolaPresensiController::class, 'getTahunAjaran'])->name('getTahunAjaran');
-            Route::get('/get-pengawas', [KelolaPresensiController::class, 'getPengawas'])->name('getPengawas');
-            Route::get('/{prodi_id}/get-semester', [KelolaPresensiController::class, 'getSemester'])->name('getSemester');
-            Route::get('/{prodi_id}/get-matkul', [KelolaPresensiController::class, 'getMatkul'])->name('getMatkul');
-            Route::get('/{tahun_ajaran_id}/get-jadwal', [KelolaPresensiController::class, 'getJadwal'])->name('getJadwal');
-            Route::get('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'show'])->name('show');
-            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-materi', [KelolaPresensiController::class, 'getMateri'])->name('getMateri');
-            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/total', [KelolaPresensiController::class, 'getTotalPelajaran'])->name('getTotalPelajaran');
-            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-pengajar', [KelolaPresensiController::class, 'getPengajar'])->name('getPengajar');
-            Route::get('/{tahun_ajaran_id}/{tahun_matkul_id}/get-ujian', [KelolaPresensiController::class, 'getJenisUjian'])->name('getJenisUjian');
-            Route::post('/{tahun_ajaran_id}', [KelolaPresensiController::class, 'store'])->name('store');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}', [KelolaPresensiController::class, 'showJadwal'])->name('showJadwal');
-            Route::put('/{jadwal_id}', [KelolaPresensiController::class, 'updateJadwal'])->name('updateJadwal');
-            Route::put('/{jadwal_id}/mulai', [KelolaPresensiController::class, 'mulaiJadwal'])->name('mulaiJadwal');
-            Route::put('/{jadwal_id}/selesai', [KelolaPresensiController::class, 'selesaiJadwal'])->name('selesaiJadwal');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/get-presensi', [KelolaPresensiController::class, 'getPresensi'])->name('getPresensi');
-            Route::get('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}', [KelolaPresensiController::class, 'getPresensiMhs'])->name('getPresensiMhs');
-            Route::put('/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}', [KelolaPresensiController::class, 'updatePresensiMhs'])->name('updatePresensiMhs');
+            Route::get(
+                '/get-tahun-ajaran',
+                [KelolaPresensiController::class, 'getTahunAjaran']
+            )->name('getTahunAjaran');
+            Route::get(
+                '/get-pengawas',
+                [KelolaPresensiController::class, 'getPengawas']
+            )->name('getPengawas');
+            Route::get(
+                '/{prodi_id}/get-semester',
+                [KelolaPresensiController::class, 'getSemester']
+            )->name('getSemester');
+            Route::get(
+                '/{prodi_id}/get-matkul',
+                [KelolaPresensiController::class, 'getMatkul']
+            )->name('getMatkul');
+            Route::get(
+                '/{tahun_ajaran_id}/get-jadwal',
+                [KelolaPresensiController::class, 'getJadwal']
+            )->name('getJadwal');
+            Route::get(
+                '/{tahun_ajaran_id}',
+                [KelolaPresensiController::class, 'show']
+            )->name('show');
+            Route::get(
+                '/{tahun_ajaran_id}/{tahun_matkul_id}/get-materi',
+                [KelolaPresensiController::class, 'getMateri']
+            )->name('getMateri');
+            Route::get(
+                '/{tahun_ajaran_id}/{tahun_matkul_id}/total',
+                [KelolaPresensiController::class, 'getTotalPelajaran']
+            )->name('getTotalPelajaran');
+            Route::get(
+                '/{tahun_ajaran_id}/{tahun_matkul_id}/get-pengajar',
+                [KelolaPresensiController::class, 'getPengajar']
+            )->name('getPengajar');
+            Route::get(
+                '/{tahun_ajaran_id}/{tahun_matkul_id}/get-ujian',
+                [KelolaPresensiController::class, 'getJenisUjian']
+            )->name('getJenisUjian');
+            Route::post(
+                '/{tahun_ajaran_id}',
+                [KelolaPresensiController::class, 'store']
+            )->name('store');
+            Route::get(
+                '/{tahun_ajaran_id}/{jadwal_id}',
+                [KelolaPresensiController::class, 'showJadwal']
+            )->name('showJadwal');
+            Route::put(
+                '/{jadwal_id}',
+                [KelolaPresensiController::class, 'updateJadwal']
+            )->name('updateJadwal');
+            Route::put(
+                '/{jadwal_id}/mulai',
+                [KelolaPresensiController::class, 'mulaiJadwal']
+            )->name('mulaiJadwal');
+            Route::put(
+                '/{jadwal_id}/selesai',
+                [KelolaPresensiController::class, 'selesaiJadwal']
+            )->name('selesaiJadwal');
+            Route::get(
+                '/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/get-presensi',
+                [KelolaPresensiController::class, 'getPresensi']
+            )->name('getPresensi');
+            Route::get(
+                '/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}',
+                [KelolaPresensiController::class, 'getPresensiMhs']
+            )->name('getPresensiMhs');
+            Route::put(
+                '/{tahun_ajaran_id}/{jadwal_id}/{rombel_id}/{mhs_id}',
+                [KelolaPresensiController::class, 'updatePresensiMhs']
+            )->name('updatePresensiMhs');
         });
 
         //? Rekap Presensi
@@ -323,14 +411,43 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('kelola-nilai')->name('kelola-nilai.')->group(function () {
-        Route::get('/', [NilaiController::class, 'index'])->name('index');
-        Route::get('/dataTahunAjaran', [NilaiController::class, 'dataTahunAjaran'])->name('dataTahunAjaran');
-        Route::get('/{tahun_ajaran_id}', [NilaiController::class, 'show'])->name('show');
+        Route::get(
+            '/',
+            [NilaiController::class, 'index']
+        )->name('index');
+        Route::get(
+            '/dataTahunAjaran',
+            [NilaiController::class, 'dataTahunAjaran']
+        )->name('dataTahunAjaran');
+        Route::get(
+            '/{tahun_ajaran_id}',
+            [NilaiController::class, 'show']
+        )->name('show');
         Route::get('/{tahun_ajaran_id}/getRombel', [NilaiController::class, 'getRombel'])->name('getRombel');
-        Route::get('/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai', [NilaiController::class, 'getNilai'])->name('getNilai');
-        Route::put('/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai', [NilaiController::class, 'store'])->name('store');
-        Route::get('/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}', [NilaiController::class, 'detailRombel'])->name('detailRombel');
-        Route::get('/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/mhs', [NilaiController::class, 'dataMhs'])->name('dataMhs');
+        Route::get(
+            '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
+            [NilaiController::class, 'getNilai']
+        )->name('getNilai');
+        Route::put(
+            '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
+            [NilaiController::class, 'store']
+        )->name('store');
+        Route::get(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}',
+            [NilaiController::class, 'detailRombel']
+        )->name('detailRombel');
+        Route::get(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/mhs',
+            [NilaiController::class, 'dataMhs']
+        )->name('dataMhs');
+        Route::get(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/download-template',
+            [NilaiController::class, 'downloadTemplate']
+        )->name('downloadTemplate');
+        Route::post(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/download-template',
+            [NilaiController::class, 'importNilai']
+        )->name('importNilai');
     });
 
     Route::prefix('kelola-pembayaran')->name('kelola-pembayaran.')->group(function () {
@@ -347,7 +464,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::patch('/{pembayaran_id}/revisi', [KelolaPembayaranController::class, 'revisi'])->name('revisi');
         });
 
-        Route::get('pembayaran-lainnya/data', [KelolaPembayaranLainnyaController::class, 'data'])->name('pembayaran-lainnya.data');
+        Route::get(
+            'pembayaran-lainnya/data',
+            [KelolaPembayaranLainnyaController::class, 'data']
+        )->name('pembayaran-lainnya.data');
         Route::resource('pembayaran-lainnya', KelolaPembayaranLainnyaController::class);
     });
 
@@ -362,7 +482,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/{id}/data', [GajiController::class, 'dataDetail'])->name('dataDetail');
         Route::delete('/{id}', [GajiController::class, 'destroy'])->name('destroy');
     });
-    
+
     Route::prefix('gaji')->name('gaji.')->group(function () {
         Route::get('/', [PengajarGajiController::class, 'index'])->name('index');
         Route::get('data', [PengajarGajiController::class, 'data'])->name('data');
@@ -378,7 +498,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::post('/{krs_id}', [KelolaKrsController::class, 'store'])->name('store');
         Route::patch('/{krs_id}/revisi', [KelolaKrsController::class, 'revisi'])->name('revisi');
     });
-    
+
     Route::prefix('krs/{tahun_semester_id}')->name('krs.')->group(function () {
         Route::post('/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
         Route::post('/simpan/{mhs_id?}', [ControllersKrsController::class, 'simpan'])->name('simpan');
@@ -400,16 +520,25 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/create', [MahasiswaPembayaranController::class, 'create'])->name('create');
                 Route::post('/', [MahasiswaPembayaranController::class, 'store'])->name('store');
                 Route::get('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'revisi'])->name('revisi');
-                Route::patch('/{pembayaran_id}/revisi', [MahasiswaPembayaranController::class, 'storeRevisi'])->name('storeRevisi');
+                Route::patch(
+                    '/{pembayaran_id}/revisi',
+                    [MahasiswaPembayaranController::class, 'storeRevisi']
+                )->name('storeRevisi');
                 Route::get('/{pembayaran_id}/edit', [MahasiswaPembayaranController::class, 'edit'])->name('edit');
                 Route::patch('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'update'])->name('update');
                 Route::delete('/{pembayaran_id}', [MahasiswaPembayaranController::class, 'destroy'])->name('destroy');
                 Route::get('/{pembayaran_id}/print', [MahasiswaPembayaranController::class, 'print'])->name('print');
             });
-            
-            Route::get('/dataPembayaran/{mhs_id?}', [MahasiswaPembayaranController::class, 'dataPembayaran'])->name('dataPembayaran');
+
+            Route::get(
+                '/dataPembayaran/{mhs_id?}',
+                [MahasiswaPembayaranController::class, 'dataPembayaran']
+            )->name('dataPembayaran');
             Route::get('/{mhs_id?}', [MahasiswaPembayaranController::class, 'show'])->name('show');
-            Route::get('/{pembayaran_id}/{mhs_id?}', [MahasiswaPembayaranController::class, 'showPembayaran'])->name('showPembayaran');
+            Route::get(
+                '/{pembayaran_id}/{mhs_id?}',
+                [MahasiswaPembayaranController::class, 'showPembayaran']
+            )->name('showPembayaran');
         });
     });
 
@@ -445,7 +574,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/', [BimbinganController::class, 'index'])->name('index');
         Route::get('/data/{mhs_id?}', [BimbinganController::class, 'data'])->name('data');
         Route::get('/{tahun_semester_id}/{mhs_id?}', [BimbinganController::class, 'show'])->name('show');
-        Route::put('/{tahun_semester_id}/{mhs_id?}', [BimbinganController::class, 'storeOrUpdate'])->name('storeOrUpdate');
+        Route::put(
+            '/{tahun_semester_id}/{mhs_id?}',
+            [BimbinganController::class, 'storeOrUpdate']
+        )->name('storeOrUpdate');
     });
 
     Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');

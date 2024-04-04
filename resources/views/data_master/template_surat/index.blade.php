@@ -38,7 +38,7 @@
     <div class="modal fade" id="template_surat" tabindex="-1" aria-labelledby="template_suratLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('data-master.template-surat.store') }}" method="get">
+                <form action="{{ route('data-master.template-surat.store') }}" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="template_suratLabel">Tambah Template Surat</h1>

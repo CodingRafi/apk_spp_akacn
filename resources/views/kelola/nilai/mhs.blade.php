@@ -10,10 +10,73 @@
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Nilai</h5>
                     </div>
+                    <div class="d-flex" style="gap: 1rem;">
+                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"
+                            aria-expanded="false" aria-controls="petunjuk">
+                            Petunjuk Import Nilai
+                        </button>
+                        <a href="{{ route('kelola-nilai.downloadTemplate', [
+                            'tahun_ajaran_id' => request('tahun_ajaran_id'),
+                            'rombel_id' => request('rombel_id'),
+                            'tahun_matkul_id' => request('tahun_matkul_id'),
+                            'tahun_semester_id' => request('tahun_semester_id'),
+                        ]) }}"
+                            class="btn btn-primary">Download Template</a>
+                        <button class="btn btn-primary" type="button"
+                            onclick="addForm('{{ route('kelola-nilai.importNilai', [
+                                'tahun_ajaran_id' => request('tahun_ajaran_id'),
+                                'rombel_id' => request('rombel_id'),
+                                'tahun_matkul_id' => request('tahun_matkul_id'),
+                                'tahun_semester_id' => request('tahun_semester_id'),
+                            ]) }}', 'Import Nilai', '#importNilai')">
+                            Import Nilai
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
+                    <div class="collapse mb-3" id="petunjuk">
+                        <div class="card card-body">
+                            <ol>
+                                <li>Klik tombol "Download Template" untuk mengunduh template yang diperlukan.</li>
+                                <li>
+                                    Untuk mutu menggunakan id mutu seperti dibawah ini
+                                    <br>
+                                    <div class="w-50">
+                                        <table class="table" aria-label="table-mutu">
+                                            <thead>
+                                                <tr>
+                                                    <th>Id</th>
+                                                    <th>Nama</th>
+                                                    <th>Nilai</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($mutu as $row)
+                                                    <tr>
+                                                        <td>{{ $row->id }}</td>
+                                                        <td>{{ $row->nama }}</td>
+                                                        <td>{{ $row->nilai }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                                <li>
+                                    Publish diisi dengan angka 1 jika ingin menampilkan data, dan 0 jika ingin
+                                    menyembunyikan.
+                                </li>
+                                <li>
+                                    Klik tombol "Import Nilai", dan pilih file template yang telah diisi.
+                                    <br>
+                                    <small class="text-danger">Catatan: Seluruh data yang ada akan direplace dengan data
+                                        yang diimport.</small>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table" aria-label="Data rombel">
+                        <table class="table table-mhs" aria-label="Data rombel">
                             <thead>
                                 <tr>
                                     <th>No</th>
@@ -38,7 +101,7 @@
     <div class="modal fade" id="nilai" tabindex="-1" aria-labelledby="nilaiLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
-                <form action="" method="get">
+                <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="nilaiLabel">Input Nilai</h1>
@@ -80,13 +143,37 @@
                         <div class="mb-3">
                             <label for="publish" class="form-label">Publish</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" name="publish" value="1"
-                                    id="publish">
+                                <input class="form-check-input" type="checkbox" role="switch" name="publish"
+                                    value="1" id="publish">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
-                        <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this)">Simpan</button>
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this)">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="importNilai" tabindex="-1" aria-labelledby="importNilaiLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="">
+                    @method('post')
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="importNilaiLabel">Import Nilai</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="file" class="form-label">File</label>
+                            <input class="form-control" type="file" id="file" name="file" />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this)">Import</button>
                     </div>
                 </form>
             </div>
@@ -98,7 +185,7 @@
     <script>
         let table;
         $(document).ready(function() {
-            table = $('.table').DataTable({
+            table = $('.table-mhs').DataTable({
                 processing: true,
                 serverSide: true,
                 responsive: true,

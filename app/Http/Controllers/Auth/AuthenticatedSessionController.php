@@ -32,11 +32,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        if (Auth::user()->hasRole('mahasiswa')) {
-            return redirect()->route('pembayaran.index');
-        } else {
-            return redirect()->intended(RouteServiceProvider::HOME);
-        }
+        return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**
