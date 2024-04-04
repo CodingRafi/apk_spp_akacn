@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Kelola\{
+    BeritaAcaraController,
     GajiController,
     KrsController as KelolaKrsController,
     KuesionerController,
@@ -407,6 +408,12 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/get-presensi', [RekapPresensiController::class, 'getPresensi'])->name('getPresensi');
                 Route::get('/{tahun_matkul_id}', [RekapPresensiController::class, 'show'])->name('show');
             });
+        });
+
+        //? Berita Acara
+        Route::prefix('berita-acara/{tahun_ajaran_id}')->name('berita-acara.')->group(function () {
+            Route::get('/', [BeritaAcaraController::class, 'index'])->name('index');
+            Route::get('/data', [BeritaAcaraController::class, 'data'])->name('data');
         });
     });
 

@@ -36,7 +36,7 @@ class PresensiController extends Controller
             $options = "<a href='" . route('kelola-presensi.rekap.index', ['tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Rekap</a>";
             $options .= "<a href='" . route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Jadwal</a>";
             if (Auth::user()->hasRole('dosen')) {
-                $options .= "<a href='" . route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Berita Acara</a>";
+                $options .= "<a href='" . route('kelola-presensi.berita-acara.index', ['tahun_ajaran_id' => $data->id]) . "' class='btn btn-info mx-2'>Berita Acara</a>";
             }
             $data->options = $options;
         }

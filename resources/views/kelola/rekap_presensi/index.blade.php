@@ -11,7 +11,6 @@
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Rekap Presensi {{ request('tahun_ajaran_id') }}</h5>
                     </div>
-                    <button class="btn btn-primary" onclick="printPDF()">Print</button>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -109,15 +108,7 @@
 @endsection
 
 @push('js')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
     <script>
-        function printPDF() {
-            const element = document.getElementById('table-presensi');
-            html2pdf().set({
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-            }).from(element).save();
-        }
-
         function generate_table(data) {
             let table = '';
 
