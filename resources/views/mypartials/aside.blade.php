@@ -230,7 +230,14 @@
                 </a>
 
                 <ul class="menu-sub">
-                    @foreach (getRoleWithout(['admin']) as $role)
+                    @php
+                        if (Auth::user()->hasRole('dosen')) {
+                            $without = ['dosen', 'petugas', 'asdos', 'admin'];
+                        } else {
+                            $without = ['admin'];
+                        }
+                    @endphp
+                    @foreach (getRoleWithout($without) as $role)
                         <li class="menu-item {{ Request::is('kelola-users/' . $role['name'] . '*') ? 'active' : '' }}">
                             <a href="{{ route('kelola-users.index', ['role' => $role['name']]) }}" class="menu-link">
                                 <div data-i18n="{{ $role['name'] }}" class="text-capitalize">{{ $role['name'] }}</div>

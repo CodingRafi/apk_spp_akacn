@@ -73,9 +73,7 @@
                                     @else
                                         <th>Email</th>
                                     @endcan
-                                    @can('edit_users', 'delete_users')
-                                        <th>Aksi</th>
-                                    @endif
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -126,11 +124,9 @@
                     {
                         "data": "login_key"
                     },
-                    @can('edit_users', 'hapus_users')
-                        {
-                            "data": "options"
-                        }
-                    @endcan
+                    {
+                        "data": "options"
+                    }
                 ],
                 pageLength: 25,
             });

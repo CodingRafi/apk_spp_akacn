@@ -21,6 +21,7 @@ use App\Exports\UserPembayaranExport;
 use Illuminate\Http\Request;
 use App\Imports\MahasiswaImport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,7 +31,10 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view_users', ['only' => ['index', 'data', 'store', 'exportPembayaran', 'printPembayaran']]);
+        $this->middleware('permission:view_users', ['only' => [
+            'index', 'data', 'store',
+            'exportPembayaran', 'printPembayaran'
+        ]]);
         $this->middleware('permission:add_users', ['only' => ['create', 'store', 'import', 'saveImport']]);
         $this->middleware('permission:edit_users', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete_users', ['only' => ['destroy']]);
@@ -144,6 +148,9 @@ class UserController extends Controller
     public function edit($role, $id)
     {
         $data = User::findOrFail($id);
+        if (!$data->hasRole($role)) {
+            abort(404);
+        }
 
         if ($role == 'dosen' && $data->dosen->source == 'neo_feeder') {
             abort(403);
@@ -298,6 +305,14 @@ class UserController extends Controller
     public function show($role, $id)
     {
         $data = User::findOrFail($id);
+        if (!$data->hasRole($role)) {
+            abort(404);
+        }
+
+        if (Auth::user()->hasRole('dosen') && $role != 'mahasiswa') {
+            abort(404);
+        }
+
         $agamas = Agama::all();
         $kewarganegaraan = Kewarganegaraan::all();
         $return = [

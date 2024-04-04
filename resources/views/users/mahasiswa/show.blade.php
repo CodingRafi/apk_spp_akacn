@@ -17,26 +17,36 @@
                             <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profil"
                                 type="button">Profil</button>
                         </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pembayaran"
-                                type="button">Pembayaran</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#krs" type="button">
-                                KRS</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#presensi"
-                                type="button">Presensi</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nilai"
-                                type="button">Nilai</button>
-                        </li>
+                        @can('view_kelola_pembayaran')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#pembayaran"
+                                    type="button">Pembayaran</button>
+                            </li>
+                        @endcan
+                        @can('view_kelola_krs')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#krs" type="button">
+                                    KRS</button>
+                            </li>
+                        @endcan
+                        @can('view_kelola_presensi')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#presensi"
+                                    type="button">Presensi</button>
+                            </li>
+                        @endcan
+                        @can('view_kelola_nilai')
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nilai"
+                                    type="button">Nilai</button>
+                            </li>
+                        @endcan
+                        @can('view_bimbingan')
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" data-bs-toggle="tab" data-bs-target="#bimbingan_akademik"
                                 type="button">Bimbingan Akademik</button>
                         </li>
+                        @endcan
                     </ul>
 
                     <hr>
@@ -48,39 +58,49 @@
                                 'role' == 'mahasiswa',
                             ])
                         </div>
-                        <div class="tab-pane fade show" id="pembayaran" role="tabpanel" tabindex="0">
-                            <h5 class="card-title">Pembayaran</h5>
-                            @include('mahasiswa.pembayaran.table', [
-                                'mhs_id' => $data->id,
-                            ])
+                        @can('view_kelola_pembayaran')
+                            <div class="tab-pane fade show" id="pembayaran" role="tabpanel" tabindex="0">
+                                <h5 class="card-title">Pembayaran</h5>
+                                @include('mahasiswa.pembayaran.table', [
+                                    'mhs_id' => $data->id,
+                                ])
 
-                            <h5 class="card-title mt-3">Pembayaran Tambahan</h5>
-                            @include('users.mahasiswa.pembayaran_tambahan.index', [
-                                'mhs_id' => $data->id,
-                            ])
+                                <h5 class="card-title mt-3">Pembayaran Tambahan</h5>
+                                @include('users.mahasiswa.pembayaran_tambahan.index', [
+                                    'mhs_id' => $data->id,
+                                ])
 
-                            <h5 class="card-title mt-3">Potongan</h5>
-                            @include('users.mahasiswa.potongan.index', [
-                                'mhs_id' => $data->id,
-                            ])
-                        </div>
-                        <div class="tab-pane fade show" id="krs" role="tabpanel" tabindex="0">
-                            @include('mahasiswa.krs.table', [
-                                'mhs_id' => $data->id,
-                            ])
-                        </div>
-                        <div class="tab-pane fade show" id="presensi" role="tabpanel" tabindex="0">
-                            @include('mahasiswa.presensi.table', [
-                                'mhs_id' => $data->id,
-                            ])
-                        </div>
-                        <div class="tab-pane fade show" id="nilai" role="tabpanel" tabindex="0">
-                        </div>
-                        <div class="tab-pane fade show" id="bimbingan_akademik" role="tabpanel" tabindex="0">
-                            @include('mahasiswa.bimbingan.table', [
-                                'mhs_id' => $data->id,
-                            ])
-                        </div>
+                                <h5 class="card-title mt-3">Potongan</h5>
+                                @include('users.mahasiswa.potongan.index', [
+                                    'mhs_id' => $data->id,
+                                ])
+                            </div>
+                        @endcan
+                        @can('view_kelola_krs')
+                            <div class="tab-pane fade show" id="krs" role="tabpanel" tabindex="0">
+                                @include('mahasiswa.krs.table', [
+                                    'mhs_id' => $data->id,
+                                ])
+                            </div>
+                        @endcan
+                        @can('view_kelola_presensi')
+                            <div class="tab-pane fade show" id="presensi" role="tabpanel" tabindex="0">
+                                @include('mahasiswa.presensi.table', [
+                                    'mhs_id' => $data->id,
+                                ])
+                            </div>
+                        @endcan
+                        @can('view_kelola_nilai')
+                            <div class="tab-pane fade show" id="nilai" role="tabpanel" tabindex="0">
+                            </div>
+                        @endcan
+                        @can('view_bimbingan')
+                            <div class="tab-pane fade show" id="bimbingan_akademik" role="tabpanel" tabindex="0">
+                                @include('mahasiswa.bimbingan.table', [
+                                    'mhs_id' => $data->id,
+                                ])
+                            </div>
+                        @endcan
                     </div>
                 </div>
             </div>
