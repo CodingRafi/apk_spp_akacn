@@ -299,23 +299,8 @@ class KrsController extends Controller
 
         $admin = DB::table('users')->first();
 
-        // $footerView = view('components.footer-pdf')->render();
         $pdf = Pdf::loadView('mahasiswa.krs.print', compact('krs', 'krsMatkul', 'admin'));
-        // $pdf->getDomPDF()->setHttpContext(stream_context_create([
-        //     'ssl' => [
-        //         'allow_self_signed'=> TRUE,
-        //         'verify_peer' => FALSE,
-        //         'verify_peer_name' => FALSE,
-        //     ]
-        // ]));
-        // $pdf->getDomPDF()->loadHtml('<h1>Isi PDF</h1>'); // Ganti dengan konten PDF Anda
-        // $pdf->getDomPDF()->setPaper('A4', 'portrait');
-        // $pdf->getDomPDF()->render();
-        // $canvas = $pdf->getDomPDF()->getCanvas();
-        // $canvas->page_text(72, 18, "Halaman {PAGE_NUM} dari {PAGE_COUNT}", null, 10, array(0,0,0)); // Tambahkan nomor halaman
-        // $canvas->page_script($footerView); // Tambahkan footer
-    
         // Unduh PDF
-        return $pdf->stream('nama_file.pdf');
+        return $pdf->stream('krs.pdf');
     }
 }

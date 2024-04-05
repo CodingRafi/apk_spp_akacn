@@ -128,28 +128,28 @@
     let columns = [];
 
     $(document).ready(function() {
-        if (typeof table !== "undefined") {
-            table.ajax.reload();
-        } else {
-            $('.table thead tr').empty();
+        // if (typeof table !== "undefined") {
+        //     table.ajax.reload();
+        // } else {
+        //     $('.table thead tr').empty();
 
-            const format = configData.format;
-            const uniq = configData.unique;
+        //     const format = configData.format;
+        //     const uniq = configData.unique;
 
-            for (let key in format) {
-                if (!uniq.includes(key)) {
-                    columns.push({
-                        data: format[key],
-                        title: capitalize(format[key].replace(/_/g, ' ')),
-                    });
-                }
-            }
+        //     for (let key in format) {
+        //         if (!uniq.includes(key)) {
+        //             columns.push({
+        //                 data: format[key],
+        //                 title: capitalize(format[key].replace(/_/g, ' ')),
+        //             });
+        //         }
+        //     }
 
-            for (const i in columns) {
-                $('.table thead tr').append(`<th>${columns[i].title}</th>`);
-            }
-            // fetchDataAndUpdateTable()
-        }
+        //     for (const i in columns) {
+        //         $('.table thead tr').append(`<th>${columns[i].title}</th>`);
+        //     }
+        //     // fetchDataAndUpdateTable()
+        // }
     })
 
     function fetchDataAndUpdateTable() {

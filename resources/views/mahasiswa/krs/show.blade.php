@@ -11,12 +11,11 @@
                 $dataEmpty = false;
                 if ($krs->status == 'pending') {
                     $validation =
-                        (Auth::user()->hasRole('admin')
-                            ? true
-                            : $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
-                                $tahun_semester->tgl_akhir_krs >= date('Y-m-d')) &&
+                        $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                        $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
                         $tahun_semester->status &&
-                        ($lock == '1' ? true : $validationPembayaran['status']);
+                        ($krs->lock == '1' && !Auth::user()->hasRole('admin') ? false : true) &&
+                        $validationPembayaran['status'];
                 } elseif ($krs->status == 'ditolak') {
                     $validation =
                         (Auth::user()->hasRole('admin')
@@ -27,7 +26,11 @@
                     $validation = false;
                 }
             } else {
-                $validation = $tahun_semester->status && $validationPembayaran['status'];
+                $validation =
+                    $tahun_semester->status &&
+                    $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                    $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
+                    $validationPembayaran['status'];
             }
         @endphp
         <div class="content-wrapper">
@@ -86,17 +89,16 @@
                                     @endif
                                 </div>
                             @endif
-                        @else
-                            @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1') || $lock))
-                                <form
-                                    action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
-                                    method="post">
-                                    @csrf
-                                    @method('patch')
-                                    <input type="hidden" name="lock" value="0" aria-hidden="true">
-                                    <button type="submit" class="btn btn-danger">unlock</button>
-                                </form>
-                            @endif
+                        @endif
+                        @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1')))
+                            <form
+                                action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
+                                method="post">
+                                @csrf
+                                @method('patch')
+                                <input type="hidden" name="lock" value="0" aria-hidden="true">
+                                <button type="submit" class="btn btn-danger">unlock</button>
+                            </form>
                         @endif
 
                         @if (Auth::user()->hasRole('mahasiswa') && $krs && $krs->status == 'diterima')
@@ -108,15 +110,15 @@
                         @if ($dataEmpty || $krs->status == 'pending')
                             @if (!$validation)
                                 @if (!$validationPembayaran['status'])
-                                    @if ($lock)
-                                        <div class="alert alert-danger">
-                                            Bukan tanggal pengisian KRS, pengisian {{ parseDate($tahun_semester->tgl_mulai_krs) }} - {{ parseDate($tahun_semester->tgl_akhir_krs) }}
-                                        </div>
-                                    @else
-                                        <div class="alert alert-danger">
-                                            {{ $validationPembayaran['message'] }}
-                                        </div>
-                                    @endif
+                                    <div class="alert alert-danger">
+                                        {{ $validationPembayaran['message'] }}
+                                    </div>
+                                @elseif (!($tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d')))
+                                    <div class="alert alert-danger">
+                                        Bukan tanggal pengisian KRS, pengisian
+                                        {{ parseDate($tahun_semester->tgl_mulai_krs) }} -
+                                        {{ parseDate($tahun_semester->tgl_akhir_krs) }}
+                                    </div>
                                 @else
                                     <div class="alert alert-danger">
                                         Bukan waktu pengisian KRS
