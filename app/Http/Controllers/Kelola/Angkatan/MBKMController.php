@@ -31,7 +31,7 @@ class MBKMController extends Controller
             }
 
             if (auth()->user()->can('delete_kelola_mbkm')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.destroy', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`)' type='button'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.destroy', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, () => {tableMbkm.ajax.reload()})' type='button'>
                                                     Hapus
                                                 </button>";
             }
@@ -148,6 +148,31 @@ class MBKMController extends Controller
             return response()->json([
                 'message' => $th->getMessage()
             ], 200);
+        }
+    }
+
+    public function destroy($prodi_id, $tahun_ajaran_id, $id)
+    {
+        $data = MBKM::findOrFail($id);
+        if ($data->id_neo_feeder) {
+            return response()->json([
+                'message' => 'Hapus yang di neo feeder dulu'
+            ], 200);
+        }
+
+        DB::beginTransaction();
+        try {
+            $data->mahasiswa()->delete();
+            $data->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
         }
     }
 }
