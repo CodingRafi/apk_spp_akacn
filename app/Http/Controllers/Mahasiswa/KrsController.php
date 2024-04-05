@@ -184,7 +184,6 @@ class KrsController extends Controller
         return view('mahasiswa.krs.show', compact('tahun_semester', 'krs', 'mhs_id', 'validationPembayaran'));
     }
 
-
     public function ajukan($tahun_semester_id)
     {
         $validationPembayaran = $this->validatePembayaran($tahun_semester_id, Auth::user()->id);

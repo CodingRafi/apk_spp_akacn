@@ -137,19 +137,21 @@ class PresensiController extends Controller
         ], 200);
     }
 
-    public function getSemester($prodi_id){
+    public function getSemester($prodi_id)
+    {
         $data = DB::table('tahun_semester')
-                ->select('tahun_semester.id', 'semesters.nama')
-                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-                ->where('tahun_semester.prodi_id', $prodi_id)
-                ->get();
+            ->select('tahun_semester.id', 'semesters.nama')
+            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+            ->where('tahun_semester.prodi_id', $prodi_id)
+            ->get();
 
         return response()->json([
             'data' => $data
         ], 200);
     }
 
-    public function getMatkul($prodi_id){
+    public function getMatkul($prodi_id)
+    {
         $data = DB::table('tahun_matkul')
             ->select('matkuls.nama', 'tahun_matkul.id')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
@@ -258,7 +260,7 @@ class PresensiController extends Controller
             }
 
             //? Validasi jam
-            if ($today->format('H:i') < $getTahunMatkul->jam_mulai || $today->format('H:i') > $getTahunMatkul->jam_akhir) {
+            if ($today->format('H:i') < date("H:i", strtotime($getTahunMatkul->jam_mulai)) || $today->format('H:i') > date("H:i", strtotime($getTahunMatkul->jam_akhir))) {
                 return response()->json([
                     'message' => 'Sekarang bukan waktunya pembelajaran'
                 ], 400);
@@ -404,19 +406,38 @@ class PresensiController extends Controller
             ->where('tahun_matkul_rombel.tahun_matkul_id', $data->tahun_matkul_id)
             ->get();
 
-        return view('kelola.presensi.showJadwal', compact('data', 'rombel'));
+        $materi = DB::table('tahun_matkul')
+            ->select('matkul_materi.*')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->join('matkul_materi', 'matkul_materi.matkul_id', '=', 'matkuls.id')
+            ->leftJoin('jadwal', function ($q) use ($data) {
+                $q->on('jadwal.materi_id', 'matkul_materi.id')
+                    ->where('jadwal.tahun_semester_id', $data->tahun_semester_id);
+            })
+            ->where(function ($q) use ($data) {
+                $q->whereNull('jadwal.id')
+                    ->orWhere('matkul_materi.id', $data->materi_id);
+            })
+            ->where('tahun_matkul.id', $data->tahun_matkul_id)
+            ->get();
+        return view('kelola.presensi.showJadwal', compact('data', 'rombel', 'materi'));
     }
 
     public function updateJadwal(Request $request, $jadwal_id)
     {
         $request->validate([
-            'materi' => 'required'
+            'materi_id' => 'required'
         ]);
+
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
 
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'materi' => $request->materi,
+                'materi_id' => $request->materi_id,
+                'materi' => $materi->materi,
                 'ket' => $request->ket
             ]);
 
@@ -459,7 +480,9 @@ class PresensiController extends Controller
             return redirect()->back()->with('error', 'Bukan tanggal pelajaran');
         }
 
-        if ($today->format('H:i') < $jadwal->jam_mulai || $today->format('H:i') > $jadwal->jam_akhir) {
+        if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
+            ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
+        ) {
             return redirect()->back()->with('error', 'Sekarang bukan waktunya pembelajaran');
         }
 
@@ -496,7 +519,7 @@ class PresensiController extends Controller
         }
 
         $today = Carbon::now();
-        if ($today->format('H:i') < $jadwal->jam_akhir) {
+        if ($today->format('H:i') < date("H:i", strtotime($jadwal->jam_akhir))) {
             return redirect()->back()->with('error', 'Tidak bisa selesaikan jadwal sebelum jam pelajaran berakhir');
         }
 

@@ -42,36 +42,36 @@
                         <div class="col-md-6">
                             <table class="table">
                                 <tr>
-                                    <td>Kode Presensi</td>
-                                    <td>{{ $data->kode }}</td>
+                                    <td class="col-6">Kode Presensi</td>
+                                    <td class="col-6">{{ $data->kode }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Pengajar</td>
-                                    <td>{{ $data->pengajar }}</td>
+                                    <td class="col-6">Pengajar</td>
+                                    <td class="col-6">{{ $data->pengajar }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Presensi Masuk Pengajar</td>
-                                    <td>{{ $data->presensi_mulai }}</td>
+                                    <td class="col-6">Presensi Masuk Pengajar</td>
+                                    <td class="col-6">{{ $data->presensi_mulai }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Presensi Pulang Pengajar</td>
-                                    <td>{{ $data->presensi_selesai }}</td>
+                                    <td class="col-6">Presensi Pulang Pengajar</td>
+                                    <td class="col-6">{{ $data->presensi_selesai }}</td>
                                 </tr>
                             </table>
                         </div>
                         <div class="col-md-6">
                             <table class="table">
                                 <tr>
-                                    <td>Tanggal Pembelajaran</td>
-                                    <td>{{ parseDate($data->tgl) }}</td>
+                                    <td class="col-6">Tanggal Pembelajaran</td>
+                                    <td class="col-6">{{ parseDate($data->tgl) }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Matkul</td>
-                                    <td>{{ $data->matkul }}</td>
+                                    <td class="col-6">Matkul</td>
+                                    <td class="col-6">{{ $data->matkul }}</td>
                                 </tr>
                                 <tr>
-                                    <td>Materi</td>
-                                    <td>{{ $data->materi }}</td>
+                                    <td class="col-6">Materi</td>
+                                    <td class="col-6">{{ $data->materi }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -112,6 +112,7 @@
             </div>
         </div>
     </div>
+    @if (!$data->presensi_selesai || Auth::user()->hasRole('admin'))
     <div class="modal fade" id="presensi" tabindex="-1" aria-labelledby="presensiLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -148,6 +149,7 @@
             </div>
         </div>
     </div>
+    @endif
     @if ($data->pengajar_id == Auth::user()->id)
         <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
@@ -156,13 +158,18 @@
                         @method('put')
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="jadwalLabel">Edit Jadwal</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="materi" class="form-label">Materi</label>
-                                <input class="form-control" type="text" name="materi"
-                                    value="{{ $data->materi }}" />
+                                <label for="materi_id" class="form-label">Materi</label>
+                                <select name="materi_id" id="materi_id" class="form-control" {{ $data->presensi_selesai ? 'readonly' : '' }}>
+                                    <option value="">Pilih Materi</option>
+                                    @foreach ($materi as $row)
+                                        <option value="{{ $row->id }}" {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="ket" class="form-label">Keterangan</label>
@@ -193,7 +200,11 @@
                     `<tr>
                         <td>${e.name}</td>
                         <td>${e.login_key}</td>
-                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status ?? '-'}</button></td>
+                        @if ($data->presensi_selesai && Auth::user()->hasRole('dosen'))
+                        <td>${e.status ?? '-'}</td>
+                        @else
+                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status}</button></td>
+                        @endif
                     </tr>`;
             });
 

@@ -15,4 +15,8 @@ class Jadwal extends Model
     public function pengajar(){
         return $this->belongsTo(User::class, 'pengajar_id');
     }
+
+    public function mahasiswa(){
+        return $this->belongsToMany(User::class, 'jadwal_presensi', 'jadwal_id', 'mhs_id')->withPivot('status');
+    }
 }
