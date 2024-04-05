@@ -17,7 +17,7 @@
                 <td style="font-weight: bold">{{ $krs->nim }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Nama Mahasiswa</td>
+                <td style="width: 7rem">Nama</td>
                 <td>:</td>
                 <td style="font-weight: bold">{{ $krs->name }}</td>
             </tr>

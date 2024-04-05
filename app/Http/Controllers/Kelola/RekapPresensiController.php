@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -14,6 +15,23 @@ class RekapPresensiController extends Controller
     {
         $prodis = DB::table('prodi')->get();
         return view('kelola.rekap_presensi.index', compact('prodis'));
+    }
+
+    public function getMatkul($tahun_ajaran_id){
+        $matkuls = DB::table('tahun_matkul')
+        ->select('tahun_matkul.id', 'matkuls.nama')
+        ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+        ->join('tahun_matkul_dosen', function($q){
+            $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
+                ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+        })
+        ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+        ->where('tahun_matkul.prodi_id', request('prodi_id'))
+        ->get();
+        
+        return response()->json([
+            'data' => $matkuls
+        ], 200);
     }
 
     public function getRombel(){
@@ -44,7 +62,6 @@ class RekapPresensiController extends Controller
                             ->where('jadwal_presensi.mhs_id', '=', $mahasiswa->id);
                     })
                     ->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'))
-                    ->where('jadwal.tahun_semester_id', request('tahun_semester_id'))
                     ->orderBy('jadwal.created_at', 'ASC')
                     ->get();
 
