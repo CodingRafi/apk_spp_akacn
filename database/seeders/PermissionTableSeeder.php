@@ -128,6 +128,11 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_presensi',
             'delete_kelola_presensi',
 
+            'view_kelola_mbkm',
+            'add_kelola_mbkm',
+            'edit_kelola_mbkm',
+            'delete_kelola_mbkm',
+
             'view_gaji',
             'view_template_surat',
 
@@ -151,6 +156,7 @@ class PermissionTableSeeder extends Seeder
 
             'view_khs',
             'view_transkrip',
+            'view_mbkm',
         ];
 
         foreach ($permissions as $permission) {

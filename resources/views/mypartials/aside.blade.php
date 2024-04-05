@@ -40,6 +40,7 @@
                         'jenjang',
                         'kewarganegaraan',
                         'lembaga_pengangkat',
+                        'jenis_aktivitas',
                         'pekerjaan',
                         'penghasilan',
                         'pangkat_golongan',

@@ -39,6 +39,7 @@ use App\Http\Controllers\{
 };
 use App\Http\Controllers\Dosen\PresensiController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
+use App\Http\Controllers\Kelola\Angkatan\MBKMController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\PotonganController;
@@ -286,6 +287,15 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/{id}', [PotonganController::class, 'show'])->name('show');
                 Route::put('/{id}', [PotonganController::class, 'update'])->name('update');
                 Route::delete('/{id}', [PotonganController::class, 'destroy'])->name('destroy');
+            });
+
+            //? Prodi - MBKM
+            Route::prefix('mbkm')->name('mbkm.')->group(function () {
+                Route::get('/data', [MBKMController::class, 'data'])->name('data');
+                Route::post('/', [MBKMController::class, 'store'])->name('store');
+                Route::get('/{id}', [MBKMController::class, 'show'])->name('show');
+                Route::put('/{id}', [MBKMController::class, 'update'])->name('update');
+                Route::delete('/{id}', [MBKMController::class, 'destroy'])->name('destroy');
             });
         });
 

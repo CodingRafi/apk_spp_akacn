@@ -48,6 +48,22 @@
                 nama_alat_transportasi: 'nama'
             }
         },
+        jenis_aktivitas: {
+            raw: {
+                "act": "GetJenisAktivitasMahasiswa",
+                "filter": "",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'jenis_aktivitas',
+            changeFormat: true,
+            unique: ['id_jenis_aktivitas_mahasiswa'],
+            format: {
+                id_jenis_aktivitas_mahasiswa: 'id',
+                nama_jenis_aktivitas_mahasiswa: 'nama'
+            }
+        },
         jenjang: {
             raw: {
                 "act": "GetJenjangPendidikan",
