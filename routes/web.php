@@ -61,6 +61,7 @@ use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\Mahasiswa\KhsController;
 use App\Http\Controllers\Mahasiswa\KrsController;
 use App\Http\Controllers\Mahasiswa\KuesionerController as MahasiswaKuesionerController;
+use App\Http\Controllers\Mahasiswa\MBKMController as MahasiswaMBKMController;
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
 use App\Http\Controllers\Mahasiswa\TranskipController;
@@ -585,6 +586,12 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/', [TranskipController::class, 'index'])->name('index');
         Route::get('/data', [TranskipController::class, 'data'])->name('data');
         Route::get('/print', [TranskipController::class, 'print'])->name('print');
+    });
+
+    Route::prefix('mbkm')->name('mbkm.')->group(function () {
+        Route::get('/', [MahasiswaMBKMController::class, 'index'])->name('index');
+        Route::get('/data', [MahasiswaMBKMController::class, 'data'])->name('data');
+        Route::get('/{id}', [MahasiswaMBKMController::class, 'show'])->name('show');
     });
 
     Route::prefix('bimbingan')->name('bimbingan.')->group(function () {

@@ -339,6 +339,15 @@
             </li>
         @endcan
 
+        @can('view_mbkm')
+            <li class="menu-item {{ Request::is('mbkm*') ? 'active' : '' }}">
+                <a href="{{ route('mbkm.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">MBKM</div>
+                </a>
+            </li>
+        @endcan
+
         @if (Auth::user()->hasRole('mahasiswa'))
             <li class="menu-item {{ Request::is('bimbingan*') ? 'active' : '' }}">
                 <a href="{{ route('bimbingan.index') }}" class="menu-link">
