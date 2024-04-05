@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <select id="prodi_id" class="form-control mb-3" onchange="get_rombel();get_matkul()">
+                            <select id="prodi_id" class="form-control mb-3" onchange="get_rombel();get_matkul();get_semester();">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
@@ -29,6 +29,11 @@
                         <div class="col-md-3">
                             <select id="rombel_id" class="form-control mb-3" onchange="get_presensi()">
                                 <option value="">Pilih Rombel</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="tahun_semester_id" class="form-control mb-3" onchange="get_presensi()">
+                                <option value="">Pilih Semester</option>
                             </select>
                         </div>
                     </div>
@@ -163,9 +168,29 @@
             })
         }
 
+        function get_semester() {
+            $('#tahun_semester_id').empty().append(`<option value="">Pilih Semester</option>`);
+            $.ajax({
+                url: "{{ route('kelola-presensi.rekap.getSemester', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+                type: 'GET',
+                dataType: "json",
+                data: {
+                    prodi_id: $('#prodi_id').val()
+                },
+                success: function(res) {
+                    res.data.forEach(e => {
+                        $('#tahun_semester_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                    })
+                },
+                error: function() {
+                    alert('Gagal get semester')
+                }
+            })
+        }
+
         function get_presensi() {
             $('.table-presensi tbody').empty();
-            if ($('#rombel_id').val() != '') {
+            if ($('#rombel_id').val() != '' && $('#tahun_semester_id').val() != '') {
                 $('.table-presensi tbody').append(`<tr>
                                                     <td colspan="17" class="text-center py-4">
                                                         <div class="spinner-border" role="status">
@@ -178,6 +203,7 @@
                     type: 'GET',
                     dataType: "json",
                     data: {
+                        tahun_semester_id: $('#tahun_semester_id').val(),
                         rombel_id: $('#rombel_id').val(),
                         tahun_matkul_id: $('#tahun_matkul_id').val(),
                     },

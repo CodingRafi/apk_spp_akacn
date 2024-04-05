@@ -34,6 +34,19 @@ class RekapPresensiController extends Controller
         ], 200);
     }
 
+    public function getSemester($tahun_ajaran_id){
+        $tahunSemester = DB::table('tahun_semester')
+                ->select('tahun_semester.id', 'semesters.nama')
+                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
+                ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+                ->where('tahun_semester.prodi_id', request('prodi_id'))
+                ->get();
+
+        return response()->json([
+            'data' => $tahunSemester
+        ], 200);
+    }
+
     public function getRombel(){
         $rombel = DB::table('tahun_matkul_rombel')
                     ->select('rombels.id', 'rombels.nama')
@@ -62,6 +75,7 @@ class RekapPresensiController extends Controller
                             ->where('jadwal_presensi.mhs_id', '=', $mahasiswa->id);
                     })
                     ->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'))
+                    ->where('jadwal.tahun_semester_id', request('tahun_semester_id'))
                     ->orderBy('jadwal.created_at', 'ASC')
                     ->get();
 
