@@ -20,6 +20,7 @@ use App\Http\Controllers\Kelola\{
     PotonganController as KelolaPotonganController,
     PresensiController as KelolaPresensiController,
     RekapPresensiController,
+    ResponseKuesionerController,
     RombelController,
     RuangController,
     SemesterController as KelolaSemesterController,
@@ -319,13 +320,22 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('kelola-kuesioner')->name('kelola-kuesioner.')->group(function () {
-        //? Kuesioner
+        //? Template Kuesioner
         Route::get(
             'template/{id}/change-status',
             [KuesionerController::class, 'change_status']
         )->name('template.change-status');
         Route::get('template/data', [KuesionerController::class, 'data'])->name('template.data');
         Route::resource('template', KuesionerController::class);
+
+        //? Response Kuesioner
+        Route::prefix('response')->name('response.')->group(function () {
+            Route::get('/', [ResponseKuesionerController::class, 'index'])->name('index');
+            Route::get('/data', [ResponseKuesionerController::class, 'data'])->name('data');
+            Route::get('/getSemester', [ResponseKuesionerController::class, 'getSemester'])->name('getSemester');
+            Route::get('/getMatkul', [ResponseKuesionerController::class, 'getMatkul'])->name('getMatkul');
+            Route::get('/{id}', [ResponseKuesionerController::class, 'show'])->name('show');
+        });
     });
 
     Route::prefix('kelola-presensi')->name('kelola-presensi.')->group(function () {

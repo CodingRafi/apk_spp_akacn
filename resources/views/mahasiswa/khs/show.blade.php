@@ -130,7 +130,7 @@
 
                     if (e.kuesioner != null) {
                         total_sks += parseInt(e.jml_sks) ?? 0;
-                        bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
+                        bobot_x_sks += parseFloat(e.bobot_x_sks) ?? 0;
                     }
                 })
 
@@ -140,7 +140,7 @@
                 <tr class="py-4">
                     <td colspan="2" style="text-align: right;font-weight: bold;border-bottom:0;">Total</td>
                     <td colspan="3" class="fw-bold">${total_sks}</td>
-                    <td class="fw-bold py-4">${bobot_x_sks}</td>
+                    <td class="fw-bold py-4">${bobot_x_sks.toFixed(2)}</td>
                     <td></td>
                 </tr>
                 <tr>

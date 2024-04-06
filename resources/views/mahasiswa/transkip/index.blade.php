@@ -75,7 +75,7 @@
                             </tr>`;
                     }
                     total_sks += parseInt(e.jml_sks) ?? 0;
-                    bobot_x_sks += parseInt(e.bobot_x_sks) ?? 0;
+                    bobot_x_sks += parseFloat(e.bobot_x_sks) ?? 0;
                 })
             })
 
@@ -90,7 +90,7 @@
                             </tr>
                             <tr>
                                 <th>Total Mutu</th>
-                                <td>${bobot_x_sks}</td>
+                                <td>${bobot_x_sks.toFixed(2)}</td>
                             </tr>
                             <tr>
                                 <th>IPK</th>

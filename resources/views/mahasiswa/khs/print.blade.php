@@ -82,7 +82,7 @@
                 <tr>
                     <th style="padding: 11px;" colspan="3">Total</th>
                     <th style="padding: 11px;" colspan="3">{{ $jml_sks }}</th>
-                    <th style="padding: 11px;">{{ $bobot_x_sks }}</th>
+                    <th style="padding: 11px;">{{ number_format($bobot_x_sks, 2) }}</th>
                 </tr>
             </tbody>
         </table>

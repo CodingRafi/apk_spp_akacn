@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize mb-0">Template Kuesioner</h5>
-                    @can('add_ruang')
+                    @can('add_kuesioner')
                         <button type="button" class="btn btn-primary"
                             onclick="addForm('{{ route('kelola-kuesioner.template.store') }}', 'Kuesioner', '#kuesioner')">
                             Tambah
@@ -22,7 +22,7 @@
                                     <th>Type</th>
                                     <th>Pertanyaan</th>
                                     <th>Status</th>
-                                    @can('add_ruang')
+                                    @can('add_kuesioner')
                                         <th>Aksi</th>
                                     @endcan
                                 </tr>
@@ -94,7 +94,7 @@
                     {
                         "data": "status"
                     },
-                    @can('delete_ruang')
+                    @can('delete_kuesioner')
                         {
                             "data": "options"
                         }

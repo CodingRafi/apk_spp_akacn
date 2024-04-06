@@ -87,7 +87,7 @@
             <tr>
                 <th style="text-align: left;">Total Mutu</th>
                 <td>:</td>
-                <td>{{ $bobot_x_sks }}</td>
+                <td>{{ number_format($bobot_x_sks, 2) }}</td>
             </tr>
             <tr>
                 <th style="text-align: left;">IPK</th>

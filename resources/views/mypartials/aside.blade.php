@@ -65,7 +65,7 @@
             </li>
         @endcanany
 
-        @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_kuesioner', 'view_ruang',
+        @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_ruang',
             'view_kelola_template_surat', 'view_kelola_mutu'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -155,6 +155,11 @@
                         <li class="menu-item {{ Request::is('kelola-kuesioner/template*') ? 'active' : '' }}">
                             <a href="{{ route('kelola-kuesioner.template.index') }}" class="menu-link">
                                 <div data-i18n="Template" class="text-capitalize">Template</div>
+                            </a>
+                        </li>
+                        <li class="menu-item {{ Request::is('kelola-kuesioner/response*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-kuesioner.response.index') }}" class="menu-link">
+                                <div data-i18n="response" class="text-capitalize">Response</div>
                             </a>
                         </li>
                     @endcan

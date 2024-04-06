@@ -34,7 +34,9 @@ class KuesionerController extends Controller
             DB::table('t_kuesioners_answer')->insert([
                 't_kuesioner_id' => $tKuesioner,
                 'kuesioner_id' => $key,
-                'answer' => $value
+                'answer' => $value,
+                'created_at' => now(),
+                'updated_at' => now()
             ]);
         }
 
