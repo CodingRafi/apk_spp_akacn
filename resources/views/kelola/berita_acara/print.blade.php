@@ -197,24 +197,14 @@
             <td>
                 Depok, {{ date('d F Y') }}
                 <br>
-                Admin
-            </td>
-            <td></td>
-            <td style="text-align: center;">
-                Mahasiswa/i
+                Dosen Pengampu,
             </td>
         </tr>
         <tr>
-            <td>
-                {{-- <img src="{{ public_path() . '/storage/' . $admin->ttd }}" alt="" style="width: 9rem;height:9rem;"> --}}
-            </td>
-            <td></td>
-            <td></td>
+            <td style="padding: 3rem;"></td>
         </tr>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>{{ Auth::user()->name }}</td>
         </tr>
     </table>
 @endsection
