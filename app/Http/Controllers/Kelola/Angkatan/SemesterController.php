@@ -62,7 +62,7 @@ class SemesterController extends Controller
             }
 
             if (auth()->user()->can('delete_prodi')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`)'>
                                                     Hapus
                                                 </button>";
             }
@@ -178,5 +178,22 @@ class SemesterController extends Controller
         return response()->json([
             'message' => 'Berhasil diubah'
         ], 200);
+    }
+
+    public function destroy($prodi_id, $tahun_ajaran_id, $id){
+        DB::beginTransaction();
+        try {
+            DB::table('tahun_semester')
+                ->where('id', $id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
     }
 }
