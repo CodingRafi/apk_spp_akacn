@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\{
     Agama,
     AlatTransportasi,
+    JalurMasuk,
+    JenisDaftar,
     JenisKelas,
+    JenisKeluar,
+    JenisPembiayaan,
     JenisTinggal,
     Jenjang,
     Kewarganegaraan,
@@ -111,6 +115,10 @@ class UserController extends Controller
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
             $jenisKelas = JenisKelas::all();
+            $jenisPembiayaan = JenisPembiayaan::all();
+            $jenisDaftar = JenisDaftar::all();
+            $jalurMasuk = JalurMasuk::all();
+            $jenisKeluar = JenisKeluar::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -120,7 +128,11 @@ class UserController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans,
-                'jenisKelas' => $jenisKelas
+                'jenisKelas' => $jenisKelas,
+                'jenisPembiayaan' => $jenisPembiayaan,
+                'jenisDaftar' => $jenisDaftar,
+                'jalurMasuk' => $jalurMasuk,
+                'jenisKeluar' => $jenisKeluar,
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -176,6 +188,10 @@ class UserController extends Controller
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
             $jenisKelas = JenisKelas::all();
+            $jenisPembiayaan = JenisPembiayaan::all();
+            $jenisDaftar = JenisDaftar::all();
+            $jalurMasuk = JalurMasuk::all();
+            $jenisKeluar = JenisKeluar::all();
             $countPembayaran = DB::table('pembayarans')
                 ->where('mhs_id', $data->id)
                 ->count();
@@ -193,7 +209,11 @@ class UserController extends Controller
                 'penghasilans' => $penghasilans,
                 'jenisKelas' => $jenisKelas,
                 'countPembayaran' => $countPembayaran,
-                'countKrs' => $countKrs
+                'countKrs' => $countKrs,
+                'jenisPembiayaan' => $jenisPembiayaan,
+                'jenisDaftar' => $jenisDaftar,
+                'jalurMasuk' => $jalurMasuk,
+                'jenisKeluar' => $jenisKeluar,
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')
@@ -333,6 +353,10 @@ class UserController extends Controller
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
             $jenisKelas = JenisKelas::all();
+            $jenisPembiayaan = JenisPembiayaan::all();
+            $jenisDaftar = JenisDaftar::all();
+            $jalurMasuk = JalurMasuk::all();
+            $jenisKeluar = JenisKeluar::all();
             $mhs = $data->mahasiswa;
             $tahun_semester = DB::table('tahun_semester')
                 ->select('tahun_semester.id', 'semesters.nama')
@@ -360,6 +384,10 @@ class UserController extends Controller
                 'tahun_semester' => $tahun_semester,
                 'jenisKelas' => $jenisKelas,
                 'tahunPembayaranLain' => $tahunPembayaranLain,
+                'jenisPembiayaan' => $jenisPembiayaan,
+                'jenisDaftar' => $jenisDaftar,
+                'jalurMasuk' => $jalurMasuk,
+                'jenisKeluar' => $jenisKeluar,
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')

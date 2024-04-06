@@ -74,11 +74,11 @@
                     'role' => $role,
                     'disabled' => $disabled,
                 ])
-            </div>
-            <div class="col-md-6">
                 @include('users.default.alamat', [
                     'role' => $role,
                 ])
+            </div>
+            <div class="col-md-6">
                 <div class="mb-3">
                     <label for="kelurahan" class="form-label">Kelurahan</label>
                     <input {{ $disabled ? 'disabled' : '' }} {{ $disabled ? 'disabled' : '' }}
@@ -132,6 +132,82 @@
                         type="text" value="{{ isset($data) ? $data->mahasiswa->npwp : old('npwp') }}"
                         id="npwp" placeholder="NPWP" name="npwp" />
                     @error('npwp')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="jenis_pembiayaan_id" class="form-label">Jenis Pembiayaan</label>
+                    <select class="form-select @error('jenis_pembiayaan_id') is-invalid @enderror"
+                        name="jenis_pembiayaan_id" id="jenis_pembiayaan_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        <option value="">Pilih Jenis Pembiayaan</option>
+                        @foreach ($jenisPembiayaan as $jenis)
+                            <option value="{{ $jenis->id }}"
+                                {{ isset($data) ? ($data->mahasiswa->jenis_pembiayaan_id == $jenis->id ? 'selected' : '') : (old('jenis_pembiayaan_id') == $jenis->id ? 'selected' : '') }}>
+                                {{ $jenis->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jenis_pembiayaan_id')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="jenis_daftar_id" class="form-label">Jenis Daftar</label>
+                    <select class="form-select @error('jenis_daftar_id') is-invalid @enderror"
+                        name="jenis_daftar_id" id="jenis_daftar_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        <option value="">Pilih Jenis Daftar</option>
+                        @foreach ($jenisDaftar as $jenis)
+                            <option value="{{ $jenis->id }}"
+                                {{ isset($data) ? ($data->mahasiswa->jenis_daftar_id == $jenis->id ? 'selected' : '') : (old('jenis_daftar_id') == $jenis->id ? 'selected' : '') }}>
+                                {{ $jenis->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jenis_daftar_id')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="jalur_masuk_id" class="form-label">Jalur Masuk</label>
+                    <select class="form-select @error('jalur_masuk_id') is-invalid @enderror"
+                        name="jalur_masuk_id" id="jalur_masuk_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        <option value="">Pilih Jalur Masuk</option>
+                        @foreach ($jalurMasuk as $jenis)
+                            <option value="{{ $jenis->id }}"
+                                {{ isset($data) ? ($data->mahasiswa->jalur_masuk_id == $jenis->id ? 'selected' : '') : (old('jalur_masuk_id') == $jenis->id ? 'selected' : '') }}>
+                                {{ $jenis->nama }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jalur_masuk_id')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="jenis_keluar_id" class="form-label">Jenis Keluar</label>
+                    <select class="form-select @error('jenis_keluar_id') is-invalid @enderror"
+                        name="jenis_keluar_id" id="jenis_keluar_id"
+                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        <option value="">Pilih Jenis Keluar</option>
+                        @foreach ($jenisKeluar as $jenis)
+                            <option value="{{ $jenis->id }}"
+                                {{ isset($data) ? ($data->mahasiswa->jenis_keluar_id == $jenis->id ? 'selected' : '') : (old('jenis_keluar_id') == $jenis->id ? 'selected' : '') }}>
+                                {{ $jenis->jenis }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('jenis_keluar_id')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
                         </div>
