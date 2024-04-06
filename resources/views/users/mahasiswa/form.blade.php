@@ -8,19 +8,19 @@
 
 <ul class="nav nav-tabs" id="profile">
     <li class="nav-item" style="white-space: nowrap;">
-        <button data-bs-toggle="tab" class="nav-link active a-tab" data-bs-target="#identitas">Identitas</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link active a-tab" data-bs-target="#identitas">Identitas</button>
     </li>
     <li class="nav-item" style="white-space: nowrap;">
-        <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#ayah">Ayah</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#ayah">Ayah</button>
     </li>
     <li class="nav-item" style="white-space: nowrap;">
-        <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#ibu">Ibu</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#ibu">Ibu</button>
     </li>
     <li class="nav-item" style="white-space: nowrap;">
-        <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#wali">Wali</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#wali">Wali</button>
     </li>
     <li class="nav-item" style="white-space: nowrap;">
-        <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#lainnya">Lainnya</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#lainnya">Lainnya</button>
     </li>
 </ul>
 

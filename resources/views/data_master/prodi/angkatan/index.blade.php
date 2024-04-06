@@ -14,31 +14,31 @@
                         <ul class="nav nav-tabs" id="detail">
                             @can('view_semester')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button data-bs-toggle="tab" data-bs-target="#semester"
+                                    <button type="button" data-bs-toggle="tab" data-bs-target="#semester"
                                         class="nav-link a-tab active">Semester</button>
                                 </li>
                             @endcan
                             @can('view_kelola_pembayaran')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button data-bs-toggle="tab" data-bs-target="#pembayaran-semester"
+                                    <button type="button" data-bs-toggle="tab" data-bs-target="#pembayaran-semester"
                                         class="nav-link a-tab">Pembayaran Semester</button>
                                 </li>
                             @endcan
                             @can('view_pembayaran_lainnya')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button data-bs-toggle="tab" class="nav-link a-tab"
+                                    <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
                                         data-bs-target="#pembayaran-lainnya">Pembayaran Lainnya</button>
                                 </li>
                             @endcan
                             @can('view_potongan')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button data-bs-toggle="tab" class="nav-link a-tab"
+                                    <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
                                         data-bs-target="#potongan">Potongan</button>
                                 </li>
                             @endcan
                             @can('view_kelola_mbkm')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#mbkm">MBKM</button>
+                                    <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#mbkm">MBKM</button>
                                 </li>
                             @endcan
                         </ul>
