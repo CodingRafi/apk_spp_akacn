@@ -34,8 +34,10 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             '2' => 'required|numeric',
             '3' => 'required|numeric',
             '4' => 'required|numeric',
-            '5' => 'required|numeric|in:' . $mutu,
-            '6' => 'required|in:0,1'
+            '5' => 'required|numeric',
+            '6' => 'required|numeric',
+            '7' => 'required|numeric|in:' . $mutu,
+            '8' => 'required|in:0,1'
         ];
     }
 
@@ -51,9 +53,9 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             ->first();
 
         $nilai = $this->mutu->filter(function ($item) use ($row) {
-            return $item->id == $row[5];
+            return $item->id == $row[7];
         })->first();
-
+        
         if ($user && $nilai) {
             DB::table('mhs_nilai')
                 ->updateOrInsert([
@@ -62,11 +64,13 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                     'tahun_matkul_id' => $this->tahunMatkulId,
                 ], [
                     'presensi' => $row[2],
-                    'uts' => $row[3],
-                    'uas' => $row[4],
-                    'mutu_id' => $row[5],
+                    'tugas' => $row[3],
+                    'uts' => $row[4],
+                    'uas' => $row[5],
+                    'nilai_akhir' => $row[6],
+                    'mutu_id' => $row[7],
                     'nilai_mutu' => $nilai->nilai,
-                    'publish' => (string) $row[6],
+                    'publish' => (string) $row[8],
                     'jml_sks' => $this->matkul->sks_mata_kuliah,
                     'updated_at' => now()
                 ]);

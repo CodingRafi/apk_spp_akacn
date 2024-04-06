@@ -108,8 +108,9 @@ class BeritaAcaraController extends Controller
             ->first();
 
         $nilai = DB::table('mhs_nilai')
-                    ->select('users.name', 'users.login_key', 'mhs_nilai.*')
+                    ->select('users.name', 'users.login_key', 'mhs_nilai.*', 'mutu.nama as mutu')
                     ->join('users', 'users.id', 'mhs_nilai.mhs_id')
+                    ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
                     ->where('tahun_semester_id', $tahun_semester_id)
                     ->where('tahun_matkul_id', $tahun_matkul_id)
                     ->get();

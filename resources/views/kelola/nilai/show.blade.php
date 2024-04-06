@@ -29,7 +29,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <small class="text-danger">*Harap pilih semua filter</small>
+                    <div class="table-responsive mt-3">
                         <table class="table" aria-label="Data rombel">
                             <thead>
                                 <tr>

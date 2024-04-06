@@ -83,8 +83,10 @@
                                     <th>Nama</th>
                                     <th>NIM</th>
                                     <th>Presensi</th>
+                                    <th>Tugas</th>
                                     <th>UTS</th>
                                     <th>UAS</th>
+                                    <th>Nilai Akhir</th>
                                     <th>Mutu</th>
                                     <th>Nilai Mutu</th>
                                     <th>Jumlah SKS</th>
@@ -117,8 +119,13 @@
                             <input class="form-control" type="text" id="nim" name="login_key" disabled />
                         </div>
                         <div class="mb-3">
-                            <label for="presensi" class="form-label">presensi</label>
+                            <label for="presensi" class="form-label">Presensi</label>
                             <input class="form-control" type="number" id="presensi" name="presensi" min="0"
+                                step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="tugas" class="form-label">Tugas</label>
+                            <input class="form-control" type="number" id="tugas" name="tugas" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
@@ -129,6 +136,11 @@
                         <div class="mb-3">
                             <label for="uas" class="form-label">UAS</label>
                             <input class="form-control" type="number" id="uas" name="uas" min="0"
+                                step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="nilai_akhir" class="form-label">Nilai Akhir</label>
+                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
@@ -205,10 +217,16 @@
                         "data": "presensi"
                     },
                     {
+                        "data": "tugas"
+                    },
+                    {
                         "data": "uts"
                     },
                     {
                         "data": "uas"
+                    },
+                    {
+                        "data": "nilai_akhir"
                     },
                     {
                         "data": "mutu"

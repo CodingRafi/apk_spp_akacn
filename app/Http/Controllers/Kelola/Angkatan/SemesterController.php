@@ -36,7 +36,16 @@ class SemesterController extends Controller
     public function data($prodi_id, $tahun_ajaran_id)
     {
         $datas = DB::table('semesters')
-            ->select('semesters.*', 'tahun_semester.jatah_sks as jatah_sks_semester', 'tahun_semester.id as tahun_semester_id', 'tahun_semester.tgl_mulai_krs', 'tahun_semester.tgl_akhir_krs', 'tahun_semester.status')
+            ->select(
+                'semesters.nama',
+                'tahun_semester.jatah_sks as jatah_sks_semester',
+                'tahun_semester.id as tahun_semester_id',
+                'tahun_semester.tgl_mulai_krs',
+                'tahun_semester.tgl_akhir_krs',
+                'tahun_semester.tgl_mulai',
+                'tahun_semester.tgl_akhir',
+                'tahun_semester.status'
+            )
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
@@ -53,7 +62,7 @@ class SemesterController extends Controller
             }
 
             if (auth()->user()->can('delete_prodi')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->id]) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`)'>
                                                     Hapus
                                                 </button>";
             }
@@ -63,7 +72,8 @@ class SemesterController extends Controller
         return DataTables::of($datas)
             ->addIndexColumn()
             ->editCOlumn('status', function ($datas) {
-                return $datas->status ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+                return $datas->status ? "<i class='bx bx-check text-success'></i>" :
+                    "<i class='bx bx-x text-danger'></i>";
             })
             ->rawColumns(['options', 'status'])
             ->make(true);
@@ -76,6 +86,8 @@ class SemesterController extends Controller
             'jatah_sks' => 'required',
             'tgl_mulai_krs' => 'required',
             'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
+            'tgl_mulai' => 'required',
+            'tgl_akhir' => 'required|after:tgl_mulai',
         ]);
 
         if ($request->status) {
@@ -101,6 +113,8 @@ class SemesterController extends Controller
                 'jatah_sks' => $request->jatah_sks,
                 'tgl_mulai_krs' => $request->tgl_mulai_krs,
                 'tgl_akhir_krs' => $request->tgl_akhir_krs,
+                'tgl_mulai' => $request->tgl_mulai,
+                'tgl_akhir' => $request->tgl_akhir,
                 'status' => ($request->status ?? "0"),
                 'created_at' => now(),
                 'updated_at' => now()
@@ -131,6 +145,8 @@ class SemesterController extends Controller
             'jatah_sks' => 'required',
             'tgl_mulai_krs' => 'required',
             'tgl_akhir_krs' => 'required|after:tgl_mulai_krs',
+            'tgl_mulai' => 'required',
+            'tgl_akhir' => 'required|after:tgl_mulai',
         ]);
 
         $data = DB::table('tahun_semester')->where('id', $id)->first();
@@ -153,6 +169,8 @@ class SemesterController extends Controller
             'jatah_sks' => $request->jatah_sks,
             'tgl_mulai_krs' => $request->tgl_mulai_krs,
             'tgl_akhir_krs' => $request->tgl_akhir_krs,
+            'tgl_mulai' => $request->tgl_mulai,
+            'tgl_akhir' => $request->tgl_akhir,
             'status' => request('status') ?? '0',
             'updated_at' => now()
         ]);

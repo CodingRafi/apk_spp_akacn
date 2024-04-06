@@ -175,10 +175,15 @@
                     <tbody>
                         @foreach ($nilai as $item)
                             <tr>
-                                <td>{{ $loop->iteration() }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $item->login_key }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->presensi }}</td>
+                                <td>{{ $item->tugas }}</td>
+                                <td>{{ $item->uts }}</td>
+                                <td>{{ $item->uas }}</td>
+                                <td>{{ $item->nilai_akhir }}</td>
+                                <td>{{ $item->mutu }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -4,8 +4,10 @@
             <th>Nama</th>
             <th>NIM</th>
             <th>Presensi</th>
+            <th>Tugas</th>
             <th>UTS</th>
             <th>UAS</th>
+            <th>Nilai Akhir</th>
             <th>Mutu</th>
             <th>Publish</th>
         </tr>
@@ -15,6 +17,8 @@
         <tr>
             <td>{{ $data->name }}</td>
             <td>{{ $data->login_key }}</td>
+            <td></td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>
