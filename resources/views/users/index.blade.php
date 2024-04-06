@@ -44,9 +44,6 @@
                                         <button type="button" class="btn btn-primary w-100">Export Pembayaran</button>
                                     </form>
                                 </div>
-                                <div class="col-md-2 mb-3">
-                                    <a href="" class="btn btn-primary d-block">Import</a>
-                                </div>
                             @endif
                             <div class="col-md-2 mb-3">
                                 <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
