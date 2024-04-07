@@ -144,6 +144,7 @@ function editForm(url, title = "Edit", modal = "#modal-form", func) {
 
             resetForm(`${modal} form`);
             loopForm(response.data, modal);
+            initTinyMCE();
 
             if (func != undefined) {
                 func(response.data);

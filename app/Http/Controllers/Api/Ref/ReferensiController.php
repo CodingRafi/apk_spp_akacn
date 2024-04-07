@@ -89,6 +89,17 @@ class ReferensiController extends Controller
         ], 200);
     }
 
+    public function jalurPendaftaran()
+    {
+        $data = DB::table('jenis_daftars')
+            ->where('untuk_daftar_sekolah', 1)
+            ->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ], 200);
+    }
+
     public function wilayah()
     {
         $data = DB::table('wilayahs')

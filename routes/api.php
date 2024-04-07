@@ -24,6 +24,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::prefix('ref')->group(function () {
         Route::get('alat-transportasi', [ReferensiController::class, 'alatTransportasi']);
+        Route::get('jalur-pendaftaran', [ReferensiController::class, 'jalurPendaftaran']);
         Route::get('jenis-tinggal', [ReferensiController::class, 'jenisTinggal']);
         Route::get('jenis-kelas', [ReferensiController::class, 'jenisKelas']);
         Route::get('jenjang', [ReferensiController::class, 'jenjang']);

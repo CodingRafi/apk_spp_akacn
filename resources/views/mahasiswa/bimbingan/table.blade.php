@@ -27,7 +27,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="catatan" class="form-label">Catatan</label>
-                        <textarea name="catatan" id="catatan" cols="30" rows="10" class="form-control" {{ $disabled ? 'disabled' : '' }}></textarea>
+                        <textarea name="catatan" id="catatan" cols="30" rows="10" class="form-control textarea-tinymce" {{ $disabled ? 'disabled' : '' }}></textarea>
                     </div>
                 </div>
                 @if (!$disabled)
