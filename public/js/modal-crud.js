@@ -35,7 +35,6 @@ function submitForm(originalForm, selector = "", func) {
                 let content = editor.getContent();
                 data.set($(this).attr("name"), content);
             }
-            editor.remove();
         }
     });
 
@@ -60,6 +59,13 @@ function submitForm(originalForm, selector = "", func) {
             if (func != undefined) {
                 func(response.data);
             }
+
+            form_textarea.each(function () {
+                if ($(this).hasClass("textarea-tinymce")) {
+                    let editor = tinymce.get($(this).attr("id"));
+                    editor.remove();
+                }
+            });
         })
         .fail((errors) => {
             $(selector).html(oldValue).attr("disabled", false);

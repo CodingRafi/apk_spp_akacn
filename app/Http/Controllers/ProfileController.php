@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Agama;
 use App\Models\AlatTransportasi;
+use App\Models\JalurMasuk;
+use App\Models\JenisDaftar;
 use App\Models\JenisKelas;
+use App\Models\JenisKeluar;
+use App\Models\JenisPembiayaan;
 use App\Models\JenisTinggal;
 use App\Models\Jenjang;
 use App\Models\Kewarganegaraan;
@@ -42,6 +46,10 @@ class ProfileController extends Controller
             $jenjang = Jenjang::all();
             $penghasilans = Penghasilan::all();
             $jenisKelas = JenisKelas::all();
+            $jenisPembiayaan = JenisPembiayaan::all();
+            $jenisDaftar = JenisDaftar::all();
+            $jalurMasuk = JalurMasuk::all();
+            $jenisKeluar = JenisKeluar::all();
             $return += [
                 'tahun_ajarans' => $tahun_ajarans,
                 'prodis' => $prodis,
@@ -51,7 +59,11 @@ class ProfileController extends Controller
                 'pekerjaans' => $pekerjaans,
                 'jenjang' => $jenjang,
                 'penghasilans' => $penghasilans,
-                'jenisKelas' => $jenisKelas
+                'jenisKelas' => $jenisKelas,
+                'jenisPembiayaan' => $jenisPembiayaan,
+                'jenisDaftar' => $jenisDaftar,
+                'jalurMasuk' => $jalurMasuk,
+                'jenisKeluar' => $jenisKeluar,
             ];
         } elseif ($role == 'asdos') {
             $dosen = User::role('dosen')

@@ -14,8 +14,7 @@
                         $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
                         $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
                         $tahun_semester->status &&
-                        ($krs->lock == '1' && !Auth::user()->hasRole('admin') ? false : true) &&
-                        $validationPembayaran['status'];
+                        ($krs->lock == '1' && !Auth::user()->hasRole('admin') ? false : true);
                 } elseif ($krs->status == 'ditolak') {
                     $validation =
                         (Auth::user()->hasRole('admin')
@@ -30,8 +29,9 @@
                     $tahun_semester->status &&
                     $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
                     $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
-                    $validationPembayaran['status'];
+                    (Auth::user()->hasRole('admin') ? true : $validationPembayaran['status']);
             }
+
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -77,7 +77,7 @@
                                             <button type="button" class="btn btn-warning btn-revisi">Revisi</button>
                                         </form>
                                     @endif
-                                    @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '0') || $lock))
+                                    @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '0')))
                                         <form
                                             action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                             method="post">
@@ -90,7 +90,7 @@
                                 </div>
                             @endif
                         @endif
-                        @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1')))
+                        @if (Auth::user()->hasRole('admin') && (!$krs || ($krs && $krs->status == 'pending' && $krs->lock == '1')))
                             <form
                                 action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                 method="post">

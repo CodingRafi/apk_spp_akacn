@@ -28,6 +28,10 @@ class PembayaranMhsMiddleware
             abort(404);
         }
 
+        if (!isset($mhs_id)) {
+            abort(404);
+        }
+
         $mhs = DB::table('profile_mahasiswas')->where('user_id', $mhs_id)->first();
         
         if (!$mhs) {
