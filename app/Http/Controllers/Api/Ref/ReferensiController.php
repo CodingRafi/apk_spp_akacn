@@ -35,6 +35,24 @@ class ReferensiController extends Controller
         ], 200);
     }
 
+    public function jalurMasuk()
+    {
+        $data = DB::table('jalur_masuks')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ], 200);
+    }
+
+    public function jenisPembiayaan()
+    {
+        $data = DB::table('jenis_pembiayaans')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ], 200);
+    }
+
     public function jenjang()
     {
         $data = DB::table('jenjangs')->get();
@@ -92,7 +110,7 @@ class ReferensiController extends Controller
     public function jalurPendaftaran()
     {
         $data = DB::table('jenis_daftars')
-            ->where('untuk_daftar_sekolah', 1)
+            ->where('untuk_daftar_sekolah', '1')
             ->get();
         return response()->json([
             'status' => true,
@@ -106,7 +124,8 @@ class ReferensiController extends Controller
             ->when(request('negara_id'), function ($q) {
                 $q->where('negara_id', request('negara_id'));
             })
-            ->get();
+            ->where('id_level_wilayah', 3)
+            ->paginate(100);
         return response()->json([
             'status' => true,
             'data' => $data
@@ -142,6 +161,18 @@ class ReferensiController extends Controller
 
     public function tahunAjaran(){
         $data = DB::table('tahun_ajarans')->get();
+        return response()->json([
+            'status' => true,
+            'data' => $data
+        ], 200);
+    }
+
+    public function semester(){
+        $data = DB::table('semesters')
+                ->when(request('tahun_ajaran_id'), function ($q){
+                    $q->where('tahun_ajaran_id', request('tahun_ajaran_id'));
+                })->get();
+                
         return response()->json([
             'status' => true,
             'data' => $data

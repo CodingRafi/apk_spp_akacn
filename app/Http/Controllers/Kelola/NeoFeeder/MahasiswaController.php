@@ -119,4 +119,14 @@ class MahasiswaController extends Controller
             'data' => $data
         ], 200);
     }
+
+    public function update(Request $request, $user_id){
+        DB::table('profile_mahasiswas')
+            ->where('user_id', $user_id)
+            ->update($request->except('_method', '_token'));
+
+        return response()->json([
+            'status' => true
+        ], 200);
+    }
 }

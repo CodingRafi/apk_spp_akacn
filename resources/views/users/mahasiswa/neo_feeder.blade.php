@@ -6,6 +6,8 @@
     let statusGetMahasiswa = false;
     let statusGetRiwayat = false;
     let token = null;
+    let id_mahasiswa = null;
+    let id_registrasi_mahasiswa = null;
 
     async function getData() {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
@@ -170,6 +172,16 @@
 
     }
 
+    async function updateData(user_id, data) {
+        $.ajax({
+            url: '{{ route('kelola-users.neo-feeder.mahasiswa.update', ':user_id') }}'.replace(':user_id',
+                user_id),
+            type: 'POST',
+            data: JSON.stringify(data),
+            dataType: 'json'
+        })
+    }
+
     async function getDetailMahasiswa(user_id) {
         try {
             const res = await $.ajax({
@@ -179,69 +191,67 @@
                 dataType: 'json'
             });
 
-            const dataMhs = {
-                nama_mahasiswa: res.data.name,
-                jenis_kelamin: (res.data.mahasiswa.jk ? res.data.mahasiswa.jk.toUpperCase() :
-                    '*'),
-                jalan: res.data.mahasiswa.jalan,
-                rt: res.data.mahasiswa.rt,
-                rw: res.data.mahasiswa.rw,
-                dusun: res.data.mahasiswa.dusun,
-                kelurahan: res.data.mahasiswa.kelurahan,
-                kode_pos: res.data.mahasiswa.kode_pos,
-                nisn: res.data.mahasiswa.nisn,
-                nik: res.data.mahasiswa.nik,
-                tempat_lahir: res.data.mahasiswa.tempat_lahir,
-                tanggal_lahir: res.data.mahasiswa.tgl_lahir,
-
-                //? Ayah
-                nama_ayah: res.data.mahasiswa.nama_ayah,
-                tanggal_lahir_ayah: res.data.mahasiswa.tgl_lahir_ayah,
-                nik_ayah: res.data.mahasiswa.nik_ayah,
-                id_jenjang_pendidikan_ayah: res.data.mahasiswa.jenjang_ayah_id,
-                id_pekerjaan_ayah: res.data.mahasiswa.pekerjaan_ayah_id,
-                id_pengahasilan_ayah: res.data.mahasiswa.penghasilan_ayah_id,
-                id_kebutuhan_khusus_ayah: res.data.mahasiswa.ayah_kebutuhan_khusus,
-
-                //? IBU
-                nama_ibu_kandung: res.data.mahasiswa.nama_ibu,
-                tanggal_lahir_ibu: res.data.mahasiswa.tgl_lahir_ibu,
-                nik_ibu: res.data.mahasiswa.nik_ibu,
-                id_jenjang_pendidikan_ibu: res.data.mahasiswa.jenjang_ibu_id,
-                id_pekerjaan_ibu: res.data.mahasiswa.pekerjaan_ibu_id,
-                id_pengahasilan_ibu: res.data.mahasiswa.penghasilan_ibu_id,
-                id_kebutuhan_khusus_ibu: res.data.mahasiswa.ibu_kebutuhan_khusus,
-
-                //? Wali
-                nama_wali: res.data.mahasiswa.nama_wali,
-                tanggal_lahir_wali: res.data.mahasiswa.tgl_lahir_wali,
-                id_jenjang_pendidikan_wali: res.data.mahasiswa.jenjang_wali_id,
-                id_pekerjaan_wali: res.data.mahasiswa.pekerjaan_wali_id,
-                id_pengahasilan_wali: res.data.mahasiswa.penghasilan_wali_id,
-
-                telepon: res.data.mahasiswa.telepon,
-                handphone: res.data.mahasiswa.handphone,
-                email: res.data.email,
-                penerima_kps: res.data.mahasiswa.penerima_kps,
-                no_kps: res.data.mahasiswa.no_kps,
-                npwp: res.data.mahasiswa.npwp,
-                id_wilayah: res.data.mahasiswa.wilayah_id,
-                id_jenis_tinggal: res.data.mahasiswa.jenis_tinggal_id,
-                id_agama: res.data.mahasiswa.agama_id,
-                id_alat_transportasi: res.data.mahasiswa.alat_transportasi_id,
-                kewarganegaraan: res.data.mahasiswa.kewarganegaraan_id
-            };
-
-            console.log(dataMhs)
-            return dataMhs;
+            return res;
         } catch (err) {
             throw err;
         }
     }
 
     async function sendDataMhsToNeoFeeder(user_id) {
-        const data = await getDetailMahasiswa(user_id)
+        const getData = await getDetailMahasiswa(user_id)
         let token = await getToken()
+        const dataMhs = {
+            nama_mahasiswa: getData.data.name,
+            jenis_kelamin: (getData.data.mahasiswa.jk ? getData.data.mahasiswa.jk.toUpperCase() :
+                '*'),
+            jalan: getData.data.mahasiswa.jalan,
+            rt: getData.data.mahasiswa.rt,
+            rw: getData.data.mahasiswa.rw,
+            dusun: getData.data.mahasiswa.dusun,
+            kelurahan: getData.data.mahasiswa.kelurahan,
+            kode_pos: getData.data.mahasiswa.kode_pos,
+            nisn: getData.data.mahasiswa.nisn,
+            nik: getData.data.mahasiswa.nik,
+            tempat_lahir: getData.data.mahasiswa.tempat_lahir,
+            tanggal_lahir: getData.data.mahasiswa.tgl_lahir,
+
+            //? Ayah
+            nama_ayah: getData.data.mahasiswa.nama_ayah,
+            tanggal_lahir_ayah: getData.data.mahasiswa.tgl_lahir_ayah,
+            nik_ayah: getData.data.mahasiswa.nik_ayah,
+            id_jenjang_pendidikan_ayah: getData.data.mahasiswa.jenjang_ayah_id,
+            id_pekerjaan_ayah: getData.data.mahasiswa.pekerjaan_ayah_id,
+            id_pengahasilan_ayah: getData.data.mahasiswa.penghasilan_ayah_id,
+            id_kebutuhan_khusus_ayah: getData.data.mahasiswa.ayah_kebutuhan_khusus,
+
+            //? IBU
+            nama_ibu_kandung: getData.data.mahasiswa.nama_ibu,
+            tanggal_lahir_ibu: getData.data.mahasiswa.tgl_lahir_ibu,
+            nik_ibu: getData.data.mahasiswa.nik_ibu,
+            id_jenjang_pendidikan_ibu: getData.data.mahasiswa.jenjang_ibu_id,
+            id_pekerjaan_ibu: getData.data.mahasiswa.pekerjaan_ibu_id,
+            id_pengahasilan_ibu: getData.data.mahasiswa.penghasilan_ibu_id,
+            id_kebutuhan_khusus_ibu: getData.data.mahasiswa.ibu_kebutuhan_khusus,
+
+            //? Wali
+            nama_wali: getData.data.mahasiswa.nama_wali,
+            tanggal_lahir_wali: getData.data.mahasiswa.tgl_lahir_wali,
+            id_jenjang_pendidikan_wali: getData.data.mahasiswa.jenjang_wali_id,
+            id_pekerjaan_wali: getData.data.mahasiswa.pekerjaan_wali_id,
+            id_pengahasilan_wali: getData.data.mahasiswa.penghasilan_wali_id,
+
+            telepon: getData.data.mahasiswa.telepon,
+            handphone: getData.data.mahasiswa.handphone,
+            email: getData.data.email,
+            penerima_kps: getData.data.mahasiswa.penerima_kps,
+            no_kps: getData.data.mahasiswa.no_kps,
+            npwp: getData.data.mahasiswa.npwp,
+            id_wilayah: getData.data.mahasiswa.wilayah_id,
+            id_jenis_tinggal: getData.data.mahasiswa.jenis_tinggal_id,
+            id_agama: getData.data.mahasiswa.agama_id,
+            id_alat_transportasi: getData.data.mahasiswa.alat_transportasi_id,
+            kewarganegaraan: getData.data.mahasiswa.kewarganegaraan_id
+        };
 
         if (token === null) {
             showAlert('GAGAL GET TOKEN', 'error');
@@ -249,23 +259,67 @@
             return false;
         }
 
-        let raw = {
-            "act": "InsertBiodataMahasiswa",
-            "token": token.data.token,
-            "record": data
-        };
-
         let settings = {
             url: url,
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            data: JSON.stringify(raw)
+            data: JSON.stringify({
+                "act": "InsertBiodataMahasiswa",
+                "token": token.data.token,
+                "record": data
+            })
         };
 
-        const response = await $.ajax(settings);
-        console.log(response)
+        // const response = await $.ajax(settings);
+
+        //? update id_mahasiswa_neo_feeder
+        if (response.error_code == '0') {
+            id_mahasiswa = response.data.id_mahasiswa
+            updateData(user_id, {
+                id_mahasiswa_neo_feeder: response.data.id_mahasiswa
+            })
+        }
+
+        //? insert riwayat pendidikan
+        let dataRiwayat = {
+            id_mahasiswa: id_mahasiswa,
+            nim: getData.data.login_key,
+            id_jenis_daftar: getData.data.mahasiswa.jenis_daftar_id,
+            id_jalur_daftar: getData.data.mahasiswa.jalur_masuk_id,
+            id_periode_masuk: getData.data.mahasiswa.semester_id,
+            tanggal_daftar: getData.data.mahasiswa.tgl_daftar,
+            id_perguruan_tinggi: id_pt,
+            id_prodi: getData.data.mahasiswa.prodi_id,
+            id_pembiayaan: getData.data.mahasiswa.jenis_pembiayaan_id
+        };
+
+        let settingsRiwayat = {
+            url: url,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: JSON.stringify({
+                "act": "InsertRiwayatPendidikanMahasiswa",
+                "token": token.data.token,
+                "record": data
+            })
+        };
+
+        // const responseRiwayat = await $.ajax(settingsRiwayat);
+
+        if (responseRiwayat.error_code == "0") {
+            id_registrasi_mahasiswa = responseRiwayat.data.id_registrasi_mahasiswa
+            updateData(user_id, {
+                id_registrasi_mahasiswa_neo_feeder: response.data.id_registrasi_mahasiswa,
+                sync_neo_feeder: 1
+            })
+
+            showAlert('BERHASIL', 'success');
+            return true
+        }
     }
 
     function sendToNeoFeeder(user_id) {

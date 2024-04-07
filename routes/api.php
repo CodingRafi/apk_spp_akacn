@@ -26,6 +26,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('alat-transportasi', [ReferensiController::class, 'alatTransportasi']);
         Route::get('jalur-pendaftaran', [ReferensiController::class, 'jalurPendaftaran']);
         Route::get('jenis-tinggal', [ReferensiController::class, 'jenisTinggal']);
+        Route::get('jenis-pembiayaan', [ReferensiController::class, 'jenisPembiayaan']);
+        Route::get('jalur-masuk', [ReferensiController::class, 'jalurMasuk']);
         Route::get('jenis-kelas', [ReferensiController::class, 'jenisKelas']);
         Route::get('jenjang', [ReferensiController::class, 'jenjang']);
         Route::get('penghasilan', [ReferensiController::class, 'penghasilan']);
@@ -36,6 +38,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('wilayah', [ReferensiController::class, 'wilayah']);
         Route::get('rombel', [ReferensiController::class, 'rombel']);
         Route::get('tahun-ajaran', [ReferensiController::class, 'tahunAjaran']);
+        Route::get('semester', [ReferensiController::class, 'semester']);
     });
 
     Route::post('mahasiswa/store', [MahasiswaController::class, 'store']);

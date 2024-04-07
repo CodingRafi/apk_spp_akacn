@@ -49,7 +49,7 @@ class UpdateWilyahCommand extends Command
                             $id_induk_wilayah = $parent->id_induk_wilayah;
                             $nama = $parent->nama . ' - ' . $nama;
                         } catch (\Throwable $th) {
-                            break
+                            break;
                         }
 
                         if ($id_induk_wilayah == null) {

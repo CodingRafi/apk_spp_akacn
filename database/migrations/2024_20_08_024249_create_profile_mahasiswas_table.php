@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('neo_feeder_id_mahasiswa')->nullable();
             $table->string('neo_feeder_id_registrasi_mahasiswa')->nullable();
             $table->enum('sync_neo_feeder', [0,1])->default(0);
+            $table->date('tgl_daftar')->nullable();
             $table->string('nisn')->nullable();
             $table->string('nik')->nullable();
             $table->string('tempat_lahir');

@@ -195,6 +195,15 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
+                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                    @error('tgl_daftar')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label for="jenis_keluar_id" class="form-label">Jenis Keluar</label>
                     <select class="form-select @error('jenis_keluar_id') is-invalid @enderror"
                         name="jenis_keluar_id" id="jenis_keluar_id"

@@ -6,6 +6,7 @@
     let url = "{{ getUrlNeoFeeder() }}/ws/live2.php";
     let username = "{{ config('services.neo_feeder.USERNAME') }}";
     let password = "{{ config('services.neo_feeder.PASSWORD') }}";
+    let id_pt = "{{ config('services.neo_feeder.ID_PT') }}";
 
     async function getToken() {
         if (!url) {

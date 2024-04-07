@@ -129,6 +129,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
                 Route::get('{user_id}', [NeoFeederMahasiswaController::class, 'show'])->name('show');
                 Route::post('store', [NeoFeederMahasiswaController::class, 'store'])->name('store');
+                Route::patch('{user_id}', [NeoFeederMahasiswaController::class, 'update'])->name('update');
             });
         });
     });
