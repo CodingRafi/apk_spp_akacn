@@ -70,77 +70,88 @@
                                     @else
                                         <th>Email</th>
                                     @endcan
+                                    @if (request('role') == 'mahasiswa')
+                                        <th>Sync Neo Feeder</th>
+                                    @endif
                                     <th>Aksi</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @push('js')
-    @if (Auth::user()->hasRole('admin') && (request('role') == 'dosen' || request('role') == 'mahasiswa'))
-        @if (request('role') == 'dosen')
-            @include('neo_feeder.raw')
-            @include('neo_feeder.index', [
-                'type' => request('role'),
-                'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
-            ])
-        @else
-            @include('users.mahasiswa.neo_feeder')
-        @endif
-    @endif
-    <script>
-        let table;
-    </script>
-    <script>
-        $(document).ready(function() {
-            table = $('.table').DataTable({
-                processing: true,
-                serverSide: true,
-                responsive: true,
-                ajax: {
-                    url: '{{ route('kelola-users.data', request('role')) }}',
-                    @if (request('role') == 'mahasiswa')
-                        data: function(p) {
-                            p.prodi = $('#filter-prodi').val();
-                            p.tahun_ajaran = $('#filter-tahun-ajaran').val();
-                            p.rombel = $('#filter-rombel').val();
-                        }
-                    @endif
-                },
-                columns: [{
-                        "data": "DT_RowIndex"
-                    },
-                    {
-                        "data": "name"
-                    },
-                    {
-                        "data": "login_key"
-                    },
-                    {
-                        "data": "options"
-                    }
-                ],
-                pageLength: 25,
-            });
-        });
-    </script>
-    @if (request('role') == 'mahasiswa')
+@if (Auth::user()->hasRole('admin') && (request('role') == 'dosen' || request('role') == 'mahasiswa'))
+    @if (request('role') == 'dosen')
+        @include('neo_feeder.raw')
+        @include('neo_feeder.index', [
+            'type' => request('role'),
+            'urlStoreData' => route('kelola-users.neo-feeder.' . request('role') . '.store'),
+        ])
         <script>
-            $('#filter-prodi, #filter-tahun-ajaran, #filter-rombel').on('change', function() {
-                table.ajax.reload();
-            });
-
-            $('.form-export button').on('click', function() {
-                $('.form-export input[name="prodi"]').val($('#filter-prodi').val());
-                $('.form-export input[name="rombel"]').val($('#filter-rombel').val());
-                $('.form-export input[name="tahun_ajaran"]').val($('#filter-tahun-ajaran').val());
-                $('.form-export').submit();
-            })
+            limitGet = 5
         </script>
+    @else
+        @include('users.mahasiswa.neo_feeder')
     @endif
+@endif
+<script>
+    let table;
+</script>
+<script>
+    $(document).ready(function() {
+        table = $('.table').DataTable({
+            processing: true,
+            serverSide: true,
+            responsive: true,
+            ajax: {
+                url: '{{ route('kelola-users.data', request('role')) }}',
+                @if (request('role') == 'mahasiswa')
+                    data: function(p) {
+                        p.prodi = $('#filter-prodi').val();
+                        p.tahun_ajaran = $('#filter-tahun-ajaran').val();
+                        p.rombel = $('#filter-rombel').val();
+                    }
+                @endif
+            },
+            columns: [{
+                    "data": "DT_RowIndex"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "login_key"
+                },
+                @if (request('role') == 'mahasiswa')
+                {
+                    "data": "sync_neo_feeder"
+                },
+                @endif
+                {
+                    "data": "options"
+                }
+            ],
+            pageLength: 25,
+        });
+    });
+</script>
+@if (request('role') == 'mahasiswa')
+    <script>
+        $('#filter-prodi, #filter-tahun-ajaran, #filter-rombel').on('change', function() {
+            table.ajax.reload();
+        });
+
+        $('.form-export button').on('click', function() {
+            $('.form-export input[name="prodi"]').val($('#filter-prodi').val());
+            $('.form-export input[name="rombel"]').val($('#filter-rombel').val());
+            $('.form-export input[name="tahun_ajaran"]').val($('#filter-tahun-ajaran').val());
+            $('.form-export').submit();
+        })
+    </script>
+@endif
 @endpush

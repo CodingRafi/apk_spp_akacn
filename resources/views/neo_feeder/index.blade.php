@@ -4,8 +4,9 @@
 @endphp
 <script>
     const configData = configNeoFeeder.{{ $type }};
+    let limitGet = 500;
 
-    async function getData(rawParams = null) {
+    async function getData(rawParams = null, func) {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
             $.LoadingOverlay("show");
             if (!url) {
@@ -24,15 +25,14 @@
                 let raw = rawParams ?? configData.raw;
                 raw.token = token.data.token;
 
-                const limit = 500;
                 let loop = 0;
                 let keepRunning = true;
 
                 while (keepRunning) {
                     showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
 
-                    raw.limit = limit;
-                    raw.offset = loop * limit;
+                    raw.limit = limitGet;
+                    raw.offset = loop * limitGet;
 
                     let settings = {
                         url: url,
@@ -50,7 +50,7 @@
                         if (configData.changeFormat) {
                             storeData(changeFormatData(response.data));
                         } else {
-                            storeData(response.data);
+                            storeData(response.data, func);
                         }
                     }else{
                         keepRunning = false;
@@ -103,11 +103,13 @@
                 },
                 dataType: 'json',
                 success: function(res) {
-                    // if (typeof table !== "undefined") {
-                    //     table.ajax.reload();
-                    // } else {
-                    //     fetchDataAndUpdateTable()
-                    // }
+                    if (thisPage == 'neo_feeder') {
+                        if (typeof table !== "undefined") {
+                            table.ajax.reload();
+                        } else {
+                            fetchDataAndUpdateTable()
+                        }
+                    }
 
                     if (func != undefined) {
                         func(response.data);
@@ -127,33 +129,8 @@
 
     let columns = [];
 
-    $(document).ready(function() {
-        // if (typeof table !== "undefined") {
-        //     table.ajax.reload();
-        // } else {
-        //     $('.table thead tr').empty();
-
-        //     const format = configData.format;
-        //     const uniq = configData.unique;
-
-        //     for (let key in format) {
-        //         if (!uniq.includes(key)) {
-        //             columns.push({
-        //                 data: format[key],
-        //                 title: capitalize(format[key].replace(/_/g, ' ')),
-        //             });
-        //         }
-        //     }
-
-        //     for (const i in columns) {
-        //         $('.table thead tr').append(`<th>${columns[i].title}</th>`);
-        //     }
-        //     // fetchDataAndUpdateTable()
-        // }
-    })
-
     function fetchDataAndUpdateTable() {
-        fetch('{{ route('neo-feeder.data', ['type' => $type]) }}')
+        fetch('{{ route('neo-feeder.data', ['type' => ":type"]) }}'.replace(':type', configData.tbl))
             .then(response => response.json())
             .then(data => {
                 $('.table').DataTable().destroy();

@@ -30,7 +30,7 @@ class NeoFeederController extends Controller
     public function data($type)
     {
         $table = str_replace("-", "_", $type);
-        $datas = DB::table("{$table}s")->get();
+        $datas = DB::table("{$table}")->get();
         return response()->json($datas, 200);
     }
 

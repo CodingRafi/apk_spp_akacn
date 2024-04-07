@@ -17,7 +17,7 @@ class LembagaPengangkatSeeder extends Seeder
     {
         DB::table('lembaga_pengangkats')->insert([
             'id' => '1',
-            'nama' => 'test'
+            'nama' => 'Kementerian Riset, Teknologi dan Pendidikan Tinggi'
         ]);
     }
 }

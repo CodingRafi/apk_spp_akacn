@@ -49,8 +49,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="prodi_id" class="form-label">Prodi</label>
-                            <select class="form-select" name="prodi_id" id="prodi_id"
-                                style="width: 100%">
+                            <select class="form-select" name="prodi_id" id="prodi_id" style="width: 100%">
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
@@ -257,6 +256,9 @@
         });
     </script>
     @if (Auth::user()->hasRole('admin'))
+        <script>
+            let thisPage = 'neo_feeder'
+        </script>
         @include('neo_feeder.raw')
         @include('neo_feeder.index', [
             'type' => 'matkul',

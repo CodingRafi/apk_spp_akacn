@@ -86,7 +86,8 @@
                             <div class="d-flex justify-content-between mb-3">
                                 <h5>Mata Kuliah</h5>
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
-                                    <button type="button" class="btn btn-primary" onclick="getNeoFeeder()">Get Neo Feeder</button>
+                                    <button type="button" class="btn btn-primary" onclick="getNeoFeeder()">Get Neo
+                                        Feeder</button>
                                     <button type="button" class="btn btn-primary"
                                         onclick="addForm('{{ route('data-master.kurikulum.storeMatkul') }}', 'Tambah Mata Kuliah', '#matkul', getMatkul)">
                                         Tambah
@@ -233,9 +234,9 @@
     <script>
         const rawKurikulumMatkul = configNeoFeeder.kurikulum_matkul.raw;
 
-        function getNeoFeeder(){
+        function getNeoFeeder() {
             rawKurikulumMatkul.filter = `id_kurikulum='${kurikulum.id}'`;
-            getData(rawKurikulumMatkul);
+            getData(rawKurikulumMatkul, () => {tableMatkul.ajax.reload()});
         }
     </script>
 @endpush

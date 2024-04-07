@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('kode_pos')->nullable();
 
             $table->string('nama_ayah')->nullable();
-            $table->string('tgl_lahir_ayah')->nullable();
+            $table->date('tgl_lahir_ayah')->nullable();
             $table->string('nik_ayah')->nullable();
             $table->uuid('jenjang_ayah_id')->nullable();
             $table->foreign('jenjang_ayah_id')->references('id')->on('jenjangs');
@@ -46,7 +46,7 @@ return new class extends Migration
             $table->foreign('penghasilan_ayah_id')->references('id')->on('penghasilans');
             
             $table->string('nama_ibu')->nullable();
-            $table->string('tgl_lahir_ibu')->nullable();
+            $table->date('tgl_lahir_ibu')->nullable();
             $table->string('nik_ibu')->nullable();
             $table->uuid('jenjang_ibu_id')->nullable();
             $table->foreign('jenjang_ibu_id')->references('id')->on('jenjangs');
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->foreign('penghasilan_ibu_id')->references('id')->on('penghasilans');
             
             $table->string('nama_wali')->nullable();
-            $table->string('tgl_lahir_wali')->nullable();
+            $table->date('tgl_lahir_wali')->nullable();
             $table->string('nik_wali')->nullable();
             $table->uuid('jenjang_wali_id')->nullable();
             $table->foreign('jenjang_wali_id')->references('id')->on('jenjangs');
@@ -70,7 +70,7 @@ return new class extends Migration
             $table->enum('penerima_kps', [0,1])->default(0);
             $table->string('no_kps')->nullable();
             $table->string('npwp')->nullable();
-            $table->uuid('agama_id');
+            $table->uuid('agama_id')->nullable();
             $table->foreign('agama_id')->references('id')->on('agamas');
             $table->foreignId('rombel_id')->nullable()->constrained('rombels');
             $table->uuid('prodi_id');

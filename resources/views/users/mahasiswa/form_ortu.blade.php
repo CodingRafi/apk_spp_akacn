@@ -15,7 +15,7 @@
 </div>
 <div class="mb-3">
     <label for="tgl_lahir_{{ $value }}" class="form-label">Tanggal Lahir {{ $value }}</label>
-    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error("tgl_lahir_{$value}") is-invalid @enderror" type="text"
+    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error("tgl_lahir_{$value}") is-invalid @enderror" type="date"
         value="{{ isset($data) ? $data->mahasiswa->{'tgl_lahir_' . $value} : old("tgl_lahir_{$value}") }}"
         id="tgl_lahir_{{ $value }}" placeholder="Tanggal Lahir {{ $value }}"
         name="tgl_lahir_{{ $value }}" />

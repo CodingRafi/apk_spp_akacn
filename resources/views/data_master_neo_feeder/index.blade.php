@@ -10,7 +10,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table">
+                        <table class="table" aria-label="{{ request('type') }}">
                             <thead>
                                 <tr>
                                     <th>Nama</th>
@@ -26,10 +26,39 @@
 
 @push('js')
     @if (Auth::user()->hasRole('admin'))
+        <script>
+            let thisPage = 'neo_feeder';
+        </script>
         @include('neo_feeder.raw')
         @include('neo_feeder.index', [
             'type' => request('type'),
             'urlStoreData' => route('neo-feeder.store'),
         ])
+        <script>
+            $(document).ready(function() {
+                if (typeof table !== "undefined") {
+                    table.ajax.reload();
+                } else {
+                    $('.table thead tr').empty();
+
+                    const format = configData.format;
+                    const uniq = configData.unique;
+
+                    for (let key in format) {
+                        if (!uniq.includes(key)) {
+                            columns.push({
+                                data: format[key],
+                                title: capitalize(format[key].replace(/_/g, ' ')),
+                            });
+                        }
+                    }
+
+                    for (const i in columns) {
+                        $('.table thead tr').append(`<th>${columns[i].title}</th>`);
+                    }
+                    fetchDataAndUpdateTable()
+                }
+            })
+        </script>
     @endif
 @endpush

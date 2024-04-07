@@ -222,6 +222,9 @@
     </script>
     @include('mypartials.tab', ['form' => '.form-tahun-ajaran'])
     @if (Auth::user()->hasRole('admin'))
+        <script>
+            let thisPage = 'neo_feeder'
+        </script>
         @include('neo_feeder.raw')
         @include('neo_feeder.index', [
             'type' => 'semester',

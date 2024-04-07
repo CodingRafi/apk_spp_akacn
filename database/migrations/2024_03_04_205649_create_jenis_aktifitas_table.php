@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('jenis_aktivitas', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('nama');
+            $table->string('untuk_kampus_merdeka');
             $table->timestamps();
         });
     }

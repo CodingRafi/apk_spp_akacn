@@ -79,6 +79,10 @@ class UserController extends Controller
 
             $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
 
+            if (auth()->user()->can('edit_users') && $role == 'mahasiswa') {
+                $options .= '<button class="btn btn-primary" type="button" onclick="sendToNeoFeeder('. $data->id .')">Sync</button>';
+            }
+
             if (auth()->user()->can('edit_users') && ($role != 'dosen' || ($role == 'dosen' && $data->dosen->source == 'app'))) {
                 $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
             }
@@ -93,7 +97,14 @@ class UserController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->addColumn('sync_neo_feeder', function ($data) {
+                if(request('role') == 'mahasiswa'){
+                    return $data->sync_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+                }
+
+                return '';
+            })
+            ->rawColumns(['options', 'sync_neo_feeder'])
             ->make(true);
     }
 

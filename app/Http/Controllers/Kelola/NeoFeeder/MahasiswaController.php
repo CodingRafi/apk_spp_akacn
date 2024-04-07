@@ -77,9 +77,9 @@ class MahasiswaController extends Controller
                             'pekerjaan_wali_id' => $data->id_pekerjaan_wali,
                             'penghasilan_wali_id' => $data->id_penghasilan_wali,
 
-                            'mhs_kebutuhan_khusus' => $data->id_kebutuhan_khusus_mahasiswa,
-                            'ayah_kebutuhan_khusus' => $data->id_kebutuhan_khusus_ayah,
-                            'ibu_kebutuhan_khusus' => $data->id_kebutuhan_khusus_ibu,
+                            'mhs_kebutuhan_khusus' => (string) $data->id_kebutuhan_khusus_mahasiswa,
+                            'ayah_kebutuhan_khusus' => (string) $data->id_kebutuhan_khusus_ayah,
+                            'ibu_kebutuhan_khusus' => (string) $data->id_kebutuhan_khusus_ibu,
 
                             'tahun_masuk_id' => substr($riwayat->id_periode_masuk, 0, -1),
                             'semester_id' => $riwayat->id_periode_masuk,
@@ -94,10 +94,29 @@ class MahasiswaController extends Controller
                 DB::commit();
             } catch (\Throwable $th) {
                 DB::rollBack();
+                dd($data);
+                $failedQuery = $th->getSql();
+
+                // Mendapatkan bind values
+                $bindValues = $th->getBindings();
+
+                // Gabungkan query dan nilai-nilai bind
+                $fullQuery = vsprintf(str_replace('?', "'%s'", $failedQuery), $bindValues);
+
+                // Menampilkan query lengkap
+                dd($fullQuery);
+                dd($th, $data);
                 return response()->json([
                     'message' => $th->getMessage()
                 ], 400);
             }
         }
+    }
+
+    public function show($user_id){
+        $data = User::with('mahasiswa')->where('id', $user_id)->first();
+        return response()->json([
+            'data' => $data
+        ], 200);
     }
 }

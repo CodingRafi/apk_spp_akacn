@@ -61,7 +61,8 @@
             unique: ['id_jenis_aktivitas_mahasiswa'],
             format: {
                 id_jenis_aktivitas_mahasiswa: 'id',
-                nama_jenis_aktivitas_mahasiswa: 'nama'
+                nama_jenis_aktivitas_mahasiswa: 'nama',
+                untuk_kampus_merdeka: 'untuk_kampus_merdeka'
             }
         },
         jenjang: {
