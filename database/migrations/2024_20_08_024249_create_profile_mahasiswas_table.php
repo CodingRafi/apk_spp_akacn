@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('dusun')->nullable();
             $table->string('kelurahan')->nullable();
             $table->string('kode_pos')->nullable();
+            $table->decimal('biaya_masuk', 12, 2)->nullable();
 
             $table->string('nama_ayah')->nullable();
             $table->date('tgl_lahir_ayah')->nullable();

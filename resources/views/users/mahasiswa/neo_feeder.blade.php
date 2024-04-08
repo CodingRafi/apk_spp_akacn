@@ -176,8 +176,8 @@
         $.ajax({
             url: '{{ route('kelola-users.neo-feeder.mahasiswa.update', ':user_id') }}'.replace(':user_id',
                 user_id),
-            type: 'POST',
-            data: JSON.stringify(data),
+            type: 'PATCH',
+            data: data,
             dataType: 'json'
         })
     }
@@ -268,23 +268,26 @@
             data: JSON.stringify({
                 "act": "InsertBiodataMahasiswa",
                 "token": token.data.token,
-                "record": data
+                "record": dataMhs
             })
         };
 
         // const response = await $.ajax(settings);
 
         //? update id_mahasiswa_neo_feeder
-        if (response.error_code == '0') {
-            id_mahasiswa = response.data.id_mahasiswa
-            updateData(user_id, {
-                id_mahasiswa_neo_feeder: response.data.id_mahasiswa
-            })
-        }
+        // if (response.error_code == '0') {
+        //     id_mahasiswa = response.data.id_mahasiswa
+        //     updateData(user_id, {
+        //         neo_feeder_id_mahasiswa: response.data.id_mahasiswa
+        //     })
+        // }else{
+        //     showAlert(response.error_desc, 'error');
+        //     return false;
+        // }
 
         //? insert riwayat pendidikan
         let dataRiwayat = {
-            id_mahasiswa: id_mahasiswa,
+            id_mahasiswa: '9f90301a-8634-4e88-85d5-1aa7a7aa7018',
             nim: getData.data.login_key,
             id_jenis_daftar: getData.data.mahasiswa.jenis_daftar_id,
             id_jalur_daftar: getData.data.mahasiswa.jalur_masuk_id,
@@ -292,7 +295,8 @@
             tanggal_daftar: getData.data.mahasiswa.tgl_daftar,
             id_perguruan_tinggi: id_pt,
             id_prodi: getData.data.mahasiswa.prodi_id,
-            id_pembiayaan: getData.data.mahasiswa.jenis_pembiayaan_id
+            id_pembiayaan: getData.data.mahasiswa.jenis_pembiayaan_id,
+            biaya_masuk: getData.data.mahasiswa.biaya_masuk,
         };
 
         let settingsRiwayat = {
@@ -304,25 +308,21 @@
             data: JSON.stringify({
                 "act": "InsertRiwayatPendidikanMahasiswa",
                 "token": token.data.token,
-                "record": data
+                "record": dataRiwayat
             })
         };
 
-        // const responseRiwayat = await $.ajax(settingsRiwayat);
+        const responseRiwayat = await $.ajax(settingsRiwayat);
 
         if (responseRiwayat.error_code == "0") {
             id_registrasi_mahasiswa = responseRiwayat.data.id_registrasi_mahasiswa
             updateData(user_id, {
-                id_registrasi_mahasiswa_neo_feeder: response.data.id_registrasi_mahasiswa,
+                neo_feeder_id_registrasi_mahasiswa: responseRiwayat.data.id_registrasi_mahasiswa,
                 sync_neo_feeder: 1
             })
 
             showAlert('BERHASIL', 'success');
             return true
         }
-    }
-
-    function sendToNeoFeeder(user_id) {
-        sendDataMhsToNeoFeeder(user_id)
     }
 </script>

@@ -196,8 +196,17 @@
                 </div>
                 <div class="mb-3">
                     <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
-                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->tgl_daftar : old('tgl_daftar') }}">
                     @error('tgl_daftar')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="biaya_masuk" class="form-label">Biaya Masuk</label>
+                    <input type="number" min="0" step="0.01" class="form-control" name="biaya_masuk" id="biaya_masuk" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->biaya_masuk : old('biaya_masuk') }}">
+                    @error('biaya_masuk')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
                         </div>

@@ -49,7 +49,7 @@ class MahasiswaController extends Controller
                             'tgl_lahir' => $this->parseFormatTgl($data->tanggal_lahir),
                             'jk' => ($data->jenis_kelamin == 'P' ? 'p' : 'l'),
                             'kewarganegaraan_id' => $data->id_negara,
-                            'wilayah_id' => 'id_wilayah',
+                            'wilayah_id' => $data->id_wilayah,
                             'jalan' => $data->jalan,
                             'rt' => $data->rt,
                             'rw' => $data->rw,
@@ -94,18 +94,6 @@ class MahasiswaController extends Controller
                 DB::commit();
             } catch (\Throwable $th) {
                 DB::rollBack();
-                dd($data);
-                $failedQuery = $th->getSql();
-
-                // Mendapatkan bind values
-                $bindValues = $th->getBindings();
-
-                // Gabungkan query dan nilai-nilai bind
-                $fullQuery = vsprintf(str_replace('?', "'%s'", $failedQuery), $bindValues);
-
-                // Menampilkan query lengkap
-                dd($fullQuery);
-                dd($th, $data);
                 return response()->json([
                     'message' => $th->getMessage()
                 ], 400);

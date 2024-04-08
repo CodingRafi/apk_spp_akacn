@@ -62,33 +62,38 @@ class UserController extends Controller
 
     public function data($role)
     {
-        $datas = User::select('users.*')
-            ->when($role == 'mahasiswa', function ($q) {
-                $q->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
-                    ->when(request('prodi') || request('tahun_ajaran') || request('rombel'), function ($q) {
-                        $q->where('b.prodi_id', request('prodi'))
-                            ->orWhere('b.tahun_masuk_id', request('tahun_ajaran'))
-                            ->orWhere('b.rombel_id', request('rombel'));
-                    });
-            })
-            ->role($role)
-            ->get();
+        if ($role != 'mahasiswa' || ($role == 'mahasiswa' && request('prodi') && request('tahun_ajaran'))) {
+            $datas = User::select('users.*')
+                ->when($role == 'mahasiswa', function ($q) {
+                    $q->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
+                        ->when(request('prodi') || request('tahun_ajaran') || request('rombel'), function ($q) {
+                            $q->where('b.prodi_id', request('prodi'))
+                                ->Where('b.tahun_masuk_id', request('tahun_ajaran'))
+                                ->Where('b.rombel_id', request('rombel'));
+                        });
+                })
+                ->role($role)
+                ->get();
+        }else{
+            $datas = [];
+        }
 
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary mx-2'>Detail</a>";
-
-            if (auth()->user()->can('edit_users') && $role == 'mahasiswa') {
-                $options .= '<button class="btn btn-primary" type="button" onclick="sendToNeoFeeder('. $data->id .')">Sync</button>';
+            if (auth()->user()->can('edit_users') && $role == 'mahasiswa' && $data->mahasiswa->sync_neo_feeder == 0) {
+                $options .= '<button class="btn btn-info m-1" type="button" onclick="sendDataMhsToNeoFeeder(' . $data->id . ')">Kirim Neo Feeder</button>';
             }
 
+            $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary m-1'>Detail</a>";
+
+
             if (auth()->user()->can('edit_users') && ($role != 'dosen' || ($role == 'dosen' && $data->dosen->source == 'app'))) {
-                $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning mx-2'>Edit</a>";
+                $options = $options . "<a href='" . route('kelola-users.edit', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-warning m-1'>Edit</a>";
             }
 
             if (auth()->user()->can('delete_users') && ($role != 'dosen' || ($role == 'dosen' && $data->dosen->source == 'app'))) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteData(`" . route('kelola-users.' . $role . '.destroy', $data->id) . "`)'>
+                $options = $options . "<button class='btn btn-danger m-1' onclick='deleteData(`" . route('kelola-users.' . $role . '.destroy', $data->id) . "`)'>
                                     Hapus
                                 </button>";
             }
@@ -98,8 +103,8 @@ class UserController extends Controller
         return DataTables::of($datas)
             ->addIndexColumn()
             ->addColumn('sync_neo_feeder', function ($data) {
-                if(request('role') == 'mahasiswa'){
-                    return $data->sync_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+                if (request('role') == 'mahasiswa') {
+                    return $data->mahasiswa->sync_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
                 }
 
                 return '';
