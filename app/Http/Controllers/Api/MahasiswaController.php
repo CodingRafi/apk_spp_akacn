@@ -74,6 +74,9 @@ class MahasiswaController extends Controller
                 'alat_transportasi_id' => $request->alat_transportasi_id,
                 'mhs_kebutuhan_khusus' => $request->mhs_kebutuhan_khusus,
                 'tahun_masuk_id' => $request->tahun_masuk_id,
+                'semester_id' => $request->semester_id,
+                'jenis_pembiayaan_id' => $request->jenis_pembiayaan_id,
+                'jalur_masuk_id' => $request->jalur_masuk_id,
                 'jenis_kelas_id' => $request->jenis_kelas_id,
                 'source' => 'pmb'
             ]);

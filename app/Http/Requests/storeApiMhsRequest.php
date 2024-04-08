@@ -50,6 +50,9 @@ class storeApiMhsRequest extends FormRequest
             'rombel_id' => 'required',
             'prodi_id' => 'required',
             'tahun_masuk_id' => 'required',
+            'semester_id' => 'required',
+            'jalur_masuk_id' => 'required',
+            'jenis_pembiayaan_id' => 'required',
             'jenis_kelas_id' => 'required'
         ];
     }
