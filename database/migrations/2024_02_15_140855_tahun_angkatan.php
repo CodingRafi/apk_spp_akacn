@@ -57,11 +57,15 @@ return new class extends Migration
             $table->uuid('kurikulum_id');
             $table->foreign('kurikulum_id')->references('id')->on('kurikulums') ;
             $table->uuid('matkul_id');
-            $table->char('hari', 1);
-            $table->time('jam_mulai');
-            $table->time('jam_akhir');
             $table->foreign('matkul_id')->references('id')->on('matkuls');
-            $table->enum('cek_ip', [0, 1]);
+            $table->char('hari', 1)->nullable();
+            $table->time('jam_mulai')->nullable();
+            $table->time('jam_akhir')->nullable();
+            $table->enum('cek_ip', [0, 1])->default(0);
+            //? F = offline, M = campuran, O = Online
+            $table->enum('mode', ['F', 'M', 'O'])->nullable();
+            //? 1 = internal, 2 = external, 3 = campuran
+            $table->enum('lingkup', ['1', '2', '3'])->nullable();
             $table->timestamps();
         });
         
@@ -104,6 +108,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('krs_id')->constrained('krs');
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->string('id_kelas_kuliah_neo_feeder')->nullable();
             $table->timestamps();
         });
 

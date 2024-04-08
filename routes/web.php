@@ -163,6 +163,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 )->name('getMatkul');
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
                 Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
+                Route::post('/neo-feeder', [AngkatanMatkulController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
                 Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
                 Route::put('/{matkul_id}', [AngkatanMatkulController::class, 'update'])->name('update');
                 Route::delete('/{matkul_id}', [AngkatanMatkulController::class, 'destroy'])->name('destroy');

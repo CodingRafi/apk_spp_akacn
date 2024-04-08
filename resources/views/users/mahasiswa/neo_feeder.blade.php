@@ -70,7 +70,7 @@
 
                 loop++;
             }
-
+            $.LoadingOverlay("hide");
         } catch (error) {
             $.LoadingOverlay("hide");
             console.error("AJAX Error:", error);
@@ -159,7 +159,7 @@
                     dataType: 'json',
                     success: function(res) {
                         if (func != undefined) {
-                            func(response.data);
+                            func(res.data);
                         }
                     },
                     error: function(err) {

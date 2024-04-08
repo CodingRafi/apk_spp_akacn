@@ -12,7 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MatkulController extends Controller
 {
-    public function index()
+    public function index($tahun_ajaran_id)
     {
         $prodis = DB::table('prodi')->get();
         $ruangs = DB::table('ruangs')->get();
@@ -22,7 +22,15 @@ class MatkulController extends Controller
             ->where('profile_dosens.status', '1')
             ->get();
 
-        return view('data_master.prodi.angkatan.partials.matkul', compact('prodis', 'ruangs', 'dosens'));
+        $semester = DB::table('semesters')
+            ->where('tahun_ajaran_id', $tahun_ajaran_id)
+            ->get()
+            ->map(function ($data) {
+                return "id_semester='{$data->id}'";
+            })
+            ->implode(' or ');
+
+        return view('data_master.prodi.angkatan.partials.matkul', compact('prodis', 'ruangs', 'dosens', 'semester'));
     }
 
     public function getKurikulum($tahun_ajaran_id, $prodi_id)
@@ -63,9 +71,9 @@ class MatkulController extends Controller
         $datas = DB::table('tahun_matkul')
             ->select('matkuls.nama as matkul', 'kurikulums.nama as kurikulum', 'matkuls.kode', 'tahun_matkul.id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-            ->join('kurikulums', 'kurikulums.id', 'tahun_matkul.kurikulum_id')
+            ->leftJoin('kurikulums', 'kurikulums.id', 'tahun_matkul.kurikulum_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->when(request('prodi_id'), function($q){
+            ->when(request('prodi_id'), function ($q) {
                 $q->where('tahun_matkul.prodi_id', request('prodi_id'));
             })
             ->get();
@@ -272,5 +280,85 @@ class MatkulController extends Controller
                 'message' => 'Gagal dihapus',
             ], 400);
         }
+    }
+
+    public function storeNeoFeeder(Request $request, $tahun_ajaran_id)
+    {
+        $data = json_decode($request->data);
+
+        DB::beginTransaction();
+        try {
+            foreach ($data as $row) {
+                DB::table('tahun_matkul')->updateOrInsert([
+                    'prodi_id' => $row->id_prodi,
+                    'tahun_ajaran_id' => $tahun_ajaran_id,
+                    'matkul_id' => $row->id_matkul,
+                ], [
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                $get = DB::table('tahun_matkul')
+                    ->where('prodi_id', $row->id_prodi)
+                    ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                    ->where('matkul_id', $row->id_matkul)
+                    ->first();
+
+                foreach ($row->mahasiswa as $mhs) {
+                    $user = DB::table('users')
+                        ->select('users.id')
+                        ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                        ->where('profile_mahasiswas.neo_feeder_id_mahasiswa', $mhs->id_mahasiswa)
+                        ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $mhs->id_registrasi_mahasiswa)
+                        ->first();
+
+                    $tahunSemester = DB::table('tahun_semester')
+                        ->where('prodi_id', $row->id_prodi)
+                        ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                        ->where('semester_id', $row->id_semester)
+                        ->first();
+
+                    $krs = DB::table('krs')
+                        ->where('mhs_id', $user->id)
+                        ->where('krs.tahun_semester_id', $tahunSemester->id)
+                        ->first();
+
+                    if ($krs) {
+                        DB::table('krs_matkul')->updateOrInsert([
+                            'krs_id' => $krs->id,
+                            'tahun_matkul_id' => $get->id,
+                        ], [
+                            'id_kelas_kuliah_neo_feeder' => $row->id_kelas_kuliah
+                        ]);
+                    } else {
+                        $krs = DB::table('krs')->insertGetId([
+                            'mhs_id' => $user->id,
+                            'verify_id' => 1,
+                            'tahun_semester_id' => $tahunSemester->id,
+                            'status' => 'diterima',
+                            'lock' => '0',
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+
+                        DB::table('krs_matkul')->insert([
+                            'krs_id' => $krs,
+                            'tahun_matkul_id' => $get->id,
+                            'id_kelas_kuliah_neo_feeder' => $row->id_kelas_kuliah
+                        ]);
+                    }
+                }
+            }
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ]);
     }
 }

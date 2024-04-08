@@ -8,10 +8,15 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>Mata Kuliah</h5>
                         @can('add_matkul')
-                            <button type="button" class="btn btn-primary"
-                                onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.store', request('id')) }}', 'Tambah Mata Kuliah', '#Matkul')">
-                                Tambah
-                            </button>
+                            <div class="d-flex" style="gap: 1rem;">
+                                <button type="button" class="btn btn-primary" onclick="getDataNeoFeeder()">
+                                    Get Neo Feeder
+                                </button>
+                                <button type="button" class="btn btn-primary"
+                                    onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.store', request('id')) }}', 'Tambah Mata Kuliah', '#Matkul')">
+                                    Tambah
+                                </button>
+                            </div>
                         @endcan
                     </div>
                 </div>
@@ -153,10 +158,188 @@
 @endcan
 
 @push('js')
+    @include('neo_feeder')
+    <script>
+        let kelasKuliah = [];
+        let mhsKelasKuliah = [];
+        let statusGetKelasKuliah = false;
+        let statusGetMhsKelasKuliah = false;
+
+        async function getDataNeoFeeder() {
+            if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
+                $.LoadingOverlay("show");
+                if (!url) {
+                    showAlert('Url tidak ditemukan', 'error');
+                }
+
+                token = await getToken();
+
+                if (token === null) {
+                    showAlert('GAGAL GET TOKEN', 'error');
+                    $.LoadingOverlay("hide");
+                    return false;
+                }
+
+                getKelasKuliahNeoFeeder(token);
+                getMhsKelasKuliah(token);
+            }
+        }
+
+        async function getKelasKuliahNeoFeeder(token) {
+            let raw = {
+                "act": "GetDetailKelasKuliah",
+                "filter": "{!! $semester !!}",
+                "order": "",
+                "token": token.data.token
+            };
+
+            const limit = 100;
+            let loop = 0;
+            let keepRunning = true;
+
+            try {
+                while (keepRunning) {
+                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+
+                    raw.limit = limit;
+                    raw.offset = loop * limit;
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const response = await $.ajax(settings);
+                    if (response.data.length > 0) {
+                        kelasKuliah = kelasKuliah.concat(response.data);
+                    } else {
+                        statusGetKelasKuliah = true;
+                        keepRunning = false;
+                        storeDataNeoFeeder()
+                    }
+
+                    loop++;
+                }
+
+                $.LoadingOverlay("hide");
+            } catch (error) {
+                $.LoadingOverlay("hide");
+                console.error("AJAX Error:", error);
+                showAlert('Terjadi kesalahan saat mengambil data', 'error');
+            }
+        }
+
+        async function getMhsKelasKuliah(token) {
+            let raw = {
+                "act": "GetPesertaKelasKuliah",
+                "filter": "angkatan='{{ request('id') }}'",
+                "order": "",
+                "token": token.data.token
+            };
+
+            const limit = 100;
+            let loop = 0;
+            let keepRunning = true;
+
+            try {
+                while (keepRunning) {
+                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+
+                    raw.limit = limit;
+                    raw.offset = loop * limit;
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const response = await $.ajax(settings);
+                    if (response.data.length > 0) {
+                        mhsKelasKuliah = mhsKelasKuliah.concat(response.data);
+                    } else {
+                        statusGetMhsKelasKuliah = true;
+                        keepRunning = false;
+                        storeDataNeoFeeder()
+                    }
+
+                    loop++;
+                }
+
+                $.LoadingOverlay("hide");
+            } catch (error) {
+                $.LoadingOverlay("hide");
+                console.error("AJAX Error:", error);
+                showAlert('Terjadi kesalahan saat mengambil data', 'error');
+            }
+        }
+
+        function storeDataNeoFeeder() {
+            if (statusGetKelasKuliah && statusGetMhsKelasKuliah) {
+                const data = parseData();
+                const chunks = chunkArray(data, 50)
+
+                chunks.forEach((chunk, index) => {
+                    $.ajax({
+                        url: '{{ route('data-master.tahun-ajaran.matkul.storeNeoFeeder', ['id' => request('id')]) }}',
+                        type: 'POST',
+                        data: {
+                            data: JSON.stringify(chunk),
+                        },
+                        dataType: 'json',
+                        success: function(res) {
+                            showAlert(res.message, 'success')
+                        },
+                        error: function(err) {
+                            showAlert(err.responseJSON.message, 'error')
+                            $.LoadingOverlay("hide");
+                        }
+                    })
+                })
+            }
+        }
+
+        function parseData() {
+            let data = [];
+
+            kelasKuliah.forEach(row => {
+                let rowParse = {
+                    id_kelas_kuliah: row.id_kelas_kuliah,
+                    id_matkul: row.id_matkul,
+                    id_prodi: row.id_prodi,
+                    id_semester: row.id_semester,
+                    tanggal_mulai_efektif: row.tanggal_mulai_efektif,
+                    tanggal_tutup_efektif: row.tanggal_tutup_efektif,
+                }
+
+                let mhs = mhsKelasKuliah.filter(function(item) {
+                    return item.id_kelas_kuliah == row.id_kelas_kuliah;
+                }).map(function(item) {
+                    return {
+                        id_mahasiswa: item.id_mahasiswa,
+                        id_registrasi_mahasiswa: item.id_registrasi_mahasiswa,
+                    };
+                })
+
+                rowParse.mahasiswa = mhs;
+                data.push(rowParse);
+            })
+
+            return data;
+        }
+    </script>
     <script>
         function get_kurikulum(data = {}) {
             let id = $('#prodi_id').val();
-            console.log(id)
             $('#kurikulum_id').empty().append('<option value="">Pilih Kurikulum</option>')
             $.ajax({
                 url: "{{ route('data-master.tahun-ajaran.matkul.getKurikulum', ['id' => request('id'), 'prodi_id' => ':id']) }}"

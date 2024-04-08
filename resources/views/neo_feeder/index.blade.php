@@ -103,7 +103,7 @@
                 },
                 dataType: 'json',
                 success: function(res) {
-                    if (thisPage == 'neo_feeder') {
+                    if (typeof thisPage != 'undefined' && thisPage == 'neo_feeder') {
                         if (typeof table !== "undefined") {
                             table.ajax.reload();
                         } else {
@@ -112,7 +112,7 @@
                     }
 
                     if (func != undefined) {
-                        func(response.data);
+                        func(res.data);
                     }
                 },
                 error: function(err) {
