@@ -125,7 +125,7 @@ class ReferensiController extends Controller
                 $q->where('negara_id', request('negara_id'));
             })
             ->where('id_level_wilayah', 3)
-            ->paginate(100);
+            ->paginate(500);
         return response()->json([
             'status' => true,
             'data' => $data

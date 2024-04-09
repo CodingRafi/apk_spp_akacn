@@ -78,6 +78,9 @@ class MahasiswaController extends Controller
                 'jenis_pembiayaan_id' => $request->jenis_pembiayaan_id,
                 'jalur_masuk_id' => $request->jalur_masuk_id,
                 'jenis_kelas_id' => $request->jenis_kelas_id,
+                'jenis_daftar_id' => $request->jenis_daftar_id,
+                'biaya_masuk' => $request->biaya_masuk,
+                'tgl_daftar' => $request->tgl_daftar,
                 'source' => 'pmb'
             ]);
 
