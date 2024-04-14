@@ -67,10 +67,33 @@ return new class extends Migration
             $table->timestamps();
         });
         
+        Schema::create('kelas_kuliah', function (Blueprint $table) {
+            $table->string('id_kelas_kuliah')->primary();
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->string('nama')->nullable();
+            $table->string('bahasan')->nullable();
+            $table->date('tanggal_mulai_efektif')->nullable();
+            $table->date('tanggal_akhir_efektif')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('kelas_kuliah_dosen', function (Blueprint $table) {
+            $table->id();
+            $table->string('id_dosen');
+            $table->string('id_aktivitas_mengajar')->nullable();
+            $table->timestamps();
+        });
+        
         Schema::create('tahun_matkul_dosen', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul')->onDelete('cascade');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
             $table->foreignId('dosen_id')->constrained('users');
+            $table->string('sks_substansi_total')->nullable();
+            $table->string('rencana_tatap_muka')->nullable();
+            $table->string('realisasi_tatap_muka')->nullable();
+            $table->uuid('jenis_evaluasi_id');
+            $table->foreign('jenis_evaluasi_id')->references('id')->on('jenis_evaluasis');
             $table->timestamps();
         });
 

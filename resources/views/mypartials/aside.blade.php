@@ -50,6 +50,7 @@
                         'jenis_keluar',
                         'status_kepegawaian',
                         'ikatan_kerja',
+                        'jenis_evaluasi',
                         'wilayah',
                     ];
                 @endphp

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Kelola\Angkatan;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MatkulAngkatanRequest;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -18,7 +19,10 @@ class MatkulController extends Controller
         $dosens = User::role('dosen')
             ->select('users.*')
             ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-            ->where('profile_dosens.status', '1')
+            ->join('penugasan_dosens', function ($q) use ($tahun_ajaran_id) {
+                $q->on('users.id_neo_feeder', 'penugasan_dosens.id_dosen')
+                    ->where('penugasan_dosens.tahun_ajaran_id', $tahun_ajaran_id);
+            })
             ->get();
 
         $semester = DB::table('semesters')
@@ -292,6 +296,18 @@ class MatkulController extends Controller
                     ->where('matkul_id', $row->id_matkul)
                     ->first();
 
+                $tahunSemester = DB::table('tahun_semester')
+                    ->where('prodi_id', $row->id_prodi)
+                    ->where('tahun_ajaran_id', $tahun_ajaran_id)
+                    ->where('semester_id', $row->id_semester)
+                    ->first();
+                if (!$tahunSemester) {
+                    return response()->json([
+                        'message' => 'Tahun semester tidak ditemukan'
+                    ], 400);
+                }
+
+                //? Mahasiswa
                 foreach ($row->mahasiswa as $mhs) {
                     $user = DB::table('users')
                         ->select('users.id')
@@ -299,18 +315,6 @@ class MatkulController extends Controller
                         ->where('users.id_neo_feeder', $mhs->id_mahasiswa)
                         ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $mhs->id_registrasi_mahasiswa)
                         ->first();
-
-                    $tahunSemester = DB::table('tahun_semester')
-                        ->where('prodi_id', $row->id_prodi)
-                        ->where('tahun_ajaran_id', $tahun_ajaran_id)
-                        ->where('semester_id', $row->id_semester)
-                        ->first();
-
-                    if (!$tahunSemester) {
-                        return response()->json([
-                            'message' => 'Tahun semester tidak ditemukan'
-                        ], 400);
-                    }
 
                     $krs = DB::table('krs')
                         ->where('mhs_id', $user->id)
@@ -342,11 +346,48 @@ class MatkulController extends Controller
                         ]);
                     }
                 }
+
+                //? Dosen
+                foreach ($row->dosen as $dosen) {
+                    $user = DB::table('users')
+                        ->where('id_neo_feeder', $dosen->id_dosen)
+                        ->first();
+
+                    DB::table('tahun_matkul_dosen')->updateOrInsert([
+                        'dosen_id' => $user->id,
+                        'tahun_matkul_id' => $get->id,
+                    ], [
+                        'sks_substansi_total' => $dosen->sks_substansi_total,
+                        'rencana_tatap_muka' => $dosen->rencana_tatap_muka,
+                        'realisasi_tatap_muka' => $dosen->realisasi_tatap_muka,
+                        'jenis_evaluasi_id' => $dosen->jenis_evaluasi_id,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                }
+
+                //? Kelas kuliah
+                DB::table('kelas_kuliah')->insert([
+                    'id_kelas_kuliah' => $row->id_kelas_kuliah,
+                    'tahun_matkul_id' => $get->id,
+                    'tahun_semester_id' => $tahunSemester->id,
+                    'nama' => $row->nama,
+                    'bahasan' => $row->bahasan,
+                    'tanggal_mulai_efektif' => Carbon::parse($row->tanggal_mulai_efektif)->format('Y-m-d'),
+                    'tanggal_akhir_efektif' => Carbon::parse($row->tanggal_akhir_efektif)->format('Y-m-d')
+                ]);
+
+                //? Kelas Kuliah Dosen
+                foreach ($row->dosen as $dosen) {
+                    DB::table('kelas_kuliah_dosen')->insertOrIgnore([
+                        'id_dosen' => $dosen->id_dosen,
+                        'id_aktivitas_mengajar' => $dosen->id_aktivitas_mengajar
+                    ]);
+                }
             }
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
-            dd($tahunSemester);
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);

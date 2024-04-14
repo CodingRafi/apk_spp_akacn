@@ -32,6 +32,22 @@
                 nama_jenis_tinggal: 'nama'
             }
         },
+        jenis_evaluasi: {
+            raw: {
+                "act": "GetJenisEvaluasi",
+                "filter": "",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'jenis_evaluasis',
+            changeFormat: true,
+            unique: ['id_jenis_evaluasi'],
+            format: {
+                id_jenis_evaluasi: 'id',
+                nama_jenis_evaluasi: 'nama'
+            }
+        },
         alat_transportasi: {
             raw: {
                 "act": "GetAlatTransportasi",

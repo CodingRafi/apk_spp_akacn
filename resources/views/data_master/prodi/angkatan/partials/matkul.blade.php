@@ -174,15 +174,19 @@
     <script>
         let kelasKuliah = [];
         let mhsKelasKuliah = [];
+        let dosenKelasKuliah = [];
         let statusGetKelasKuliah = false;
         let statusGetMhsKelasKuliah = false;
+        let statusGetDosenKelasKuliah = false;
 
         async function getDataNeoFeeder() {
             if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
                 kelasKuliah = [];
                 mhsKelasKuliah = [];
+                dosenKelasKuliah = [];
                 statusGetKelasKuliah = false;
                 statusGetMhsKelasKuliah = false;
+                statusGetDosenKelasKuliah = false;
 
                 $.LoadingOverlay("show");
                 if (!url) {
@@ -199,6 +203,7 @@
 
                 getKelasKuliahNeoFeeder(token);
                 getMhsKelasKuliah(token);
+                getDosenKelasKuliah(token);
             }
         }
 
@@ -300,10 +305,60 @@
             }
         }
 
+        async function getDosenKelasKuliah(token) {
+            let raw = {
+                "act": "GetDosenPengajarKelasKuliah",
+                "filter": "{!! $semester !!}",
+                "order": "",
+                "token": token.data.token
+            };
+
+            const limit = 100;
+            let loop = 0;
+            let keepRunning = true;
+
+            try {
+                while (keepRunning) {
+                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+
+                    raw.limit = limit;
+                    raw.offset = loop * limit;
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const response = await $.ajax(settings);
+                    if (response.data.length > 0) {
+                        dosenKelasKuliah = dosenKelasKuliah.concat(response.data);
+                    } else {
+                        statusGetDosenKelasKuliah = true;
+                        keepRunning = false;
+                        storeDataNeoFeeder()
+                    }
+
+                    loop++;
+                }
+
+                $.LoadingOverlay("hide");
+            } catch (error) {
+                $.LoadingOverlay("hide");
+                console.error("AJAX Error:", error);
+                showAlert('Terjadi kesalahan saat mengambil data', 'error');
+            }
+        }
+
         function storeDataNeoFeeder() {
-            if (statusGetKelasKuliah && statusGetMhsKelasKuliah) {
+            if (statusGetKelasKuliah && statusGetMhsKelasKuliah && statusGetDosenKelasKuliah) {
                 const data = parseData();
-                const chunks = chunkArray(data, 50)
+                console.log(data)
+                const chunks = chunkArray(data, 20)
 
                 chunks.forEach((chunk, index) => {
                     $.ajax({
@@ -334,8 +389,10 @@
                     id_matkul: row.id_matkul,
                     id_prodi: row.id_prodi,
                     id_semester: row.id_semester,
+                    nama: row.nama_kelas_kuliah,
+                    bahasan: row.bahasan,
                     tanggal_mulai_efektif: row.tanggal_mulai_efektif,
-                    tanggal_tutup_efektif: row.tanggal_tutup_efektif,
+                    tanggal_akhir_efektif: row.tanggal_akhir_efektif,
                 }
 
                 let mhs = mhsKelasKuliah.filter(function(item) {
@@ -347,7 +404,19 @@
                     };
                 })
 
+                let dosen = dosenKelasKuliah.filter(function(item) {
+                    return item.id_kelas_kuliah == row.id_kelas_kuliah;
+                }).map(function(item) {
+                    return {
+                        id_aktivitas_mengajar: item.id_aktivitas_mengajar,
+                        id_dosen: item.id_dosen,
+                        id_jenis_evaluasi: item.id_jenis_evaluasi,
+                        id_registrasi_dosen: item.id_registrasi_dosen,
+                    };
+                })
+
                 rowParse.mahasiswa = mhs;
+                rowParse.dosen = dosen;
                 data.push(rowParse);
             })
 
@@ -355,7 +424,7 @@
         }
     </script>
     <script>
-        function editTahunMatkul(data){
+        function editTahunMatkul(data) {
             get_matkul(data);
             get_rombel(data);
         }
