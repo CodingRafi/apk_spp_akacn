@@ -10,8 +10,8 @@
                         <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
                             <button class="btn btn-primary" onclick="getData()">Get Neo
                                 Feeder</button>
-                            <a href="{{ route('data-master.prodi.create') }}" class="btn btn-primary text-capitalize">Tambah
-                                Prodi</a>
+                            {{-- <a href="{{ route('data-master.prodi.create') }}" class="btn btn-primary text-capitalize">Tambah
+                                Prodi</a> --}}
                         </div>
                     @endcan
                 </div>

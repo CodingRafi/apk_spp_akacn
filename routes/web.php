@@ -150,15 +150,11 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::prefix('{id}/matkul')->name('matkul.')->group(function () {
                 Route::get('/', [AngkatanMatkulController::class, 'index'])->name('index');
                 Route::get(
-                    '/{prodi_id}/get-kurikulum',
-                    [AngkatanMatkulController::class, 'getKurikulum']
-                )->name('getKurikulum');
-                Route::get(
                     '/{prodi_id}/get-rombel',
                     [AngkatanMatkulController::class, 'getRombel']
                 )->name('getRombel');
                 Route::get(
-                    '/{kurikulum_id}/get-matkul',
+                    '/{prodi_id}/get-matkul',
                     [AngkatanMatkulController::class, 'getMatkul']
                 )->name('getMatkul');
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');

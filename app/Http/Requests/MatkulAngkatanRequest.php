@@ -24,13 +24,14 @@ class MatkulAngkatanRequest extends FormRequest
     public function rules()
     {
         return [
-            'kurikulum_id' => 'required',
             'matkul_id' => 'required',
             'dosen_id' => 'required',
             'ruang_id' => 'required',
             'hari' => 'required',
             'jam_mulai' => 'required|date_format:H:i',
             'jam_akhir' => 'required|date_format:H:i|after:jam_mulai',
+            'mode' => 'required',
+            'lingkup' => 'required'
         ];
     }
 }

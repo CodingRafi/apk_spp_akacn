@@ -36,7 +36,6 @@
                                     <th>No</th>
                                     <th>Kode</th>
                                     <th>Nama</th>
-                                    <th>Kurikulum</th>
                                     <th>Dosen</th>
                                     <th>Rombel</th>
                                     @can('edit_matkul', 'delete_matkul')
@@ -67,17 +66,11 @@
                         <div class="mb-3">
                             <label for="prodi_id" class="form-label">Prodi</label>
                             <select class="form-select" name="prodi_id" id="prodi_id"
-                                onchange="get_kurikulum(); get_rombel();">
+                                onchange="get_matkul();get_rombel();">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="kurikulum_id" class="form-label">Kurikulum</label>
-                            <select class="form-select" name="kurikulum_id" id="kurikulum_id" onchange="get_matkul()">
-                                <option value="">Pilih Kurikulum</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -140,6 +133,25 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label for="mode" class="form-label">Mode</label>
+                            <select class="form-select" name="mode" id="mode">
+
+                                <option value="">Pilih Mode</option>
+                                <option value="F">Offline</option>
+                                <option value="O">Online</option>
+                                <option value="M">Campuran</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lingkup" class="form-label">Lingkup</label>
+                            <select class="form-select" name="lingkup" id="lingkup">
+                                <option value="">Pilih Lingkup</option>
+                                <option value="1">Internal</option>
+                                <option value="2">Eksternal</option>
+                                <option value="3">Campuran</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="cek_ip" class="form-label">Cek IP?</label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch" name="cek_ip"
@@ -167,6 +179,11 @@
 
         async function getDataNeoFeeder() {
             if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
+                kelasKuliah = [];
+                mhsKelasKuliah = [];
+                statusGetKelasKuliah = false;
+                statusGetMhsKelasKuliah = false;
+
                 $.LoadingOverlay("show");
                 if (!url) {
                     showAlert('Url tidak ditemukan', 'error');
@@ -338,38 +355,18 @@
         }
     </script>
     <script>
-        function get_kurikulum(data = {}) {
-            let id = $('#prodi_id').val();
-            $('#kurikulum_id').empty().append('<option value="">Pilih Kurikulum</option>')
-            $.ajax({
-                url: "{{ route('data-master.tahun-ajaran.matkul.getKurikulum', ['id' => request('id'), 'prodi_id' => ':id']) }}"
-                    .replace(':id', id),
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    $.each(res.data, function(key, value) {
-                        $('#kurikulum_id').append(`<option value="${value.id}">${value.nama}</option>`);
-                    })
-
-                    if (data.kurikulum_id) {
-                        $('#kurikulum_id').val(data.kurikulum_id);
-                        get_matkul(data)
-                        get_rombel(data)
-                    }
-                },
-                error: function(err) {
-                    alert('Gagal get matkul')
-                }
-            })
+        function editTahunMatkul(data){
+            get_matkul(data);
+            get_rombel(data);
         }
 
         function get_matkul(data = {}) {
-            let id = $('#kurikulum_id').val();
+            let id = $('#prodi_id').val();
             $('#matkul_id').empty().append(
                 '<option value="">Pilih Mata Kuliah</option>'
             );
             $.ajax({
-                url: "{{ route('data-master.tahun-ajaran.matkul.getMatkul', ['id' => request('id'), 'kurikulum_id' => ':id']) }}"
+                url: "{{ route('data-master.tahun-ajaran.matkul.getMatkul', ['id' => request('id'), 'prodi_id' => ':id']) }}"
                     .replace(':id', id),
                 type: 'GET',
                 dataType: 'json',
@@ -435,9 +432,6 @@
                     },
                     {
                         "data": "matkul"
-                    },
-                    {
-                        "data": "kurikulum"
                     },
                     {
                         "data": "dosen"
