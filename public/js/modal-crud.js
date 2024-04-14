@@ -245,7 +245,7 @@ function loopForm(originalForm, modal) {
                     .prop("checked", true);
             } else if($(`${modal} [name=${field}]`).attr("type") == 'time'){
                 // Time
-                $(`${modal} [name=${field}]`).val(originalForm[field].substring(0, 5));
+                $(`${modal} [name=${field}]`).val((originalForm[field] ? originalForm[field].substring(0, 5) : null));
             }
              else {
                 if (

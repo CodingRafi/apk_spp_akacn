@@ -48,6 +48,8 @@
                         'jenis_daftar',
                         'jalur_masuk',
                         'jenis_keluar',
+                        'status_kepegawaian',
+                        'ikatan_kerja',
                         'wilayah',
                     ];
                 @endphp
@@ -251,6 +253,12 @@
                         </li>
                     @endforeach
                 </ul>
+            </li>
+            <li class="menu-item {{ Request::is('penugasan-dosen*') ? 'active' : '' }}">
+                <a href="{{ route('penugasan-dosen.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Penugasan Dosen</div>
+                </a>
             </li>
         @endcan
 

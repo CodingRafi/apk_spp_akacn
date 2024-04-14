@@ -14,6 +14,7 @@ use App\Http\Controllers\Kelola\{
     NilaiController,
     PembayaranController as KelolaPembayaranController,
     PembayaranLainnyaController as KelolaPembayaranLainnyaController,
+    PenugasanDosenController,
     RoleController,
     TahunAjaranController,
     ProdiController,
@@ -132,6 +133,15 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::patch('{user_id}', [NeoFeederMahasiswaController::class, 'update'])->name('update');
             });
         });
+    });
+
+    Route::prefix('penugasan-dosen')->name('penugasan-dosen.')->group(function () {
+        Route::get('/', [PenugasanDosenController::class, 'index'])->name('index');
+        Route::get('/dataTahunAjaran', [PenugasanDosenController::class, 'dataTahunAjaran'])->name('dataTahunAjaran');
+        Route::get('/{tahun_ajaran_id}', [PenugasanDosenController::class, 'show'])->name('show');
+        Route::get('/{tahun_ajaran_id}/data', [PenugasanDosenController::class, 'data'])->name('data');
+        Route::post('/{tahun_ajaran_id}/neo-feeder', [PenugasanDosenController::class, 'storeNeoFeeder'])
+            ->name('storeNeoFeeder');
     });
 
     Route::post('/upload-file', [HomeController::class, 'upload_file'])->name('upload_file');
@@ -430,7 +440,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/{tahun_matkul_id}', [RekapPresensiController::class, 'show'])->name('show');
             });
         });
-        
+
         //? Berita Acara
         Route::prefix('berita-acara/{tahun_ajaran_id}')->name('berita-acara.')->group(function () {
             Route::get('/', [BeritaAcaraController::class, 'index'])->name('index');

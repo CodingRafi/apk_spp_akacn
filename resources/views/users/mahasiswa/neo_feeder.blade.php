@@ -16,6 +16,11 @@
                 showAlert('Url tidak ditemukan', 'error');
             }
 
+            dataMahasiswa = [];
+            riwayatMahasiswa = [];
+            statusGetMahasiswa = false;
+            statusGetRiwayat = false;
+
             token = await getToken();
 
             if (token === null) {

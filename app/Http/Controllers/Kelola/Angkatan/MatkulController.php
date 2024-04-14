@@ -296,7 +296,7 @@ class MatkulController extends Controller
                     $user = DB::table('users')
                         ->select('users.id')
                         ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-                        ->where('profile_mahasiswas.neo_feeder_id_mahasiswa', $mhs->id_mahasiswa)
+                        ->where('users.id_neo_feeder', $mhs->id_mahasiswa)
                         ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $mhs->id_registrasi_mahasiswa)
                         ->first();
 
@@ -305,6 +305,12 @@ class MatkulController extends Controller
                         ->where('tahun_ajaran_id', $tahun_ajaran_id)
                         ->where('semester_id', $row->id_semester)
                         ->first();
+
+                    if (!$tahunSemester) {
+                        return response()->json([
+                            'message' => 'Tahun semester tidak ditemukan'
+                        ], 400);
+                    }
 
                     $krs = DB::table('krs')
                         ->where('mhs_id', $user->id)
@@ -340,6 +346,7 @@ class MatkulController extends Controller
             DB::commit();
         } catch (\Throwable $th) {
             DB::rollBack();
+            dd($tahunSemester);
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);

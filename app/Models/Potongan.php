@@ -22,8 +22,4 @@ class Potongan extends Model
     public function tahunAjaran(){
         return $this->belongsTo(TahunAjaran::class, 'tahun_ajaran_id');
     }
-
-    public function mahasiswa(){
-        return $this->belongsToMany(Mahasiswa::class, 'potongan_mhs', 'potongan_id', 'mhs_id');
-    }
 }

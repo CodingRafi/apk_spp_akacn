@@ -58,11 +58,7 @@ class DosenController extends Controller
                         'status_pernikahan' => $data['status_pernikahan'],
                         'tgl_mulai_pns' => Carbon::parse($data['tanggal_mulai_pns'])->format('Y-m-d'),
                     ]);
-
                     DB::commit();
-                    return response()->json([
-                        'message' => 'success'
-                    ], 200);
                 } catch (\Throwable $th) {
                     DB::rollBack();
                     return response()->json([
@@ -71,5 +67,9 @@ class DosenController extends Controller
                 }
             }
         }
+
+        return response()->json([
+            'message' => 'success'
+        ], 200);
     }
 }

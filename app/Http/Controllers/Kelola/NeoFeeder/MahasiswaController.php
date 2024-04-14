@@ -32,16 +32,15 @@ class MahasiswaController extends Controller
                     ], [
                         'name' => $riwayat->nama_mahasiswa,
                         'email' => $data->email,
+                        'id_neo_feeder' => $riwayat->id_mahasiswa
                     ]);
-
                     $user->assignRole('mahasiswa');
 
                     DB::table('profile_mahasiswas')
                         ->updateOrInsert([
                             'user_id' => $user->id,
-                            'neo_feeder_id_mahasiswa' => $riwayat->id_mahasiswa,
-                            'neo_feeder_id_registrasi_mahasiswa' => $riwayat->id_registrasi_mahasiswa,
                         ], [
+                            'neo_feeder_id_registrasi_mahasiswa' => $riwayat->id_registrasi_mahasiswa,
                             'sync_neo_feeder' => '1',
                             'nisn' => $data->nisn,
                             'nik' => $data->nik,
@@ -99,6 +98,10 @@ class MahasiswaController extends Controller
                 ], 400);
             }
         }
+
+        return response()->json([
+            'status' => true
+        ], 200);
     }
 
     public function show($user_id){

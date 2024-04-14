@@ -284,6 +284,38 @@
                 nama_pembiayaan: 'nama'
             }
         },
+        status_kepegawaian: {
+            raw: {
+                "act": "GetStatusKepegawaian",
+                "filter": "",
+                "order": "",
+                "limit": "50",
+                "offset": "0"
+            },
+            tbl: 'status_pegawais',
+            changeFormat: true,
+            unique: ['id_status_pegawai'],
+            format: {
+                id_status_pegawai: 'id',
+                nama_status_pegawai: 'nama'
+            }
+        },
+        ikatan_kerja: {
+            raw: {
+                "act": "GetIkatanKerjaSdm",
+                "filter": "",
+                "order": "",
+                "limit": "50",
+                "offset": "0"
+            },
+            tbl: 'ikatan_kerjas',
+            changeFormat: true,
+            unique: ['id_ikatan_kerja'],
+            format: {
+                id_ikatan_kerja: 'id',
+                nama_ikatan_kerja: 'nama'
+            }
+        },
         jenis_daftar: {
             raw: {
                 "act": "GetJenisPendaftaran",
@@ -343,6 +375,19 @@
                 "offset": "0"
             },
             tbl: 'matkuls',
+            changeFormat: false,
+            unique: [],
+            format: {}
+        },
+        penugasan_dosen:{
+            raw: {
+                "act": "GetListPenugasanDosen",
+                "filter": "id_tahun_ajaran = '{{ request('tahun_ajaran_id') }}' and id_perguruan_tinggi = '{{ config('services.neo_feeder.ID_PT') }}'",
+                "order": "",
+                "limit": "100",
+                "offset": "0"
+            },
+            tbl: 'penugasan_dosens',
             changeFormat: false,
             unique: [],
             format: {}
