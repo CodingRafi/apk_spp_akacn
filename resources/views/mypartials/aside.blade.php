@@ -91,6 +91,13 @@
                             </a>
                         </li>
                     @endcan
+                    @can('view_jenis_kelas')
+                        <li class="menu-item {{ Request::is('data-master/jenis-kelas*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.jenis-kelas.index') }}" class="menu-link">
+                                <div data-i18n="jenis-kelas">Jenis Kelas</div>
+                            </a>
+                        </li>
+                    @endcan
                     @can('view_rombel')
                         <li class="menu-item {{ Request::is('data-master/rombel*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.rombel.index') }}" class="menu-link">
@@ -116,13 +123,6 @@
                         <li class="menu-item {{ Request::is('data-master/ruang*') ? 'active' : '' }}">
                             <a href="{{ route('data-master.ruang.index') }}" class="menu-link">
                                 <div data-i18n="ruang">Ruang</div>
-                            </a>
-                        </li>
-                    @endcan
-                    @can('view_jenis_kelas')
-                        <li class="menu-item {{ Request::is('data-master/jenis-kelas*') ? 'active' : '' }}">
-                            <a href="{{ route('data-master.jenis-kelas.index') }}" class="menu-link">
-                                <div data-i18n="jenis-kelas">Jenis Kelas</div>
                             </a>
                         </li>
                     @endcan

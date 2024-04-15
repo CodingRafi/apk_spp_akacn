@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kelola\Angkatan;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MatkulAngkatanRequest;
+use App\Models\JenisEvaluasi;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,14 +17,6 @@ class MatkulController extends Controller
     {
         $prodis = DB::table('prodi')->get();
         $ruangs = DB::table('ruangs')->get();
-        $dosens = User::role('dosen')
-            ->select('users.*')
-            ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-            ->join('penugasan_dosens', function ($q) use ($tahun_ajaran_id) {
-                $q->on('users.id_neo_feeder', 'penugasan_dosens.id_dosen')
-                    ->where('penugasan_dosens.tahun_ajaran_id', $tahun_ajaran_id);
-            })
-            ->get();
 
         $semester = DB::table('semesters')
             ->where('tahun_ajaran_id', $tahun_ajaran_id)
@@ -33,7 +26,7 @@ class MatkulController extends Controller
             })
             ->implode(' or ');
 
-        return view('data_master.prodi.angkatan.partials.matkul', compact('prodis', 'ruangs', 'dosens', 'semester'));
+        return view('data_master.tahun_ajaran.matkul.index', compact('prodis', 'ruangs', 'semester'));
     }
 
     public function getMatkul($tahun_ajaran_id, $prodi_id)
@@ -73,6 +66,8 @@ class MatkulController extends Controller
             $options = '';
 
             if (auth()->user()->can('edit_matkul')) {
+                $options = $options . "<a href='". route('data-master.tahun-ajaran.matkul.rekap.index', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) ."' class='btn btn-info mx-2'>Neo Feeder</a>";
+                $options = $options . "<a href='" . route('data-master.tahun-ajaran.matkul.dosen.index', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "' class='btn btn-primary mx-2'>Set Dosen</a>";
                 $options = $options . " <button class='btn btn-warning'
                         onclick='editForm(`" . route('data-master.tahun-ajaran.matkul.show', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`, `Edit Mata Kuliah`, `#Matkul`, editTahunMatkul)'>
                         <i class='ti-pencil'></i>
@@ -123,13 +118,6 @@ class MatkulController extends Controller
             $requestParse['updated_at'] = now();
             DB::table('tahun_matkul')->insert($requestParse);
             $tahun_matkul_id = DB::getPdo()->lastInsertId();
-
-            foreach ($request->dosen_id as $dosen_id) {
-                DB::table('tahun_matkul_dosen')->insert([
-                    'tahun_matkul_id' => $tahun_matkul_id,
-                    'dosen_id' => $dosen_id
-                ]);
-            }
 
             foreach ($request->rombel_id as $rombel_id) {
                 DB::table('tahun_matkul_rombel')->insert([

@@ -19,7 +19,7 @@
                                 </select>
                             </div>
                             <div class="col-md-2 mb-3">
-                                <select class="form-select" id="filter-tahun-ajaran">
+                                <select class="form-select select2" id="filter-tahun-ajaran">
                                     <option value="" selected>Pilih Tahun Masuk</option>
                                     @foreach ($tahun_ajarans as $tahun_ajaran)
                                         <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>

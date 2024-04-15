@@ -66,10 +66,12 @@ class UserController extends Controller
             $datas = User::select('users.*')
                 ->when($role == 'mahasiswa', function ($q) {
                     $q->join('profile_mahasiswas as b', 'users.id', 'b.user_id')
-                        ->when(request('prodi') || request('tahun_ajaran') || request('rombel'), function ($q) {
+                        ->when(request('prodi') || request('tahun_ajaran'), function ($q) {
                             $q->where('b.prodi_id', request('prodi'))
-                                ->Where('b.tahun_masuk_id', request('tahun_ajaran'))
-                                ->Where('b.rombel_id', request('rombel'));
+                                ->where('b.tahun_masuk_id', request('tahun_ajaran'));
+                        })
+                        ->when(request('rombel'), function($q){
+                            $q->where('b.rombel_id', request('rombel'));
                         });
                 })
                 ->role($role)
@@ -82,7 +84,7 @@ class UserController extends Controller
             $options = '';
 
             if (auth()->user()->can('edit_users') && $role == 'mahasiswa' && $data->mahasiswa->sync_neo_feeder == 0) {
-                $options .= '<button class="btn btn-info m-1" type="button" onclick="sendDataMhsToNeoFeeder(' . $data->id . ')">Kirim Neo Feeder</button>';
+                $options .= '<button class="btn btn-info m-1" type="button" onclick="sendDataMhsToNeoFeeder(' . $data->id . ', `'. $data->id_neo_feeder .'`)">Kirim Neo Feeder</button>';
             }
 
             $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary m-1'>Detail</a>";

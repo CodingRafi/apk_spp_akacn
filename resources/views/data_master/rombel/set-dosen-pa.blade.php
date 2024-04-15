@@ -73,7 +73,7 @@
         function getTahunAjaran(dosen_pa = {}) {
             $('#tahun_masuk_id').attr('disabled', 'disabled')
             $.ajax({
-                url: "{{ route('data-master.rombel.getTahunAjaran') }}" + "?dosen_pa_id=" + (dosen_pa.id ?? ''),
+                url: "{{ route('data-master.rombel.getTahunAjaran', request('rombel_id')) }}" + "?dosen_pa_id=" + (dosen_pa.id ?? ''),
                 type: "GET",
                 success: function(res) {
                     $('#tahun_masuk_id').empty().append('<option value="">Pilih Tahun Masuk</option>')

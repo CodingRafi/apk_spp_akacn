@@ -112,9 +112,19 @@ class MahasiswaController extends Controller
     }
 
     public function update(Request $request, $user_id){
-        DB::table('profile_mahasiswas')
-            ->where('user_id', $user_id)
-            ->update($request->except('_method', '_token'));
+        if ($request->neo_feeder_id_mahasiswa) {
+            DB::table('users')
+                ->where('id', $user_id)
+                ->update([
+                    'id_neo_feeder' => $request->neo_feeder_id_mahasiswa
+                ]);
+        }
+
+        if (count($request->except('_method', '_token', 'neo_feeder_id_mahasiswa')) > 0) {
+            DB::table('profile_mahasiswas')
+                ->where('user_id', $user_id)
+                ->update($request->except('_method', '_token', 'neo_feeder_id_mahasiswa'));
+        }
 
         return response()->json([
             'status' => true

@@ -68,7 +68,8 @@ return new class extends Migration
         });
         
         Schema::create('kelas_kuliah', function (Blueprint $table) {
-            $table->string('id_kelas_kuliah')->primary();
+            $table->id();
+            $table->string('id_kelas_kuliah')->nullable();
             $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
             $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
             $table->string('nama')->nullable();
@@ -77,10 +78,12 @@ return new class extends Migration
             $table->date('tanggal_akhir_efektif')->nullable();
             $table->timestamps();
         });
-
+        
         Schema::create('kelas_kuliah_dosen', function (Blueprint $table) {
             $table->id();
-            $table->string('id_dosen');
+            $table->foreignId('tahun_matkul_id')->constrained('tahun_matkul');
+            $table->foreignId('tahun_semester_id')->constrained('tahun_semester');
+            $table->string('id_registrasi_dosen');
             $table->string('id_aktivitas_mengajar')->nullable();
             $table->timestamps();
         });

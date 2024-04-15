@@ -25,7 +25,6 @@ class MatkulAngkatanRequest extends FormRequest
     {
         return [
             'matkul_id' => 'required',
-            'dosen_id' => 'required',
             'ruang_id' => 'required',
             'hari' => 'required',
             'jam_mulai' => 'required|date_format:H:i',

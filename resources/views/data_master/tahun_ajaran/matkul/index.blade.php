@@ -80,16 +80,6 @@
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="dosen_id" class="form-label">Dosen</label>
-                            <select class="form-select select2" style="width: 100%;" name="dosen_id[]" multiple
-                                id="dosen_id">
-                                @foreach ($dosens as $d)
-                                    <option value="{{ $d->id }}">{{ $d->name }} ({{ $d->login_key }})
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
                             <label for="ruang_id" class="form-label">Ruang</label>
                             <select class="form-select select2" name="ruang_id[]" id="ruang_id" multiple
                                 style="width: 100%">

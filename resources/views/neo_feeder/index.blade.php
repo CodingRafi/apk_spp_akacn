@@ -5,6 +5,8 @@
 <script>
     const configData = configNeoFeeder.{{ $type }};
     let limitGet = 500;
+    let process = 0;
+    let processDone = 0;
 
     async function getData(rawParams = null, func) {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
@@ -21,18 +23,22 @@
                 return false;
             }
 
+            process = 0;
+            processDone = 0;
+
             try {
                 let raw = rawParams ?? configData.raw;
                 raw.token = token.data.token;
 
-                let loop = 0;
                 let keepRunning = true;
 
                 while (keepRunning) {
-                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+                    showAlert(`Loop ${process + 1} sedang berjalan`, 'success');
 
                     raw.limit = limitGet;
-                    raw.offset = loop * limitGet;
+                    raw.offset = process * limitGet;
+
+                    process++;
 
                     let settings = {
                         url: url,
@@ -54,9 +60,8 @@
                         }
                     }else{
                         keepRunning = false;
+                        process--;
                     }
-
-                    loop++;
                 }
                 $.LoadingOverlay("hide");
             } catch (error) {
@@ -91,8 +96,6 @@
 
     function storeData(data, func) {
         const chunks = chunkArray(data, 50)
-        let loop = 0;
-
         chunks.forEach((chunk, index) => {
             $.ajax({
                 url: '{{ $urlStoreData }}',
@@ -103,12 +106,16 @@
                 },
                 dataType: 'json',
                 success: function(res) {
-                    if (typeof thisPage != 'undefined' && thisPage == 'neo_feeder') {
-                        if (typeof table !== "undefined") {
-                            table.ajax.reload();
-                        } else {
-                            fetchDataAndUpdateTable()
+                    processDone++;
+                    if (process == processDone) {
+                        if (typeof thisPage != 'undefined' && thisPage == 'neo_feeder') {
+                            if (typeof table !== "undefined") {
+                                table.ajax.reload();
+                            } else {
+                                fetchDataAndUpdateTable()
+                            }
                         }
+                        showAlert('Berhasil di get!', 'success');
                     }
 
                     if (func != undefined) {

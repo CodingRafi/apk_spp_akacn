@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('profile_mahasiswas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('neo_feeder_id_mahasiswa')->nullable();
             $table->string('neo_feeder_id_registrasi_mahasiswa')->nullable();
             $table->enum('sync_neo_feeder', [0,1])->default(0);
             $table->date('tgl_daftar')->nullable();
