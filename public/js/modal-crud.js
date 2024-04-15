@@ -10,7 +10,7 @@ function addForm(url, title = "Tambah", modal = "#modal-form", func) {
     $(`${modal} form`).attr("action", url);
     $(`${modal} [name=_method]`).val("post");
 
-    resetForm(`${modal} form`);
+    resetForm(`${modal} form`, modal);
     initTinyMCE();
 
     if (func != undefined) {
@@ -162,10 +162,10 @@ function editForm(url, title = "Edit", modal = "#modal-form", func) {
         });
 }
 
-function resetForm(selector) {
+function resetForm(selector, modal) {
     $(selector)[0].reset();
 
-    $(".select2").trigger("change");
+    $(`${modal} .select2`).trigger("change");
 
     clearErrorValidationBootstrap();
 }
@@ -250,25 +250,25 @@ function loopForm(originalForm, modal) {
              else {
                 if (
                     $(`${modal} [name=${field}]`).length == 0 &&
-                    $(`[name="${field}[]"]`).attr("multiple")
+                    $(`${modal} [name="${field}[]"]`).attr("multiple")
                 ) {
                     // select multiple
-                    $(`[name="${field}[]"]`).val(originalForm[field]);
+                    $(`${modal} [name="${field}[]"]`).val(originalForm[field]);
                 } else {
                     $(`${modal} [name=${field}]`).val(originalForm[field]);
                 }
             }
 
-            if ($(`[name="${field}[]"]`).length > 1) {
+            if ($(`${modal} [name="${field}[]"]`).length > 1) {
                 // checkbox multiple
                 originalForm[field].forEach((el) => {
-                    $(`[name="${field}[]"]`)
+                    $(`${modal} [name="${field}[]"]`)
                         .filter(`[value="${el}"]`)
                         .prop("checked", true);
                 });
             }
 
-            $(".select2").trigger("change");
+            $(`${modal} .select2`).trigger("change");
         } else {
             $(`.preview-${field}`).attr("src", originalForm[field]).show();
         }

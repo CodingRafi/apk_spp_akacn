@@ -16,7 +16,7 @@
 </div>
 
 <div class="modal fade" id="bimbingan" tabindex="-1" aria-labelledby="bimbinganLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <form action="" method="post">
                 @method('post')
@@ -27,13 +27,18 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="catatan" class="form-label">Catatan</label>
-                        <textarea name="catatan" id="catatan" cols="30" rows="10" class="form-control textarea-tinymce" {{ $disabled ? 'disabled' : '' }}></textarea>
+                        @if ($disabled)
+                            <div class="div-catatan"></div>
+                        @else
+                            <textarea name="catatan" id="catatan" cols="30" rows="10" class="form-control textarea-tinymce"></textarea>
+                        @endif
                     </div>
                 </div>
                 @if (!$disabled)
-                <div class="modal-footer justify-content-start px-3">
-                    <button type="button" class="btn btn-primary" onclick="submitForm(this.form, this)">Simpan</button>
-                </div>
+                    <div class="modal-footer justify-content-start px-3">
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this)">Simpan</button>
+                    </div>
                 @endif
             </form>
         </div>
@@ -62,4 +67,8 @@
             responsive: true,
         });
     });
+
+    function showMhs(data) {
+        $('.div-catatan').empty().html(data.catatan)
+    }
 </script>
