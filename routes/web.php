@@ -183,6 +183,9 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                     Route::get('/', [MatkulDosenController::class, 'index'])->name('index');
                     Route::post('/', [MatkulDosenController::class, 'store'])->name('store');
                     Route::get('/data', [MatkulDosenController::class, 'data'])->name('data');
+                    Route::get('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'show'])->name('show');
+                    Route::put('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'update'])->name('update');
+                    Route::delete('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'destroy'])->name('destroy');
                 });
 
                 //? Neo Feeder

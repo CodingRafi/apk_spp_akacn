@@ -69,14 +69,14 @@ class MatkulDosenController extends Controller
 
         foreach ($datas as $data) {
             $options = '';
-                            
+
             $options = $options . " <button class='btn btn-warning'
-                                onclick='editForm(`" . route('data-master.ruang.show', $data->id) . "`, `Edit Ruang`, `#ruang`)'>
+                                onclick='editForm(`" . route('data-master.tahun-ajaran.matkul.dosen.show', ['id' => $tahun_ajaran_id, 'matkul_id' => $id, 'tahun_matkul_dosen_id' => $data->id]) . "`, `Edit Dosen`, `#setDosen`, editDosen)'>
                                 <i class='ti-pencil'></i>
                                 Edit
                             </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.ruang.destroy', $data->id) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.tahun-ajaran.matkul.dosen.destroy', ['id' => $tahun_ajaran_id, 'matkul_id' => $id, 'tahun_matkul_dosen_id' => $data->id]) . "`, () => {tableDosen.ajax.reload()})' type='button'>
                                                                 Hapus
                                                             </button>";
 
@@ -87,5 +87,65 @@ class MatkulDosenController extends Controller
             ->addIndexColumn()
             ->rawColumns(['options'])
             ->make(true);
+    }
+
+    public function show($tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id)
+    {
+        $data = DB::table('tahun_matkul_dosen')
+            ->where('id', $tahun_matkul_dosen_id)
+            ->first();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function update(Request $request, $tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id){
+        $request->validate([
+            'sks_substansi_total' => 'required',
+            'rencana_tatap_muka' => 'required',
+            'realisasi_tatap_muka' => 'required',
+            'jenis_evaluasi_id' => 'required'
+        ]);
+
+        DB::table('tahun_matkul_dosen')
+            ->where('id', $tahun_matkul_dosen_id)
+            ->update([
+                'sks_substansi_total' => $request->sks_substansi_total,
+                'rencana_tatap_muka' => $request->rencana_tatap_muka,
+                'realisasi_tatap_muka' => $request->realisasi_tatap_muka,
+                'jenis_evaluasi_id' => $request->jenis_evaluasi_id,
+                'updated_at' => now()
+            ]);
+
+        return response()->json([
+            'message' => 'Berhasil ditambahkan'
+        ], 200);
+    }
+
+    public function destroy($tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id){
+        $get = DB::table('tahun_matkul_dosen')
+                ->where('id', $tahun_matkul_dosen_id)
+                ->first();
+
+        //? Validation jika sudah buat jadwal
+        $check = DB::table('jadwal')
+                    ->where('tahun_matkul_id', $matkul_id)
+                    ->where('pengajar_id', $get->dosen_id)
+                    ->count();
+
+        if ($check > 0) {
+            return response()->json([
+                'message' => 'Tidak bisa dihapus karena sudah ada jadwal'
+            ], 400);
+        }
+        
+        DB::table('tahun_matkul_dosen')
+            ->where('id', $tahun_matkul_dosen_id)
+            ->delete();
+
+        return response()->json([
+            'message' => 'Berhasil dihapus'
+        ], 200);
     }
 }

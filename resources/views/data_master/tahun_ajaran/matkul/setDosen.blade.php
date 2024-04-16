@@ -8,7 +8,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>Dosen Mata Kuliah</h5>
                         <button type="button" class="btn btn-primary"
-                            onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.dosen.store', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}', 'Tambah Dosen', '#setDosen')">
+                            onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.dosen.store', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}', 'Tambah Dosen', '#setDosen', addDosen)">
                             Tambah
                         </button>
                     </div>
@@ -48,7 +48,8 @@
                             <select class="form-select" name="dosen_id" id="dosen_id">
                                 <option value="">Pilih Dosen</option>
                                 @foreach ($dosens as $dosen)
-                                    <option value="{{ $dosen->id }}">{{ $dosen->name }} ({{ $dosen->login_key }})</option>
+                                    <option value="{{ $dosen->id }}">{{ $dosen->name }} ({{ $dosen->login_key }})
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
@@ -73,10 +74,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary"
-                                onclick="submitForm(this.form, this, () => tableMatkul.ajax.reload())">Simpan</button>
-                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary"
+                            onclick="submitForm(this.form, this, () => tableDosen.ajax.reload())">Simpan</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -123,5 +125,13 @@
         $('#filter-prodi').on('change', function() {
             tableDosen.ajax.reload();
         });
+
+        function editDosen() {
+            $('#dosen_id').attr('disabled', 'disabled');
+        }
+
+        function addDosen() {
+            $('#dosen_id').removeAttr('disabled');
+        }
     </script>
 @endpush
