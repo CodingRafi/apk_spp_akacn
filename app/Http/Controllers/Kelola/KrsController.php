@@ -105,7 +105,21 @@ class KrsController extends Controller
     public function show($id)
     {
         $data = DB::table('krs')
-            ->select('krs.*', 'b.login_key', 'b.name', 'd.nama as prodi', 'e.name as verify', 'g.nama as semester', 'h.nama as tahun_masuk', 'f.id as tahun_semester_id', 'f.jatah_sks', 'krs.status', 'b.id as mhs_id', 'i.nama as rombel')
+            ->select(
+                'krs.*',
+                'b.login_key',
+                'b.name',
+                'd.nama as prodi',
+                'e.name as verify',
+                'g.nama as semester',
+                'h.nama as tahun_masuk',
+                'f.id as tahun_semester_id',
+                'f.jatah_sks',
+                'krs.status',
+                'b.id as mhs_id',
+                'i.nama as rombel',
+                'k.name as dosen_pa'
+            )
             ->join('users as b', 'krs.mhs_id', '=', 'b.id')
             ->join('profile_mahasiswas as c', 'c.user_id', '=', 'b.id')
             ->join('prodi as d', 'c.prodi_id', '=', 'd.id')
@@ -114,6 +128,11 @@ class KrsController extends Controller
             ->join('semesters as g', 'f.semester_id', '=', 'g.id')
             ->join('tahun_ajarans as h', 'c.tahun_masuk_id', '=', 'h.id')
             ->join('rombels as i', 'c.rombel_id', '=', 'i.id')
+            ->join('rombel_tahun_ajarans as j', function($q){
+                $q->on('j.rombel_id', '=', 'i.id')
+                    ->on('j.tahun_masuk_id', '=', 'c.tahun_masuk_id');
+            })
+            ->join('users as k', 'k.id', '=', 'j.dosen_pa_id')
             ->where('krs.id', $id)
             ->first();
 

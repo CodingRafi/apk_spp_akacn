@@ -46,42 +46,54 @@
                         </div>
                     @elseif($data->status == 'ditolak')
                         <div class="alert alert-danger">
-                            KRS ini ditolak. Tanggal revisi : {{ parseDate($data->tgl_mulai_revisi) }} - {{ parseDate($data->tgl_akhir_revisi) }}
+                            KRS ini ditolak. Tanggal revisi : {{ parseDate($data->tgl_mulai_revisi) }} -
+                            {{ parseDate($data->tgl_akhir_revisi) }}
                         </div>
                     @endif
-                    <div class="col-md-6">
-                        <table class="table table-bordered">
-                            <tr>
-                                <th>Nama</th>
-                                <th>:</th>
-                                <th>{{ $data->name }}</th>
-                            </tr>
-                            <tr>
-                                <th>NIM</th>
-                                <th>:</th>
-                                <th>{{ $data->login_key }}</th>
-                            </tr>
-                            <tr>
-                                <th>Prodi</th>
-                                <th>:</th>
-                                <th>{{ $data->prodi }}</th>
-                            </tr>
-                            <tr>
-                                <th>Tahun Masuk</th>
-                                <th>:</th>
-                                <th>{{ $data->tahun_masuk }}</th>
-                            </tr>
-                            <tr>
-                                <th>Pengajuan Semester</th>
-                                <th>:</th>
-                                <th>{{ $data->semester }}</th>
-                            </tr>
-                            <tr>
-                                <th>Rombel</th>
-                                <th>:</th>
-                                <th>{{ $data->rombel }}</th>
-                            </tr>
-                        </table>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>Nama</th>
+                                    <th>:</th>
+                                    <th>{{ $data->name }}</th>
+                                </tr>
+                                <tr>
+                                    <th>NIM</th>
+                                    <th>:</th>
+                                    <th>{{ $data->login_key }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Dosen PA</th>
+                                    <th>:</th>
+                                    <th>{{ $data->dosen_pa }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Prodi</th>
+                                    <th>:</th>
+                                    <th>{{ $data->prodi }}</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table">
+                                <tr>
+                                    <th>Tahun Masuk</th>
+                                    <th>:</th>
+                                    <th>{{ $data->tahun_masuk }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Pengajuan Semester</th>
+                                    <th>:</th>
+                                    <th>{{ $data->semester }}</th>
+                                </tr>
+                                <tr>
+                                    <th>Rombel</th>
+                                    <th>:</th>
+                                    <th>{{ $data->rombel }}</th>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                     <div class="d-flex justify-content-between mt-3">
                         <h5 class="text-capitalize">Mata Kuliah</h5>
