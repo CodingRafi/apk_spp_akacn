@@ -57,6 +57,7 @@ class DosenController extends Controller
                         'handphone' => $data['handphone'],
                         'status_pernikahan' => $data['status_pernikahan'],
                         'tgl_mulai_pns' => Carbon::parse($data['tanggal_mulai_pns'])->format('Y-m-d'),
+                        'source' => 'neo_feeder',
                     ]);
                     DB::commit();
                 } catch (\Throwable $th) {
