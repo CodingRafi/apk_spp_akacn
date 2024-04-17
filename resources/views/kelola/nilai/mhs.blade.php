@@ -37,12 +37,14 @@
                     <div class="collapse mb-3" id="petunjuk">
                         <div class="card card-body">
                             <ol>
-                                <li>Klik tombol "Download Template" untuk mengunduh template yang diperlukan.</li>
-                                <li>
+                                <li class="mb-2">
+                                    Klik tombol "Download Template" untuk mengunduh template yang diperlukan.
+                                </li>
+                                <li class="mb-2">
                                     Untuk mutu menggunakan id mutu seperti dibawah ini
                                     <br>
                                     <div class="w-50">
-                                        <table class="table" aria-label="table-mutu">
+                                        <table class="table mt-2" aria-label="table-mutu">
                                             <thead>
                                                 <tr>
                                                     <th>Id</th>
@@ -62,11 +64,43 @@
                                         </table>
                                     </div>
                                 </li>
-                                <li>
+                                <li class="mb-2">
+                                    Untuk Persentase seperti dibawah ini
+                                    <br>
+                                    <div class="col-md-4">
+                                        <table class="table table-bordered mt-2" aria-label="table-persentase">
+                                            <thead>
+                                                <tr>
+                                                    <th>TEORI</th>
+                                                    <th>PRAKTIK</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Kehadiran (10%)</td>
+                                                    <td>Pretest (5%)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tugas (20%)</td>
+                                                    <td>Laporan (30%)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>UTS (30%)</td>
+                                                    <td>Keterampilan (25%)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>UAS (40%)</td>
+                                                    <td>Nil.Ujian Akhir Prak (40%)</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
+                                <li class="mb-2">
                                     Publish diisi dengan angka 1 jika ingin menampilkan data, dan 0 jika ingin
                                     menyembunyikan.
                                 </li>
-                                <li>
+                                <li class="mb-2">
                                     Klik tombol "Import Nilai", dan pilih file template yang telah diisi.
                                     <br>
                                     <small class="text-danger">Catatan: Seluruh data yang ada akan direplace dengan data
@@ -140,8 +174,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="nilai_akhir" class="form-label">Nilai Akhir</label>
-                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir" min="0"
-                                step="0.01" />
+                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir"
+                                min="0" step="0.01" />
                         </div>
                         <div class="mb-3">
                             <label for="mutu_id" class="form-label">Mutu</label>
