@@ -6,10 +6,18 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <a href="{{ route('khs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @if (Auth::user()->hasRole('mahasiswa'))
+                                <a href="{{ route('khs.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @else
+                                <a href="{{ route('kelola-users.mahasiswa.show', $mhs_id) }}"><i
+                                        class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                            @endif
                             <h5 class="text-capitalize mb-0">Kartu Hasil Studi {{ $tahun_semester->nama }}</h5>
                         </div>
-                        <a href="{{ route('khs.print', request('tahun_semester_id')) }}" class="btn btn-primary">Download KHS</a>
+                        @if (Auth::user()->hasRole('mahasiswa'))
+                        <a href="{{ route('khs.print', request('tahun_semester_id')) }}" class="btn btn-primary">Download
+                            KHS</a>
+                        @endif
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -113,7 +121,11 @@
                             <td>${e.kode_mk}</td>
                             <td>${e.matkul}</td>
                             <td colspan="4" class="text-center"><div class="badge bg-warning text-white">BELUM ISI KUESIONER</div></td>
+                            @if (Auth::user()->hasRole('mahasiswa'))
                             <td><button class="btn btn-primary" onclick="isiKuesioner('${e.tahun_matkul_id}')">Isi Kuesioner</button></td>
+                            @else
+                            <td></td>
+                            @endif
                             </tr>`;
                     } else {
                         table +=
@@ -172,7 +184,7 @@
 
             function loadData() {
                 $.ajax({
-                    url: "{{ route('khs.data', ['tahun_semester_id' => $tahun_semester->id]) }}",
+                    url: "{{ route('khs.data', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}",
                     dataType: "json",
                     success: function(res) {
                         console.log(res)

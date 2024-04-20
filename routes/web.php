@@ -670,10 +670,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
     Route::prefix('khs')->name('khs.')->group(function () {
         Route::get('/', [KhsController::class, 'index'])->name('index');
-        Route::get('/dataSemester', [KhsController::class, 'dataSemester'])->name('dataSemester');
+        Route::get('/dataSemester/{mhs_id?}', [KhsController::class, 'dataSemester'])->name('dataSemester');
         Route::get('/{tahun_semester_id}/print', [KhsController::class, 'print'])->name('print');
-        Route::get('/{tahun_semester_id}', [KhsController::class, 'show'])->name('show');
-        Route::get('/{tahun_semester_id}/data', [KhsController::class, 'data'])->name('data');
+        Route::get('/{tahun_semester_id}/data/{mhs_id?}', [KhsController::class, 'data'])->name('data');
+        Route::get('/{tahun_semester_id}/{mhs_id?}', [KhsController::class, 'show'])->name('show');
     });
 
     Route::prefix('transkip')->name('transkip.')->group(function () {

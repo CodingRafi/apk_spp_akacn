@@ -37,7 +37,8 @@ class UserController extends Controller
     {
         $this->middleware('permission:view_users', ['only' => [
             'index', 'data', 'store',
-            'exportPembayaran', 'printPembayaran'
+            'exportPembayaran', 'printPembayaran',
+            'show'
         ]]);
         $this->middleware('permission:add_users', ['only' => ['create', 'store', 'import', 'saveImport']]);
         $this->middleware('permission:edit_users', ['only' => ['edit', 'update']]);

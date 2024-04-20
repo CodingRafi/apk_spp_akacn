@@ -37,8 +37,8 @@
                         @endcan
                         @can('view_kelola_nilai')
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#nilai"
-                                    type="button">Nilai</button>
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#khs"
+                                    type="button">KHS</button>
                             </li>
                         @endcan
                         @can('view_bimbingan')
@@ -91,7 +91,10 @@
                             </div>
                         @endcan
                         @can('view_kelola_nilai')
-                            <div class="tab-pane fade show" id="nilai" role="tabpanel" tabindex="0">
+                            <div class="tab-pane fade show" id="khs" role="tabpanel" tabindex="0">
+                                @include('mahasiswa.khs.table', [
+                                    'mhs_id' => $data->id,
+                                ])
                             </div>
                         @endcan
                         @can('view_bimbingan')

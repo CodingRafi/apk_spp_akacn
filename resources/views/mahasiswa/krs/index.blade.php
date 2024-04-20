@@ -6,7 +6,6 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize">KRS</h5>
-                    {{-- <a href="{{ route('pembayaran.export') }}" class="btn btn-primary">Export</a> --}}
                 </div>
                 <div class="card-body">
                     @include('mahasiswa.krs.table')

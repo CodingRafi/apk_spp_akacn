@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mahasiswa;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,10 +17,27 @@ class KhsController extends Controller
         return view('mahasiswa.khs.index');
     }
 
-    public function dataSemester()
+    private function validateMhsId($mhs_id = null)
     {
         $user = Auth::user();
-        $mhs = $user->mahasiswa;
+
+        if ($user->hasRole('mahasiswa')) {
+            $mhs_id = $user->id;
+        }
+
+        $user = User::findOrFail($mhs_id);
+
+        if ((!$user->hasRole('mahasiswa') && $mhs_id == null) || $user->mahasiswa == null) {
+            abort(404);
+        }
+
+        return $mhs_id;
+    }
+
+    public function dataSemester($mhs_id = null)
+    {
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $mhs = User::findOrFail($mhs_id)->mahasiswa;
 
         $datas = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama')
@@ -29,7 +47,7 @@ class KhsController extends Controller
             ->get();
 
         foreach ($datas as $data) {
-            $data->options = '<a href="' . route('khs.show', $data->id) . '" class="btn btn-primary">Detail</a>';
+            $data->options = '<a href="' . route('khs.show', ['tahun_semester_id' => $data->id, 'mhs_id' => $mhs_id]) . '" class="btn btn-primary">Detail</a>';
         }
 
         return DataTables::of($datas)
@@ -38,7 +56,7 @@ class KhsController extends Controller
             ->make(true);
     }
 
-    public function show($tahun_semester_id)
+    public function show($tahun_semester_id, $mhs_id = null)
     {
         $tahun_semester = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama')
@@ -50,12 +68,15 @@ class KhsController extends Controller
             ->where('status', '1')
             ->get();
 
-        return view('mahasiswa.khs.show', compact('tahun_semester', 'kuesioner'));
+        $mhs_id = $this->validateMhsId($mhs_id);
+
+        return view('mahasiswa.khs.show', compact('tahun_semester', 'kuesioner', 'mhs_id'));
     }
 
-    public function data($tahun_semester_id)
+    public function data($tahun_semester_id, $mhs_id = null)
     {
-        $user = Auth::user();
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $user = User::findOrFail($mhs_id);
         $tahunSemester = DB::table('tahun_semester')
             ->select('id')
             ->where('id', '<=', $tahun_semester_id)
