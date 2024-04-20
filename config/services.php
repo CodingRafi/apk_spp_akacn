@@ -91,4 +91,10 @@ return [
         'KEY_ENCRYPT' => env('KEY_ENCRYPT_NEO_FEEDER'),
         'ID_PT' => env('ID_PT')
     ],
+
+    'peran' => [
+        '1' => 'Ketua',
+        '2' => 'Anggota',
+        '3' => 'Personal'
+    ]
 ];

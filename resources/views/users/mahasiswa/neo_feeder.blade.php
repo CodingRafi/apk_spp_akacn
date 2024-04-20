@@ -174,7 +174,6 @@
                 })
             })
         }
-
     }
 
     async function updateData(user_id, data) {

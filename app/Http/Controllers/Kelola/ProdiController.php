@@ -135,21 +135,13 @@ class ProdiController extends Controller
 
         $jenisAktivitas = DB::table('jenis_aktivitas')
             ->get();
-
-        $mhs = User::role('mahasiswa')
-                ->select('users.id', 'users.name', 'users.login_key')
-                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', '=', 'users.id')
-                ->where('profile_mahasiswas.prodi_id', $prodi_id)
-                ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-                ->get();
-
+            
         return view('data_master.prodi.angkatan.index', compact(
             'prodi_id',
             'tahun_ajaran_id',
             'semesterPotongan',
             'lainnyaPotongan',
             'jenisAktivitas',
-            'mhs'
         ));
     }
 

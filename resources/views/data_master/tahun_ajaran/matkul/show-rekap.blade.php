@@ -5,8 +5,11 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5>Rekap Kelas Perkuliahan</h5>
+                    <div class="d-flex align-items-center">
+                        <a
+                            href="{{ route('data-master.tahun-ajaran.matkul.rekap.index', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="mb-0">Rekap Kelas Perkuliahan</h5>
                     </div>
                     <button type="button" class="btn btn-primary"
                         onclick="sendDataToNeoFeeder('{{ $tahunMatkul->id_kelas_kuliah }}')">Kirim ke Neo
@@ -184,7 +187,9 @@
 @endsection
 
 @push('js')
-    @include('data_master.tahun_ajaran.matkul.neo_feeder')
+    @if (Auth::user()->hasRole('admin'))
+        @include('data_master.tahun_ajaran.matkul.neo_feeder')
+    @endif
     <script>
         $(document).ready(function() {
             $('.table-dosen').DataTable({

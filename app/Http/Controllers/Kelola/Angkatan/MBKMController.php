@@ -22,6 +22,8 @@ class MBKMController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
+            $options .= " <a href='". route('data-master.prodi.mbkm.mahasiswa.index', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary'>Set Mahasiswa</a>";
+
             if (auth()->user()->can('edit_kelola_mbkm')) {
                 $options = $options . " <button class='btn btn-warning'
                                     onclick='editForm(`" . route('data-master.prodi.mbkm.show', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, `Edit MBKM`, `#Mbkm`)'>
@@ -55,16 +57,7 @@ class MBKMController extends Controller
             $req = $request->except('_method', '_token', 'mhs_id');
             $req['prodi_id'] = $prodi_id;
 
-            $data = MBKM::create($req);
-
-            foreach ($request->mhs_id as $mhs_id) {
-                DB::table('mbkm_mhs')->insert([
-                    'mbkm_id' => $data->id,
-                    'mhs_id' => $mhs_id,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
+            MBKM::create($req);
 
             DB::commit();
             return response()->json([
@@ -82,11 +75,6 @@ class MBKMController extends Controller
             ->with('mahasiswa')
             ->first();
 
-        $data->mhs_id = $data->mahasiswa()
-                ->whereNull('deleted_at')
-                ->pluck('users.id')
-                ->toArray();
-
         return response()->json([
             'data' => $data
         ], 200);
@@ -94,50 +82,9 @@ class MBKMController extends Controller
 
     public function update(MbkmRequest $request, $prodi_id, $tahun_ajaran_id, $id)
     {
-        $data = MBKM::where('id', $id)->first();
-        $mhsDb = $data->mahasiswa()
-            ->where('deleted_at', null)
-            ->pluck('users.id')
-            ->toArray();
-
         DB::beginTransaction();
         try {
-            //? delete mahasiswa
-            $deleteMhs = array_diff($mhsDb, ($request->mhs_id ?? []));
-            foreach ($deleteMhs as $mhs) {
-                DB::table('mbkm_mhs')
-                    ->where('mbkm_id', $id)
-                    ->where('mhs_id', $mhs)
-                    ->update([
-                        'deleted_at' => now(),
-                    ]);
-            }
-
-            //? Add mahasiswa
-            $addMhs = array_diff(($request->mhs_id ?? []), $mhsDb);
-            foreach ($addMhs as $mhs) {
-                $exist = DB::table('mbkm_mhs')
-                    ->where('mbkm_id', $id)
-                    ->where('mhs_id', $mhs)
-                    ->exists();
-
-                if ($exist) {
-                    DB::table('mbkm_mhs')
-                        ->where('mbkm_id', $id)
-                        ->where('mhs_id', $mhs)
-                        ->update([
-                            'deleted_at' => null
-                        ]);
-                } else {
-                    DB::table('mbkm_mhs')->insert([
-                        'mbkm_id' => $id,
-                        'mhs_id' => $mhs,
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-                }
-            }
-
+            $data = MBKM::where('id', $id)->first();
             $data->update($request->except('_method', '_token', 'mhs_id'));
             DB::commit();
             return response()->json([

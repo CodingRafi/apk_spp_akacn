@@ -10,6 +10,7 @@ use App\Http\Controllers\Kelola\{
     KurikulumController,
     MateriController,
     MatkulController,
+    MBKMMahasiswaController,
     MutuController,
     NilaiController,
     PembayaranController as KelolaPembayaranController,
@@ -332,6 +333,16 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/{id}', [MBKMController::class, 'show'])->name('show');
                 Route::put('/{id}', [MBKMController::class, 'update'])->name('update');
                 Route::delete('/{id}', [MBKMController::class, 'destroy'])->name('destroy');
+                
+                Route::prefix('{id}/mahasiswa')->name('mahasiswa.')->group(function () {
+                    Route::get('/', [MBKMMahasiswaController::class, 'index'])->name('index');
+                    Route::post('/', [MBKMMahasiswaController::class, 'store'])->name('store');
+                    Route::get('/get-mhs', [MBKMMahasiswaController::class, 'getMhs'])->name('get-mhs');
+                    Route::get('/data', [MBKMMahasiswaController::class, 'data'])->name('data');
+                    Route::get('/{mhs_id}', [MBKMMahasiswaController::class, 'show'])->name('show');
+                    Route::put('/{mhs_id}', [MBKMMahasiswaController::class, 'update'])->name('update');
+                    Route::delete('/{mhs_id}', [MBKMMahasiswaController::class, 'destroy'])->name('destroy');
+                });
             });
         });
 
@@ -505,6 +516,14 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/mhs',
             [NilaiController::class, 'dataMhs']
         )->name('dataMhs');
+        Route::get(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/get-data',
+            [NilaiController::class, 'getDataNilai']
+        )->name('getDataNilai');
+        Route::patch(
+            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/update-neo-feeder',
+            [NilaiController::class, 'updateNeoFeeder']
+        )->name('updateNeoFeeder');
         Route::get(
             '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/download-template',
             [NilaiController::class, 'downloadTemplate']

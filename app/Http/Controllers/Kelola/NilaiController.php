@@ -252,4 +252,30 @@ class NilaiController extends Controller
             ], 400);
         }
     }
+
+    public function getDataNilai($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
+    {
+        $datas = DB::table('mhs_nilai')
+            ->select(
+                'profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa',
+                'matkuls.kode',
+                'matkuls.nama as matkul',
+                'matkuls.sks_mata_kuliah',
+                'mutu.nama as huruf',
+                'matkuls.id as matkul_id',
+                'mutu.nilai',
+                'users.id as mhs_id'
+            )
+            ->join('users', 'users.id', 'mhs_nilai.mhs_id')
+            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+            ->join('tahun_matkul', 'mhs_nilai.tahun_matkul_id', 'tahun_matkul.id')
+            ->join('matkuls', 'tahun_matkul.matkul_id', 'matkuls.id')
+            ->join('mutu', 'mhs_nilai.mutu_id', 'mutu.id')
+            ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id)
+            ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id)
+            ->where('mhs_nilai.publish', '1')
+            ->get();
+
+        return response()->json($datas, 200);
+    }
 }

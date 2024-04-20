@@ -176,6 +176,7 @@ return new class extends Migration
             $table->foreignId('mutu_id')->nullable()->constrained('mutu');
             $table->decimal('nilai_mutu', 5, 2)->nullable();
             $table->enum('publish', [0,1])->default(0);
+            $table->string('id_transfer_neo_feeder')->nullable();
             $table->timestamps();
         });
 

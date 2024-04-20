@@ -4,33 +4,45 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
-                <div class="card-header d-flex justify-content-between">
+                <div class="card-header row justify-content-between">
                     <div class="d-flex align-items-center">
                         <a href="{{ route('kelola-nilai.show', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Nilai</h5>
                     </div>
-                    <div class="d-flex" style="gap: 1rem;">
-                        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"
-                            aria-expanded="false" aria-controls="petunjuk">
-                            Petunjuk Import Nilai
-                        </button>
-                        <a href="{{ route('kelola-nilai.downloadTemplate', [
-                            'tahun_ajaran_id' => request('tahun_ajaran_id'),
-                            'rombel_id' => request('rombel_id'),
-                            'tahun_matkul_id' => request('tahun_matkul_id'),
-                            'tahun_semester_id' => request('tahun_semester_id'),
-                        ]) }}"
-                            class="btn btn-primary">Download Template</a>
-                        <button class="btn btn-primary" type="button"
-                            onclick="addForm('{{ route('kelola-nilai.importNilai', [
+                    <div class="row" style="gap: 1rem;">
+                        <div class="col-md">
+                            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"
+                                aria-expanded="false" aria-controls="petunjuk">
+                                Petunjuk Import Nilai
+                            </button>
+                        </div>
+                        <div class="col-md">
+                            <a href="{{ route('kelola-nilai.downloadTemplate', [
                                 'tahun_ajaran_id' => request('tahun_ajaran_id'),
                                 'rombel_id' => request('rombel_id'),
                                 'tahun_matkul_id' => request('tahun_matkul_id'),
                                 'tahun_semester_id' => request('tahun_semester_id'),
-                            ]) }}', 'Import Nilai', '#importNilai')">
-                            Import Nilai
-                        </button>
+                            ]) }}"
+                                class="btn btn-primary">Download Template</a>
+                        </div>
+                        <div class="col-md">
+                            <button class="btn btn-primary" type="button"
+                                onclick="addForm('{{ route('kelola-nilai.importNilai', [
+                                    'tahun_ajaran_id' => request('tahun_ajaran_id'),
+                                    'rombel_id' => request('rombel_id'),
+                                    'tahun_matkul_id' => request('tahun_matkul_id'),
+                                    'tahun_semester_id' => request('tahun_semester_id'),
+                                ]) }}', 'Import Nilai', '#importNilai')">
+                                Import Nilai
+                            </button>
+                        </div>
+                        <div class="col-md">
+                            <button class="btn btn-primary" type="button"
+                                onclick="sendNeoFeeder()">
+                                Send Neo Feeder
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -228,6 +240,9 @@
 @endsection
 
 @push('js')
+    @if (Auth::user()->hasRole('admin'))
+        @include('kelola.nilai.neo_feeder')
+    @endif
     <script>
         let table;
         $(document).ready(function() {

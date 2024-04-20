@@ -5,8 +5,9 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card mb-4">
                 <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5>Rekap Kelas Perkuliahan</h5>
+                    <div class="d-flex align-items-center">
+                        <a href="{{ route('data-master.tahun-ajaran.matkul.index', ['id' => request('id')]) }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="mb-0">Rekap Kelas Perkuliahan</h5>
                     </div>
                 </div>
                 <div class="card-body">

@@ -34,6 +34,7 @@ return new class extends Migration
             $table->foreignId('mbkm_id')->constrained('mbkm');
             $table->foreignId('mhs_id')->constrained('users');
             $table->enum('sync', [0,1])->default(0);
+            $table->enum('peran', [1,2,3]);
             $table->softDeletes();
             $table->timestamps();
         });

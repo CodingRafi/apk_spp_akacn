@@ -1,12 +1,21 @@
 <div class="tab-pane" id="mbkm" role="tabpanel">
     <div class="d-flex justify-content-between mb-3">
         <h5>MBKM</h5>
-        @can('add_kelola_mbkm')
-            <button type="button" class="btn btn-primary"
-                onclick="addForm('{{ route('data-master.prodi.mbkm.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah MBKM', '#Mbkm')">
-                Tambah
-            </button>
-        @endcan
+        <div class="row">
+            <div class="col-md">
+                @can('add_kelola_mbkm')
+                    <button type="button" class="btn btn-primary"
+                        onclick="addForm('{{ route('data-master.prodi.mbkm.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah MBKM', '#Mbkm')">
+                        Tambah
+                    </button>
+                @endcan
+            </div>
+            @if (Auth::user()->hasRole('admin'))
+                <div class="col-md">
+                    
+                </div>
+            @endif
+        </div>
     </div>
     <div class="table-responsive">
         <table class="table table-mbkm">
@@ -80,14 +89,6 @@
                         <div class="mb-3">
                             <label for="tgl_sk_tugas" class="form-label">Tanggal SK Tugas</label>
                             <input type="date" class="form-control" id="tgl_sk_tugas" name="tgl_sk_tugas">
-                        </div>
-                        <div class="mb-3">
-                            <label for="user_id" class="form-label">Mahasiswa</label>
-                            <select class="select2" multiple name="mhs_id[]" id="user_id" style="width: 100%">
-                                @foreach ($mhs as $row)
-                                    <option value="{{ $row->id }}">{{ $row->name }} | {{ $row->login_key }}</option>
-                                @endforeach
-                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
