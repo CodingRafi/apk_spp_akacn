@@ -289,6 +289,7 @@ class MatkulController extends Controller
                     ->where('tahun_ajaran_id', $tahun_ajaran_id)
                     ->where('semester_id', $row->id_semester)
                     ->first();
+
                 if (!$tahunSemester) {
                     return response()->json([
                         'message' => 'Tahun semester tidak ditemukan'
@@ -368,8 +369,10 @@ class MatkulController extends Controller
                 //? Kelas Kuliah Dosen
                 foreach ($row->dosen as $dosen) {
                     DB::table('kelas_kuliah_dosen')->insertOrIgnore([
-                        'id_dosen' => $dosen->id_dosen,
-                        'id_aktivitas_mengajar' => $dosen->id_aktivitas_mengajar
+                        'id_registrasi_dosen' => $dosen->id_registrasi_dosen,
+                        'id_aktivitas_mengajar' => $dosen->id_aktivitas_mengajar,
+                        'tahun_semester_id' => $tahunSemester->id,
+                        'tahun_matkul_id' => $get->id
                     ]);
                 }
             }

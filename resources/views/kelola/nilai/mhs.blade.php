@@ -241,7 +241,7 @@
 
 @push('js')
     @if (Auth::user()->hasRole('admin'))
-        @include('kelola.nilai.neo_feeder')
+        @include('kelola.nilai.neo_feeder.insert')
     @endif
     <script>
         let table;

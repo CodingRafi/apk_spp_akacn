@@ -402,6 +402,10 @@
                         id_dosen: item.id_dosen,
                         id_jenis_evaluasi: item.id_jenis_evaluasi,
                         id_registrasi_dosen: item.id_registrasi_dosen,
+                        sks_substansi_total: item.sks_substansi_total,
+                        rencana_tatap_muka: item.rencana_minggu_pertemuan,
+                        realisasi_tatap_muka: item.realisasi_minggu_pertemuan,
+                        jenis_evaluasi_id: item.id_jenis_evaluasi
                     };
                 })
 

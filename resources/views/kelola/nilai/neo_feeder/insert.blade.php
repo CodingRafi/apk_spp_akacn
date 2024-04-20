@@ -6,6 +6,7 @@
     let countError = 0;
     let dataSuccess = [];
 
+    //? Insert Neo Feeder
     async function getData() {
         try {
             const res = await $.ajax({
@@ -20,17 +21,17 @@
         }
     }
 
-    function updateData(){
+    function updateData() {
         $.ajax({
             url: '{{ route('kelola-nilai.updateNeoFeeder', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'rombel_id' => request('rombel_id'), 'tahun_semester_id' => request('tahun_semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) }}',
             type: 'PATCH',
             data: dataSuccess,
             dataType: 'json',
-            success: function(){
+            success: function() {
                 $.LoadingOverlay("hide");
                 showAlert(`Berhasil ${countSuccess}, GAGAL ${countError}`, 'success');
             },
-            error: function(){
+            error: function() {
                 $.LoadingOverlay("hide");
                 showAlert(`Berhasil ${countSuccess}, GAGAL ${countError}`, 'success');
             }
@@ -66,7 +67,7 @@
             },
             error: function(err) {
                 countError++;
-                
+
                 if (countSend === (countSuccess + countError)) {
                     updateData()
                 }
