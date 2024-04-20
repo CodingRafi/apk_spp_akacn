@@ -94,19 +94,22 @@ class NilaiController extends Controller
 
     public function show($tahun_ajaran_id)
     {
-        $matkul = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
+        $prodis = DB::table('prodi')->get();
+        return view('kelola.nilai.show', compact('prodis'));
+    }
+
+    public function getMatkul($tahun_ajaran_id)
+    {
+        $matkuls = DB::table('tahun_matkul')
+            ->select('tahun_matkul.id', 'matkuls.nama')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->where('tahun_matkul.prodi_id', request('prodi_id'))
             ->get();
 
-        $semester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-            ->get();
-
-        return view('kelola.nilai.show', compact('matkul', 'semester'));
+        return response()->json([
+            'data' => $matkuls
+        ], 200);
     }
 
     public function getRombel($tahun_ajaran_id)

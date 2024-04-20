@@ -526,6 +526,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '/{tahun_ajaran_id}',
             [NilaiController::class, 'show']
         )->name('show');
+        Route::get(
+            '/{tahun_ajaran_id}/get-matkul',
+            [NilaiController::class, 'getMatkul']
+        )->name('getMatkul');
         Route::post('/neo-feeder', [NilaiController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
         Route::get('/{tahun_ajaran_id}/getRombel', [NilaiController::class, 'getRombel'])->name('getRombel');
         Route::get(

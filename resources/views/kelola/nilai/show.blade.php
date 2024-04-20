@@ -15,19 +15,21 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <select id="tahun_matkul_id" class="form-control mb-3">
-                                <option value="">Pilih Matkul</option>
-                                @foreach ($matkul as $item)
-                                    <option value="{{ $item->id }}">{{ $item->kode }} | {{ $item->nama }}</option>
+                            <select id="prodi_id" class="form-control mb-3" onchange="get_matkul();get_semester();">
+                                <option value="">Pilih Program Studi</option>
+                                @foreach ($prodis as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="tahun_matkul_id" class="form-control mb-3 select2">
+                                <option value="">Pilih Mata Kuliah</option>
                             </select>
                         </div>
                         <div class="col-md-3">
                             <select id="tahun_semester_id" class="form-control mb-3">
                                 <option value="">Pilih Semester</option>
-                                @foreach ($semester as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -81,6 +83,46 @@
         $('#tahun_matkul_id, #tahun_semester_id').on('change', function() {
             table.ajax.reload();
         });
+
+        function get_matkul() {
+            $('#tahun_matkul_id').empty().append(`<option value="">Pilih Mata Kuliah</option>`);
+            $.ajax({
+                url: "{{ route('kelola-nilai.getMatkul', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+                type: 'GET',
+                dataType: "json",
+                data: {
+                    prodi_id: $('#prodi_id').val()
+                },
+                success: function(res) {
+                    res.data.forEach(e => {
+                        $('#tahun_matkul_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                    })
+                },
+                error: function() {
+                    alert('Gagal get matkul')
+                }
+            })
+        }
+
+        function get_semester() {
+            $('#tahun_semester_id').empty().append(`<option value="">Pilih Semester</option>`);
+            $.ajax({
+                url: "{{ route('kelola-presensi.rekap.getSemester', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+                type: 'GET',
+                dataType: "json",
+                data: {
+                    prodi_id: $('#prodi_id').val()
+                },
+                success: function(res) {
+                    res.data.forEach(e => {
+                        $('#tahun_semester_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                    })
+                },
+                error: function() {
+                    alert('Gagal get semester')
+                }
+            })
+        }
     </script>
     @include('kelola.nilai.neo_feeder.get')
 @endpush
