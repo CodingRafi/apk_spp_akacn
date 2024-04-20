@@ -93,12 +93,9 @@
             <td style="width: 45%;">
                 Depok, {{ date('d F Y') }}
                 <br>
-                Admin
+                <div style="height: 5rem"></div>
                 <br>
-                @if ($admin->ttd)
-                <img src="{{ public_path() . '/storage/' . $admin->ttd }}" alt=""
-                    style="width: 9rem;height:9rem; margin-top: 1rem;">
-                @endif
+                ..................................
             </td>
             <td>
                 <table aria-hidden="true" style="font-size: 1.05rem">

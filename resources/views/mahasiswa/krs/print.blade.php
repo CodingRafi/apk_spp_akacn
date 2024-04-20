@@ -86,8 +86,6 @@
         <tr>
             <td>
                 Depok, {{ date('d F Y') }}
-                <br>
-                Admin
             </td>
             <td></td>
             <td style="text-align: center;">
@@ -95,9 +93,7 @@
             </td>
         </tr>
         <tr>
-            <td>
-                <img src="{{ public_path() . '/storage/' . $admin->ttd }}" alt="" style="width: 9rem;height:9rem;">
-            </td>
+            <td></td>
             <td></td>
             <td></td>
         </tr>
@@ -106,5 +102,5 @@
             <td></td>
             <td></td>
         </tr>
-    </table>    
+    </table>
 @endsection
