@@ -14,4 +14,12 @@ class MBKM extends Model
     public function mahasiswa(){
         return $this->belongsToMany(User::class, 'mbkm_mhs', 'mbkm_id', 'mhs_id');
     }
+
+    public function dosenPembimbing(){
+        return $this->belongsToMany(User::class, 'mbkm_dosen_pembimbing', 'mbkm_id', 'dosen_id');
+    }
+
+    public function dosenPenguji(){
+        return $this->belongsToMany(User::class, 'mbkm_dosen_penguji', 'mbkm_id', 'dosen_id');
+    }
 }

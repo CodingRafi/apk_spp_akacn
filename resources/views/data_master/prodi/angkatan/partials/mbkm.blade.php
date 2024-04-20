@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="table-responsive">
-        <table class="table table-mbkm">
+        <table class="table table-mbkm" class="table-mbkm">
             <thead>
                 <tr>
                     <th>No</th>

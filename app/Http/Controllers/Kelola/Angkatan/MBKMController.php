@@ -37,7 +37,7 @@ class MBKMController extends Controller
 
         return DataTables::of($datas)
             ->addColumn('jml_mhs', function ($datas) {
-                return $datas->mahasiswa()->whereNull('deleted_at')->count();
+                return $datas->mahasiswa()->count();
             })
             ->addIndexColumn()
             ->rawColumns(['options'])
@@ -103,6 +103,8 @@ class MBKMController extends Controller
         DB::beginTransaction();
         try {
             $data->mahasiswa()->delete();
+            $data->dosenPembimbing()->delete();
+            $data->dosenPenguji()->delete();
             $data->delete();
             DB::commit();
             return response()->json([
