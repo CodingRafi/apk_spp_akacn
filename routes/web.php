@@ -336,7 +336,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/{id}', [MBKMController::class, 'show'])->name('show');
                 Route::put('/{id}', [MBKMController::class, 'update'])->name('update');
                 Route::delete('/{id}', [MBKMController::class, 'destroy'])->name('destroy');
-                
+
                 Route::prefix('{id}/mahasiswa')->name('mahasiswa.')->group(function () {
                     Route::post('/', [MBKMMahasiswaController::class, 'store'])->name('store');
                     Route::get('/get-mhs', [MBKMMahasiswaController::class, 'getMhs'])->name('get-mhs');
@@ -366,6 +366,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
                 Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
                     Route::post('/', [MBKMNeoFeederController::class, 'store'])->name('store');
+                    Route::get('/{mbkm_id}', [MBKMNeoFeederController::class, 'show'])->name('show');
+                    Route::patch('/{mbkm_id}', [MBKMNeoFeederController::class, 'update'])->name('update');
                 });
             });
         });
@@ -506,7 +508,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::prefix('berita-acara/{tahun_ajaran_id}')->name('berita-acara.')->group(function () {
             Route::get('/', [BeritaAcaraController::class, 'index'])->name('index');
             Route::get('/data', [BeritaAcaraController::class, 'data'])->name('data');
-            Route::get('/{tahun_matkul_id}/{tahun_semester_id}/print', [BeritaAcaraController::class, 'print'])->name('print');
+            Route::get('/{tahun_matkul_id}/{tahun_semester_id}/print', [BeritaAcaraController::class, 'print'])
+                ->name('print');
         });
     });
 

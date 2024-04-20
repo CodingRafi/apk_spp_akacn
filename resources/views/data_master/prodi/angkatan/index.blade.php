@@ -38,7 +38,8 @@
                             @endcan
                             @can('view_kelola_mbkm')
                                 <li class="nav-item" style="white-space: nowrap;">
-                                    <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#mbkm">MBKM</button>
+                                    <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
+                                        data-bs-target="#mbkm">MBKM</button>
                                 </li>
                             @endcan
                         </ul>

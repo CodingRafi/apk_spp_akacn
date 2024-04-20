@@ -13,7 +13,7 @@ class MBKMController extends Controller
 {
     public function data($prodi_id, $tahun_ajaran_id)
     {
-        $datas = MBKM::select('mbkm.judul', 'mbkm.id')
+        $datas = MBKM::select('mbkm.judul', 'mbkm.id', 'mbkm.id_neo_feeder')
             ->join('tahun_semester', 'mbkm.tahun_semester_id', 'tahun_semester.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
@@ -22,6 +22,10 @@ class MBKMController extends Controller
 
         foreach ($datas as $data) {
             $options = '';
+
+            $options = $options . "<button class='btn btn-primary mx-2' onclick='storeToNeoFeeder(`". $data->id ."`, `". $data->id_neo_feeder ."`)' type='button'>
+                                                Send To Neo Feeder
+                                            </button>";
 
             $options .= " <a href='". route('data-master.prodi.mbkm.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary'>Detail</a>";
 

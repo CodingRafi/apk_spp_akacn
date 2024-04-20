@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('mbkm', function (Blueprint $table) {
             $table->id();
+            //? id_neo_feeder == id_aktivitas
             $table->string('id_neo_feeder')->nullable();
             //? 0 => Personal, 1 => kelompok
             $table->enum('jenis_anggota', [0,1]);
