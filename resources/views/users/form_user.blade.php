@@ -3,7 +3,7 @@
 @endphp
 
 <div class="mb-3">
-    <img src="{{ asset(Auth::user()->profile ? 'storage/' . Auth::user()->profile : 'image/profile.jpg') }}"
+    <img src="{{ asset($data->profile ? 'storage/' . $data->profile : 'image/profile.jpg') }}"
         alt="user-avatar" class="d-block rounded mb-3" height="200" width="200" id="uploadedAvatar"
         style="object-fit: cover;" />
 

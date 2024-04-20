@@ -10,7 +10,6 @@ use App\Http\Controllers\Kelola\{
     KurikulumController,
     MateriController,
     MatkulController,
-    MBKMMahasiswaController,
     MutuController,
     NilaiController,
     PembayaranController as KelolaPembayaranController,
@@ -47,6 +46,10 @@ use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeeder;
 use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulRekapController;
 use App\Http\Controllers\Kelola\Angkatan\MBKMController;
+use App\Http\Controllers\Kelola\Angkatan\MBKMDosenPembimbingController;
+use App\Http\Controllers\Kelola\Angkatan\MBKMDosenPengujiController;
+use App\Http\Controllers\Kelola\Angkatan\MBKMMahasiswaController;
+use App\Http\Controllers\Kelola\Angkatan\MBKMNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranLainnyaController;
 use App\Http\Controllers\Kelola\Angkatan\PembayaranSemesterController;
 use App\Http\Controllers\Kelola\Angkatan\PotonganController;
@@ -335,13 +338,34 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::delete('/{id}', [MBKMController::class, 'destroy'])->name('destroy');
                 
                 Route::prefix('{id}/mahasiswa')->name('mahasiswa.')->group(function () {
-                    Route::get('/', [MBKMMahasiswaController::class, 'index'])->name('index');
                     Route::post('/', [MBKMMahasiswaController::class, 'store'])->name('store');
                     Route::get('/get-mhs', [MBKMMahasiswaController::class, 'getMhs'])->name('get-mhs');
                     Route::get('/data', [MBKMMahasiswaController::class, 'data'])->name('data');
                     Route::get('/{mhs_id}', [MBKMMahasiswaController::class, 'show'])->name('show');
                     Route::put('/{mhs_id}', [MBKMMahasiswaController::class, 'update'])->name('update');
                     Route::delete('/{mhs_id}', [MBKMMahasiswaController::class, 'destroy'])->name('destroy');
+                });
+
+                Route::prefix('{id}/dosen-pembimbing')->name('dosen-pembimbing.')->group(function () {
+                    Route::post('/', [MBKMDosenPembimbingController::class, 'store'])->name('store');
+                    Route::get('/get-dosen', [MBKMDosenPembimbingController::class, 'getDosen'])->name('get-dosen');
+                    Route::get('/data', [MBKMDosenPembimbingController::class, 'data'])->name('data');
+                    Route::get('/{dosen_id}', [MBKMDosenPembimbingController::class, 'show'])->name('show');
+                    Route::put('/{dosen_id}', [MBKMDosenPembimbingController::class, 'update'])->name('update');
+                    Route::delete('/{dosen_id}', [MBKMDosenPembimbingController::class, 'destroy'])->name('destroy');
+                });
+
+                Route::prefix('{id}/dosen-penguji')->name('dosen-penguji.')->group(function () {
+                    Route::post('/', [MBKMDosenPengujiController::class, 'store'])->name('store');
+                    Route::get('/get-dosen', [MBKMDosenPengujiController::class, 'getDosen'])->name('get-dosen');
+                    Route::get('/data', [MBKMDosenPengujiController::class, 'data'])->name('data');
+                    Route::get('/{dosen_id}', [MBKMDosenPengujiController::class, 'show'])->name('show');
+                    Route::put('/{dosen_id}', [MBKMDosenPengujiController::class, 'update'])->name('update');
+                    Route::delete('/{dosen_id}', [MBKMDosenPengujiController::class, 'destroy'])->name('destroy');
+                });
+
+                Route::prefix('neo-feeder')->name('neo-feeder.')->group(function () {
+                    Route::post('/', [MBKMNeoFeederController::class, 'store'])->name('store');
                 });
             });
         });

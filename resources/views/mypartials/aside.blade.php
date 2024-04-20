@@ -35,6 +35,7 @@
                 @php
                     $type = [
                         'agama',
+                        'kategori_kegiatan',
                         'jenis_tinggal',
                         'alat_transportasi',
                         'jenjang',

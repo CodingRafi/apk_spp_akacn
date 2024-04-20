@@ -12,7 +12,7 @@
             </div>
             @if (Auth::user()->hasRole('admin'))
                 <div class="col-md">
-                    
+                    <button class="btn btn-primary" onclick="getData()">Get Neo Feeder</button>
                 </div>
             @endif
         </div>
@@ -130,3 +130,7 @@
         });
     })
 </script>
+
+@if (Auth::user()->hasRole('admin'))
+    @include('data_master.prodi.angkatan.neo_feeder')
+@endif

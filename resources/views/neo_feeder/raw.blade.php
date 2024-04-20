@@ -16,6 +16,22 @@
                 nama_agama: 'nama'
             }
         },
+        kategori_kegiatan: {
+            raw: {
+                "act": "GetKategoriKegiatan",
+                "filter": "",
+                "order": "",
+                "limit": "50",
+                "offset": "0"
+            },
+            tbl: 'kategori_kegiatans',
+            changeFormat: true,
+            unique: ['id_kategori_kegiatan'],
+            format: {
+                id_kategori_kegiatan: 'id',
+                nama_kategori_kegiatan: 'nama'
+            }
+        },
         jenis_tinggal: {
             raw: {
                 "act": "GetJenisTinggal",

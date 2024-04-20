@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Kelola\Angkatan;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MbkmRequest;
+use App\Models\KategoriKegiatan;
 use App\Models\MBKM;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -22,15 +23,8 @@ class MBKMController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options .= " <a href='". route('data-master.prodi.mbkm.mahasiswa.index', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary'>Set Mahasiswa</a>";
+            $options .= " <a href='". route('data-master.prodi.mbkm.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary'>Detail</a>";
 
-            if (auth()->user()->can('edit_kelola_mbkm')) {
-                $options = $options . " <button class='btn btn-warning'
-                                    onclick='editForm(`" . route('data-master.prodi.mbkm.show', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, `Edit MBKM`, `#Mbkm`)'>
-                                    <i class='ti-pencil'></i>
-                                    Edit
-                                </button>";
-            }
 
             if (auth()->user()->can('delete_kelola_mbkm')) {
                 $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.destroy', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, () => {tableMbkm.ajax.reload()})' type='button'>
@@ -72,12 +66,11 @@ class MBKMController extends Controller
     public function show($tahun_ajaran_id, $prodi_id, $id)
     {
         $data = MBKM::where('id', $id)
-            ->with('mahasiswa')
             ->first();
 
-        return response()->json([
-            'data' => $data
-        ], 200);
+        $kategoriKegiatan = KategoriKegiatan::all();
+
+        return view('data_master.prodi.angkatan.mbkm.show', compact('data', 'kategoriKegiatan'));
     }
 
     public function update(MbkmRequest $request, $prodi_id, $tahun_ajaran_id, $id)

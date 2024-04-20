@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Kelola;
+namespace App\Http\Controllers\Kelola\Angkatan;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -10,11 +10,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class MBKMMahasiswaController extends Controller
 {
-    public function index()
-    {
-        return view('data_master.prodi.angkatan.mbkm_mhs.index');
-    }
-
     public function data($prodi_id, $tahun_ajaran_id, $mbkm_id)
     {
         $datas = DB::table('mbkm_mhs')
@@ -27,12 +22,12 @@ class MBKMMahasiswaController extends Controller
             $options = '';
 
             $options = $options . " <button class='btn btn-warning'
-                    onclick='editForm(`" . route('data-master.prodi.mbkm.mahasiswa.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $mbkm_id, 'mhs_id' => $data->id]) . "`, `Edit Mahasiswa`, `#mahasiswa`, getMhs)'>
+                    onclick='editForm(`" . route('data-master.prodi.mbkm.mahasiswa.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $mbkm_id, 'mhs_id' => $data->id]) . "`, `Edit Mahasiswa`, `#mahasiswaModal`, getMhs)'>
                     <i class='ti-pencil'></i>
                     Edit
                 </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.mahasiswa.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $mbkm_id, 'mhs_id' => $data->id]) . "`)' type='button'>
+            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.mahasiswa.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $mbkm_id, 'mhs_id' => $data->id]) . "`, () => {tableMhs.ajax.reload()})' type='button'>
                                         Hapus
                                     </button>";
 
@@ -127,9 +122,7 @@ class MBKMMahasiswaController extends Controller
         DB::table('mbkm_mhs')
             ->where('mbkm_id', $mbkm_id)
             ->where('mhs_id', $mhs_id)
-            ->update([
-                'deleted_at' => date('Y-m-d H:i:s'),
-            ]);
+            ->delete();
         return response()->json([
             'message' => 'Berhasil dihapus'
         ], 200);

@@ -135,13 +135,22 @@ class ProdiController extends Controller
 
         $jenisAktivitas = DB::table('jenis_aktivitas')
             ->get();
-            
+
+        $tahun_semester_id = DB::table('semesters')
+            ->where('tahun_ajaran_id', $tahun_ajaran_id)
+            ->get()
+            ->map(function ($data) {
+                return "id_semester='{$data->id}'";
+            })
+            ->implode(' or ');
+
         return view('data_master.prodi.angkatan.index', compact(
             'prodi_id',
             'tahun_ajaran_id',
             'semesterPotongan',
             'lainnyaPotongan',
             'jenisAktivitas',
+            'tahun_semester_id'
         ));
     }
 

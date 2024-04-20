@@ -54,12 +54,16 @@
                 "record": dataReq
             }),
             success: function(res) {
-                countSuccess++;
-
-                dataSuccess.push({
-                    id_transfer_neo_feeder: res.data.id_transfer,
-                    mhs_id: data.mhs_id
-                });
+                if (res.error_code == '0') {
+                    countSuccess++;
+    
+                    dataSuccess.push({
+                        id_transfer_neo_feeder: res.data.id_transfer,
+                        mhs_id: data.mhs_id
+                    });
+                }else{
+                    countError++;
+                }
 
                 if (countSend === (countSuccess + countError)) {
                     updateData()
