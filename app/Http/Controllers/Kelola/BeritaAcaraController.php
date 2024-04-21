@@ -14,7 +14,7 @@ class BeritaAcaraController extends Controller
 {
     public function index($tahun_ajaran_id)
     {
-        $prodis = DB::table('prodis')->get();
+        $prodis = DB::table('prodi')->get();
         return view('kelola.berita_acara.index', compact('prodis'));
     }
 
