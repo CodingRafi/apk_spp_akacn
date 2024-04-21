@@ -218,7 +218,7 @@
 
                     $.each(res.data, function(i, e) {
                         let template = $('#template-' + e.type).html();
-                        if (res.type == 'input') {
+                        if (e.type == 'input') {
                             response += template
                                 .replace('__PERTANYAAN__', e.pertanyaan).replace('__ANSWER__', e.answer)
                         } else {
