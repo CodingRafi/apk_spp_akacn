@@ -63,7 +63,7 @@
                 @foreach ($krsMatkul as $item)
                     <tr>
                         <td style="padding: 8px;">{{ $loop->iteration }}</td>
-                        <td style="padding: 8px;">{{ $configHari[$item->hari] }}</td>
+                        <td style="padding: 8px;">{{ $item->hari ? $configHari[$item->hari] : '' }}</td>
                         <td style="padding: 8px;">{{ date('h:i', strtotime($item->jam_mulai)) }} -
                             {{ date('h:i', strtotime($item->jam_akhir)) }}</td>
                         <td style="padding: 8px;">{{ $item->matkul }}</td>
