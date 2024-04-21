@@ -16,6 +16,19 @@
                 nama_agama: 'nama'
             }
         },
+        mutu: {
+            raw: {
+                "act": "GetListSkalaNilaiProdi",
+                "filter": "",
+                "order": "",
+                "limit": "50",
+                "offset": "0"
+            },
+            tbl: 'mutus',
+            changeFormat: false,
+            unique: [],
+            format: {}
+        },
         kategori_kegiatan: {
             raw: {
                 "act": "GetKategoriKegiatan",

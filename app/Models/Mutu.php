@@ -11,4 +11,8 @@ class Mutu extends Model
 
     protected $guarded = ['id'];
     protected $table = 'mutu';
+
+    public function prodi(){
+        return $this->belongsTo(Prodi::class, 'prodi_id', 'id');
+    }
 }

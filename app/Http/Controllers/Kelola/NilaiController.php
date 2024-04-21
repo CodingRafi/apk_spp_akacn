@@ -173,11 +173,17 @@ class NilaiController extends Controller
             ->make(true);
     }
 
-    public function detailRombel()
+    public function detailRombel($tahun_ajaran_id, $rombel_id)
     {
+        $rombel = DB::table('rombels')
+            ->where('id', $rombel_id)
+            ->first();
+
         $mutu = DB::table('mutu')
             ->where('status', '1')
+            ->where('prodi_id', $rombel->prodi_id)
             ->get();
+            
         return view('kelola.nilai.mhs', compact('mutu'));
     }
 

@@ -257,6 +257,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
         //? Mutu
         Route::get('mutu/data', [MutuController::class, 'data'])->name('mutu.data');
+        Route::post('mutu/neo-feeder', [MutuController::class, 'storeNeoFeeder'])->name('mutu.storeNeoFeeder');
         Route::resource('mutu', MutuController::class);
 
         //? Mata Kuliah
