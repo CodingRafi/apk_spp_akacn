@@ -304,15 +304,7 @@ class PresensiController extends Controller
     public function show($tahun_ajaran_id)
     {
         $role = getRole();
-        $prodis = DB::table('tahun_matkul')
-            ->select('prodi.*')
-            ->join('prodi', 'prodi.id', 'tahun_matkul.prodi_id')
-            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->when(Auth::user()->hasRole('dosen'), function ($q) {
-                $q->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
-                    ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
-            })
-            ->get();
+        $prodis = DB::table('prodi')->get();
 
         $tahunMatkul = DB::table('tahun_matkul')
             ->select(

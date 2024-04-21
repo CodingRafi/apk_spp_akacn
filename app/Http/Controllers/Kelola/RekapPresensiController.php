@@ -13,15 +13,7 @@ class RekapPresensiController extends Controller
 {
     public function index($tahun_ajaran_id)
     {
-        $prodis = DB::table('tahun_matkul')
-                    ->select('prodi.*')
-                    ->join('prodi', 'prodi.id', 'tahun_matkul.prodi_id')
-                    ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-                    ->join('tahun_matkul_dosen', function($q){
-                        $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
-                            ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
-                    })
-                    ->get();
+        $prodis = DB::table('prodi')->get();
         return view('kelola.rekap_presensi.index', compact('prodis'));
     }
 
