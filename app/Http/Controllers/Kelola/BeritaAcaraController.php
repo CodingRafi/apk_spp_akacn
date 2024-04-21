@@ -14,15 +14,7 @@ class BeritaAcaraController extends Controller
 {
     public function index($tahun_ajaran_id)
     {
-        $prodis = DB::table('tahun_matkul')
-            ->select('prodi.*')
-            ->join('prodi', 'prodi.id', 'tahun_matkul.prodi_id')
-            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->join('tahun_matkul_dosen', function ($q) {
-                $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
-                    ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
-            })
-            ->get();
+        $prodis = DB::table('prodis')->get();
         return view('kelola.berita_acara.index', compact('prodis'));
     }
 
@@ -46,6 +38,10 @@ class BeritaAcaraController extends Controller
             $datas = DB::table('tahun_matkul')
                 ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
                 ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                ->join('tahun_matkul_dosen', function($q){
+                    $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
+                        ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                })
                 ->where('tahun_matkul.prodi_id', request('prodi_id'))
                 ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran_id'))
                 ->get();
