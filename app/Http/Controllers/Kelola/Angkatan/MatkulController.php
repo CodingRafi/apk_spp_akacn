@@ -263,6 +263,14 @@ class MatkulController extends Controller
         }
     }
 
+    private function sumSKS($krs_id){
+        return DB::table('krs_matkul')
+                    ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
+                    ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+                    ->where('krs_matkul.krs_id', $krs_id)
+                    ->sum('matkuls.sks_mata_kuliah');
+    }
+
     public function storeNeoFeeder(Request $request, $tahun_ajaran_id)
     {
         $data = json_decode($request->data);
@@ -306,13 +314,15 @@ class MatkulController extends Controller
                         ->first();
 
                     $krs = DB::table('krs')
+                        ->select('id')
                         ->where('mhs_id', $user->id)
                         ->where('krs.tahun_semester_id', $tahunSemester->id)
                         ->first();
 
                     if ($krs) {
+                        $krs = $krs->id;
                         DB::table('krs_matkul')->updateOrInsert([
-                            'krs_id' => $krs->id,
+                            'krs_id' => $krs,
                             'tahun_matkul_id' => $get->id,
                         ], [
                             'id_kelas_kuliah_neo_feeder' => $row->id_kelas_kuliah
@@ -334,6 +344,13 @@ class MatkulController extends Controller
                             'id_kelas_kuliah_neo_feeder' => $row->id_kelas_kuliah
                         ]);
                     }
+
+                    $sksDiambil = $this->sumSKS($krs);
+                    DB::table('krs')
+                        ->where('id', $krs)
+                        ->update([
+                            'jml_sks_diambil' => $sksDiambil
+                        ]);
                 }
 
                 //? Dosen

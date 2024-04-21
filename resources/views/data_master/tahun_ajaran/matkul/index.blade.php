@@ -344,29 +344,31 @@
             }
         }
 
-        function storeDataNeoFeeder() {
+        async function ajaxSend(chunk) {
+            return $.ajax({
+                url: '{{ route('data-master.tahun-ajaran.matkul.storeNeoFeeder', ['id' => request('id')]) }}',
+                type: 'POST',
+                data: {
+                    data: JSON.stringify(chunk),
+                },
+                dataType: 'json'
+            })
+        }
+
+        async function storeDataNeoFeeder() {
             if (statusGetKelasKuliah && statusGetMhsKelasKuliah && statusGetDosenKelasKuliah) {
                 const data = parseData();
-                console.log(data)
                 const chunks = chunkArray(data, 20)
 
-                chunks.forEach((chunk, index) => {
-                    $.ajax({
-                        url: '{{ route('data-master.tahun-ajaran.matkul.storeNeoFeeder', ['id' => request('id')]) }}',
-                        type: 'POST',
-                        data: {
-                            data: JSON.stringify(chunk),
-                        },
-                        dataType: 'json',
-                        success: function(res) {
-                            showAlert(res.message, 'success')
-                        },
-                        error: function(err) {
-                            showAlert(err.responseJSON.message, 'error')
-                            $.LoadingOverlay("hide");
-                        }
-                    })
-                })
+                for (let i = 0; i < chunks.length; i++) {
+                    try {
+                        await ajaxSend(chunks[i]);
+                        showAlert('Data Berhasil dikirim', 'success');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showAlert('Terjadi kesalahan saat mengirim data', 'error');
+                    }
+                }
             }
         }
 
