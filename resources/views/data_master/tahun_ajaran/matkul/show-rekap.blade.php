@@ -154,6 +154,7 @@
                                             <th rowspan="2" class="text-center">Bobot</th>
                                             <th colspan="2" class="text-center">Pertemuan</th>
                                             <th rowspan="2" class="text-center">Jenis Evaluasi</th>
+                                            <th rowspan="2" class="text-center">Send Neo Feeder</th>
                                         </tr>
                                         <tr>
                                             <th class="text-center">Rencana</th>
@@ -174,6 +175,7 @@
                                             <th class="text-center">Jenis Kelamin</th>
                                             <th class="text-center">Program Studi</th>
                                             <th class="text-center">Angkatan</th>
+                                            <th class="text-center">Send Neo Feeder</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -217,6 +219,9 @@
                     {
                         "data": "jenisEvaluasi"
                     },
+                    {
+                        "data": "send_neo_feeder"
+                    },
                 ]
             });
 
@@ -241,6 +246,9 @@
                     },
                     {
                         "data": "tahun_masuk_id"
+                    },
+                    {
+                        "data": "send_neo_feeder"
                     },
                 ]
             });

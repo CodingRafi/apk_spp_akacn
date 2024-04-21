@@ -13,7 +13,13 @@ class MBKMMahasiswaController extends Controller
     public function data($prodi_id, $tahun_ajaran_id, $mbkm_id)
     {
         $datas = DB::table('mbkm_mhs')
-            ->select('users.id', 'users.name', 'users.login_key', 'mbkm_mhs.peran')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.login_key',
+                'mbkm_mhs.peran',
+                'mbkm_mhs.id_anggota_neo_feeder'
+            )
             ->join('users', 'users.id', 'mbkm_mhs.mhs_id')
             ->where('mbkm_mhs.mbkm_id', $mbkm_id)
             ->get();
@@ -42,7 +48,10 @@ class MBKMMahasiswaController extends Controller
             ->addColumn('mhs', function ($datas) {
                 return $datas->name . ' (' . $datas->login_key . ')';
             })
-            ->rawColumns(['options'])
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_anggota_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'send_neo_feeder'])
             ->make(true);
     }
 
@@ -57,7 +66,7 @@ class MBKMMahasiswaController extends Controller
             })
             ->where('profile_mahasiswas.prodi_id', $prodi_id)
             ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-            ->when(request('except'), function($q){
+            ->when(request('except'), function ($q) {
                 $q->orWhere('users.id', request('except'));
             })
             ->whereNull('mbkm_mhs.mbkm_id')

@@ -19,6 +19,7 @@ class MBKMDosenPengujiController extends Controller
                 'users.login_key',
                 'mbkm_dosen_penguji.penguji_ke',
                 'kategori_kegiatans.nama as kategori_kegiatan',
+                'mbkm_dosen_penguji.id_uji_neo_feeder'
             )
             ->join('users', 'users.id', 'mbkm_dosen_penguji.dosen_id')
             ->join('kategori_kegiatans', 'mbkm_dosen_penguji.kategori_kegiatan_id', '=', 'kategori_kegiatans.id')
@@ -46,7 +47,10 @@ class MBKMDosenPengujiController extends Controller
             ->addColumn('dosen', function ($datas) {
                 return $datas->name . ' (' . $datas->login_key . ')';
             })
-            ->rawColumns(['options'])
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_uji_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'send_neo_feeder'])
             ->make(true);
     }
 

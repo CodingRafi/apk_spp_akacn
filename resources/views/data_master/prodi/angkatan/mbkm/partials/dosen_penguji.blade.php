@@ -14,6 +14,7 @@
                     <th>Dosen</th>
                     <th>Penguji Ke</th>
                     <th>Kategori Kegiatan</th>
+                    <th>Send Neo Feeder</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -111,6 +112,9 @@
                 },
                 {
                     "data": "kategori_kegiatan"
+                },
+                {
+                    "data": "send_neo_feeder"
                 },
                 {
                     "data": "options"

@@ -1,19 +1,15 @@
 <div class="tab-pane" id="mbkm" role="tabpanel">
     <div class="d-flex justify-content-between mb-3">
         <h5>MBKM</h5>
-        <div class="row">
-            <div class="col-md">
-                @can('add_kelola_mbkm')
-                    <button type="button" class="btn btn-primary"
-                        onclick="addForm('{{ route('data-master.prodi.mbkm.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah MBKM', '#Mbkm')">
-                        Tambah
-                    </button>
-                @endcan
-            </div>
+        <div class="d-flex flex-wrap" style="gap: 1rem;">
+            @can('add_kelola_mbkm')
+                <button type="button" class="btn btn-primary"
+                    onclick="addForm('{{ route('data-master.prodi.mbkm.store', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah MBKM', '#Mbkm')">
+                    Tambah
+                </button>
+            @endcan
             @if (Auth::user()->hasRole('admin'))
-                <div class="col-md">
-                    <button class="btn btn-primary" onclick="getData()">Get Neo Feeder</button>
-                </div>
+                <button class="btn btn-primary" onclick="getData()">Get Neo Feeder</button>
             @endif
         </div>
     </div>
@@ -24,6 +20,7 @@
                     <th>No</th>
                     <th>Judul</th>
                     <th>Total Mahasiswa</th>
+                    <th>Send Neo Feeder</th>
                     @can('edit_kelola_mbkm', 'delete_kelola_mbkm')
                         <th>Aksi</th>
                     @endcan
@@ -119,6 +116,9 @@
                 },
                 {
                     "data": "jml_mhs"
+                },
+                {
+                    "data": "send_neo_feeder"
                 },
                 @can('edit_kelola_mbkm', 'delete_kelola_mbkm')
                     {

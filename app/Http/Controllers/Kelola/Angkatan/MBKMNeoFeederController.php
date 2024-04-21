@@ -120,6 +120,7 @@ class MBKMNeoFeederController extends Controller
             ->join('users', 'users.id', '=', 'mbkm_mhs.mhs_id')
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', '=', 'users.id')
             ->where('mbkm_mhs.mbkm_id', $mbkm_id)
+            ->whereNull('mbkm_mhs.id_anggota_neo_feeder')
             ->get();
 
         $data->dosenPembimbing = DB::table('mbkm_dosen_pembimbing')
@@ -130,6 +131,7 @@ class MBKMNeoFeederController extends Controller
             )
             ->join('users', 'users.id', '=', 'mbkm_dosen_pembimbing.dosen_id')
             ->where('mbkm_dosen_pembimbing.mbkm_id', $mbkm_id)
+            ->whereNull('mbkm_dosen_pembimbing.id_bimbing_mahasiswa_neo_feeder')
             ->get();
 
         $data->dosenPenguji = DB::table('mbkm_dosen_penguji')
@@ -140,6 +142,7 @@ class MBKMNeoFeederController extends Controller
             )
             ->join('users', 'users.id', '=', 'mbkm_dosen_penguji.dosen_id')
             ->where('mbkm_dosen_penguji.mbkm_id', $mbkm_id)
+            ->whereNull('mbkm_dosen_penguji.id_uji_neo_feeder')
             ->get();
 
         return response()->json([

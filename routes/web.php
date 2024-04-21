@@ -334,6 +334,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 Route::get('/data', [MBKMController::class, 'data'])->name('data');
                 Route::post('/', [MBKMController::class, 'store'])->name('store');
                 Route::get('/{id}', [MBKMController::class, 'show'])->name('show');
+                Route::get('/{id}/set', [MBKMController::class, 'set'])->name('set');
                 Route::put('/{id}', [MBKMController::class, 'update'])->name('update');
                 Route::delete('/{id}', [MBKMController::class, 'destroy'])->name('destroy');
 

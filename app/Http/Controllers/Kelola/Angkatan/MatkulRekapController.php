@@ -81,7 +81,7 @@ class MatkulRekapController extends Controller
         return view('data_master.tahun_ajaran.matkul.show-rekap', compact('prodis', 'tahunMatkul', 'semester'));
     }
 
-    public function getDosen($tahun_ajaran_id, $matkul_id)
+    public function getDosen($tahun_ajaran_id, $matkul_id, $tahun_semester_id)
     {
         $datas = DB::table('tahun_matkul_dosen')
             ->select(
@@ -91,15 +91,29 @@ class MatkulRekapController extends Controller
                 'tahun_matkul_dosen.sks_substansi_total',
                 'tahun_matkul_dosen.rencana_tatap_muka',
                 'tahun_matkul_dosen.realisasi_tatap_muka',
-                'jenis_evaluasis.nama as jenisEvaluasi'
+                'jenis_evaluasis.nama as jenisEvaluasi',
+                'kelas_kuliah_dosen.id_aktivitas_mengajar'
             )
             ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
             ->leftJoin('jenis_evaluasis', 'tahun_matkul_dosen.jenis_evaluasi_id', 'jenis_evaluasis.id')
+            ->join('penugasan_dosens', function ($q) use ($tahun_ajaran_id) {
+                $q->on('penugasan_dosens.id_dosen', 'users.id_neo_feeder')
+                    ->where('penugasan_dosens.tahun_ajaran_id', $tahun_ajaran_id);
+            })
+            ->leftJoin('kelas_kuliah_dosen', function($q) use($matkul_id, $tahun_semester_id) {
+                $q->on('kelas_kuliah_dosen.id_registrasi_dosen', 'penugasan_dosens.id_registrasi_dosen')
+                    ->where('kelas_kuliah_dosen.tahun_matkul_id', $matkul_id)
+                    ->where('kelas_kuliah_dosen.tahun_semester_id', $tahun_semester_id);
+            })
             ->where('tahun_matkul_dosen.tahun_matkul_id', $matkul_id)
             ->get();
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_aktivitas_mengajar ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['send_neo_feeder'])
             ->make(true);
     }
 
@@ -111,7 +125,8 @@ class MatkulRekapController extends Controller
                 'users.login_key',
                 'prodi.nama as prodi',
                 'profile_mahasiswas.tahun_masuk_id',
-                'profile_mahasiswas.jk'
+                'profile_mahasiswas.jk',
+                'krs_matkul.id_kelas_kuliah_neo_feeder'
             )
             ->join('krs_matkul', function ($q) use ($matkul_id) {
                 $q->on('krs_matkul.krs_id', '=', 'krs.id')
@@ -126,6 +141,10 @@ class MatkulRekapController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_kelas_kuliah_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['send_neo_feeder'])
             ->make(true);
     }
 
@@ -180,7 +199,8 @@ class MatkulRekapController extends Controller
             )
             ->join('krs_matkul', function ($q) use ($matkul_id) {
                 $q->on('krs_matkul.krs_id', '=', 'krs.id')
-                    ->where('krs_matkul.tahun_matkul_id', $matkul_id);
+                    ->where('krs_matkul.tahun_matkul_id', $matkul_id)
+                    ->whereNull('krs_matkul.id_kelas_kuliah_neo_feeder');
             })
             ->join('users', 'users.id', '=', 'krs.mhs_id')
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', '=', 'users.id')
@@ -201,7 +221,13 @@ class MatkulRekapController extends Controller
                 $q->on('penugasan_dosens.id_dosen', 'users.id_neo_feeder')
                     ->where('penugasan_dosens.tahun_ajaran_id', $tahun_ajaran_id);
             })
+            ->leftJoin('kelas_kuliah_dosen', function($q) use($matkul_id, $tahun_semester_id) {
+                $q->on('kelas_kuliah_dosen.id_registrasi_dosen', 'penugasan_dosens.id_registrasi_dosen')
+                    ->where('kelas_kuliah_dosen.tahun_matkul_id', $matkul_id)
+                    ->where('kelas_kuliah_dosen.tahun_semester_id', $tahun_semester_id);
+            })
             ->where('tahun_matkul_dosen.tahun_matkul_id', $matkul_id)
+            ->whereNull('kelas_kuliah_dosen.id_aktivitas_mengajar')
             ->get();
 
         $data->mahasiswa = $mhs;
@@ -235,7 +261,7 @@ class MatkulRekapController extends Controller
         if ($request->mahasiswa) {
             foreach ($request->mahasiswa as $mhs) {
                 DB::table('krs')
-                    ->join('krs_matkul', function($q) use($matkul_id){
+                    ->join('krs_matkul', function ($q) use ($matkul_id) {
                         $q->on('krs_matkul.krs_id', '=', 'krs.id')
                             ->where('krs_matkul.tahun_matkul_id', $matkul_id);
                     })

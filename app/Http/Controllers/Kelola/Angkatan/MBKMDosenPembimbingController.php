@@ -19,6 +19,7 @@ class MBKMDosenPembimbingController extends Controller
                 'users.login_key',
                 'mbkm_dosen_pembimbing.pembimbing_ke',
                 'kategori_kegiatans.nama as kategori_kegiatan',
+                'mbkm_dosen_pembimbing.id_bimbing_mahasiswa_neo_feeder'
             )
             ->join('users', 'users.id', 'mbkm_dosen_pembimbing.dosen_id')
             ->join('kategori_kegiatans', 'mbkm_dosen_pembimbing.kategori_kegiatan_id', '=', 'kategori_kegiatans.id')
@@ -46,7 +47,10 @@ class MBKMDosenPembimbingController extends Controller
             ->addColumn('dosen', function ($datas) {
                 return $datas->name . ' (' . $datas->login_key . ')';
             })
-            ->rawColumns(['options'])
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_bimbing_mahasiswa_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'send_neo_feeder'])
             ->make(true);
     }
 
@@ -129,7 +133,7 @@ class MBKMDosenPembimbingController extends Controller
             ->where('mbkm_id', $mbkm_id)
             ->where('dosen_id', $dosen_id)
             ->delete();
-            
+
         return response()->json([
             'message' => 'Berhasil dihapus'
         ], 200);

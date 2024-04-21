@@ -9,7 +9,7 @@
                         <a
                             href="{{ route('data-master.prodi.angkatan.detail', ['prodi_id' => request('prodi_id'), 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                        <h5 class="text-capitalize mb-0">Detail MBKM</h5>
+                        <h5 class="text-capitalize mb-0">Set MBKM</h5>
                     </div>
                 </div>
                 <div class="card-body">

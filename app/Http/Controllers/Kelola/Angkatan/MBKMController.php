@@ -23,15 +23,23 @@ class MBKMController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<button class='btn btn-primary mx-2' onclick='storeToNeoFeeder(`". $data->id ."`, `". $data->id_neo_feeder ."`)' type='button'>
+            $options = $options . "<button class='btn btn-primary m-1' onclick='storeToNeoFeeder(`". $data->id ."`, `". $data->id_neo_feeder ."`)' type='button'>
                                                 Send To Neo Feeder
                                             </button>";
 
-            $options .= " <a href='". route('data-master.prodi.mbkm.show', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary'>Detail</a>";
+            $options .= " <a href='". route('data-master.prodi.mbkm.set', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'id' => $data->id]) ."' class='btn btn-primary m-1'>Set</a>";
 
+
+            if (auth()->user()->can('edit_kelola_mbkm')) {
+                $options = $options . " <button class='btn btn-warning m-1'
+                        onclick='editForm(`" . route('data-master.prodi.mbkm.show', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, `Edit MBKM`, `#Mbkm`)'>
+                        <i class='ti-pencil'></i>
+                        Edit
+                    </button>";
+            }
 
             if (auth()->user()->can('delete_kelola_mbkm')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.destroy', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, () => {tableMbkm.ajax.reload()})' type='button'>
+                $options = $options . "<button class='btn btn-danger m-1' onclick='deleteDataAjax(`" . route('data-master.prodi.mbkm.destroy', ['tahun_ajaran_id' => $tahun_ajaran_id, 'prodi_id' => $prodi_id, 'id' => $data->id]) . "`, () => {tableMbkm.ajax.reload()})' type='button'>
                                                     Hapus
                                                 </button>";
             }
@@ -43,8 +51,11 @@ class MBKMController extends Controller
             ->addColumn('jml_mhs', function ($datas) {
                 return $datas->mahasiswa()->count();
             })
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->id_neo_feeder ? "<i class='bx bx-check text-success'></i>" : "<i class='bx bx-x text-danger'></i>";
+            })
             ->addIndexColumn()
-            ->rawColumns(['options'])
+            ->rawColumns(['options', 'send_neo_feeder'])
             ->make(true);
     }
 
@@ -68,6 +79,16 @@ class MBKMController extends Controller
     }
 
     public function show($tahun_ajaran_id, $prodi_id, $id)
+    {
+        $data = MBKM::where('id', $id)
+            ->first();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function set($tahun_ajaran_id, $prodi_id, $id)
     {
         $data = MBKM::where('id', $id)
             ->first();

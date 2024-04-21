@@ -13,6 +13,7 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Peran</th>
+                    <th>Send Neo Feeder</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -100,6 +101,9 @@
                 },
                 {
                     "data": "peran"
+                },
+                {
+                    "data": "send_neo_feeder"
                 },
                 {
                     "data": "options"
