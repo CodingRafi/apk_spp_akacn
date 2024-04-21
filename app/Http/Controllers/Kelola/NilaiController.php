@@ -53,15 +53,33 @@ class NilaiController extends Controller
                 ->where('semester_id', $data->id_semester)
                 ->first();
 
+            if (!$tahunSemester) {
+                return response()->json([
+                    'message' => 'Tahun semester tidak ditemukan'
+                ], 400);
+            }
+
             $tahunMatkul = DB::table('tahun_matkul')
                 ->where('prodi_id', $data->id_prodi)
                 ->where('tahun_ajaran_id', $data->angkatan)
                 ->where('matkul_id', $data->id_matkul)
                 ->first();
 
+            if (!$tahunMatkul) {
+                return response()->json([
+                    'message' => 'Tahun matkul tidak ditemukan'
+                ], 400);
+            }
+
             $mutu = DB::table('mutu')
                 ->where('nama', $data->nilai_huruf)
                 ->first();
+
+            if (!$mutu) {
+                return response()->json([
+                    'message' => 'Mutu tidak ditemukan'
+                ], 400);
+            }
 
             $exists = DB::table('mhs_nilai')
                 ->where('mhs_id', $mhs->id)
