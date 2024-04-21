@@ -73,9 +73,9 @@
                                 <td>${e.jml_sks ?? ''}</td>
                                 <td>${e.mutu ?? ''}</td>
                             </tr>`;
+                        total_sks += parseInt(e.jml_sks) ?? 0;
+                        bobot_x_sks += parseFloat(e.bobot_x_sks) ?? 0;
                     }
-                    total_sks += parseInt(e.jml_sks) ?? 0;
-                    bobot_x_sks += parseFloat(e.bobot_x_sks) ?? 0;
                 })
             })
 

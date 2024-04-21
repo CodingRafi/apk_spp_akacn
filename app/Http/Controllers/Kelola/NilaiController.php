@@ -95,10 +95,9 @@ class NilaiController extends Controller
                         'tahun_matkul_id' => $tahunMatkul->id,
                         'jml_sks' => (int) $data->sks_mata_kuliah,
                         'mutu_id' => $mutu->id,
-                        'publish' => 1,
+                        'publish' => '1',
                         'nilai_mutu' => $mutu->nilai,
                         'id_transfer_neo_feeder' => 'GET_NEO_FEEDER',
-                        'publish' => 1,
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
