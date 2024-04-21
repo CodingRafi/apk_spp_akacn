@@ -38,8 +38,6 @@
                     raw.limit = limitGet;
                     raw.offset = process * limitGet;
 
-                    process++;
-
                     let settings = {
                         url: url,
                         method: "POST",
@@ -53,6 +51,7 @@
                     const response = await $.ajax(settings);
 
                     if (response.data.length > 0) {
+                        process++;
                         if (configData.changeFormat) {
                             storeData(changeFormatData(response.data));
                         } else {
@@ -60,7 +59,6 @@
                         }
                     }else{
                         keepRunning = false;
-                        process--;
                     }
                 }
                 $.LoadingOverlay("hide");

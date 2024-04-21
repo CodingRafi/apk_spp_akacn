@@ -3,19 +3,20 @@
 @endphp
 
 <div class="mb-3">
-    <img src="{{ asset($data->profile ? 'storage/' . $data->profile : 'image/profile.jpg') }}"
+    <img src="{{ isset($data) ? asset($data->profile ? 'storage/' . $data->profile : 'image/profile.jpg') : asset('image/profile.jpg') }}"
         alt="user-avatar" class="d-block rounded mb-3" height="200" width="200" id="uploadedAvatar"
         style="object-fit: cover;" />
 
     @if (!$disabled)
-    <input class="form-control mb-3 input-pp @error('profile') is-invalid @enderror" type="file" name="profile"
-        id="foto" accept="image/*" onchange="previewImageUpdate();" />
+        <input class="form-control mb-3 input-pp @error('profile') is-invalid @enderror" type="file" name="profile"
+            id="foto" accept="image/*" onchange="previewImageUpdate();" />
     @endif
 </div>
 <div class="mb-3">
     <label for="name" class="form-label">Nama</label>
     <input class="form-control @error('name') is-invalid @enderror" type="text"
-        value="{{ isset($data) ? $data->name : old('name') }}" id="name" placeholder="Name User" name="name" {{ $disabled ? 'disabled' : '' }} />
+        value="{{ isset($data) ? $data->name : old('name') }}" id="name" placeholder="Name User" name="name"
+        {{ $disabled ? 'disabled' : '' }} />
     @error('name')
         <div class="invalid-feedback d-block">
             {{ $message }}
