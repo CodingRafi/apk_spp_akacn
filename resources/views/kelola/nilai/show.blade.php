@@ -9,8 +9,9 @@
                         <a href="{{ route('kelola-nilai.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Nilai</h5>
                     </div>
-
-                    <button class="btn btn-primary" onclick="getDataNeoFeeder()">Get Neo Feeder</button>
+                    @if (Auth::user()->hasRole('admin'))
+                        <button class="btn btn-primary" onclick="getDataNeoFeeder()">Get Neo Feeder</button>
+                    @endif
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -124,5 +125,7 @@
             })
         }
     </script>
-    @include('kelola.nilai.neo_feeder.get')
+    @if (Auth::user()->hasRole('admin'))
+        @include('kelola.nilai.neo_feeder.get')
+    @endif
 @endpush

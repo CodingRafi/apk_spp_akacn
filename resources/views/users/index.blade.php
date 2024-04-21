@@ -34,6 +34,7 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @if (Auth::user()->hasRole('admin'))
                             <div class="col-md-2 mb-3">
                                 <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}"
                                     class="form-export">
@@ -43,6 +44,7 @@
                                     <button type="button" class="btn btn-primary w-100">Export Pembayaran</button>
                                 </form>
                             </div>
+                            @endif
                         @endif
                         @can('add_users')
                             <div class="col-md-2 mb-3">
@@ -50,11 +52,14 @@
                                     class="btn btn-primary d-block text-capitalize">Tambah</a>
                             </div>
                         @endcan
-                        @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
-                            <div class="col-md-2 mb-3">
-                                <button class="btn btn-primary d-block w-100" type="button" onclick="getData()">Get list
-                                    data</button>
-                            </div>
+                        @if (Auth::user()->hasRole('admin'))
+                            @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
+                                <div class="col-md-2 mb-3">
+                                    <button class="btn btn-primary d-block w-100" type="button" onclick="getData()">Get
+                                        list
+                                        data</button>
+                                </div>
+                            @endif
                         @endif
                     </div>
                     @if (request('role') == 'mahasiswa')
