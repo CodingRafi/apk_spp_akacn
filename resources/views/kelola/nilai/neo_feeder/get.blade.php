@@ -73,10 +73,6 @@
         }
     }
 
-    function processData(data) {
-
-    }
-
     function prosesData() {
         let data =  dataNilai.map(row => {
             return {

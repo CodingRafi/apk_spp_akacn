@@ -39,14 +39,14 @@ class NilaiController extends Controller
     public function storeNeoFeeder(Request $request)
     {
         $dataReq = json_decode($request->data);
-
         foreach ($dataReq as $data) {
             $mhs = DB::table('users')
+                ->select('users.id')
                 ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
                 ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $data->id_registrasi_mahasiswa)
                 ->where('users.id_neo_feeder', $data->id_mahasiswa)
                 ->first();
-
+                
             $tahunSemester = DB::table('tahun_semester')
                 ->where('prodi_id', $data->id_prodi)
                 ->where('tahun_ajaran_id', $data->angkatan)
@@ -183,7 +183,7 @@ class NilaiController extends Controller
             ->where('status', '1')
             ->where('prodi_id', $rombel->prodi_id)
             ->get();
-            
+
         return view('kelola.nilai.mhs', compact('mutu'));
     }
 
@@ -237,7 +237,7 @@ class NilaiController extends Controller
             ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->get();
-
+            
         foreach ($datas as $data) {
             $data->options = " <button class='btn btn-warning'
             onclick='editForm(`" .
