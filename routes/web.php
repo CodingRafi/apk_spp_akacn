@@ -692,6 +692,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/', [MahasiswaMBKMController::class, 'index'])->name('index');
         Route::get('/data', [MahasiswaMBKMController::class, 'data'])->name('data');
         Route::get('/{id}', [MahasiswaMBKMController::class, 'show'])->name('show');
+        Route::get('/{id}/get-pembimbing', [MahasiswaMBKMController::class, 'getPembimbing'])->name('get-pembimbing');
+        Route::get('/{id}/get-penguji', [MahasiswaMBKMController::class, 'getPenguji'])->name('get-penguji');
     });
 
     Route::prefix('bimbingan')->name('bimbingan.')->group(function () {

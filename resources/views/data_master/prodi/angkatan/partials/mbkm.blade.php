@@ -87,6 +87,14 @@
                             <label for="tgl_sk_tugas" class="form-label">Tanggal SK Tugas</label>
                             <input type="date" class="form-control" id="tgl_sk_tugas" name="tgl_sk_tugas">
                         </div>
+                        <div class="mb-3">
+                            <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control" id="tanggal_mulai" name="tanggal_mulai">
+                        </div>
+                        <div class="mb-3">
+                            <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control" id="tanggal_selesai" name="tanggal_selesai">
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary"

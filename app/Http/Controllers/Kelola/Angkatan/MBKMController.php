@@ -63,7 +63,7 @@ class MBKMController extends Controller
     {
         DB::beginTransaction();
         try {
-            $req = $request->except('_method', '_token', 'mhs_id');
+            $req = $request->except('_method', '_token');
             $req['prodi_id'] = $prodi_id;
 
             MBKM::create($req);
@@ -103,7 +103,7 @@ class MBKMController extends Controller
         DB::beginTransaction();
         try {
             $data = MBKM::where('id', $id)->first();
-            $data->update($request->except('_method', '_token', 'mhs_id'));
+            $data->update($request->except('_method', '_token'));
             DB::commit();
             return response()->json([
                 'message' => 'Berhasil diupdate'
@@ -127,9 +127,6 @@ class MBKMController extends Controller
 
         DB::beginTransaction();
         try {
-            $data->mahasiswa()->delete();
-            $data->dosenPembimbing()->delete();
-            $data->dosenPenguji()->delete();
             $data->delete();
             DB::commit();
             return response()->json([
