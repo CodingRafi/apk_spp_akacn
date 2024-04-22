@@ -35,14 +35,8 @@
                             </div>
                             <div class="mb-3">
                                 <label for="tahun_semester_id" class="form-label">Semester</label>
-                                <select class="form-select" name="tahun_semester_id" id="tahun_semester_id" disabled>
-                                    <option value="">Pilih Semester</option>
-                                    @foreach ($semester as $item)
-                                        <option value="{{ $item->id }}"
-                                            {{ $data->tahun_semester_id == $item->id ? 'selected' : '' }}>
-                                            {{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" class="form-control" id="semester" name="semester" disabled
+                                value="{{ $data->semester }}">
                             </div>
                             <div class="mb-3">
                                 <label for="judul" class="form-label">Judul</label>
@@ -93,10 +87,17 @@
                             <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
                                 data-bs-target="#dosen-penguji">Dosen Penguji</button>
                         </li>
+                        @if (Auth::user()->hasRole('dosen'))
+                        <li class="nav-item" style="white-space: nowrap;">
+                            <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
+                                data-bs-target="#mahasiswa">Mahasiswa</button>
+                        </li>
+                        @endif
                     </ul>
                     <div class="tab-content py-4 px-1" id="detail">
                         @include('mahasiswa.mbkm.partials.dosen_pembimbing')
                         @include('mahasiswa.mbkm.partials.dosen_penguji')
+                        @include('mahasiswa.mbkm.partials.mhs')
                     </div>
                 </div>
             </div>

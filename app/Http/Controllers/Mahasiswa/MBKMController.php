@@ -18,9 +18,17 @@ class MBKMController extends Controller
     public function data()
     {
         $datas = DB::table('mbkm')
-            ->join('mbkm_mhs', function ($q) {
-                $q->on('mbkm_mhs.mbkm_id', 'mbkm.id')
-                    ->where('mbkm_mhs.mhs_id', auth()->user()->id);
+            ->when(Auth::user()->hasRole('mahasiswa'), function ($q) {
+                $q->join('mbkm_mhs', function ($q) {
+                    $q->on('mbkm_mhs.mbkm_id', 'mbkm.id')
+                        ->where('mbkm_mhs.mhs_id', auth()->user()->id);
+                });
+            })
+            ->when(Auth::user()->hasRole('dosen'), function ($q) {
+                $q->leftJoin('mbkm_dosen_pembimbing', 'mbkm.id', 'mbkm_dosen_pembimbing.mbkm_id')
+                    ->leftJoin('mbkm_dosen_penguji', 'mbkm.id', 'mbkm_dosen_penguji.mbkm_id')
+                    ->where('mbkm_dosen_pembimbing.dosen_id', auth()->user()->id)
+                    ->orWhere('mbkm_dosen_penguji.dosen_id', auth()->user()->id);
             })
             ->select('mbkm.*')
             ->get();
@@ -41,32 +49,36 @@ class MBKMController extends Controller
     public function show($id)
     {
         $data = DB::table('mbkm')
-            ->join('mbkm_mhs', function ($q) {
-                $q->on('mbkm_mhs.mbkm_id', 'mbkm.id')
-                    ->where('mbkm_mhs.mhs_id', auth()->user()->id);
+            ->when(Auth::user()->hasRole('mahasiswa'), function ($q) {
+                $q->join('mbkm_mhs', function ($q) {
+                    $q->on('mbkm_mhs.mbkm_id', 'mbkm.id')
+                        ->where('mbkm_mhs.mhs_id', auth()->user()->id);
+                });
             })
+            ->when(Auth::user()->hasRole('dosen'), function ($q) {
+                $q->leftJoin('mbkm_dosen_pembimbing', 'mbkm.id', 'mbkm_dosen_pembimbing.mbkm_id')
+                    ->leftJoin('mbkm_dosen_penguji', 'mbkm.id', 'mbkm_dosen_penguji.mbkm_id')
+                    ->where('mbkm_dosen_pembimbing.dosen_id', auth()->user()->id)
+                    ->orWhere('mbkm_dosen_penguji.dosen_id', auth()->user()->id);
+            })
+            ->join('tahun_semester', 'mbkm.tahun_semester_id', 'tahun_semester.id')
+            ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
             ->where('mbkm.id', $id)
-            ->select('mbkm.*')
+            ->select('mbkm.*', 'semesters.nama as semester')
             ->first();
 
         if (!$data) {
             abort(404);
         }
 
-        $semester = DB::table('semesters')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
-            ->where('tahun_semester.prodi_id', Auth::user()->mahasiswa->prodi_id)
-            ->where('tahun_semester.tahun_ajaran_id', Auth::user()->mahasiswa->tahun_masuk_id)
-            ->get();
-
         $jenisAktivitas = DB::table('jenis_aktivitas')
             ->get();
 
-        return view('mahasiswa.mbkm.show', compact('data', 'semester', 'jenisAktivitas'));
+        return view('mahasiswa.mbkm.show', compact('data', 'jenisAktivitas'));
     }
 
-    public function getPembimbing($mbkm_id){
+    public function getPembimbing($mbkm_id)
+    {
         $datas = DB::table('mbkm_dosen_pembimbing')
             ->select(
                 'users.id',
@@ -90,7 +102,8 @@ class MBKMController extends Controller
             ->make(true);
     }
 
-    public function getPenguji($mbkm_id){
+    public function getPenguji($mbkm_id)
+    {
         $datas = DB::table('mbkm_dosen_penguji')
             ->select(
                 'users.id',
@@ -108,6 +121,31 @@ class MBKMController extends Controller
             ->addColumn('dosen', function ($datas) {
                 return $datas->name . ' (' . $datas->login_key . ')';
             })
+            ->make(true);
+    }
+
+    public function getMhs($mbkm_id){
+        $datas = DB::table('mbkm_mhs')
+            ->select(
+                'users.id',
+                'users.name',
+                'users.login_key',
+                'mbkm_mhs.peran',
+                'mbkm_mhs.id_anggota_neo_feeder'
+            )
+            ->join('users', 'users.id', 'mbkm_mhs.mhs_id')
+            ->where('mbkm_mhs.mbkm_id', $mbkm_id)
+            ->get();
+
+        return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('peran', function ($datas) {
+                return config('services.peran')[$datas->peran];
+            })
+            ->addColumn('mhs', function ($datas) {
+                return $datas->name . ' (' . $datas->login_key . ')';
+            })
+            ->rawColumns(['options'])
             ->make(true);
     }
 }
