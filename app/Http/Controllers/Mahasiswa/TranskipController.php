@@ -15,10 +15,10 @@ class TranskipController extends Controller
         return view('mahasiswa.transkip.index');
     }
 
-    public function data()
+    private function getTranskip($user)
     {
-        $user = Auth::user();
-        $data = DB::table('rekap_krs_matkul')
+        $loop = [];
+        $datas = DB::table('rekap_krs_matkul')
             ->select(
                 'rekap_krs_matkul.*',
                 'semesters.nama as semester',
@@ -32,6 +32,41 @@ class TranskipController extends Controller
             ->where('mhs_id', $user->id)
             ->get()
             ->groupBy('semester');
+
+        foreach ($datas as $indexSemester =>  $data) {
+            foreach ($data as $indexMatkul => $matkul) {
+                $cek = array_filter($loop, function ($item) use ($matkul) {
+                    return $item['tahun_matkul_id'] == $matkul->tahun_matkul_id;
+                });
+                
+                if (!empty($cek)) {
+                    if ($matkul->nilai_mutu > $cek[0]['nilai_mutu']) {
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->jml_sks = $matkul->jml_sks;
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->mutu = $matkul->mutu;
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->nilai_mutu = $matkul->nilai_mutu;
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->bobot_x_sks = $matkul->bobot_x_sks;
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->kuesioner = $matkul->kuesioner;
+                        $datas[$cek[0]['index_semester']][$cek[0]['index_matkul']]->status = $matkul->status;
+                    }
+                    unset($datas[$indexSemester][$indexMatkul]);
+                }else{
+                    $loop[] = [
+                        'tahun_matkul_id' => $matkul->tahun_matkul_id,
+                        'nilai_mutu' => $matkul->nilai_mutu,
+                        'index_semester' => $indexSemester,
+                        'index_matkul' => $indexMatkul
+                    ];
+                }
+            }
+        }
+
+        return $datas;
+    }
+
+    public function data()
+    {
+        $user = Auth::user();
+        $data = $this->getTranskip($user);
 
         return response()->json([
             'data' => $data
@@ -41,20 +76,7 @@ class TranskipController extends Controller
     public function print()
     {
         $user = Auth::user();
-        $rekap = DB::table('rekap_krs_matkul')
-            ->select(
-                'rekap_krs_matkul.*',
-                'semesters.nama as semester',
-                'matkuls.kode as kode_mk',
-                'matkuls.nama as matkul'
-            )
-            ->join('tahun_semester', 'rekap_krs_matkul.tahun_semester_id', '=', 'tahun_semester.id')
-            ->join('semesters', 'tahun_semester.semester_id', '=', 'semesters.id')
-            ->join('tahun_matkul', 'rekap_krs_matkul.tahun_matkul_id', '=', 'tahun_matkul.id')
-            ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
-            ->where('mhs_id', $user->id)
-            ->get()
-            ->groupBy('semester');
+        $rekap = $this->getTranskip($user);
 
         $data = DB::table('users')
             ->select(
