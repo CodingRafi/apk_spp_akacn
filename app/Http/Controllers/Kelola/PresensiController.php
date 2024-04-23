@@ -244,6 +244,12 @@ class PresensiController extends Controller
             Carbon::setLocale('id');
             $day = $today->translatedFormat('l');
 
+            if(!$getTahunMatkul->hari){
+                return response()->json([
+                    'message' => 'Hari Belum di set'
+                ], 400);
+            }
+
             if ($day != config('services.hari')[$getTahunMatkul->hari]) {
                 return response()->json([
                     'message' => 'Sekarang bukan hari ' . config('services.hari')[$getTahunMatkul->hari]
