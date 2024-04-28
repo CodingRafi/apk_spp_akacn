@@ -10,8 +10,18 @@ use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
+    private function validateRole($role){
+        $getRole = getRole()->name;
+
+        if ($getRole != $role) {
+            abort(404);
+        }
+    }
+
     public function admin()
     {
+        $this->validateRole('admin');
+
         $users = Role::withCount('users')
             ->where('roles.name', '!=', 'admin')
             ->get();
@@ -80,21 +90,26 @@ class DashboardController extends Controller
 
     public function asdos()
     {
+        $this->validateRole('asdos');
+
         return view('dashboard.asdos');
     }
 
     public function dosen()
     {
+        $this->validateRole('dosen');
         return view('dashboard.dosen');
     }
 
     public function petugas()
     {
+        $this->validateRole('petugas');
         return view('dashboard.petugas');
     }
 
     public function mahasiswa()
     {
+        $this->validateRole('mahasiswa');
         return view('dashboard.mahasiswa');
     }
 }
