@@ -21,6 +21,7 @@ class DashboardController extends Controller
         $pembayaran = [];
         $semester = [];
         $krs = [];
+        $presensi = [];
 
         if (request('prodi') && request('tahun_ajaran') && request('semester')) {
             $semester = DB::table('tahun_semester')
@@ -41,6 +42,28 @@ class DashboardController extends Controller
                 ->groupBy('status')
                 ->get()
                 ->toArray();
+
+            $presensi = DB::table('jadwal')
+                ->select(DB::raw('count(*) as y'), 'jadwal_presensi.status as name')
+                ->join('jadwal_presensi', 'jadwal_presensi.jadwal_id', 'jadwal.id')
+                ->join('users', 'users.id', 'jadwal_presensi.mhs_id')
+                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                ->where('jadwal.tahun_semester_id', request('semester'))
+                ->where('profile_mahasiswas.prodi_id', request('prodi'))
+                ->where('profile_mahasiswas.tahun_masuk_id', request('tahun_ajaran'))
+                ->groupBy('jadwal_presensi.status')
+                ->get();
+
+            $nilai = DB::table('mhs_nilai')
+                ->select(DB::raw('count(mhs_nilai.id) as y'), 'mutu.nama')
+                ->join('users', 'users.id', 'mhs_nilai.mhs_id')
+                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                ->join('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
+                ->where('mhs_nilai.tahun_semester_id', request('semester'))
+                ->where('profile_mahasiswas.prodi_id', request('prodi'))
+                ->where('profile_mahasiswas.tahun_masuk_id', request('tahun_ajaran'))
+                ->groupBy('mutu.nama')
+                ->get();
         }
 
 
@@ -49,23 +72,29 @@ class DashboardController extends Controller
             'tahunAjaran',
             'prodis',
             'pembayaran',
-            'krs'
+            'krs',
+            'presensi',
+            'nilai'
         ));
     }
 
-    public function asdos(){
+    public function asdos()
+    {
         return view('dashboard.asdos');
     }
 
-    public function dosen(){
+    public function dosen()
+    {
         return view('dashboard.dosen');
     }
 
-    public function petugas(){
+    public function petugas()
+    {
         return view('dashboard.petugas');
     }
 
-    public function mahasiswa(){
+    public function mahasiswa()
+    {
         return view('dashboard.mahasiswa');
     }
 }
