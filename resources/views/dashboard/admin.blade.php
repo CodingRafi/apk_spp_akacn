@@ -71,7 +71,7 @@
             <div class="card">
                 <div class="card-body">
                     <form action="">
-                        <div class="row mb-3">
+                        <div class="row">
                             <div class="col-md-3 mb-3">
                                 <select name="prodi" id="filter-prodi" class="select2">
                                     <option value="">Pilih Prodi</option>
@@ -101,6 +101,7 @@
                                 <button type="submit" class="btn btn-primary">Filter</button>
                             </div>
                         </div>
+                        <small class="text-danger">*Harap pilih semua filter</small>
                     </form>
                     <div class="row">
                         <div class="col-md-6">

@@ -21,7 +21,8 @@ class DashboardController extends Controller
         $pembayaran = [];
         $semester = [];
         $krs = [];
-        $presensi = [];
+        $presensi = collect([]);
+        $nilai = collect([]);
 
         if (request('prodi') && request('tahun_ajaran') && request('semester')) {
             $semester = DB::table('tahun_semester')
@@ -65,7 +66,6 @@ class DashboardController extends Controller
                 ->groupBy('mutu.nama')
                 ->get();
         }
-
 
         return view('dashboard.admin', compact(
             'users',
