@@ -214,6 +214,10 @@ class GajiController extends Controller
             ], 400);
         }
 
+        DB::table('gaji_matkul')
+            ->where('gaji_id', $data->id)
+            ->delete();
+
         DB::table('gaji_user')
             ->where('gaji_id', $data->id)
             ->delete();
