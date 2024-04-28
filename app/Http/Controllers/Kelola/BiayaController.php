@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use DataTables, DB;
 use App\Models\{
     TahunAjaran,
     Semester,
     Prodi
 };
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class BiayaController extends Controller
 {
@@ -115,7 +116,7 @@ class BiayaController extends Controller
 
         $page = 'show';
 
-        return view('data_master.prodi.semester.biaya.form', compact('prodi', 'semester', 'tahun_ajarans', 'data', 'page'));  
+        return view('data_master.prodi.semester.biaya.form', compact('prodi', 'semester', 'tahun_ajarans', 'data', 'page'));
     }
 
     public function edit($prodi_id, $semester_id, $tahun_ajaran_id){

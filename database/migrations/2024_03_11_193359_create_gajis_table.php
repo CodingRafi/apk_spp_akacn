@@ -27,8 +27,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->decimal('tunjangan', 20, 2);
             $table->decimal('fee_transport', 20, 2);
+            $table->decimal('fee_sks', 20, 2);
             $table->integer('total_kehadiran');
             $table->decimal('total_fee_transport', 20, 2);
+            $table->decimal('total_fee_matkul', 20, 2);
             $table->decimal('total', 20, 2);
             $table->timestamps();
         });
@@ -42,5 +44,6 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('gajis');
+        Schema::dropIfExists('gaji_user');
     }
 };

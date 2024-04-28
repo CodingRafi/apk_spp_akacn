@@ -44,7 +44,9 @@
                                     <th>Nama</th>
                                     <th>Tunjangan</th>
                                     <th>Biaya Transport</th>
+                                    <th>Biaya 1 SKS</th>
                                     <th>Total Kehadiran</th>
+                                    <th>Total Biaya SKS</th>
                                     <th>Total Biaya Transport</th>
                                     <th>Total Gaji</th>
                                 </tr>
@@ -52,34 +54,6 @@
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="gaji" tabindex="-1" aria-labelledby="gajiLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="" method="post">
-                    @method('post')
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="gajiLabel"></h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="tgl_awal" class="form-label">Tanggal Awal</label>
-                            <input class="form-control" type="date" id="tgl_awal" name="tgl_awal" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="tgl_akhir" class="form-label">Tanggal Akhir</label>
-                            <input class="form-control" type="date" id="tgl_akhir" name="tgl_akhir" />
-                        </div>
-                    </div>
-                    <div class="modal-footer justify-content-start px-3">
-                        <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this)">Generate</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -107,7 +81,13 @@
                         "data": "fee_transport"
                     },
                     {
+                        "data": "fee_sks"
+                    },
+                    {
                         "data": "total_kehadiran"
+                    },
+                    {
+                        "data": "total_fee_matkul"
                     },
                     {
                         "data": "total_fee_transport"

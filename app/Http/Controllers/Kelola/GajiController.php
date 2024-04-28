@@ -36,15 +36,18 @@ class GajiController extends Controller
             ->make(true);
     }
 
-    public function store(Request $request)
+    private function generateGaji($gajiId)
     {
-        $request->validate([
-            'tgl_awal' => 'required|date',
-            'tgl_akhir' => 'required|date'
-        ]);
+        $gaji = Gaji::findOrFail($gajiId);
+        $default = DB::table('settings')
+                    ->whereIn('id', [1,3,4,5])
+                    ->get();
 
-        $getDefaultFeeTransport = DB::table('settings')->where('id', 1)->first();
-        $defaultFeeTransport = (int) $getDefaultFeeTransport->value;
+        $defaultFeeTransportDosen = (int) $default[0]->value;
+        $defaultFeeTransportAsdos = (int) $default[1]->value;
+        $defaultFeeSksDosen = (int) $default[2]->value;
+        $defaultFeeSksAsdos = (int) $default[3]->value;
+
         $pengajar = User::role(['dosen', 'asdos'])
             ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
             ->leftJoin('profile_dosens', 'profile_dosens.user_id', 'users.id')
@@ -53,15 +56,67 @@ class GajiController extends Controller
                 $q->where('profile_dosens.status', '1')
                     ->orWhere('profile_asdos.status', '1');
             })
-            ->with(['jadwalPengajar' => function ($q) use ($request) {
-                $q->where('tgl', '>=', $request->tgl_awal)
-                    ->where('tgl', '<=', $request->tgl_akhir);
-            }])
-            ->get()
-            ->map(function ($data) {
-                $data->total_kehadiran = $data->jadwalPengajar->count();
-                return $data;
-            });
+            ->with(['jadwalPengajar' => function ($q) use ($gaji) {
+                $q->select('jadwal.*', 'matkuls.sks_mata_kuliah')
+                    ->join('tahun_matkul', 'tahun_matkul.id', '=', 'jadwal.tahun_matkul_id')
+                    ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                    ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
+                    ->where('jadwal.tgl', '<=', $gaji->tgl_akhir);
+            }, 'roles'])
+            ->whereIn('users.id', [32, 606])
+            ->get();
+            
+        foreach ($pengajar as $item) {
+            $feeSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksDosen : $defaultFeeSksAsdos;
+            $feeTransportasi = ($item->roles[0]->name == 'dosen') ? $defaultFeeTransportDosen : $defaultFeeTransportAsdos;
+            $sumAllFeeSks = 0;
+            $jadwalPengajar = $item->jadwalPengajar->groupBy('tahun_matkul_id');
+            foreach ($jadwalPengajar as $matkul_id => $jadwal) {
+                $totalKehadiran = $jadwal->count();
+                $sks = $jadwal->first()->sks_mata_kuliah;
+                $totalFeeSks = $totalKehadiran * $sks * $feeSks;
+                $sumAllFeeSks += $totalFeeSks;
+                DB::table('gaji_matkul')
+                    ->updateOrInsert([
+                        'gaji_id' => $gajiId,
+                        'user_id' => $item->id,
+                        'tahun_matkul_id' => $matkul_id,
+                    ], [
+                        'total_kehadiran' => $totalKehadiran,
+                        'sks' => $sks,
+                        'fee_sks' => $feeSks,
+                        'total_fee_sks' => $totalFeeSks,
+                    ]);
+            }
+            
+            $total_fee_transport = ($feeTransportasi * $item->jadwalPengajar->count());
+            $tunjangan = (int) $item->tunjangan ?? 0;
+            DB::table('gaji_user')
+                ->updateOrInsert([
+                    'gaji_id' => $gajiId,
+                    'user_id' => $item->id,
+                ], [
+                    'tunjangan' => $tunjangan,
+                    'fee_sks' => $feeSks,
+                    'fee_transport' => $feeTransportasi,
+                    'total_kehadiran' => $item->jadwalPengajar->count(),
+                    'total_fee_transport' => $total_fee_transport,
+                    'total_fee_matkul' => $sumAllFeeSks,
+                    'total' => $total_fee_transport + $tunjangan + $sumAllFeeSks,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+        }
+
+        return true;
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'tgl_awal' => 'required|date',
+            'tgl_akhir' => 'required|date'
+        ]);
 
         $gaji = DB::table('gaji')
             ->insertGetId([
@@ -71,22 +126,7 @@ class GajiController extends Controller
                 'updated_at' => now()
             ]);
 
-        foreach ($pengajar as $item) {
-            $total_fee_transport = ($defaultFeeTransport * $item->total_kehadiran);
-            $tunjangan = (int) $item->tunjangan ?? 0;
-            DB::table('gaji_user')
-                ->insert([
-                    'gaji_id' => $gaji,
-                    'user_id' => $item->id,
-                    'tunjangan' => $tunjangan,
-                    'fee_transport' => $defaultFeeTransport,
-                    'total_kehadiran' => $item->total_kehadiran,
-                    'total_fee_transport' => $total_fee_transport,
-                    'total' => $total_fee_transport + $tunjangan,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-        }
+        $this->generateGaji($gaji);
 
         return response()->json([
             'message' => 'Berhasil digenerate'
@@ -106,7 +146,7 @@ class GajiController extends Controller
             ->join('users', 'users.id', 'gaji_user.user_id')
             ->where('gaji_user.gaji_id', $gaji)
             ->get();
-
+        
         return DataTables::of($data)
             ->editColumn('tunjangan', function ($data) {
                 return formatRupiah($data->tunjangan);
@@ -119,6 +159,12 @@ class GajiController extends Controller
             })
             ->editColumn('total_fee_transport', function ($data) {
                 return formatRupiah($data->total_fee_transport);
+            })
+            ->editColumn('total_fee_matkul', function ($data) {
+                return formatRupiah($data->total_fee_matkul);
+            })
+            ->editColumn('fee_sks', function ($data) {
+                return formatRupiah($data->fee_sks);
             })
             ->addIndexColumn()
             ->make(true);
@@ -140,7 +186,8 @@ class GajiController extends Controller
         return redirect()->back()->with('success', 'Berhasil di unpublish');
     }
 
-    public function generateUlang($id){
+    public function generateUlang($id)
+    {
         $gaji = Gaji::findOrFail($id);
         if ($gaji->status == '1') {
             return response()->json([
@@ -148,43 +195,7 @@ class GajiController extends Controller
             ], 200);
         }
 
-        
-        $getDefaultFeeTransport = DB::table('settings')->where('id', 1)->first();
-        $defaultFeeTransport = (int) $getDefaultFeeTransport->value;
-        $pengajar = User::role(['dosen', 'asdos'])
-        ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
-        ->leftJoin('profile_dosens', 'profile_dosens.user_id', 'users.id')
-        ->leftJoin('profile_asdos', 'profile_asdos.user_id', 'users.id')
-        ->where(function ($q) {
-            $q->where('profile_dosens.status', '1')
-            ->orWhere('profile_asdos.status', '1');
-        })
-        ->with(['jadwalPengajar' => function ($q) use ($gaji) {
-            $q->where('tgl', '>=', $gaji->tgl_awal)
-            ->where('tgl', '<=', $gaji->tgl_akhir);
-        }])
-        ->get()
-        ->map(function ($data) {
-            $data->total_kehadiran = $data->jadwalPengajar->count();
-            return $data;
-        });
-
-        foreach ($pengajar as $item) {
-            $total_fee_transport = ($defaultFeeTransport * $item->total_kehadiran);
-            $tunjangan = (int) $item->tunjangan ?? 0;
-            DB::table('gaji_user')
-                ->updateOrInsert([
-                    'gaji_id' => $gaji->id,
-                    'user_id' => $item->id,
-                ], [
-                    'tunjangan' => $tunjangan,
-                    'fee_transport' => $defaultFeeTransport,
-                    'total_kehadiran' => $item->total_kehadiran,
-                    'total_fee_transport' => $total_fee_transport,
-                    'total' => $total_fee_transport + $tunjangan,
-                    'updated_at' => now()
-                ]);
-        }
+        $this->generateGaji($id);
 
         return response()->json([
             'message' => 'Berhasil digenerate ulang!'
@@ -206,7 +217,7 @@ class GajiController extends Controller
         DB::table('gaji_user')
             ->where('gaji_id', $data->id)
             ->delete();
-            
+
         $data->delete();
         return response()->json([
             'message' => 'Berhasil di hapus'
