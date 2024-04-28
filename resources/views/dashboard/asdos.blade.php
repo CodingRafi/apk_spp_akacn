@@ -54,11 +54,11 @@
 @section('container')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-            <div class="card" style="border-top: 10px solid #1E88D7;">
-                <div class="card-body">
-                    
-                </div>
-            </div>
+          
         </div>
     </div>
 @endsection
+
+@push('js')
+   
+@endpush

@@ -27,15 +27,15 @@ class MatkulController extends Controller
 
             $options .= "<a href='" . route('data-master.mata-kuliah.materi.index', $data->id) . "' class='btn btn-info mx-2'>Materi</a>";
 
-            $options = $options . " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('data-master.mata-kuliah.show', $data->id) . "`, `Edit Mata Kuliah`, `#matkul`)' type='button'>
-                        <i class='ti-pencil'></i>
-                        Edit
-                    </button>";
+            // $options = $options . " <button class='btn btn-warning'
+            //             onclick='editForm(`" . route('data-master.mata-kuliah.show', $data->id) . "`, `Edit Mata Kuliah`, `#matkul`)' type='button'>
+            //             <i class='ti-pencil'></i>
+            //             Edit
+            //         </button>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
-                                                Hapus
-                                            </button>";
+            // $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
+            //                                     Hapus
+            //                                 </button>";
 
             $data->options = $options;
         }
@@ -82,7 +82,7 @@ class MatkulController extends Controller
     public function update(MatkulRequest $request, $id)
     {
         $matkul = Matkul::find($id);
-
+        
         DB::beginTransaction();
         try {
             $requestParse = $request->except('_method', '_token');

@@ -10,10 +10,12 @@
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Presensi {{ request('tahun_ajaran_id') }}</h5>
                     </div>
+                    @can('add_kelola_presensi')
                     <button type="button" class="btn btn-primary"
-                        onclick="addForm('{{ route('kelola-presensi.presensi.store', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Jadwal', '#jadwal')">
+                        onclick="addForm('{{ route('kelola-presensi.presensi.store', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}', 'Tambah Jadwal', '#jadwal', clearForm)">
                         Tambah
                     </button>
+                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -67,20 +69,15 @@
                         <div class="div-alert"></div>
                         <div class="mb-3">
                             <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
-                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select" onchange="get_materi()">
+                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select">
                                 <option value="">Pilih Pelajaran</option>
                                 @foreach ($tahunMatkul as $matkul)
                                     <option value="{{ $matkul->id }}">{{ $matkul->nama }}
                                         |
-                                        {{ $matkul->hari ? config('services.hari')[$matkul->hari] : '' }}, {{ $matkul->jam_mulai }} -
+                                        {{ $matkul->hari ? config('services.hari')[$matkul->hari] : '' }},
+                                        {{ $matkul->jam_mulai }} -
                                         {{ $matkul->jam_akhir }}</option>
                                 @endforeach
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="materi_id" class="form-label">Materi</label>
-                            <select name="materi_id" id="materi_id" class="form-control">
-                                <option value="">Pilih Materi</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -110,6 +107,12 @@
                             <input type="hidden" name="type" value="pertemuan">
                             <input type="hidden" name="pengajar_id" value="{{ Auth::user()->id }}">
                             <div class="mb-3">
+                                <label for="materi_id" class="form-label">Materi</label>
+                                <select name="materi_id" id="materi_id" class="form-control">
+                                    <option value="">Pilih Materi</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
                                 <label for="ket" class="form-label">Keterangan</label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket"></textarea>
                             </div>
@@ -138,6 +141,15 @@
             <label for="pengajar_id" class="form-label"></label>
             <select name="pengajar_id" id="pengajar_id" class="form-control">
                 <option value="">Pilih</option>
+            </select>
+        </div>
+    </template>
+
+    <template id="select-materi">
+        <div class="mb-3">
+            <label for="materi_id" class="form-label">Materi</label>
+            <select name="materi_id" id="materi_id" class="form-control">
+                <option value="">Pilih Materi</option>
             </select>
         </div>
     </template>
@@ -177,19 +189,34 @@
             }
         }
 
-        function get_materi() {
+        $('#type, #tahun_matkul_id').on('change', get_materi);
+
+        function get_materi(data = {}) {
             $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
 
-            if ($('#tahun_matkul_id').val()) {
+            @if (getRole()->name == 'admin')
+            let check = $('#tahun_matkul_id').val() != '' && $('#type').val() != '' && $('#type').val() == 'pertemuan';
+            @else
+            let check = $('#tahun_matkul_id').val() != '';
+            @endif
+
+            if (check) {
                 $.ajax({
                     url: "{{ route('kelola-presensi.presensi.getMateri', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}"
                         .replace(':tahun_matkul_id', $('#tahun_matkul_id').val()),
                     type: 'GET',
                     dataType: 'json',
+                    data: {
+                        except : data.materi_id
+                    },
                     success: function(res) {
                         $.each(res.data, function(i, e) {
                             $('#materi_id').append(`<option value="${e.id}">${e.materi}</option>`)
                         })
+
+                        if (data.materi_id) {
+                            $('#materi_id').val(data.materi_id);
+                        }
                     },
                     error: function(err) {
                         alert('Gagal get materi');
@@ -202,7 +229,7 @@
             let prodi_id = $('#filter-prodi').val();
             $('#filter-tahun-semester').empty().append(`<option value="">Pilih Semester</option>`);
             $.ajax({
-                url: '{{ route('kelola-presensi.presensi.getSemester', ":prodi_id") }}'.replace(':prodi_id',
+                url: '{{ route('kelola-presensi.presensi.getSemester', ':prodi_id') }}'.replace(':prodi_id',
                     prodi_id),
                 type: 'GET',
                 dataType: 'json',
@@ -221,7 +248,7 @@
             let prodi_id = $('#filter-prodi').val();
             $('#filter-tahun-matkul').empty().append(`<option value="">Pilih Matkul</option>`);
             $.ajax({
-                url: '{{ route('kelola-presensi.presensi.getMatkul', ['prodi_id' => ":prodi_id"]) }}'
+                url: '{{ route('kelola-presensi.presensi.getMatkul', ['prodi_id' => ':prodi_id']) }}'
                     .replace(':prodi_id', prodi_id),
                 type: 'GET',
                 dataType: 'json',
@@ -236,7 +263,7 @@
             })
         }
 
-        function getPengajar(tahun_matkul_id) {
+        function getPengajar(tahun_matkul_id, data = {}) {
             $.ajax({
                 url: '{{ route('kelola-presensi.presensi.getPengajar', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
                     .replace(':tahun_matkul_id', tahun_matkul_id),
@@ -247,6 +274,10 @@
                         $('#pengajar_id').append(
                             `<option value="${e.id}">${e.name} | ${e.login_key}</option>`)
                     })
+
+                    if (data.pengajar_id) {
+                        $('#pengajar_id').val(data.pengajar_id);
+                    }
                 },
                 error: function(err) {
                     alert('Gagal get pengajar');
@@ -254,7 +285,7 @@
             })
         }
 
-        function getPengawas() {
+        function getPengawas(data = {}) {
             $.ajax({
                 url: '{{ route('kelola-presensi.presensi.getPengawas') }}',
                 type: 'GET',
@@ -264,6 +295,10 @@
                         $('#pengajar_id').append(
                             `<option value="${e.id}">${e.name} | ${e.login_key}</option>`)
                     })
+
+                    if (data.pengajar_id) {
+                        $('#pengajar_id').val(data.pengajar_id);
+                    }
                 },
                 error: function(err) {
                     alert('Gagal get pengawas');
@@ -271,39 +306,69 @@
             })
         }
 
-        function generateForm() {
-            if ($('#type').val()) {
-                $('.div-ujian, .div-pengajar').empty();
+        function clearForm(){
+            $('.div-ujian, .div-pengajar').empty();
+        }
+
+        $('#type, #tahun_matkul_id').on('change', () => {
+            if ($('#type').val() == '' || $('#tahun_matkul_id').val() == '') {
+                clearForm();
+            }
+        });
+
+        function editJadwal(data){
+            clearForm();
+            generateForm(data)
+        }
+
+        function generateForm(data = {}) {
+            let type = data.type ?? $('#type').val();
+            let tahun_matkul_id = data.tahun_matkul_id ?? $('#tahun_matkul_id').val();
+
+            if (type != '' && tahun_matkul_id != '') {
+                $('.div-ujian, .div-pengajar, .div-alert').empty();
                 $('.div-pengajar').html($('#select-pengajar').html());
                 $('#pengajar_id').empty();
-                if ($('#type').val() == 'ujian') {
+                if (type == 'ujian') {
                     $('label[for="pengajar_id"]').text('Pengawas');
                     $('#pengajar_id').append('<option value="">Pilih Pengawas</option>');
                     $('.div-ujian').html($('#select-ujian').html());
-                    getPengawas();
-                    getJenisUjian();
+                    getPengawas(data);
+                    getJenisUjian(tahun_matkul_id, data);
                 } else {
-                    $('label[for="pengajar_id"]').text('Asdos');
-                    $('#pengajar_id').append('<option value="">Pilih Asdos</option>');
-                    if ($('#tahun_matkul_id').val()) {
+                    $('label[for="pengajar_id"]').text('Pengajar');
+                    $('#pengajar_id').append('<option value="">Pilih Pengajar</option>');
+                    $('.div-pengajar').append($('#select-materi').html());
+                    if (data.materi_id) {
+                        get_materi(data);
+                    }
+
+                    if (tahun_matkul_id) {
                         getTotal();
-                        getPengajar($('#tahun_matkul_id').val());
+                        getPengajar(tahun_matkul_id, data);
                     }
                 }
             }
         }
 
-        function getJenisUjian(tahun_matkul_id) {
+        function getJenisUjian(tahun_matkul_id, data = {}) {
             $.ajax({
                 url: '{{ route('kelola-presensi.presensi.getJenisUjian', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
                     .replace(':tahun_matkul_id', tahun_matkul_id),
                 type: 'GET',
                 dataType: 'json',
+                data: {
+                    except : data.jenis_ujian
+                },
                 success: function(res) {
                     $('#jenis').empty().append(`<option value="">Pilih Jenis Ujian</option>`);
                     $.each(res.data, function(i, e) {
                         $('#jenis').append(`<option value="${e}">${e.toUpperCase()}</option>`)
                     })
+
+                    if (data.jenis_ujian) {
+                        $('#jenis').val(data.jenis_ujian);
+                    }
                 },
                 error: function(err) {
                     alert('Gagal get jenis ujian');
@@ -311,7 +376,7 @@
             })
         }
 
-        $('#type, #tahun_matkul_id').on('change', generateForm);
+        $('#type, #tahun_matkul_id').on('change', () => generateForm());
 
         let table;
         $(document).ready(function() {

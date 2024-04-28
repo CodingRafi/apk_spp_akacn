@@ -42,7 +42,7 @@ class AsdosController extends Controller
         $user = User::findOrFail($id);
         
         if ($role->name == 'admin' && $user->asdos->dosen_id != $request->dosen_id) {
-            $cek = DB::table('jadwals')->where('pengajar_id', $id)->count();
+            $cek = DB::table('jadwal')->where('pengajar_id', $id)->count();
             if ($cek > 0) {
                 return redirect()->back()->with('error', 'Dosen tidak bisa diubah!');
             }

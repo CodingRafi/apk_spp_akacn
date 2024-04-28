@@ -16,7 +16,7 @@ class SettingSeeder extends Seeder
     public function run()
     {
         DB::table('settings')->insert([
-            'nama' => 'Uang Tranport',
+            'nama' => 'Uang Tranport Dosen',
             'type' => 'number',
             'value' => '15000',
             'created_at' => now(),
@@ -27,6 +27,30 @@ class SettingSeeder extends Seeder
             'nama' => 'URL Neofeeder',
             'type' => 'text',
             'value' => '',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'Uang Tranport Asdos',
+            'type' => 'number',
+            'value' => '15000',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'Uang Dosen 1 SKS',
+            'type' => 'number',
+            'value' => '15000',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'Uang Asdos 1 SKS',
+            'type' => 'number',
+            'value' => '15000',
             'created_at' => now(),
             'updated_at' => now()
         ]);

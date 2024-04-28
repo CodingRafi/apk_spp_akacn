@@ -13,6 +13,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class PresensiController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('permission:view_kelola_presensi', ['only' => ['index', 'show', 'showJadwal']]);
+        $this->middleware('permission:add_kelola_presensi', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_kelola_presensi', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_kelola_presensi', ['only' => ['destroy']]);
+    }
+
     private function getSemesterAktif($tahun_ajaran_id, $prodi_id)
     {
         return DB::table('tahun_semester')
@@ -72,6 +81,9 @@ class PresensiController extends Controller
             })
             ->whereNull('jadwal.id')
             ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->when(request('except'), function ($q) {
+                $q->orWhere('matkul_materi.id', '=', request('except'));
+            })
             ->get();
         return response()->json([
             'data' => $data
@@ -80,26 +92,24 @@ class PresensiController extends Controller
 
     public function getPengajar($tahun_ajaran_id, $tahun_matkul_id)
     {
-        $tahun_matkul = DB::table('tahun_matkul')
-            ->select('dosen_id')
-            ->where('tahun_ajaran_id', $tahun_ajaran_id)
-            ->where('id', $tahun_matkul_id)
-            ->first();
-
-        if (!$tahun_matkul) {
-            return response()->json([
-                'message' => 'Tidak ada tahun matkul'
-            ], 400);
-        }
-
-        $asdos = DB::table('users')
-            ->select('users.*')
-            ->join('profile_asdos', 'users.id', '=', 'profile_asdos.user_id')
-            ->where('profile_asdos.dosen_id', $tahun_matkul->dosen_id)
+        $dosen = DB::table('tahun_matkul')
+            ->select('users.id', 'users.login_key', 'users.name')
+            ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+            ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
+            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
+            ->where('tahun_matkul.id', $tahun_matkul_id)
             ->get();
 
+        $asdos = DB::table('users')
+            ->select('users.id', 'users.login_key', 'users.name')
+            ->join('profile_asdos', 'users.id', '=', 'profile_asdos.user_id')
+            ->whereIn('profile_asdos.dosen_id', $dosen->pluck('id')->toArray())
+            ->get();
+
+        $data = $dosen->merge($asdos);
+
         return response()->json([
-            'data' => $asdos
+            'data' => $data
         ], 200);
     }
 
@@ -176,8 +186,13 @@ class PresensiController extends Controller
             'kode' => 'required|max:6|min:6',
             'type' => 'required',
             'pengajar_id' => 'required',
-            'materi_id' => 'required'
         ];
+
+        if ($request->type == 'pertemuan') {
+            $validate += [
+                'materi_id' => 'required',
+            ];
+        }
 
         $request->validate($validate);
 
@@ -244,7 +259,7 @@ class PresensiController extends Controller
             Carbon::setLocale('id');
             $day = $today->translatedFormat('l');
 
-            if(!$getTahunMatkul->hari){
+            if (!$getTahunMatkul->hari) {
                 return response()->json([
                     'message' => 'Hari Belum di set'
                 ], 400);
@@ -273,14 +288,8 @@ class PresensiController extends Controller
             }
         }
 
-        $materi = DB::table('matkul_materi')
-            ->where('id', $request->materi_id)
-            ->first();
-
         $data = [
             'tgl' => $tgl,
-            'materi_id' => $request->materi_id,
-            'materi' => $materi->materi,
             'tahun_matkul_id' => $request->tahun_matkul_id,
             'tahun_semester_id' => $getTahunSemesterAktif->id,
             'ket' => $request->ket,
@@ -288,6 +297,26 @@ class PresensiController extends Controller
             'created_at' => now(),
             'updated_at' => now()
         ];
+
+        if ($request->type == 'pertemuan') {
+            $materi = DB::table('matkul_materi')
+                ->where('id', $request->materi_id)
+                ->first();
+
+            $data += [
+                'materi_id' => $request->materi_id,
+                'materi' => $materi->materi,
+                'type' => 'pertemuan',
+                'jenis_ujian' => null
+            ];
+        } else {
+            $data += [
+                'materi_id' => null,
+                'materi' => null,
+                'type' => 'ujian',
+                'jenis_ujian' => $request->jenis
+            ];
+        }
 
         if ($roleUser->name == 'dosen') {
             $data += [
@@ -372,7 +401,24 @@ class PresensiController extends Controller
         $datas = isset($jadwals) ? $jadwals : [];
 
         foreach ($datas as $data) {
-            $data->options = "<a href='" . route('kelola-presensi.presensi.showJadwal', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";;
+            $options = "";
+            $options .= "<a href='" . route('kelola-presensi.presensi.showJadwal', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
+
+            if (auth()->user()->can('edit_kelola_presensi')) {
+                $options .= " <button class='btn btn-warning'
+                        onclick='editForm(`" . route('kelola-presensi.presensi.showJadwalEdit', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "`, `Edit Jadwal`, `#jadwal`, editJadwal)'>
+                        <i class='ti-pencil'></i>
+                        Edit
+                    </button>";
+            }
+
+            if (auth()->user()->can('delete_kelola_presensi')) {
+                $options .= "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-presensi.presensi.deleteJadwal', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "`)' type='button'>
+                                        Hapus
+                                    </button>";
+            }
+
+            $data->options = $options;
         }
 
         return DataTables::of($datas)
@@ -382,6 +428,17 @@ class PresensiController extends Controller
             })
             ->rawColumns(['options', 'status'])
             ->make(true);
+    }
+
+    public function showJadwalEdit($tahun_ajaran_id, $jadwal_id)
+    {
+        $data = DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->first();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
     }
 
     public function showJadwal($tahun_ajaran_id, $jadwal_id)
@@ -446,14 +503,8 @@ class PresensiController extends Controller
 
     public function mulaiJadwal(Request $request, $jadwal_id)
     {
-        $role = getRole();
-
-        if ($role->name != 'asdos') {
-            return redirect()->back()->with('error', 'Telah terjadi kesalahan');
-        }
-
         $jadwal = DB::table('jadwal')
-            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'jadwal.presensi_mulai', 'jadwal.tgl', 'tahun_matkul.cek_ip', 'tahun_matkul.jam_mulai', 'tahun_matkul.jam_akhir')
+            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'jadwal.presensi_mulai', 'jadwal.tgl', 'tahun_matkul.cek_ip', 'tahun_matkul.jam_mulai', 'tahun_matkul.jam_akhir', 'jadwal.type')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->where('jadwal.id', $jadwal_id)
             ->first();
@@ -475,13 +526,15 @@ class PresensiController extends Controller
 
         $today = Carbon::now();
         if ($jadwal->tgl != $today->format('Y-m-d')) {
-            return redirect()->back()->with('error', 'Bukan tanggal pelajaran');
+            return redirect()->back()->with('error', 'Tanggal tidak valid');
         }
-
-        if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
-            ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
-        ) {
-            return redirect()->back()->with('error', 'Sekarang bukan waktunya pembelajaran');
+        
+        if ($jadwal->type == 'pertemuan') {
+            if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
+                ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
+            ) {
+                return redirect()->back()->with('error', 'Waktu tidak valid');
+            }
         }
 
         DB::table('jadwal')
@@ -625,20 +678,111 @@ class PresensiController extends Controller
 
     public function getJenisUjian($tahun_ajaran_id, $tahun_matkul_id)
     {
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id);
+        $tahun_matkul = DB::table('tahun_matkul')
+            ->select('prodi_id')
+            ->where('id', $tahun_matkul_id)
+            ->first();
+
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
         $jadwalUjian = DB::table('jadwal')
             ->select('jenis_ujian')
             ->where('type', 'ujian')
             ->where('tahun_semester_id', $getTahunSemesterAktif->id)
             ->where('tahun_matkul_id', $tahun_matkul_id)
             ->get()
-            ->pluck('jenis_ujian')
-            ->toArray();
-
+            ->pluck('jenis_ujian');
         $defaultUjian = array_column(config('services.ujian'), 'key');
 
+        if (request('except')) {
+            $jadwalUjian = $jadwalUjian->reject(function ($item) {
+                return $item === request('except');
+            });
+        }
+
         return response()->json([
-            'data' => array_diff($defaultUjian, $jadwalUjian)
+            'data' => array_diff($defaultUjian, $jadwalUjian->toArray())
+        ], 200);
+    }
+
+    public function deleteJadwal($tahun_ajaran_id, $jadwal_id)
+    {
+        $jadwal = DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->first();
+
+        if ($jadwal->presensi_mulai) {
+            return response()->json([
+                'message' => 'Jadwal sudah dimulai, tidak bisa dihapus'
+            ], 400);
+        }
+
+        DB::beginTransaction();
+        try {
+            DB::table('jadwal')
+                ->where('id', $jadwal_id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
+        }
+    }
+
+    public function updateJadwalEdit(Request $request, $tahun_ajaran_id, $jadwal_id)
+    {
+        $jadwal = DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->first();
+
+        if ($jadwal->presensi_mulai) {
+            return response()->json([
+                'message' => 'Jadwal sudah dimulai, tidak bisa diedit'
+            ], 400);
+        }
+
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
+
+        $data = [
+            'tgl' => $request->tgl,
+            'tahun_matkul_id' => $request->tahun_matkul_id,
+            'ket' => $request->ket,
+            'kode' => $request->kode,
+            'updated_at' => now()
+        ];
+
+        if ($request->type == 'pertemuan') {
+            $materi = DB::table('matkul_materi')
+                ->where('id', $request->materi_id)
+                ->first();
+
+            $data += [
+                'materi_id' => $request->materi_id,
+                'materi' => $materi->materi,
+                'type' => 'pertemuan',
+                'jenis_ujian' => null
+            ];
+        } else {
+            $data += [
+                'materi_id' => null,
+                'materi' => null,
+                'type' => 'ujian',
+                'jenis_ujian' => $request->jenis
+            ];
+        }
+
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update($data);
+
+        return response()->json([
+            'message' => 'Berhasil diupdate'
         ], 200);
     }
 }

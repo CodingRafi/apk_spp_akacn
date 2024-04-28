@@ -99,7 +99,14 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
     });
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
+        Route::get('/mahasiswa', [DashboardController::class, 'mahasiswa'])->name('mahasiswa');
+        Route::get('/dosen', [DashboardController::class, 'dosen'])->name('dosen');
+        Route::get('/petugas', [DashboardController::class, 'petugas'])->name('petugas');
+        Route::get('/asdos', [DashboardController::class, 'asdos'])->name('asdos');
+    });
+
     Route::resource('roles', RoleController::class);
 
     Route::prefix('kelola-users')->name('kelola-users.')->group(function () {
@@ -472,6 +479,18 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 '/{jadwal_id}',
                 [KelolaPresensiController::class, 'updateJadwal']
             )->name('updateJadwal');
+            Route::get(
+                '/{tahun_ajaran_id}/{jadwal_id}/jadwal',
+                [KelolaPresensiController::class, 'showJadwalEdit']
+            )->name('showJadwalEdit');
+            Route::put(
+                '/{tahun_ajaran_id}/{jadwal_id}/jadwal',
+                [KelolaPresensiController::class, 'updateJadwalEdit']
+            )->name('updateJadwalEdit');
+            Route::delete(
+                '/{tahun_ajaran_id}/{jadwal_id}',
+                [KelolaPresensiController::class, 'deleteJadwal']
+            )->name('deleteJadwal');
             Route::put(
                 '/{jadwal_id}/mulai',
                 [KelolaPresensiController::class, 'mulaiJadwal']

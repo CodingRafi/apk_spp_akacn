@@ -14,12 +14,16 @@
         </a>
     </div>
 
+    @php
+        $role = getRole();
+    @endphp
+
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1" style="overflow-y: auto;overflow-x: hidden">
 
-        <li class="menu-item {{ Request::is('dashboard') ? 'active' : '' }}">
-            <a href="/dashboard" class="menu-link">
+        <li class="menu-item {{ Request::is('dashboard/' . $role->name) ? 'active' : '' }}">
+            <a href="{{ route('dashboard.' . $role->name) }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </a>

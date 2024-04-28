@@ -9,20 +9,22 @@
                         <a
                             href="{{ route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                        <h5 class="text-capitalize mb-0">Pertemuan</h5>
+                        <h5 class="text-capitalize mb-0">{{ $data->type }}</h5>
                     </div>
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
                             @if ($data->pengajar_id == Auth::user()->id)
+                                @if ($data->type == 'pertemuan')
                                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
                                     Jadwal</button>
+                                @endif
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
                                         action="{{ route('kelola-presensi.presensi.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
                                         method="post">
                                         @csrf
                                         @method('put')
-                                        <button class="btn btn-danger" type="submit">Selesai Pelajaran</button>
+                                        <button class="btn btn-danger" type="submit">Selesai</button>
                                     </form>
                                 @elseif(!$data->presensi_mulai)
                                     <form
@@ -30,13 +32,16 @@
                                         method="post">
                                         @csrf
                                         @method('put')
-                                        <button class="btn btn-primary" type="submit">Mulai Pelajaran</button>
+                                        <button class="btn btn-primary" type="submit">Mulai</button>
                                     </form>
                                 @endif
                             @endif
                         </div>
                     @endif
                 </div>
+                @php
+                    $typeUser = $data->type == 'pertemuan' ? 'Pengajar' : 'Pengawas';
+                @endphp
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -46,15 +51,15 @@
                                     <td class="col-6">{{ $data->kode }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="col-6">Pengajar</td>
+                                    <td class="col-6">{{ $typeUser }}</td>
                                     <td class="col-6">{{ $data->pengajar }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="col-6">Presensi Masuk Pengajar</td>
+                                    <td class="col-6">Presensi Masuk {{ $typeUser }}</td>
                                     <td class="col-6">{{ $data->presensi_mulai }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="col-6">Presensi Pulang Pengajar</td>
+                                    <td class="col-6">Presensi Pulang {{ $typeUser }}</td>
                                     <td class="col-6">{{ $data->presensi_selesai }}</td>
                                 </tr>
                             </table>
@@ -62,17 +67,19 @@
                         <div class="col-md-6">
                             <table class="table">
                                 <tr>
-                                    <td class="col-6">Tanggal Pembelajaran</td>
+                                    <td class="col-6">Tanggal</td>
                                     <td class="col-6">{{ parseDate($data->tgl) }}</td>
                                 </tr>
                                 <tr>
                                     <td class="col-6">Matkul</td>
                                     <td class="col-6">{{ $data->matkul }}</td>
                                 </tr>
+                                @if ($data->type == 'pertemuan')
                                 <tr>
                                     <td class="col-6">Materi</td>
                                     <td class="col-6">{{ $data->materi }}</td>
                                 </tr>
+                                @endif
                             </table>
                         </div>
                         <div class="col-md-12">

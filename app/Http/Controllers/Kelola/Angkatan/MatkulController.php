@@ -199,17 +199,6 @@ class MatkulController extends Controller
                 ->where('tahun_ajaran_id', $tahun_ajaran_id)
                 ->update($requestParse);
 
-            DB::table('tahun_matkul_dosen')
-                ->where('tahun_matkul_id', $id)
-                ->delete();
-
-            foreach (($request->dosen_id ?? []) as $dosen_id) {
-                DB::table('tahun_matkul_dosen')->insert([
-                    'tahun_matkul_id' => $id,
-                    'dosen_id' => $dosen_id
-                ]);
-            }
-
             DB::table('tahun_matkul_rombel')
                 ->where('tahun_matkul_id', $id)
                 ->delete();

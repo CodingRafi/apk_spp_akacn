@@ -8,10 +8,10 @@
                     <h5 class="text-capitalize">Mata Kuliah</h5>
                     @can('add_matkul')
                         <div class="d-flex justify-content-center align-items-center" style="gap: 1rem">
-                            <button type="button" class="btn btn-primary"
+                            {{-- <button type="button" class="btn btn-primary"
                                 onclick="addForm('{{ route('data-master.mata-kuliah.store') }}', 'Tambah', '#matkul')">
                                 Tambah
-                            </button>
+                            </button> --}}
                             <button class="btn btn-primary" onclick="getData()">Get NEO Feeder</button>
                         </div>
                     @endcan
@@ -25,10 +25,7 @@
                                     <th>Kode MK</th>
                                     <th>Nama</th>
                                     <th>Prodi</th>
-                                    <th>Sync Neo Feeder</th>
-                                    @can('edit_matkul', 'delete_matkul')
-                                        <th>Aksi</th>
-                                    @endcan
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -242,13 +239,8 @@
                         "data": "prodi"
                     },
                     {
-                        "data": "sync"
-                    },
-                    @can('edit_matkul', 'hapus_matkul')
-                        {
-                            "data": "options"
-                        }
-                    @endcan
+                        "data": "options"
+                    }
                 ],
                 pageLength: 25,
                 responsive: true,
