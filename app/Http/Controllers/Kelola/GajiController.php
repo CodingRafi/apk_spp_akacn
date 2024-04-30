@@ -63,7 +63,6 @@ class GajiController extends Controller
                     ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
                     ->where('jadwal.tgl', '<=', $gaji->tgl_akhir);
             }, 'roles'])
-            ->whereIn('users.id', [32, 606])
             ->get();
             
         foreach ($pengajar as $item) {
