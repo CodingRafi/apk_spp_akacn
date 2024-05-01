@@ -40,7 +40,7 @@ class SettingSeeder extends Seeder
         ]);
 
         DB::table('settings')->insert([
-            'nama' => 'Uang Dosen 1 SKS',
+            'nama' => 'Uang Teori Dosen 1 SKS',
             'type' => 'number',
             'value' => '15000',
             'created_at' => now(),
@@ -48,7 +48,23 @@ class SettingSeeder extends Seeder
         ]);
 
         DB::table('settings')->insert([
-            'nama' => 'Uang Asdos 1 SKS',
+            'nama' => 'Uang Teori Asdos 1 SKS',
+            'type' => 'number',
+            'value' => '15000',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'Uang Praktek Dosen 1 SKS',
+            'type' => 'number',
+            'value' => '15000',
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        DB::table('settings')->insert([
+            'nama' => 'Uang Praktek Asdos 1 SKS',
             'type' => 'number',
             'value' => '15000',
             'created_at' => now(),

@@ -44,11 +44,13 @@ class MateriController extends Controller
     public function store(Request $request, $matkul_id)
     {
         $request->validate([
-            'materi' => 'required'
+            'materi' => 'required',
+            'type' => 'required'
         ]);
 
         DB::table('matkul_materi')->insert([
             'materi' => $request->materi,
+            'type' => $request->type,
             'matkul_id' => $matkul_id,
             'created_at' => now(),
             'updated_at' => now()
@@ -73,17 +75,38 @@ class MateriController extends Controller
     public function update(Request $request, $matkul_id, $materi_id)
     {
         $request->validate([
-            'materi' => 'required'
+            'materi' => 'required',
+            'type' => 'required'
         ]);
 
         DB::table('matkul_materi')
             ->where('id', $materi_id)
             ->update([
-                'materi' => $request->materi
+                'materi' => $request->materi,
+                'type' => $request->type,
             ]);
 
         return response()->json([
             'message' => 'Berhasil disimpan'
         ], 200);
+    }
+
+    public function destroy($matkul_id, $materi_id)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('matkul_materi')
+                ->where('id', $materi_id)
+                ->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Berhasil dihapus',
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Gagal dihapus',
+            ], 400);
+        }
     }
 }

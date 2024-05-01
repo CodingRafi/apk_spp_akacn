@@ -25,6 +25,7 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Materi</th>
+                                    <th>Type</th>
                                     @canany(['edit_materi', 'delete_materi'])
                                         <th>Aksi</th>
                                     @endcanany
@@ -48,8 +49,16 @@
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="materi" class="form-label">materi</label>
+                            <label for="materi" class="form-label">Materi</label>
                             <input class="form-control" type="text" id="materi" name="materi" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Type</label>
+                            <select name="type" id="type" class="form-select">
+                                <option value="">Pilih Type</option>
+                                <option value="teori">Teori</option>
+                                <option value="praktek">Praktek</option>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
@@ -75,6 +84,9 @@
                     },
                     {
                         "data": "materi"
+                    },
+                    {
+                        "data": "type"
                     },
                     @canany(['edit_materi', 'delete_materi'])
                         {

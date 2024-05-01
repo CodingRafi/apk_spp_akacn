@@ -46,7 +46,7 @@
                     <div class="modal-body">
                         <div class="mb-3">
                             <label for="prodi_id" class="form-label">Prodi</label>
-                            <select class="form-select" name="prodi_id" id="prodi_id" style="width: 100%">
+                            <select class="form-select" name="prodi_id" id="prodi_id" style="width: 100%" disabled>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
@@ -54,15 +54,15 @@
                         </div>
                         <div class="mb-3">
                             <label for="kode" class="form-label">Kode</label>
-                            <input class="form-control" type="text" id="kode" name="kode" />
+                            <input class="form-control" type="text" id="kode" name="kode" disabled/>
                         </div>
                         <div class="mb-3">
                             <label for="nama" class="form-label">Nama</label>
-                            <input class="form-control" type="text" id="nama" name="nama" />
+                            <input class="form-control" type="text" id="nama" name="nama" disabled/>
                         </div>
                         <div class="mb-3">
                             <label for="jenis_matkul" class="form-label">Jenis Matkul</label>
-                            <select class="form-select" name="jenis_matkul" id="jenis_matkul">
+                            <select class="form-select" name="jenis_matkul" id="jenis_matkul" disabled>
                                 <option value="">Pilih Jenis Matkul</option>
                                 @foreach (config('services.matkul.jenis') as $key => $item)
                                     <option value="{{ $key }}">{{ $item }}</option>
@@ -71,7 +71,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="kel_matkul" class="form-label">Kelompok Matkul</label>
-                            <select class="form-select" name="kel_matkul" id="kel_matkul">
+                            <select class="form-select" name="kel_matkul" id="kel_matkul" disabled>
                                 <option value="">Pilih Kelompok Matkul</option>
                                 @foreach (config('services.matkul.kelompok') as $key => $item)
                                     <option value="{{ $key }}">{{ $item }}</option>
@@ -81,41 +81,41 @@
                         <div class="mb-3">
                             <label for="sks_mata_kuliah" class="form-label">SKS Mata Kuliah</label>
                             <input class="form-control" type="number" id="sks_mata_kuliah" name="sks_mata_kuliah"
-                                value="0" min="0" />
+                                value="0" min="0" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="sks_tatap_muka" class="form-label">SKS Tatap Muka</label>
                             <input class="form-control" type="number" id="sks_tatap_muka" name="sks_tatap_muka"
-                                value="0" min="0" />
+                                value="0" min="0" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="sks_praktek" class="form-label">SKS Praktek</label>
                             <input class="form-control" type="number" id="sks_praktek" name="sks_praktek" value="0"
-                                min="0" />
+                                min="0" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="sks_praktek_lapangan" class="form-label">SKS Praktek Lapangan</label>
                             <input class="form-control" type="number" id="sks_praktek_lapangan"
-                                name="sks_praktek_lapangan" value="0" min="0" />
+                                name="sks_praktek_lapangan" value="0" min="0" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="sks_simulasi" class="form-label">SKS Simulasi</label>
                             <input class="form-control" type="number" id="sks_simulasi" name="sks_simulasi"
-                                value="0" min="0" />
+                                value="0" min="0" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="ada_sap" class="form-label">ada SAP?</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_sap" value="1"
-                                        id="ada_sap_1">
+                                        id="ada_sap_1" disabled>
                                     <label class="form-check-label" for="ada_sap_1">
                                         Ya
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_sap" value="0"
-                                        id="ada_sap_0" checked>
+                                        id="ada_sap_0" checked disabled>
                                     <label class="form-check-label" for="ada_sap_0">
                                         Tidak
                                     </label>
@@ -127,14 +127,14 @@
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_silabus" value="1"
-                                        id="ada_silabus_1">
+                                        id="ada_silabus_1" disabled>
                                     <label class="form-check-label" for="ada_silabus_1">
                                         Ya
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_silabus" value="0"
-                                        id="ada_silabus_0" checked>
+                                        id="ada_silabus_0" checked disabled>
                                     <label class="form-check-label" for="ada_silabus_0">
                                         Tidak
                                     </label>
@@ -146,14 +146,14 @@
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_bahan_ajar" value="1"
-                                        id="ada_bahan_ajar_1">
+                                        id="ada_bahan_ajar_1" disabled>
                                     <label class="form-check-label" for="ada_bahan_ajar_1">
                                         Ya
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_bahan_ajar" value="0"
-                                        id="ada_bahan_ajar_0" checked>
+                                        id="ada_bahan_ajar_0" checked disabled>
                                     <label class="form-check-label" for="ada_bahan_ajar_0">
                                         Tidak
                                     </label>
@@ -165,14 +165,14 @@
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_acara_praktek"
-                                        value="1" id="ada_acara_praktek_1">
+                                        value="1" id="ada_acara_praktek_1" disabled>
                                     <label class="form-check-label" for="ada_acara_praktek_1">
                                         Ya
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_acara_praktek"
-                                        value="0" id="ada_acara_praktek_0" checked>
+                                        value="0" id="ada_acara_praktek_0" checked disabled>
                                     <label class="form-check-label" for="ada_acara_praktek_0">
                                         Tidak
                                     </label>
@@ -184,14 +184,14 @@
                             <div class="d-flex gap-3">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_diklat" value="1"
-                                        id="ada_diklat_1">
+                                        id="ada_diklat_1" disabled>
                                     <label class="form-check-label" for="ada_diklat_1">
                                         Ya
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="ada_diklat" value="0"
-                                        id="ada_diklat_0" checked>
+                                        id="ada_diklat_0" checked disabled>
                                     <label class="form-check-label" for="ada_diklat_0">
                                         Tidak
                                     </label>
@@ -200,16 +200,12 @@
                         </div>
                         <div class="mb-3">
                             <label for="tgl_mulai_aktif" class="form-label">Tanggal mulai aktif</label>
-                            <input class="form-control" type="date" id="tgl_mulai_aktif" name="tgl_mulai_aktif" />
+                            <input class="form-control" type="date" id="tgl_mulai_aktif" name="tgl_mulai_aktif" disabled />
                         </div>
                         <div class="mb-3">
                             <label for="tgl_akhir_aktif" class="form-label">Tanggal akhir aktif</label>
-                            <input class="form-control" type="date" id="tgl_akhir_aktif" name="tgl_akhir_aktif" />
+                            <input class="form-control" type="date" id="tgl_akhir_aktif" name="tgl_akhir_aktif" disabled />
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => tableMatkul.ajax.reload())">Simpan</button>
                     </div>
                 </form>
             </div>

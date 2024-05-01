@@ -27,11 +27,11 @@ class MatkulController extends Controller
 
             $options .= "<a href='" . route('data-master.mata-kuliah.materi.index', $data->id) . "' class='btn btn-info mx-2'>Materi</a>";
 
-            // $options = $options . " <button class='btn btn-warning'
-            //             onclick='editForm(`" . route('data-master.mata-kuliah.show', $data->id) . "`, `Edit Mata Kuliah`, `#matkul`)' type='button'>
-            //             <i class='ti-pencil'></i>
-            //             Edit
-            //         </button>";
+            $options = $options . " <button class='btn btn-primary'
+                        onclick='editForm(`" . route('data-master.mata-kuliah.show', $data->id) . "`, `Detail Mata Kuliah`, `#matkul`)' type='button'>
+                        <i class='ti-pencil'></i>
+                        Detail
+                    </button>";
 
             // $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
             //                                     Hapus
