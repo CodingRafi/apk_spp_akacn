@@ -31,7 +31,6 @@
                     $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
                     (Auth::user()->hasRole('admin') ? true : $validationPembayaran['status']);
             }
-
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -46,9 +45,9 @@
                             @endif
                             <h5 class="text-capitalize mb-0">KRS {{ $tahun_semester->nama }}</h5>
                         </div>
-                        @if ($validation)
-                            @if ($dataEmpty || ($krs->status == 'pending' || $krs->status == 'ditolak'))
-                                <div class="d-flex" style="gap: 1rem;">
+                        <div class="d-flex" style="gap: 1rem;">
+                            @if ($validation)
+                                @if ($dataEmpty || ($krs->status == 'pending' || $krs->status == 'ditolak'))
                                     <button type="button" class="btn btn-primary"
                                         onclick="addForm('{{ route('krs.store', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}', 'Tambah Mata Kuliah', '#addMatkul', getMatkul)">
                                         Tambah Mata Kuliah
@@ -74,37 +73,37 @@
                                             class="form-revisi">
                                             @csrf
                                             @method('patch')
-                                            <button type="button" class="btn btn-warning btn-revisi">Revisi</button>
+                                            <button type="button" class="btn btn-warning btn-revisi">Kirim Revisi</button>
                                         </form>
                                     @endif
-                                    @if (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '0')))
-                                        <form
-                                            action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
-                                            method="post">
-                                            @csrf
-                                            @method('patch')
-                                            <input type="hidden" name="lock" value="1" aria-hidden="true">
-                                            <button type="submit" class="btn btn-danger">lock</button>
-                                        </form>
-                                    @endif
-                                </div>
+                                @endif
                             @endif
-                        @endif
-                        @if (Auth::user()->hasRole('admin') && (!$krs || ($krs && $krs->status == 'pending' && $krs->lock == '1')))
+                            @if (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '0') || (!$krs && $validationPembayaran['status'] && $validation))
                             <form
                                 action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                 method="post">
                                 @csrf
                                 @method('patch')
-                                <input type="hidden" name="lock" value="0" aria-hidden="true">
-                                <button type="submit" class="btn btn-danger">unlock</button>
+                                <input type="hidden" name="lock" value="1" aria-hidden="true">
+                                <button type="submit" class="btn btn-danger">lock</button>
                             </form>
-                        @endif
+                            @endif
+                            @if (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '1') || (!$krs && !$validationPembayaran['status'] && $validation))
+                                <form
+                                    action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
+                                    method="post">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="lock" value="0" aria-hidden="true">
+                                    <button type="submit" class="btn btn-danger">unlock</button>
+                                </form>
+                            @endif
 
-                        @if (Auth::user()->hasRole('mahasiswa') && $krs && $krs->status == 'diterima')
-                            <a href="{{ route('krs.print', request('tahun_semester_id')) }}"
-                                class="btn btn-primary">Download KRS</a>
-                        @endif
+                            @if (Auth::user()->hasRole('mahasiswa') && $krs && $krs->status == 'diterima')
+                                <a href="{{ route('krs.print', request('tahun_semester_id')) }}"
+                                    class="btn btn-primary">Download KRS</a>
+                            @endif
+                        </div>
                     </div>
                     <div class="card-body">
                         @if ($dataEmpty || $krs->status == 'pending')

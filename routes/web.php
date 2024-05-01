@@ -617,6 +617,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::patch('/{id}/publish', [GajiController::class, 'publish'])->name('publish');
         Route::patch('/{id}/unpublish', [GajiController::class, 'unpublish'])->name('unpublish');
         Route::get('/{id}/data', [GajiController::class, 'dataDetail'])->name('dataDetail');
+        Route::get('/{id}/{user_id}/matkul', [GajiController::class, 'showMatkul'])->name('showMatkul');
+        Route::get('/{id}/{user_id}/data-matkul', [GajiController::class, 'dataMatkul'])->name('dataMatkul');
         Route::delete('/{id}', [GajiController::class, 'destroy'])->name('destroy');
     });
 

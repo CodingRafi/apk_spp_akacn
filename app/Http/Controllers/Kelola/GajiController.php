@@ -40,13 +40,15 @@ class GajiController extends Controller
     {
         $gaji = Gaji::findOrFail($gajiId);
         $default = DB::table('settings')
-                    ->whereIn('id', [1,3,4,5])
-                    ->get();
+            ->whereIn('id', [1, 3, 4, 5, 6, 7])
+            ->get();
 
         $defaultFeeTransportDosen = (int) $default[0]->value;
         $defaultFeeTransportAsdos = (int) $default[1]->value;
-        $defaultFeeSksDosen = (int) $default[2]->value;
-        $defaultFeeSksAsdos = (int) $default[3]->value;
+        $defaultFeeSksTeoriDosen = (int) $default[2]->value;
+        $defaultFeeSksTeoriAsdos = (int) $default[3]->value;
+        $defaultFeeSksPraktekDosen = (int) $default[2]->value;
+        $defaultFeeSksPraktekAsdos = (int) $default[3]->value;
 
         $pengajar = User::role(['dosen', 'asdos'])
             ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
@@ -57,37 +59,49 @@ class GajiController extends Controller
                     ->orWhere('profile_asdos.status', '1');
             })
             ->with(['jadwalPengajar' => function ($q) use ($gaji) {
-                $q->select('jadwal.*', 'matkuls.sks_mata_kuliah')
+                $q->select('jadwal.*', 'matkuls.sks_mata_kuliah', 'matkul_materi.type as type_materi')
                     ->join('tahun_matkul', 'tahun_matkul.id', '=', 'jadwal.tahun_matkul_id')
                     ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                    ->join('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
                     ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
                     ->where('jadwal.tgl', '<=', $gaji->tgl_akhir);
             }, 'roles'])
             ->get();
-            
+
         foreach ($pengajar as $item) {
-            $feeSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksDosen : $defaultFeeSksAsdos;
+            $feeTeoriSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksTeoriDosen : $defaultFeeSksTeoriAsdos;
+            $feePraktekSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksPraktekDosen : $defaultFeeSksPraktekAsdos;
             $feeTransportasi = ($item->roles[0]->name == 'dosen') ? $defaultFeeTransportDosen : $defaultFeeTransportAsdos;
             $sumAllFeeSks = 0;
             $jadwalPengajar = $item->jadwalPengajar->groupBy('tahun_matkul_id');
             foreach ($jadwalPengajar as $matkul_id => $jadwal) {
-                $totalKehadiran = $jadwal->count();
                 $sks = $jadwal->first()->sks_mata_kuliah;
-                $totalFeeSks = $totalKehadiran * $sks * $feeSks;
-                $sumAllFeeSks += $totalFeeSks;
+                //Calculate Fee Teori
+                $totalKehadiranTeori = $jadwal->where('type_materi', 'teori')->count();
+                $totalFeeSksTeori = $totalKehadiranTeori * $sks * $feeTeoriSks;
+
+                //Calculate Fee Praktek 
+                $totalKehadiranPraktek = $jadwal->where('type_materi', 'praktek')->count();
+                $totalFeeSksPraktek = $totalKehadiranPraktek * $sks * $feePraktekSks;
+
+                $sumAllFeeSks += ($totalFeeSksTeori + $totalFeeSksPraktek);
                 DB::table('gaji_matkul')
                     ->updateOrInsert([
                         'gaji_id' => $gajiId,
                         'user_id' => $item->id,
                         'tahun_matkul_id' => $matkul_id,
                     ], [
-                        'total_kehadiran' => $totalKehadiran,
+                        'total_kehadiran_teori' => $totalKehadiranTeori,
+                        'total_kehadiran_praktek' => $totalKehadiranPraktek,
                         'sks' => $sks,
-                        'fee_sks' => $feeSks,
-                        'total_fee_sks' => $totalFeeSks,
+                        'fee_sks_teori' => $feeTeoriSks,
+                        'total_fee_sks_teori' => $totalFeeSksTeori,
+                        'fee_sks_praktek' => $feePraktekSks,
+                        'total_fee_sks_praktek' => $totalFeeSksPraktek,
+                        'total' => $totalFeeSksTeori + $totalFeeSksPraktek,
                     ]);
             }
-            
+
             $total_fee_transport = ($feeTransportasi * $item->jadwalPengajar->count());
             $tunjangan = (int) $item->tunjangan ?? 0;
             DB::table('gaji_user')
@@ -96,7 +110,6 @@ class GajiController extends Controller
                     'user_id' => $item->id,
                 ], [
                     'tunjangan' => $tunjangan,
-                    'fee_sks' => $feeSks,
                     'fee_transport' => $feeTransportasi,
                     'total_kehadiran' => $item->jadwalPengajar->count(),
                     'total_fee_transport' => $total_fee_transport,
@@ -140,13 +153,19 @@ class GajiController extends Controller
 
     public function dataDetail($gaji)
     {
-        $data = DB::table('gaji_user')
+        $datas = DB::table('gaji_user')
             ->select('gaji_user.*', 'users.name')
             ->join('users', 'users.id', 'gaji_user.user_id')
             ->where('gaji_user.gaji_id', $gaji)
             ->get();
-        
-        return DataTables::of($data)
+
+        foreach ($datas as $data) {
+            $options = '';
+            $options .= '<a href="' . route('kelola-gaji.showMatkul', ['id' => $gaji, 'user_id' => $data->user_id]) . '" class="btn btn-primary">Gaji Matkul</a>';
+            $data->options = $options;
+        }
+
+        return DataTables::of($datas)
             ->editColumn('tunjangan', function ($data) {
                 return formatRupiah($data->tunjangan);
             })
@@ -166,6 +185,7 @@ class GajiController extends Controller
                 return formatRupiah($data->fee_sks);
             })
             ->addIndexColumn()
+            ->rawColumns(['options'])
             ->make(true);
     }
 
@@ -225,5 +245,37 @@ class GajiController extends Controller
         return response()->json([
             'message' => 'Berhasil di hapus'
         ], 200);
+    }
+
+    public function showMatkul($gaji, $user_id)
+    {
+        return view('kelola.gaji.showMatkul');
+    }
+
+    public function dataMatkul($gaji, $user_id)
+    {
+        $datas = DB::table('gaji_matkul')
+            ->select('gaji_matkul.*', 'matkuls.nama as matkul')
+            ->join('tahun_matkul', 'tahun_matkul.id', 'gaji_matkul.tahun_matkul_id')
+            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->where('gaji_matkul.gaji_id', $gaji)
+            ->where('gaji_matkul.user_id', $user_id)
+            ->get();
+
+        return DataTables::of($datas)
+            ->editColumn('fee_sks_teori', function ($data) {
+                return formatRupiah($data->fee_sks_teori);
+            })
+            ->editColumn('total_gee_sks_teori', function ($data) {
+                return formatRupiah($data->total_gee_sks_teori);
+            })
+            ->editColumn('fee_sks_praktek', function ($data) {
+                return formatRupiah($data->fee_sks_praktek);
+            })
+            ->editColumn('total_gee_sks_praktek', function ($data) {
+                return formatRupiah($data->total_gee_sks_praktek);
+            })
+            ->addIndexColumn()
+            ->make(true);
     }
 }

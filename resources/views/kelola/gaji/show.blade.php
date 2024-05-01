@@ -44,11 +44,11 @@
                                     <th>Nama</th>
                                     <th>Tunjangan</th>
                                     <th>Biaya Transport</th>
-                                    <th>Biaya 1 SKS</th>
                                     <th>Total Kehadiran</th>
                                     <th>Total Biaya SKS</th>
                                     <th>Total Biaya Transport</th>
                                     <th>Total Gaji</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -81,9 +81,6 @@
                         "data": "fee_transport"
                     },
                     {
-                        "data": "fee_sks"
-                    },
-                    {
                         "data": "total_kehadiran"
                     },
                     {
@@ -94,6 +91,9 @@
                     },
                     {
                         "data": "total"
+                    },
+                    {
+                        "data": "options"
                     }
                 ],
                 pageLength: 25,
