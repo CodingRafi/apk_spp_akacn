@@ -191,7 +191,7 @@ class PresensiController extends Controller
                 'message' => 'Kode tidak valid!'
             ], 400);
         }
-
+    
         //? validasi KRS
         $krs = DB::table('krs')
             ->where('mhs_id', Auth::user()->id)
@@ -219,7 +219,7 @@ class PresensiController extends Controller
             $today = Carbon::now();
             Carbon::setLocale('id');
             $day = $today->translatedFormat('Y-m-d');
-    
+            
             if ($day != $data->tgl) {
                 return response()->json([
                     'message' => 'Kode tidak valid!'

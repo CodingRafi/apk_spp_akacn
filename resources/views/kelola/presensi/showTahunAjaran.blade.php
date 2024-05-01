@@ -211,7 +211,7 @@
                     },
                     success: function(res) {
                         $.each(res.data, function(i, e) {
-                            $('#materi_id').append(`<option value="${e.id}">${e.materi}</option>`)
+                            $('#materi_id').append(`<option value="${e.id}">${e.materi} (${e.type})</option>`)
                         })
 
                         if (data.materi_id) {

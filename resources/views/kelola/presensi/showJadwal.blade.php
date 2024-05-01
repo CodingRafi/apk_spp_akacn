@@ -174,7 +174,7 @@
                                 <select name="materi_id" id="materi_id" class="form-control" {{ $data->presensi_selesai ? 'readonly' : '' }}>
                                     <option value="">Pilih Materi</option>
                                     @foreach ($materi as $row)
-                                        <option value="{{ $row->id }}" {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }}</option>
+                                        <option value="{{ $row->id }}" {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }} ({{ $row->type }})</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -210,7 +210,7 @@
                         @if ($data->presensi_selesai && Auth::user()->hasRole('dosen'))
                         <td>${e.status ?? '-'}</td>
                         @else
-                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status}</button></td>
+                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status ?? ''}</button></td>
                         @endif
                     </tr>`;
             });

@@ -369,7 +369,10 @@ class PresensiController extends Controller
         $role = getRole();
         $jadwals = DB::table('jadwal')
             ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
-            ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
+            ->join('tahun_matkul', function($q) use($tahun_ajaran_id){
+                $q->on('jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
+                    ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id);
+            })
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->when(request('prodi_id'), function ($q) {
                 $q->where('tahun_matkul.prodi_id', request('prodi_id'));
