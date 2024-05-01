@@ -266,14 +266,14 @@ class GajiController extends Controller
             ->editColumn('fee_sks_teori', function ($data) {
                 return formatRupiah($data->fee_sks_teori);
             })
-            ->editColumn('total_gee_sks_teori', function ($data) {
-                return formatRupiah($data->total_gee_sks_teori);
+            ->editColumn('total_fee_sks_teori', function ($data) {
+                return formatRupiah($data->total_fee_sks_teori);
             })
             ->editColumn('fee_sks_praktek', function ($data) {
                 return formatRupiah($data->fee_sks_praktek);
             })
-            ->editColumn('total_gee_sks_praktek', function ($data) {
-                return formatRupiah($data->total_gee_sks_praktek);
+            ->editColumn('total_fee_sks_praktek', function ($data) {
+                return formatRupiah($data->total_fee_sks_praktek);
             })
             ->addIndexColumn()
             ->make(true);
