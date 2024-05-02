@@ -9,22 +9,23 @@
                         <a href="{{ route('kelola-gaji.index') }}"><i class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Detail</h5>
                     </div>
-                    @if (!$data->status)
-                        <div class="d-flex align-items-center" style="gap: 1rem;">
+                    <div class="d-flex align-items-center" style="gap: 1rem;">
+                        @if (!$data->status)
                             <button class="btn btn-warning btn-generate">Generate Ulang</button>
                             <form action="{{ route('kelola-gaji.publish', $data->id) }}" method="post">
                                 @csrf
                                 @method('patch')
                                 <button type="submit" class="btn btn-primary">Publish</button>
                             </form>
-                        </div>
-                    @else
-                        <form action="{{ route('kelola-gaji.unpublish', $data->id) }}" method="post">
-                            @csrf
-                            @method('patch')
-                            <button type="submit" class="btn btn-danger">Unpublish</button>
-                        </form>
-                    @endif
+                        @else
+                            <form action="{{ route('kelola-gaji.unpublish', $data->id) }}" method="post">
+                                @csrf
+                                @method('patch')
+                                <button type="submit" class="btn btn-danger">Unpublish</button>
+                            </form>
+                            <a href="{{ route('kelola-gaji.export', $data->id) }}" class="btn btn-primary">Export</a>
+                        @endif
+                    </div>
                 </div>
                 <div class="card-body">
                     @if (!$data->status)

@@ -613,6 +613,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('data', [GajiController::class, 'data'])->name('data');
         Route::post('/', [GajiController::class, 'store'])->name('store');
         Route::get('/{id}', [GajiController::class, 'show'])->name('show');
+        Route::get('/{id}/export', [GajiController::class, 'export'])->name('export');
         Route::get('/{id}/generate-ulang', [GajiController::class, 'generateUlang'])->name('generateUlang');
         Route::patch('/{id}/publish', [GajiController::class, 'publish'])->name('publish');
         Route::patch('/{id}/unpublish', [GajiController::class, 'unpublish'])->name('unpublish');

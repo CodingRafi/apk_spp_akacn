@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Kelola;
 
+use App\Exports\GajiExport;
 use App\Http\Controllers\Controller;
 use App\Models\Gaji;
 use App\Models\Jadwal;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class GajiController extends Controller
@@ -277,5 +279,9 @@ class GajiController extends Controller
             })
             ->addIndexColumn()
             ->make(true);
+    }
+
+    public function export($gajiId){
+        return Excel::download(new GajiExport($gajiId), 'gaji.xlsx');
     }
 }
