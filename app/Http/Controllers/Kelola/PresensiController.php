@@ -241,36 +241,9 @@ class PresensiController extends Controller
 
         //? Validasi sudah dibikin belum
         $tgl = $roleUser->name == 'admin' ? $request->tgl : Carbon::now()->format('Y-m-d');
-        $cekJadwalHari = DB::table('jadwal')
-            ->where('tahun_matkul_id', $request->tahun_matkul_id)
-            ->where('tgl', $tgl)
-            ->count();
-
-        if ($cekJadwalHari > 0) {
-            return response()->json([
-                'message' => 'Sudah ada jadwal hari ini'
-            ], 400);
-        }
 
         //? Validasi IP
         if ($roleUser->name == 'dosen') {
-            //? Validasi hari
-            $today = Carbon::now();
-            Carbon::setLocale('id');
-            $day = $today->translatedFormat('l');
-
-            if (!$getTahunMatkul->hari) {
-                return response()->json([
-                    'message' => 'Hari Belum di set'
-                ], 400);
-            }
-
-            if ($day != config('services.hari')[$getTahunMatkul->hari]) {
-                return response()->json([
-                    'message' => 'Sekarang bukan hari ' . config('services.hari')[$getTahunMatkul->hari]
-                ], 400);
-            }
-
             if ($getTahunMatkul->cek_ip == '1') {
                 $whitelist_ip = DB::table('whitelist_ip')->get()->pluck('ip')->toArray();
                 if (!in_array($request->ip(), $whitelist_ip)) {
@@ -278,13 +251,6 @@ class PresensiController extends Controller
                         'message' => 'Jaringan anda tidak valid!'
                     ], 400);
                 }
-            }
-
-            //? Validasi jam
-            if ($today->format('H:i') < date("H:i", strtotime($getTahunMatkul->jam_mulai)) || $today->format('H:i') > date("H:i", strtotime($getTahunMatkul->jam_akhir))) {
-                return response()->json([
-                    'message' => 'Sekarang bukan waktunya pembelajaran'
-                ], 400);
             }
         }
 
