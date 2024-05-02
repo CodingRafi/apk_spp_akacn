@@ -71,9 +71,10 @@ class KurikulumController extends Controller
             $datas = [];
         }
         foreach ($datas as $data) {
-            $data->options = "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroyMatkul', ['kurikulum_id' => $kurikulum_id, 'matkul_id' => $data->id]) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
-                        Hapus
-                    </button>";
+            // $data->options = "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroyMatkul', ['kurikulum_id' => $kurikulum_id, 'matkul_id' => $data->id]) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
+            //             Hapus
+            //         </button>";
+            $data->options = "";
         }
 
         return DataTables::of($datas)

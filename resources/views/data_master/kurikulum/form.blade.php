@@ -88,10 +88,10 @@
                                 <div class="d-flex justify-content-center align-items-center" style="gap: 1rem;">
                                     <button type="button" class="btn btn-primary" onclick="getNeoFeeder()">Get Neo
                                         Feeder</button>
-                                    <button type="button" class="btn btn-primary"
+                                    {{-- <button type="button" class="btn btn-primary"
                                         onclick="addForm('{{ route('data-master.kurikulum.storeMatkul') }}', 'Tambah Mata Kuliah', '#matkul', getMatkul)">
                                         Tambah
-                                    </button>
+                                    </button> --}}
                                 </div>
                             </div>
                             <div class="table-responsive">
@@ -117,7 +117,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="matkul" tabindex="-1" aria-labelledby="matkulLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="matkul" tabindex="-1" aria-labelledby="matkulLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form action="">
                 <div class="modal-content">
@@ -140,7 +140,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> --}}
 @endsection
 
 @push('js')

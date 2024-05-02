@@ -120,6 +120,14 @@
         .select2 {
             width: 100%
         }
+
+        .layout-menu-expanded #layout-menu{
+            z-index: 99992;
+        }
+
+        .layout-menu-expanded .layout-overlay{
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -142,7 +150,7 @@
         </div>
 
         <!-- Overlay -->
-        <div class="layout-overlay layout-menu-toggle" style="z-index: 99991;"></div>
+        <div class="layout-overlay layout-menu-toggle"></div>
     </div>
 
     <form action="" class="form-delete" method="POST">

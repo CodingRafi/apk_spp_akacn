@@ -38,15 +38,15 @@ class ProdiController extends Controller
 
             $options = $options . "<a href='" . route('data-master.prodi.show', $data->id) . "' class='btn btn-info mx-2'>Detail</a>";
 
-            if (auth()->user()->can('edit_prodi')) {
-                $options = $options . "<a href='" . route('data-master.prodi.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
-            }
+            // if (auth()->user()->can('edit_prodi')) {
+            //     $options = $options . "<a href='" . route('data-master.prodi.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
+            // }
 
-            if (auth()->user()->can('delete_prodi')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.destroy', $data->id) . "`)'>
-                                        Hapus
-                                    </button>";
-            }
+            // if (auth()->user()->can('delete_prodi')) {
+            //     $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.destroy', $data->id) . "`)'>
+            //                             Hapus
+            //                         </button>";
+            // }
             $data->options = $options;
         }
 
