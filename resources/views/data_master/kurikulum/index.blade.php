@@ -9,8 +9,8 @@
                     @can('add_kurikulum')
                         <div class="d-flex justify-content-center align-items-center" style="gap: 1rem">
                             <button class="btn btn-primary" onclick="getData()">Get NEO Feeder</button>
-                            <a href="{{ route('data-master.kurikulum.create') }}" class="btn btn-primary text-capitalize">Tambah
-                                Kurikulum</a>
+                            {{-- <a href="{{ route('data-master.kurikulum.create') }}" class="btn btn-primary text-capitalize">Tambah
+                                Kurikulum</a> --}}
                         </div>
                     @endcan
                 </div>
@@ -24,9 +24,7 @@
                                     <th>Prodi</th>
                                     <th>Mulai Berlaku</th>
                                     <th>Sync Neo Feeder</th>
-                                    @can('edit_kurikulum', 'delete_kurikulum')
-                                        <th>Aksi</th>
-                                    @endcan
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -61,11 +59,9 @@
                     {
                         "data": "sync"
                     },
-                    @can('edit_kurikulum', 'hapus_kurikulum')
-                        {
-                            "data": "options"
-                        }
-                    @endcan
+                    {
+                        "data": "options"
+                    }
                 ],
                 pageLength: 25,
                 responsive: true,

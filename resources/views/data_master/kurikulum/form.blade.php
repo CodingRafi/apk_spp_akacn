@@ -21,40 +21,40 @@
                             <div class="mb-3">
                                 <label for="nama" class="form-label">Nama</label>
                                 <input class="form-control" type="text" id="nama" name="nama"
-                                    value="{{ isset($data) ? $data->nama : old('nama') }}" />
+                                    value="{{ isset($data) ? $data->nama : old('nama') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="jml_sks_lulus" class="form-label">Jumlah SKS Lulus</label>
                                 <input class="form-control" type="number" id="jml_sks_lulus" name="jml_sks_lulus"
-                                    value="{{ isset($data) ? $data->jml_sks_lulus : old('jml_sks_lulus') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_lulus : old('jml_sks_lulus') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="jml_sks_wajib" class="form-label">Jumlah SKS Wajib</label>
                                 <input class="form-control" type="number" id="jml_sks_wajib" name="jml_sks_wajib"
-                                    value="{{ isset($data) ? $data->jml_sks_wajib : old('jml_sks_wajib') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_wajib : old('jml_sks_wajib') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="jml_sks_pilihan" class="form-label">Jumlah SKS Pilihan</label>
                                 <input class="form-control" type="number" id="jml_sks_pilihan" name="jml_sks_pilihan"
-                                    value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_pilihan : old('jml_sks_pilihan') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="jml_sks_mata_kuliah_wajib" class="form-label">Jumlah SKS Mata Kuliah
                                     Wajib</label>
                                 <input class="form-control" type="number" id="jml_sks_mata_kuliah_wajib"
                                     name="jml_sks_mata_kuliah_wajib"
-                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_wajib : old('jml_sks_mata_kuliah_wajib') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_wajib : old('jml_sks_mata_kuliah_wajib') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="jml_sks_mata_kuliah_pilihan" class="form-label">Jumlah SKS Mata Kuliah
                                     Pilihan</label>
                                 <input class="form-control" type="number" id="jml_sks_mata_kuliah_pilihan"
                                     name="jml_sks_mata_kuliah_pilihan"
-                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_pilihan : old('jml_sks_mata_kuliah_pilihan') }}" />
+                                    value="{{ isset($data) ? $data->jml_sks_mata_kuliah_pilihan : old('jml_sks_mata_kuliah_pilihan') }}" disabled />
                             </div>
                             <div class="mb-3">
                                 <label for="semester_id" class="form-label">Semester Mulai</label>
-                                <select name="semester_id" id="semester_id" class="select2">
+                                <select name="semester_id" id="semester_id" class="select2" disabled>
                                     <option value="">Pilih Tahun Semester</option>
                                     @foreach ($semesters as $semester)
                                         <option value="{{ $semester->id }}"
@@ -66,7 +66,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="prodi_id" class="form-label">Program Studi</label>
-                                <select name="prodi_id" id="prodi_id" class="form-control">
+                                <select name="prodi_id" id="prodi_id" class="form-control" disabled>
                                     <option value="">Pilih Program Studi</option>
                                     @foreach ($prodis as $item)
                                         <option value="{{ $item->id }}"
@@ -78,7 +78,7 @@
                             </div>
                             <div class="d-grid gap-2 d-md-flex justify-content-md-start f1-buttons">
                                 <button class="btn btn-primary btn-next btn-selanjutnya-1" type="button"
-                                    onclick="submitForm(this.form, this, setKurikulum)">Simpan dan Lanjutkan</button>
+                                    onclick="setKurikulum()">Lanjutkan</button>
                             </div>
                         </fieldset>
 

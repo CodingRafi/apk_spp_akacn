@@ -104,11 +104,11 @@ class KurikulumController extends Controller
         foreach ($datas as $data) {
             $options = '';
 
-            $options = $options . "<a href='" . route('data-master.kurikulum.edit', $data->id) . "' class='btn btn-warning mx-2'>Edit</a>";
+            $options = $options . "<a href='" . route('data-master.kurikulum.edit', $data->id) . "' class='btn btn-primary mx-2'>Detail</a>";
 
-            $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroy', $data->id) . "`)' type='button'>
-                                                Hapus
-                                            </button>";
+            // $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.kurikulum.destroy', $data->id) . "`)' type='button'>
+            //                                     Hapus
+            //                                 </button>";
             $data->options = $options;
         }
 

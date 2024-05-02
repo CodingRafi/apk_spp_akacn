@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme" style="z-index: 99992;">
     <div class="app-brand demo">
         <a href="/dashboard" class="app-brand-link">
             <span
