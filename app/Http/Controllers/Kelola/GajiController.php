@@ -47,8 +47,8 @@ class GajiController extends Controller
         $defaultFeeTransportAsdos = (int) $default[1]->value;
         $defaultFeeSksTeoriDosen = (int) $default[2]->value;
         $defaultFeeSksTeoriAsdos = (int) $default[3]->value;
-        $defaultFeeSksPraktekDosen = (int) $default[2]->value;
-        $defaultFeeSksPraktekAsdos = (int) $default[3]->value;
+        $defaultFeeSksPraktekDosen = (int) $default[4]->value;
+        $defaultFeeSksPraktekAsdos = (int) $default[5]->value;
 
         $pengajar = User::role(['dosen', 'asdos'])
             ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
