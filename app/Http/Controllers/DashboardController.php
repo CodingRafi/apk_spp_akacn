@@ -110,6 +110,20 @@ class DashboardController extends Controller
     public function mahasiswa()
     {
         $this->validateRole('mahasiswa');
-        return view('dashboard.mahasiswa');
+
+        $tagihan = DB::table('rekap_pembayaran')
+                    ->select(DB::raw('SUM(sisa) as tagihan'))
+                    ->where('user_id', auth()->user()->id)
+                    ->first();
+
+        $krs = DB::table('krs')
+                ->select('krs.jml_sks_diambil', 'semesters.nama as semester')
+                ->join('tahun_semester', 'krs.tahun_semester_id', 'tahun_semester.id')
+                ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
+                ->where('krs.status', 'diterima')
+                ->where('krs.mhs_id', auth()->user()->id)
+                ->get();
+
+        return view('dashboard.mahasiswa', compact('tagihan', 'krs'));
     }
 }
