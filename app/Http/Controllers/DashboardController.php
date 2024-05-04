@@ -91,20 +91,28 @@ class DashboardController extends Controller
     public function asdos()
     {
         $this->validateRole('asdos');
-
-        return view('dashboard.asdos');
+        $totalMengajar = DB::table('jadwal')
+        ->where('pengajar_id', auth()->user()->id)
+        ->count();
+        return view('dashboard.asdos', compact('totalMengajar'));
     }
 
     public function dosen()
     {
         $this->validateRole('dosen');
-        return view('dashboard.dosen');
+        $totalMengajar = DB::table('jadwal')
+                            ->where('pengajar_id', auth()->user()->id)
+                            ->count();
+        return view('dashboard.dosen', compact('totalMengajar'));
     }
 
     public function petugas()
     {
         $this->validateRole('petugas');
-        return view('dashboard.petugas');
+        $totalVerifikasi = DB::table('pembayarans')
+                            ->where('verify_id', auth()->user()->id)
+                            ->count();
+        return view('dashboard.petugas', compact('totalVerifikasi'));
     }
 
     public function mahasiswa()

@@ -54,11 +54,14 @@
 @section('container')
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
-          
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-capitalize">Total Verifikasi Pembayaran</h5>
+                        <p class="card-text" style="font-size: 1.6rem;">{{ $totalVerifikasi }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
-
-@push('js')
-   
-@endpush
