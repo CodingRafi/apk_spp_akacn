@@ -220,6 +220,26 @@ class PresensiController extends Controller
             ], 400);
         }
 
+        if ($data->type == 'pertemuan') {
+            //? Validasi hari
+            $today = Carbon::now();
+            Carbon::setLocale('id');
+            $day = $today->translatedFormat('Y-m-d');
+            
+            if ($day != $data->tgl) {
+                return response()->json([
+                    'message' => 'Kode tidak valid!'
+                ], 400);
+            }
+    
+            //? Validasi jam
+            if ($today->format('H:i') < $data->jam_mulai || $today->format('H:i') > $data->jam_akhir) {
+                return response()->json([
+                    'message' => 'Kode tidak valid!'
+                ], 400);
+            }
+        }
+
         $cekSudahPresensi = DB::table('jadwal_presensi')
             ->where('jadwal_id', $data->id)
             ->where('mhs_id', Auth::user()->id)

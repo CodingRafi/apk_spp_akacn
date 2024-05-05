@@ -241,9 +241,36 @@ class PresensiController extends Controller
 
         //? Validasi sudah dibikin belum
         $tgl = $roleUser->name == 'admin' ? $request->tgl : Carbon::now()->format('Y-m-d');
+        $cekJadwalHari = DB::table('jadwal')
+            ->where('tahun_matkul_id', $request->tahun_matkul_id)
+            ->where('tgl', $tgl)
+            ->count();
+
+        if ($cekJadwalHari > 0) {
+            return response()->json([
+                'message' => 'Sudah ada jadwal hari ini'
+            ], 400);
+        }
 
         //? Validasi IP
         if ($roleUser->name == 'dosen') {
+            //? Validasi hari
+            $today = Carbon::now();
+            Carbon::setLocale('id');
+            $day = $today->translatedFormat('l');
+
+            if (!$getTahunMatkul->hari) {
+                return response()->json([
+                    'message' => 'Hari Belum di set'
+                ], 400);
+            }
+
+            if ($day != config('services.hari')[$getTahunMatkul->hari]) {
+                return response()->json([
+                    'message' => 'Sekarang bukan hari ' . config('services.hari')[$getTahunMatkul->hari]
+                ], 400);
+            }
+
             if ($getTahunMatkul->cek_ip == '1') {
                 $whitelist_ip = DB::table('whitelist_ip')->get()->pluck('ip')->toArray();
                 if (!in_array($request->ip(), $whitelist_ip)) {
@@ -251,6 +278,13 @@ class PresensiController extends Controller
                         'message' => 'Jaringan anda tidak valid!'
                     ], 400);
                 }
+            }
+
+            //? Validasi jam
+            if ($today->format('H:i') < date("H:i", strtotime($getTahunMatkul->jam_mulai)) || $today->format('H:i') > date("H:i", strtotime($getTahunMatkul->jam_akhir))) {
+                return response()->json([
+                    'message' => 'Sekarang bukan waktunya pembelajaran'
+                ], 400);
             }
         }
 
@@ -335,7 +369,7 @@ class PresensiController extends Controller
         $role = getRole();
         $jadwals = DB::table('jadwal')
             ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
-            ->join('tahun_matkul', function($q) use($tahun_ajaran_id){
+            ->join('tahun_matkul', function ($q) use ($tahun_ajaran_id) {
                 $q->on('jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
                     ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id);
             })
@@ -497,7 +531,7 @@ class PresensiController extends Controller
         if ($jadwal->tgl != $today->format('Y-m-d')) {
             return redirect()->back()->with('error', 'Tanggal tidak valid');
         }
-        
+
         if ($jadwal->type == 'pertemuan') {
             if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
                 ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
