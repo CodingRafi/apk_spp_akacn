@@ -14,6 +14,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class GajiController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:view_kelola_gaji', ['only' => ['index', 'store']]);
+        $this->middleware('permission:add_kelola_gaji', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_kelola_gaji', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_kelola_gaji', ['only' => ['destroy']]);
+    }
+
     public function index()
     {
         return view('kelola.gaji.index');
