@@ -12,7 +12,7 @@ class RuangController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('permission:view_ruang', ['only' => ['index', 'store']]);
+        $this->middleware('permission:view_ruang', ['only' => ['index', 'show']]);
         $this->middleware('permission:add_ruang', ['only' => ['create', 'store']]);
         $this->middleware('permission:edit_ruang', ['only' => ['edit', 'update']]);
         $this->middleware('permission:delete_ruang', ['only' => ['destroy']]);
