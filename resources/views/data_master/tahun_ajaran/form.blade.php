@@ -27,7 +27,7 @@
                                 <label for="tgl_mulai" class="form-label">Tanggal Mulai</label>
                                 <input class="form-control @error('tgl_mulai') is-invalid @enderror" type="date"
                                     value="{{ isset($data) ? $data->tgl_mulai : old('tgl_mulai') }}" id="tgl_mulai"
-                                    name="tgl_mulai" />
+                                    name="tgl_mulai" disabled />
                                 @error('tgl_mulai')
                                     <div class="invalid-feedback d-block">
                                         {{ $message }}
@@ -38,7 +38,7 @@
                                 <label for="tgl_selesai" class="form-label">Tanggal Selesai</label>
                                 <input class="form-control @error('tgl_selesai') is-invalid @enderror" type="date"
                                     value="{{ isset($data) ? $data->tgl_selesai : old('tgl_selesai') }}" id="tgl_selesai"
-                                    name="tgl_selesai" />
+                                    name="tgl_selesai" disabled />
                                 @error('tgl_selesai')
                                     <div class="invalid-feedback d-block">
                                         {{ $message }}
@@ -49,7 +49,7 @@
                                 <label for="status" class="form-label">Status</label>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" role="switch" name="status"
-                                        id="status" {{ isset($data) ? ($data->status ? 'checked' : '') : old('status') }}
+                                        id="status" {{ isset($data) ? ($data->status ? 'checked' : '') : old('status') }} disabled
                                         value="1">
                                 </div>
                             </div>
@@ -75,6 +75,7 @@
                                             <th>Status</th>
                                             <th>Tanggal Mulai</th>
                                             <th>Tanggal Akhir</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -189,6 +190,9 @@
                     },
                     {
                         data: 'tgl_selesai'
+                    },
+                    {
+                        data: 'options'
                     },
                 ]
             });
