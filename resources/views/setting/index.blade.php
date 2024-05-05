@@ -6,8 +6,22 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize mb-0">Setting</h5>
+                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"
+                        aria-expanded="false" aria-controls="petunjuk">
+                        Petunjuk Ngrok
+                    </button>
                 </div>
                 <div class="card-body">
+                    <div class="collapse mb-3" id="petunjuk">
+                        <div class="card card-body">
+                            <ol class="mb-0">
+                                <li class="mb-2">
+                                    Buka ngrok
+                                </li>
+                                <li>Silahkan ketik "ngrok http http://localhost:3003"</li>
+                            </ol>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -57,13 +71,13 @@
 
 @push('js')
     <script>
-        function editSetting(data){
+        function editSetting(data) {
             $('.div-value').empty();
 
-            if(data.type == 'number'){
+            if (data.type == 'number') {
                 $('#value').attr('type', 'number').val(data.value);
-            }else if(data.type == 'text'){
-                $('#value').attr('type' , 'text').val(data.value);
+            } else if (data.type == 'text') {
+                $('#value').attr('type', 'text').val(data.value);
             }
 
             console.log(data)
