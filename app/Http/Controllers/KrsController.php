@@ -109,7 +109,16 @@ class KrsController extends Controller
         }
 
         $datas = DB::table('krs')
-            ->select('krs_matkul.id', 'matkuls.kode', 'matkuls.nama as matkul', 'matkuls.sks_mata_kuliah', 'tahun_matkul.id as tahun_matkul_id')
+            ->select(
+                'krs_matkul.id',
+                'matkuls.kode',
+                'matkuls.nama as matkul',
+                'matkuls.sks_mata_kuliah',
+                'tahun_matkul.id as tahun_matkul_id',
+                'tahun_matkul.hari',
+                'tahun_matkul.jam_mulai',
+                'tahun_matkul.jam_akhir',
+            )
             ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
@@ -152,6 +161,12 @@ class KrsController extends Controller
                     ->toArray();
 
                 return implode(', ', $dosen);
+            })
+            ->addColumn('hari', function ($datas) {
+                return $datas->hari ? config('services.hari')[$datas->hari] : '';
+            })
+            ->addColumn('jam', function ($datas) {
+                return $datas->jam_mulai . ' - ' . $datas->jam_akhir;
             })
             ->rawColumns(['options', 'ruang'])
             ->make(true);

@@ -105,6 +105,12 @@
                     "data": "sks_mata_kuliah"
                 },
                 {
+                    "data": "hari"
+                },
+                {
+                    "data": "jam"
+                },
+                {
                     "data": "dosen"
                 },
                 {
