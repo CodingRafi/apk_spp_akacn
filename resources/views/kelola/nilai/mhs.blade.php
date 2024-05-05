@@ -130,6 +130,7 @@
                                     <th>Nilai Mutu</th>
                                     <th>Jumlah SKS</th>
                                     <th>Publish</th>
+                                    <th>Send Neo Feeder</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -281,6 +282,9 @@
                     },
                     {
                         "data": "publish"
+                    },
+                    {
+                        "data": "send_neo_feeder"
                     },
                     {
                         "data": "options"

@@ -46,7 +46,7 @@ class NilaiController extends Controller
                 ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $data->id_registrasi_mahasiswa)
                 ->where('users.id_neo_feeder', $data->id_mahasiswa)
                 ->first();
-                
+
             $tahunSemester = DB::table('tahun_semester')
                 ->where('prodi_id', $data->id_prodi)
                 ->where('tahun_ajaran_id', $data->angkatan)
@@ -97,7 +97,7 @@ class NilaiController extends Controller
                         'mutu_id' => $mutu->id,
                         'publish' => '1',
                         'nilai_mutu' => $mutu->nilai,
-                        'id_transfer_neo_feeder' => 'GET_NEO_FEEDER',
+                        'send_neo_feeder' => '1',
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
@@ -218,7 +218,8 @@ class NilaiController extends Controller
                 'mhs_nilai.nilai_mutu',
                 'mutu.nama as mutu',
                 'mhs_nilai.publish',
-                'mhs_nilai.jml_sks'
+                'mhs_nilai.jml_sks',
+                'mhs_nilai.send_neo_feeder'
             )
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
             ->join('krs', 'krs.mhs_id', 'users.id')
@@ -236,7 +237,7 @@ class NilaiController extends Controller
             ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->get();
-            
+
         foreach ($datas as $data) {
             $data->options = " <button class='btn btn-warning'
             onclick='editForm(`" .
@@ -259,7 +260,11 @@ class NilaiController extends Controller
                 return $datas->publish ? "<i class='bx bx-check text-success'></i>" :
                     "<i class='bx bx-x text-danger'></i>";
             })
-            ->rawColumns(['options', 'publish'])
+            ->editCOlumn('send_neo_feeder', function ($datas) {
+                return $datas->send_neo_feeder ? "<i class='bx bx-check text-success'></i>" :
+                    "<i class='bx bx-x text-danger'></i>";
+            })
+            ->rawColumns(['options', 'publish', 'send_neo_feeder'])
             ->make(true);
     }
 
@@ -337,27 +342,49 @@ class NilaiController extends Controller
 
     public function getDataNilai($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
     {
-        $datas = DB::table('mhs_nilai')
+        $datas = DB::table('users')
             ->select(
                 'profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa',
-                'matkuls.kode',
-                'matkuls.nama as matkul',
-                'matkuls.sks_mata_kuliah',
-                'mutu.nama as huruf',
-                'matkuls.id as matkul_id',
-                'mutu.nilai',
-                'users.id as mhs_id'
+                'krs_matkul.id_kelas_kuliah_neo_feeder',
+                'mhs_nilai.nilai_akhir as nilai_angka',
+                'mhs_nilai.nilai_mutu as nilai_indeks',
+                'mutu.nama as nilai_huruf',
+                'users.id as mhs_id',
+                'krs_matkul.tahun_matkul_id'
             )
-            ->join('users', 'users.id', 'mhs_nilai.mhs_id')
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-            ->join('tahun_matkul', 'mhs_nilai.tahun_matkul_id', 'tahun_matkul.id')
-            ->join('matkuls', 'tahun_matkul.matkul_id', 'matkuls.id')
-            ->join('mutu', 'mhs_nilai.mutu_id', 'mutu.id')
-            ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id)
-            ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id)
+            ->join('krs', 'krs.mhs_id', 'users.id')
+            ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
+                $join->on('krs_matkul.krs_id', 'krs.id')
+                    ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
+            })
+            ->leftJoin('mhs_nilai', function ($q) use ($tahun_semester_id, $tahun_matkul_id) {
+                $q->on('users.id', 'mhs_nilai.mhs_id')
+                    ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id)
+                    ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id);
+            })
+            ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
+            ->where('profile_mahasiswas.rombel_id', $rombel_id)
+            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
+            ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->where('mhs_nilai.publish', '1')
             ->get();
 
         return response()->json($datas, 200);
+    }
+
+    public function updateNeoFeeder(Request $request){
+        foreach (json_decode($request->data) as $data) {
+            DB::table('mhs_nilai')
+                ->where('mhs_id', $data->mhs_id)
+                ->where('tahun_matkul_id', $data->tahun_matkul_id)
+                ->update([
+                    'send_neo_feeder' => '1'
+                ]);
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
     }
 }

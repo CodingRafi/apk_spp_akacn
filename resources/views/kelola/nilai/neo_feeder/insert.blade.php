@@ -25,7 +25,9 @@
         $.ajax({
             url: '{{ route('kelola-nilai.updateNeoFeeder', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'rombel_id' => request('rombel_id'), 'tahun_semester_id' => request('tahun_semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) }}',
             type: 'PATCH',
-            data: dataSuccess,
+            data: {
+                data: JSON.stringify(dataSuccess)
+            },
             dataType: 'json',
             success: function() {
                 $.LoadingOverlay("hide");
@@ -39,8 +41,6 @@
     }
 
     async function ajaxSend(token, data) {
-        let dataReq = data;
-        delete dataReq.mhs_id;
 
         $.ajax({
             url: url,
@@ -49,17 +49,22 @@
                 "Content-Type": "application/json"
             },
             data: JSON.stringify({
-                "act": "InsertNilaiTransferPendidikanMahasiswa",
+                "act": "UpdateNilaiPerkuliahanKelas",
                 "token": token.data.token,
-                "record": dataReq
+                "key" : {
+                    "id_registrasi_mahasiswa" : data[0].id_registrasi_mahasiswa,
+                    "id_kelas_kuliah": data[0].id_kelas_kuliah
+                },
+                "record": data[1]
             }),
             success: function(res) {
+                console.log(res)
                 if (res.error_code == '0') {
                     countSuccess++;
     
                     dataSuccess.push({
-                        id_transfer_neo_feeder: res.data.id_transfer,
-                        mhs_id: data.mhs_id
+                        mhs_id: data[0].mhs_id,
+                        tahun_matkul_id: data[0].tahun_matkul_id,
                     });
                 }else{
                     countError++;
@@ -87,18 +92,19 @@
 
         const res = await getData();
         const data = res.map((e) => {
-            return {
-                id_registrasi_mahasiswa: e.neo_feeder_id_registrasi_mahasiswa,
-                id_matkul: e.matkul_id,
-                kode_mata_kuliah_asal: e.kode,
-                nama_mata_kuliah_asal: e.matkul,
-                sks_mata_kuliah_asal: e.sks_mata_kuliah,
-                sks_mata_kuliah_diakui: e.sks_mata_kuliah,
-                nilai_huruf_asal: e.huruf,
-                nilai_huruf_diakui: e.huruf,
-                nilai_angka_diakui: e.nilai,
-                mhs_id: e.mhs_id
-            }
+            return [
+                {
+                    id_registrasi_mahasiswa: e.neo_feeder_id_registrasi_mahasiswa,
+                    id_kelas_kuliah: e.id_kelas_kuliah_neo_feeder,
+                    mhs_id: e.mhs_id,
+                    tahun_matkul_id: e.tahun_matkul_id,
+                },
+                {
+                    nilai_angka: e.nilai_angka,
+                    nilai_indeks: e.nilai_indeks,
+                    nilai_huruf: e.nilai_huruf,
+                }
+            ];
         })
 
         const token = await getToken()
