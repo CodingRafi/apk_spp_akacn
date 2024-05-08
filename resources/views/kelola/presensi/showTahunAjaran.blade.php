@@ -72,7 +72,7 @@
                             <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select">
                                 <option value="">Pilih Pelajaran</option>
                                 @foreach ($tahunMatkul as $matkul)
-                                    <option value="{{ $matkul->id }}">{{ $matkul->nama }}
+                                    <option value="{{ $matkul->id }}">{{ $matkul->kode }} - {{ $matkul->nama }}
                                         |
                                         {{ $matkul->hari ? config('services.hari')[$matkul->hari] : '' }},
                                         {{ $matkul->jam_mulai }} -

@@ -347,7 +347,8 @@ class PresensiController extends Controller
                 'matkuls.nama',
                 'tahun_matkul.hari',
                 'tahun_matkul.jam_mulai',
-                'tahun_matkul.jam_akhir'
+                'tahun_matkul.jam_akhir',
+                'matkuls.kode'
             )
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
