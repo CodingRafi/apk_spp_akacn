@@ -127,15 +127,15 @@ class KrsController extends Controller
             ->join('tahun_semester as f', 'krs.tahun_semester_id', '=', 'f.id')
             ->join('semesters as g', 'f.semester_id', '=', 'g.id')
             ->join('tahun_ajarans as h', 'c.tahun_masuk_id', '=', 'h.id')
-            ->join('rombels as i', 'c.rombel_id', '=', 'i.id')
-            ->join('rombel_tahun_ajarans as j', function($q){
+            ->leftJoin('rombels as i', 'c.rombel_id', '=', 'i.id')
+            ->leftJoin('rombel_tahun_ajarans as j', function($q){
                 $q->on('j.rombel_id', '=', 'i.id')
                     ->on('j.tahun_masuk_id', '=', 'c.tahun_masuk_id');
             })
-            ->join('users as k', 'k.id', '=', 'j.dosen_pa_id')
+            ->leftJoin('users as k', 'k.id', '=', 'j.dosen_pa_id')
             ->where('krs.id', $id)
             ->first();
-
+            
         if (!$data) {
             abort(404);
         }

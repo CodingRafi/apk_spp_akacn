@@ -111,6 +111,8 @@
                                     <th>Kode</th>
                                     <th>Nama</th>
                                     <th>SKS</th>
+                                    <th>Hari</th>
+                                    <th>Tanggal</th>
                                     <th>Dosen</th>
                                     <th>Ruang</th>
                                     @if ($data->status == 'pengajuan')

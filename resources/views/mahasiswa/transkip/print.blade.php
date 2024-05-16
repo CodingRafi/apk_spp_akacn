@@ -41,7 +41,6 @@
         <table aria-label="table-matkul" class="bordered" style="width: 100%;text-align:center">
             <thead>
                 <tr>
-                    <th style="padding: 8px;">#</th>
                     <th style="padding: 8px;">Kode</th>
                     <th style="padding: 8px;">Mata Kuliah</th>
                     <th style="padding: 8px;">SKS</th>
@@ -55,11 +54,10 @@
                 @endphp
                 @foreach ($rekap as $semester => $row)
                     <tr>
-                        <td colspan="5" style="text-align: left;">{{ $semester }}</td>
+                        <td colspan="4" style="text-align: left;">{{ $semester }}</td>
                     </tr>
                     @foreach ($row as $item)
                         <tr>
-                            <td style="padding: 5px;">{{ $loop->parent->iteration }}</td>
                             <td style="padding: 5px;">{{ $item->kode_mk }}</td>
                             <td style="padding: 5px;">{{ $item->matkul }}</td>
                             @if ($item->kuesioner != null)
@@ -93,6 +91,18 @@
                 <th style="text-align: left;">IPK</th>
                 <td>:</td>
                 <td>{{ $bobot_x_sks > 0 || $jml_sks > 0 ? number_format($bobot_x_sks / $jml_sks, 2) : 0 }}
+                </td>
+            </tr>
+        </table>
+
+        <table aria-hidden="true" style="width: 100%">
+            <tr style="text-align: center;">
+                <td style="padding-left: 65%">
+                    Depok, {{ date('d F Y') }}
+                    <br>
+                    <div style="height: 5rem"></div>
+                    <br>
+                    Yuyun Lusini, M.Si
                 </td>
             </tr>
         </table>

@@ -141,7 +141,7 @@
                     <label for="jenis_pembiayaan_id" class="form-label">Jenis Pembiayaan</label>
                     <select class="form-select @error('jenis_pembiayaan_id') is-invalid @enderror"
                         name="jenis_pembiayaan_id" id="jenis_pembiayaan_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Pembiayaan</option>
                         @foreach ($jenisPembiayaan as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -160,7 +160,7 @@
                     <label for="jenis_daftar_id" class="form-label">Jenis Daftar</label>
                     <select class="form-select @error('jenis_daftar_id') is-invalid @enderror"
                         name="jenis_daftar_id" id="jenis_daftar_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Daftar</option>
                         @foreach ($jenisDaftar as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -179,7 +179,7 @@
                     <label for="jalur_masuk_id" class="form-label">Jalur Masuk</label>
                     <select class="form-select @error('jalur_masuk_id') is-invalid @enderror"
                         name="jalur_masuk_id" id="jalur_masuk_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jalur Masuk</option>
                         @foreach ($jalurMasuk as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -196,7 +196,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
-                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->tgl_daftar : old('tgl_daftar') }}">
+                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->tgl_daftar : old('tgl_daftar') }}">
                     @error('tgl_daftar')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -205,7 +205,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="biaya_masuk" class="form-label">Biaya Masuk</label>
-                    <input type="number" min="0" step="0.01" class="form-control" name="biaya_masuk" id="biaya_masuk" {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->biaya_masuk : old('biaya_masuk') }}">
+                    <input type="number" min="0" step="0.01" class="form-control" name="biaya_masuk" id="biaya_masuk" {{ $page == 'profile' || $disabled ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->biaya_masuk : old('biaya_masuk') }}">
                     @error('biaya_masuk')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -216,7 +216,7 @@
                     <label for="jenis_keluar_id" class="form-label">Jenis Keluar</label>
                     <select class="form-select @error('jenis_keluar_id') is-invalid @enderror"
                         name="jenis_keluar_id" id="jenis_keluar_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Keluar</option>
                         @foreach ($jenisKeluar as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -285,7 +285,7 @@
                     <label for="jenis_kelas_id" class="form-label">Jenis Kelas</label>
                     <select class="form-select @error('jenis_kelas_id') is-invalid @enderror" name="jenis_kelas_id"
                         id="jenis_kelas_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Kelas</option>
                         @foreach ($jenisKelas as $item)
                             <option value="{{ $item->id }}"
@@ -303,7 +303,7 @@
                     <label for="rombel_id" class="form-label">Rombel</label>
                     <select class="form-select @error('rombel_id') is-invalid @enderror" name="rombel_id"
                         id="rombel_id"
-                        {{ $page == 'profile' || $disabled || $countPembayaran > 0 || $countKrs > 0 ? 'disabled' : '' }}>
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Rombel</option>
                     </select>
                     @error('rombel_id')

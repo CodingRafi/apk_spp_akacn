@@ -78,17 +78,21 @@
                                     @endif
                                 @endif
                             @endif
-                            @if (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '0') || (!$krs && $validationPembayaran['status'] && $validation))
-                            <form
-                                action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
-                                method="post">
-                                @csrf
-                                @method('patch')
-                                <input type="hidden" name="lock" value="1" aria-hidden="true">
-                                <button type="submit" class="btn btn-danger">lock</button>
-                            </form>
+                            @if (
+                                (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '0')) ||
+                                    (!$krs && $validation))
+                                <form
+                                    action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
+                                    method="post">
+                                    @csrf
+                                    @method('patch')
+                                    <input type="hidden" name="lock" value="1" aria-hidden="true">
+                                    <button type="submit" class="btn btn-danger">lock</button>
+                                </form>
                             @endif
-                            @if (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '1') || (!$krs && !$validationPembayaran['status'] && $validation))
+                            @if (
+                                (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '1')) ||
+                                    (!$krs && !$validation))
                                 <form
                                     action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                     method="post">
@@ -108,21 +112,9 @@
                     <div class="card-body">
                         @if ($dataEmpty || $krs->status == 'pending')
                             @if (!$validation)
-                                @if (!$validationPembayaran['status'])
-                                    <div class="alert alert-danger">
-                                        {{ $validationPembayaran['message'] }}
-                                    </div>
-                                @elseif (!($tahun_semester->tgl_mulai_krs <= date('Y-m-d') && $tahun_semester->tgl_akhir_krs >= date('Y-m-d')))
-                                    <div class="alert alert-danger">
-                                        Bukan tanggal pengisian KRS, pengisian
-                                        {{ parseDate($tahun_semester->tgl_mulai_krs) }} -
-                                        {{ parseDate($tahun_semester->tgl_akhir_krs) }}
-                                    </div>
-                                @else
-                                    <div class="alert alert-danger">
-                                        Bukan waktu pengisian KRS
-                                    </div>
-                                @endif
+                                <div class="alert alert-danger">
+                                    Tidak dapat mengisi KRS
+                                </div>
                             @else
                                 <div class="alert alert-info">
                                     Silahkan pilih mata kuliah yang ingin diambil. Maximal

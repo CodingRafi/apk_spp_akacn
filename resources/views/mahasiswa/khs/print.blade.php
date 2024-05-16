@@ -3,7 +3,7 @@
 @section('title', 'Kartu Hasil Studi')
 
 @section('content')
-    <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">KARTU RENCANA STUDI</h2>
+    <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">KARTU HASIL STUDI</h2>
 
     <div style="margin-top: 2rem;">
         <table style="float: left;width: 50%" aria-hidden="true">
@@ -95,7 +95,7 @@
                 <br>
                 <div style="height: 5rem"></div>
                 <br>
-                ..................................
+                {{ $data->dosenPa }}
             </td>
             <td>
                 <table aria-hidden="true" style="font-size: 1.05rem">

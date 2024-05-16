@@ -118,7 +118,7 @@ class NilaiController extends Controller
     public function getMatkul($tahun_ajaran_id)
     {
         $matkuls = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.nama')
+            ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
             ->where('tahun_matkul.prodi_id', request('prodi_id'))

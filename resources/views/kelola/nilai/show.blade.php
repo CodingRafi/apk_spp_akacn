@@ -96,7 +96,7 @@
                 },
                 success: function(res) {
                     res.data.forEach(e => {
-                        $('#tahun_matkul_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                        $('#tahun_matkul_id').append(`<option value="${e.id}">${e.kode} - ${e.nama}</option>`)
                     })
                 },
                 error: function() {
