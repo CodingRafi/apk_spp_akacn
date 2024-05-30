@@ -91,7 +91,7 @@
     <table aria-hidden="true" style="width: 100%;margin-top: 1rem">
         <tr>
             <td style="width: 45%;">
-                Depok, {{ date('d F Y') }}
+                Jakarta, {{ date('d F Y') }}
                 <br>
                 <div style="height: 5rem"></div>
                 <br>

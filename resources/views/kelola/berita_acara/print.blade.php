@@ -35,7 +35,7 @@
             </table>
         </div>
         <div style="margin-top: 2rem;">
-            <table aria-label="table-daftar-hadir" style="width: 100%;text-align:center">
+            <table aria-label="table-daftar-hadir" style="width: 100%;text-align:center" class="bordered">
                 <thead>
                     <tr>
                         <th style="padding: 11px;width: 20%">Timestamp</th>
@@ -55,9 +55,9 @@
                                 <table style="width: 100%;text-align: center;" aria-hidden="true">
                                     @foreach ($item->mahasiswa as $mhs)
                                         <tr>
-                                            <td>{{ $mhs->name }}</td>
-                                            <td>{{ $mhs->login_key }}</td>
-                                            <td>{{ $mhs->pivot->status }}</td>
+                                            <td style="border-width: 0">{{ $mhs->name }}</td>
+                                            <td style="border-width: 0">{{ $mhs->login_key }}</td>
+                                            <td style="border-width: 0">{{ $mhs->pivot->status }}</td>
                                         </tr>
                                     @endforeach
                                 </table>
@@ -65,6 +65,18 @@
                         </tr>
                     @endforeach
                 </tbody>
+            </table>
+            <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
+                <tr>
+                    <td>
+                        Jakarta, ........ Bulan ........ Tahun ........
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{{ public_path() . '/image/ttd_direktur.jpg' }}" alt="" style="width: 13rem">
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
@@ -100,7 +112,7 @@
             </table>
         </div>
         <div style="margin-top: 1rem;">
-            <table aria-label="table-daftar-hadir" style="width: 100%;text-align:center">
+            <table aria-label="table-daftar-hadir" style="width: 100%;text-align:center" class="bordered">
                 <thead>
                     <tr>
                         <th style="padding: 11px;width: 20%">Timestamp</th>
@@ -121,6 +133,18 @@
                         </tr>
                     @endforeach
                 </tbody>
+            </table>
+            <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
+                <tr>
+                    <td>
+                        Jakarta, ........ Bulan ........ Tahun ........
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="{{ public_path() . '/image/ttd_direktur.jpg' }}" alt="" style="width: 13rem">
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
@@ -188,23 +212,19 @@
                         @endforeach
                     </tbody>
                 </table>
+                <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
+                    <tr>
+                        <td>
+                            Jakarta, ........ Bulan ........ Tahun ........
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <img src="{{ public_path() . '/image/ttd_direktur.jpg' }}" alt="" style="width: 13rem">
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
-
-    <table aria-hidden="true" style="width: 100%;margin-top: 1rem">
-        <tr>
-            <td>
-                Depok, {{ date('d F Y') }}
-                <br>
-                Dosen Pengampu,
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 3rem;"></td>
-        </tr>
-        <tr>
-            <td>{{ Auth::user()->name }}</td>
-        </tr>
-    </table>
 @endsection
