@@ -141,25 +141,29 @@ class ReferensiController extends Controller
         }
 
         $data = DB::table('rombels')
-            ->select('rombels.*', 'users.name as dosen_pa', 'users.login_key as nip_pa')
+            ->select('rombels.id', DB::raw("GROUP_CONCAT(CONCAT(users.name, ' (', users.login_key, ')')) as dosen_pa"), 'rombels.nama')
             ->join('rombel_tahun_ajarans', 'rombel_tahun_ajarans.rombel_id', '=', 'rombels.id')
             ->join('users', 'users.id', 'rombel_tahun_ajarans.dosen_pa_id')
-            ->where('rombel_tahun_ajarans.tahun_masuk_id', request('tahun_ajaran_id'))
             ->when(request('jenis_kelas_id'), function ($q) {
-                $q->where('jenis_kelas_id', request('jenis_kelas_id'));
+                $q->where('rombels.jenis_kelas_id', request('jenis_kelas_id'));
+            })
+            ->when(request('tahun_ajaran_id'), function ($q) {
+                $q->where('rombel_tahun_ajarans.tahun_masuk_id', request('tahun_ajaran_id'));
             })
             ->when(request('prodi_id'), function ($q) {
                 $q->where('rombels.prodi_id', request('prodi_id'));
             })
+            ->groupBy('rombels.id', 'rombel_tahun_ajarans.tahun_masuk_id')
             ->get();
-            
+
         return response()->json([
             'status' => true,
             'data' => $data
         ], 200);
     }
 
-    public function tahunAjaran(){
+    public function tahunAjaran()
+    {
         $data = DB::table('tahun_ajarans')->get();
         return response()->json([
             'status' => true,
@@ -167,12 +171,13 @@ class ReferensiController extends Controller
         ], 200);
     }
 
-    public function semester(){
+    public function semester()
+    {
         $data = DB::table('semesters')
-                ->when(request('tahun_ajaran_id'), function ($q){
-                    $q->where('tahun_ajaran_id', request('tahun_ajaran_id'));
-                })->get();
-                
+            ->when(request('tahun_ajaran_id'), function ($q) {
+                $q->where('tahun_ajaran_id', request('tahun_ajaran_id'));
+            })->get();
+
         return response()->json([
             'status' => true,
             'data' => $data

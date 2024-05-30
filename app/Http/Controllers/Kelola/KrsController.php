@@ -117,8 +117,9 @@ class KrsController extends Controller
                 'f.jatah_sks',
                 'krs.status',
                 'b.id as mhs_id',
-                'i.nama as rombel',
-                'k.name as dosen_pa'
+                'c.tahun_masuk_id',
+                'c.prodi_id',
+                'c.rombel_id'
             )
             ->join('users as b', 'krs.mhs_id', '=', 'b.id')
             ->join('profile_mahasiswas as c', 'c.user_id', '=', 'b.id')
@@ -127,15 +128,14 @@ class KrsController extends Controller
             ->join('tahun_semester as f', 'krs.tahun_semester_id', '=', 'f.id')
             ->join('semesters as g', 'f.semester_id', '=', 'g.id')
             ->join('tahun_ajarans as h', 'c.tahun_masuk_id', '=', 'h.id')
-            ->leftJoin('rombels as i', 'c.rombel_id', '=', 'i.id')
-            ->leftJoin('rombel_tahun_ajarans as j', function($q){
-                $q->on('j.rombel_id', '=', 'i.id')
-                    ->on('j.tahun_masuk_id', '=', 'c.tahun_masuk_id');
-            })
-            ->leftJoin('users as k', 'k.id', '=', 'j.dosen_pa_id')
             ->where('krs.id', $id)
             ->first();
-            
+
+        $getRombel = getRombelMhs($data->prodi_id, $data->tahun_masuk_id, $data->rombel_id);
+        
+        $data->rombel = $getRombel['nama'];
+        $data->dosen_pa = $getRombel['dosen_pa'];
+
         if (!$data) {
             abort(404);
         }

@@ -240,19 +240,15 @@ class KrsController extends Controller
                 'prodi.nama as prodi',
                 'semesters.nama as semester',
                 'users.login_key as nim',
-                'dosenPa.name as dosenPa'
+                'profile_mahasiswas.tahun_masuk_id',
+                'profile_mahasiswas.prodi_id',
+                'profile_mahasiswas.rombel_id'
             )
             ->join('tahun_semester', 'krs.tahun_semester_id', 'tahun_semester.id')
             ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
             ->join('users', 'krs.mhs_id', 'users.id')
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
             ->join('prodi', 'profile_mahasiswas.prodi_id', 'prodi.id')
-            ->join('rombels', 'profile_mahasiswas.rombel_id', 'rombels.id')
-            ->join('rombel_tahun_ajarans', function ($q) {
-                $q->on('rombels.id', 'rombel_tahun_ajarans.rombel_id')
-                    ->on('rombel_tahun_ajarans.tahun_masuk_id', 'profile_mahasiswas.tahun_masuk_id');
-            })
-            ->join('users as dosenPa', 'dosenPa.id', 'rombel_tahun_ajarans.dosen_pa_id')
             ->where('krs.mhs_id', Auth::user()->id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->first();
@@ -260,6 +256,11 @@ class KrsController extends Controller
         if (!$krs) {
             abort(404);
         }
+
+        $getRombel = getRombelMhs($krs->prodi_id, $krs->tahun_masuk_id, $krs->rombel_id);
+        
+        $krs->rombel = $getRombel['nama'];
+        $krs->dosenPa = $getRombel['dosen_pa'];
 
         $krsMatkul = DB::table('krs_matkul')
             ->select(

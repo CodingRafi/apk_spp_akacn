@@ -82,20 +82,20 @@ class TranskipController extends Controller
             ->select(
                 'users.name',
                 'users.login_key as nim',
-                'dosen.name as dosenPa',
                 'prodi.nama as prodi',
-                'profile_mahasiswas.tahun_masuk_id as angkatan'
+                'profile_mahasiswas.tahun_masuk_id as angkatan',
+                'profile_mahasiswas.rombel_id',
+                'profile_mahasiswas.prodi_id'
             )
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-            ->join('rombels', 'rombels.id', 'profile_mahasiswas.rombel_id')
-            ->join('rombel_tahun_ajarans', function ($q) {
-                $q->on('rombel_tahun_ajarans.rombel_id', 'rombels.id')
-                    ->on('rombel_tahun_ajarans.tahun_masuk_id', 'profile_mahasiswas.tahun_masuk_id');
-            })
-            ->join('users as dosen', 'dosen.id', 'rombel_tahun_ajarans.dosen_pa_id')
             ->join('prodi', 'prodi.id', 'profile_mahasiswas.prodi_id')
             ->where('users.id', $user->id)
             ->first();
+
+            $getRombel = getRombelMhs($data->prodi_id, $data->angkatan, $data->rombel_id);
+        
+            $data->rombel = $getRombel['nama'];
+            $data->dosenPa = $getRombel['dosen_pa'];
 
         return Pdf::loadView('mahasiswa.transkip.print', compact('data', 'rekap'))
             ->stream('transkip.pdf');

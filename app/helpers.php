@@ -64,6 +64,43 @@ if (!function_exists('getUrlNeoFeeder')) {
     }
 }
 
+if (!function_exists('getRombelMhs')) {
+
+    function getRombelMhs($prodi_id, $tahun_masuk_id, $rombel_id)
+    {
+        if ($rombel_id) {
+            $data = DB::table('rombels')
+                ->join('rombel_tahun_ajarans', 'rombels.id', '=', 'rombel_tahun_ajarans.rombel_id')
+                ->join('users', 'users.id', '=', 'rombel_tahun_ajarans.dosen_pa_id')
+                ->where('prodi_id', $prodi_id)
+                ->where('tahun_masuk_id', $tahun_masuk_id)
+                ->where('rombel_id', $rombel_id)
+                ->select('rombels.nama', 'users.name as dosen_pa')
+                ->get();
+
+            // Langsung manipulasi data jika query mengembalikan hasil
+            if ($data->isNotEmpty()) {
+                $groupedData = $data->groupBy('nama');
+                $firstGroup = $groupedData->first();
+
+                // Pastikan grup memiliki elemen sebelum mencoba mengakses properti
+                if ($firstGroup->isNotEmpty()) {
+                    return [
+                        'nama' => $firstGroup->first()->nama,
+                        'dosen_pa' => $firstGroup->pluck('dosen_pa')->implode(', ')
+                    ];
+                }
+            }
+        }
+
+        // Mengembalikan data default jika $rombel_id tidak ada atau query tidak mengembalikan hasil
+        return [
+            'nama' => '',
+            'dosen_pa' => '',
+        ];
+    }
+}
+
 if (!function_exists('encryptString')) {
 
     function encryptString($string)

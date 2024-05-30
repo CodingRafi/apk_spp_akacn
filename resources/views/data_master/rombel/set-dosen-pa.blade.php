@@ -51,8 +51,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="dosen_pa" class="form-label">Dosen</label>
-                            <select class="form-select" name="dosen_pa_id">
-                                <option value="">Pilih Dosen</option>
+                            <select class="form-select select2" name="dosen_pa_id[]" multiple style="width: 100%">
                                 @foreach ($dosen as $row)
                                     <option value="{{ $row->id }}">{{ $row->name }} ({{ $row->login_key }})</option>
                                 @endforeach
@@ -70,10 +69,11 @@
 
 @push('js')
     <script>
-        function getTahunAjaran(dosen_pa = {}) {
+        function getTahunAjaran(data = {}) {
+            console.log(data)
             $('#tahun_masuk_id').attr('disabled', 'disabled')
             $.ajax({
-                url: "{{ route('data-master.rombel.getTahunAjaran', request('rombel_id')) }}" + "?dosen_pa_id=" + (dosen_pa.id ?? ''),
+                url: "{{ route('data-master.rombel.getTahunAjaran', request('rombel_id')) }}" + "?tahun_masuk_id=" + (data.tahun_masuk_id ?? ''),
                 type: "GET",
                 success: function(res) {
                     $('#tahun_masuk_id').empty().append('<option value="">Pilih Tahun Masuk</option>')
@@ -83,15 +83,14 @@
                         )
                     })
 
-                    $('#tahun_masuk_id').val(dosen_pa.tahun_masuk_id);
+                    $('#tahun_masuk_id').val(data.tahun_masuk_id);
 
-                    if (!dosen_pa.tahun_masuk_id) {
+                    if (!data.tahun_masuk_id) {
                         $('#tahun_masuk_id').removeAttr('disabled');
                     }
                 },
                 error: function(err) {
                     $('#tahun_masuk_id').removeAttr('disabled')
-                    console.log(err)
                 }
             })
         }

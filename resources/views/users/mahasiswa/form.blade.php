@@ -412,7 +412,7 @@
             success: function(res) {
                 $.each(res.data, function(i, e) {
                     $('#rombel_id').append(
-                        `<option value="${e.id}">${e.nama} (${e.dosen_pa}|${e.nip_pa})</option>`
+                        `<option value="${e.id}">${e.nama} (${e.dosen_pa})</option>`
                     );
                 })
             },

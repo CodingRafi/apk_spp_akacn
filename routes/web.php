@@ -392,9 +392,9 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::get('{rombel_id}/dosen-pa', [RombelController::class, 'indexDosenPa'])->name('index');
             Route::post('{rombel_id}/dosen-pa', [RombelController::class, 'storeDosenPa'])->name('store');
             Route::get('{rombel_id}/dosen-pa/data', [RombelController::class, 'dataDosenPa'])->name('data');
-            Route::get('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'showDosenPa'])->name('show');
-            Route::put('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'updateDosenPa'])->name('update');
-            Route::delete('{rombel_id}/dosen-pa/{id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
+            Route::get('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'showDosenPa'])->name('show');
+            Route::put('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'updateDosenPa'])->name('update');
+            Route::delete('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
         });
         Route::resource('rombel', RombelController::class);
     });
