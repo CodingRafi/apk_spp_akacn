@@ -708,6 +708,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/', [TranskipController::class, 'index'])->name('index');
         Route::get('/data', [TranskipController::class, 'data'])->name('data');
         Route::get('/print', [TranskipController::class, 'print'])->name('print');
+        Route::get('/export', [TranskipController::class, 'export'])->name('export');
     });
 
     Route::prefix('mbkm')->name('mbkm.')->group(function () {

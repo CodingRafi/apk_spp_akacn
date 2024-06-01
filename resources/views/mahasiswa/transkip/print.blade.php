@@ -1,112 +1,175 @@
-@extends('components.template-pdf')
+<html>
 
-@section('title', 'Rekap Nilai Akademik')
+<head>
+    <style>
+        @page {
+            margin: 285px 35px 30px;
+        }
 
-@section('content')
-    <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">REKAPITULASI NILAI AKADEMIK</h2>
+        header {
+            position: fixed;
+            top: -17.4rem;
+            left: 0px;
+            right: 0px;
+            height: 7rem;
+            font-size: 13px !important;
+        }
 
-    <div style="margin-top: 1rem;">
-        <table aria-hidden="true">
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .content tr>td:first-child {
+            text-align: justify;
+        }
+
+        .content tr td:last-child {
+            font-size: 10px;
+            line-height: 15px;
+        }
+
+        .content td {
+            border-bottom: 0px dotted #E4E4E4;
+            line-height: 20px;
+            font-size: 10px;
+            padding: 2px 0;
+            display: table-cell;
+            vertical-align: text-top;
+
+        }
+
+        .content td:first-child::after {
+            content: "";
+            display: inline-block;
+            width: 100%;
+        }
+
+        .table.bordered {
+            border-collapse: collapse;
+        }
+
+        .table.bordered th,
+        .table.bordered td {
+            border: 1px solid #a09e9e;
+            margin: 0;
+            padding: .25rem;
+        }
+
+        .table td {
+            padding: 5px;
+        }
+
+        .table.no-padding td {
+            padding: 0px;
+        }
+    </style>
+    <title>Transkip Akademik</title>
+</head>
+
+<body>
+    @php
+        setlocale(LC_TIME, 'id_ID.utf8');
+    @endphp
+    <header>
+        <h3 style="text-align: center">TRANSKIP AKADEMIK MAHASISWA</h3>
+        <table aria-hidden="true" style="margin:auto">
             <tr>
-                <td style="width: 7rem">NIM</td>
+                <td>Nomor Seri Transkip Akademik</td>
                 <td>:</td>
-                <td style="font-weight: bold">{{ $data->nim }}</td>
+                <td></td>
             </tr>
             <tr>
-                <td style="width: 7rem">Nama Mahasiswa</td>
+                <td>Nomor Ijazah Nasional</td>
                 <td>:</td>
-                <td style="font-weight: bold">{{ $data->name }}</td>
+                <td></td>
             </tr>
             <tr>
-                <td style="width: 7rem">Angkatan</td>
+                <td>Program Pendidikan</td>
                 <td>:</td>
-                <td style="font-weight: bold">{{ $data->angkatan }}</td>
+                <td>{{ $data->jenjang }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Dosen PA</td>
+                <td>Program Studi</td>
                 <td>:</td>
-                <td style="font-weight: bold">{{ $data->dosenPa }}</td>
+                <td>{{ $data->prodi }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Prodi</td>
+                <td>Nama</td>
                 <td>:</td>
-                <td style="font-weight: bold">{{ $data->prodi }}</td>
+                <td>{{ $data->name }}</td>
+            </tr>
+            <tr>
+                <td>Tempat dan Tanggal Lahir</td>
+                <td>:</td>
+                <td>{{ $data->tempat_lahir }},
+                    {{ \Carbon\Carbon::parse($data->tgl_lahir)->locale('id')->isoFormat('D MMMM Y') }}</td>
+            </tr>
+            <tr>
+                <td>Nomor Induk Mahasiswa (NIM)</td>
+                <td>:</td>
+                <td>{{ $data->nim }}</td>
+            </tr>
+            <tr>
+                <td>Tanggal, Bulan, dan Tahun Kelulusan</td>
+                <td>:</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Jumlah SKS</td>
+                <td>:</td>
+                <td>{{ $totalSKS }}</td>
+            </tr>
+            <tr>
+                <td>Index Prestasi Komulatif</td>
+                <td>:</td>
+                <td>{{ number_format(end($ipk)['ipk'], 2) }}</td>
+            </tr>
+            <tr>
+                <td>Predikat Kelulusan</td>
+                <td>:</td>
+                <td></td>
             </tr>
         </table>
-    </div>
+    </header>
 
-    <div style="clear: both;"></div>
-
-    <div style="margin-top: 2rem;">
-        <table aria-label="table-matkul" class="bordered" style="width: 100%;text-align:center">
-            <thead>
-                <tr>
-                    <th style="padding: 8px;">Kode</th>
-                    <th style="padding: 8px;">Mata Kuliah</th>
-                    <th style="padding: 8px;">SKS</th>
-                    <th style="padding: 8px;">Nilai</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    $jml_sks = 0;
-                    $bobot_x_sks = 0;
-                @endphp
-                @foreach ($rekap as $semester => $row)
+    <main>
+        <div>
+            <table aria-label="table-matkul" class="table bordered" style="width: 100%;text-align:center">
+                <thead>
                     <tr>
-                        <td colspan="4" style="text-align: left;">{{ $semester }}</td>
+                        <th style="padding: 8px;">Kode</th>
+                        <th style="padding: 8px;">Mata Kuliah</th>
+                        <th style="padding: 8px;">SKS</th>
+                        <th style="padding: 8px;">Nilai</th>
                     </tr>
-                    @foreach ($row as $item)
+                </thead>
+                <tbody>
+                    @foreach ($rekap as $semester => $row)
                         <tr>
-                            <td style="padding: 5px;">{{ $item->kode_mk }}</td>
-                            <td style="padding: 5px;">{{ $item->matkul }}</td>
-                            @if ($item->kuesioner != null)
-                                @php
-                                    $jml_sks += $item->jml_sks;
-                                    $bobot_x_sks += $item->bobot_x_sks;
-                                @endphp
-                                <td style="padding: 5px;">{{ $item->jml_sks }}</td>
-                                <td style="padding: 5px;">{{ $item->mutu }}</td>
-                            @else
-                                <td colspan="2" style="padding: 5px;">BELUM ISI KUESIONER</td>
-                            @endif
+                            <td colspan="4" style="text-align: left;">{{ $semester }}</td>
+                        </tr>
+                        @foreach ($row as $item)
+                            <tr>
+                                <td style="padding: 5px;">{{ $item->kode_mk }}</td>
+                                <td style="padding: 5px;">{{ $item->matkul }}</td>
+                                @if ($item->kuesioner != null && $item->status == 1)
+                                    <td style="padding: 5px;">{{ $item->jml_sks }}</td>
+                                    <td style="padding: 5px;">{{ $item->mutu }}</td>
+                                @else
+                                    <td style="padding: 5px;"></td>
+                                    <td style="padding: 5px;"></td>
+                                @endif
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <td colspan="2" style="text-align: center">Jumlah SKS dan IP {{ $semester }}</td>
+                            <td>{{ $ipk[$semester]['sks'] }}</td>
+                            <td>{{ number_format($ipk[$semester]['ipk'], 2) }}</td>
                         </tr>
                     @endforeach
-                @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+    </main>
+</body>
 
-        <table aria-hidden="true" style="margin-top: 1rem;">
-            <tr>
-                <th style="text-align: left;">Total SKS Lulus</th>
-                <td>:</td>
-                <td>{{ $jml_sks }}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">Total Mutu</th>
-                <td>:</td>
-                <td>{{ number_format($bobot_x_sks, 2) }}</td>
-            </tr>
-            <tr>
-                <th style="text-align: left;">IPK</th>
-                <td>:</td>
-                <td>{{ $bobot_x_sks > 0 || $jml_sks > 0 ? number_format($bobot_x_sks / $jml_sks, 2) : 0 }}
-                </td>
-            </tr>
-        </table>
-
-        <table aria-hidden="true" style="width: 100%">
-            <tr style="text-align: center;">
-                <td style="padding-left: 65%">
-                    Jakarta, {{ date('d F Y') }}
-                    <br>
-                    <div style="height: 5rem"></div>
-                    <br>
-                    Yuyun Lusini, M.Si
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    </table>
-@overwrite
+</html>

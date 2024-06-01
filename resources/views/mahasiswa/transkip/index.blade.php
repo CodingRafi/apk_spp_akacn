@@ -6,7 +6,10 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="text-capitalize">Transkip Nilai</h5>
-                    <a href="{{ route('transkip.print') }}" class="btn btn-primary">Download Transkip</a>
+                    <div class="d-flex justify-content-center align-items-center" style="gap: 1rem">
+                        <a href="{{ route('transkip.print') }}" class="btn btn-primary">Export PDF</a>
+                        <a href="{{ route('transkip.export') }}" class="btn btn-primary">Export Excel</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
