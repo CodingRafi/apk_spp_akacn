@@ -3,7 +3,16 @@
 @section('title', 'Berita Acara')
 
 @section('content')
+    @php
+        $dateNow = \Carbon\Carbon::now();
+        \Carbon\Carbon::setLocale('id');
 
+        $day = $dateNow->format('d');
+        $month = $dateNow->translatedFormat('F'); // Nama bulan dalam bahasa Indonesia
+        $year = $dateNow->format('Y');
+
+        $dataFormat = "Jakarta, {$day} Bulan {$month} Tahun {$year}"
+    @endphp
     <div class="daftar-hadir" style="page-break-after: always;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">DAFTAR HADIR KULIAH MAHASISWA
         </h2>
@@ -69,7 +78,7 @@
             <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
                 <tr>
                     <td>
-                        Jakarta, ........ Bulan ........ Tahun ........
+                        {{ $dataFormat }}
                     </td>
                 </tr>
                 <tr>
@@ -137,7 +146,7 @@
             <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
                 <tr>
                     <td>
-                        Jakarta, ........ Bulan ........ Tahun ........
+                        {{ $dataFormat }}
                     </td>
                 </tr>
                 <tr>
@@ -215,13 +224,14 @@
                 <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
                     <tr>
                         <td>
-                            Jakarta, ........ Bulan ........ Tahun ........
+                            {{ $dataFormat }}
                         </td>
                     </tr>
                     <tr>
-                        <td>
-                            <img src="{{ public_path() . '/image/ttd_direktur.jpg' }}" alt="" style="width: 13rem">
-                        </td>
+                        <div style="height: 6rem"></div>
+                    </tr>
+                    <tr>
+                        <td style="text-align: center">{{ Auth::user()->name }}</td>
                     </tr>
                 </table>
             </div>

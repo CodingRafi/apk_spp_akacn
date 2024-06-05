@@ -13,7 +13,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-matkul text-center">
+                        <table class="table table-matkul">
                             <thead>
                                 <tr>
                                     <th class="col-4">Kode</th>
@@ -23,7 +23,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr class="text-center">
                                     <td colspan="4" class="py-5">
                                         <div class="spinner-border text-primary" role="status">
                                             <span class="visually-hidden">Loading...</span>

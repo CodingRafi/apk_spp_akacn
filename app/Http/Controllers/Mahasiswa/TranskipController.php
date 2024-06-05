@@ -94,8 +94,14 @@ class TranskipController extends Controller
                 }
             }
 
+            try {
+                $ipk = array_sum($mutu_x_sks) / array_sum($sks);
+            } catch (\Throwable $th) {
+                $ipk = 0;
+            }
+
             $result[$key] = [
-                'ipk' => array_sum($mutu_x_sks) / array_sum($sks),
+                'ipk' => $ipk,
                 'sks' => $jml_sks_semester
             ];
         }
