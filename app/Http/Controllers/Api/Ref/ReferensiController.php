@@ -153,7 +153,7 @@ class ReferensiController extends Controller
             ->when(request('prodi_id'), function ($q) {
                 $q->where('rombels.prodi_id', request('prodi_id'));
             })
-            ->groupBy('rombels.id', 'rombel_tahun_ajarans.tahun_masuk_id')
+            ->groupBy('rombels.id', 'rombel_tahun_ajarans.tahun_masuk_id', 'rombels.nama')
             ->get();
 
         return response()->json([

@@ -78,11 +78,11 @@
 @push('js')
     <script>
         function storeRombel(){
-            $('#prodi_id, #jenis_kelas_id').removeAttr('disabled');
+            $('#prodi_id, #jenis_kelas_id').removeAttr('readonly');
         }
 
         function editRombel(){
-            $('#prodi_id, #jenis_kelas_id').attr('disabled', 'disabled');
+            $('#prodi_id, #jenis_kelas_id').attr('readonly', 'readonly');
         }
 
         let table;
