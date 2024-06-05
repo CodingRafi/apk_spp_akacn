@@ -21,7 +21,6 @@ class SemesterController extends Controller
             ->join('tahun_ajarans', 'tahun_ajarans.id', 'semesters.tahun_ajaran_id')
             ->whereNull('tahun_semester.semester_id')
             ->where('tahun_ajarans.id', ">=", $tahun_ajaran_id)
-            ->where('tahun_ajarans.status', "1")
             ->where('semesters.status', "1")
             ->when(request('semester_id') && request('semester_id') != '', function ($q) {
                 $q->orWhere('tahun_semester.semester_id', request('semester_id'));
