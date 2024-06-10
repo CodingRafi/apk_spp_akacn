@@ -101,6 +101,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
 
     Route::prefix('dashboard')->name('dashboard.')->group(function () {
         Route::get('/admin', [DashboardController::class, 'admin'])->name('admin');
+        Route::get('/admin/get-matkul', [DashboardController::class, 'adminGetMatkul'])->name('adminGetMatkul');
         Route::get('/mahasiswa', [DashboardController::class, 'mahasiswa'])->name('mahasiswa');
         Route::get('/dosen', [DashboardController::class, 'dosen'])->name('dosen');
         Route::get('/petugas', [DashboardController::class, 'petugas'])->name('petugas');

@@ -92,9 +92,14 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-3">
+                            <div class="col-md-2 mb-3">
                                 <select name="semester" id="filter-semester" class="select2">
                                     <option value="">Pilih Semester</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <select name="matkul" id="filter-matkul" class="select2">
+                                    <option value="">Pilih Mata Kuliah</option>
                                 </select>
                             </div>
                             <div class="col-md-1">
@@ -332,6 +337,7 @@
     <script>
         $('#filter-tahun-ajaran, #filter-prodi').on('change', function() {
             getSemester();
+            getMatkul();
         });
 
         function getSemester(semester_id = null) {
@@ -361,11 +367,40 @@
                 })
             }
         }
+
+        function getMatkul(matkul_id = null) {
+            if ($('#filter-tahun-ajaran').val() != '' && $('#filter-prodi').val() != '') {
+                $('#filter-matkul').empty().append(`<option value="">Pilih Mata Kuliah</option>`);
+                $.ajax({
+                    url: '{{ route('kelola-kuesioner.response.getMatkul') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        prodi_id: $('#filter-prodi').val(),
+                        tahun_ajaran_id: $('#filter-tahun-ajaran').val(),
+                    },
+                    success: function(res) {
+                        $.each(res.data, function(i, e) {
+                            $('#filter-matkul').append(
+                                `<option value="${e.id}">${e.kode} - ${e.nama}</option>`)
+                        })
+
+                        if (matkul_id != null) {
+                            $('#filter-matkul').val(matkul_id);
+                        }   
+                    },
+                    error: function(err) {
+                        alert('Gagal get matkul');
+                    }
+                })
+            }
+        }
     </script>
     @if (request('tahun_ajaran') != null && request('prodi') != null)
         <script>
             $(document).ready(function() {
                 getSemester({{ request('semester') }});
+                getMatkul({{ request('matkul') }});
             })
         </script>
     @endif

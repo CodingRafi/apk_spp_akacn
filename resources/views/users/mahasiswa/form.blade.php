@@ -55,6 +55,17 @@
                     @enderror
                 </div>
                 <div class="mb-3">
+                    <label for="no_ktp" class="form-label">No KTP</label>
+                    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('no_ktp') is-invalid @enderror"
+                        type="text" value="{{ isset($data) ? $data->mahasiswa->no_ktp : old('no_ktp') }}" id="no_ktp"
+                        placeholder="No KTP" name="no_ktp" />
+                    @error('no_ktp')
+                        <div class="invalid-feedback d-block">
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+                <div class="mb-3">
                     <label for="nik" class="form-label">NIK</label>
                     <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('nik') is-invalid @enderror"
                         type="text" value="{{ isset($data) ? $data->mahasiswa->nik : old('nik') }}" id="nik"

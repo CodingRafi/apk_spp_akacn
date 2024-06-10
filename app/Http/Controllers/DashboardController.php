@@ -48,9 +48,13 @@ class DashboardController extends Controller
                 ->toArray();
 
             $krs = DB::table('krs')
-                ->select('status as name', DB::raw('count(*) as y'))
-                ->where('tahun_semester_id', request('semester'))
-                ->groupBy('status')
+                ->select('krs.status as name', DB::raw('count(*) as y'))
+                ->when(request('matkul'), function($q){
+                    $q->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
+                        ->where('krs_matkul.tahun_matkul_id', request('matkul'));
+                })
+                ->where('krs.tahun_semester_id', request('semester'))
+                ->groupBy('krs.status')
                 ->get()
                 ->toArray();
 
@@ -59,6 +63,9 @@ class DashboardController extends Controller
                 ->join('jadwal_presensi', 'jadwal_presensi.jadwal_id', 'jadwal.id')
                 ->join('users', 'users.id', 'jadwal_presensi.mhs_id')
                 ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                ->when(request('matkul'), function($q){
+                    $q->where('jadwal.tahun_matkul_id', request('matkul'));
+                })
                 ->where('jadwal.tahun_semester_id', request('semester'))
                 ->where('profile_mahasiswas.prodi_id', request('prodi'))
                 ->where('profile_mahasiswas.tahun_masuk_id', request('tahun_ajaran'))
@@ -70,6 +77,9 @@ class DashboardController extends Controller
                 ->join('users', 'users.id', 'mhs_nilai.mhs_id')
                 ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
                 ->join('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
+                ->when(request('matkul'), function($q){
+                    $q->where('mhs_nilai.tahun_matkul_id', request('matkul'));
+                })
                 ->where('mhs_nilai.tahun_semester_id', request('semester'))
                 ->where('profile_mahasiswas.prodi_id', request('prodi'))
                 ->where('profile_mahasiswas.tahun_masuk_id', request('tahun_ajaran'))
@@ -133,5 +143,15 @@ class DashboardController extends Controller
                 ->get();
 
         return view('dashboard.mahasiswa', compact('tagihan', 'krs'));
+    }
+
+    public function adminGetMatkul(){
+        $data = DB::table('tahun_matkul')
+                    ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+                    ->where('tahun_matkul.prodi_id', request('prodi'))
+                    ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran'))
+                    ->get();
+
+        return response()->json($data, 200);
     }
 }

@@ -191,7 +191,7 @@
     </div>
 
     <div class="mt-05">
-        <table>
+        <table aria-hidden="true">
             <tr>
                 <td style="width: 30rem"></td>
                 <td>

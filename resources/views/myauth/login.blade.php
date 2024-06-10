@@ -67,7 +67,7 @@
                                 </div>
                             @endif
                             <div class="mb-3">
-                                <label for="login_key" class="form-label">Email\NIDN\NIP\NIM</label>
+                                <label for="login_key" class="form-label">Email\NIDN\NIM</label>
                                 <input type="text" class="form-control" id="login_key" name="login_key"
                                     placeholder="Email\NIDN\NIP\NIM" autofocus required />
                             </div>

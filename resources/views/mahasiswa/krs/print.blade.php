@@ -3,6 +3,16 @@
 @section('title', 'Kartu Rencana Studi')
 
 @section('content')
+    <style>
+        .table-container {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-item {
+            text-align: center;
+        }
+    </style>
     @php
         $configHari = config('services.hari');
     @endphp
@@ -81,26 +91,52 @@
             </tbody>
         </table>
     </div>
+    <div style="margin-top: 1rem">
+        <div style="width: 32%;float: right">
+            <table aria-hidden="true" style="width: 100%;margin-top: 1rem">
+                <tr>
+                    <td style="text-align: center;">
+                        Mahasiswa/i
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        @php
+            $dateNow = \Carbon\Carbon::now();
+            \Carbon\Carbon::setLocale('id');
 
-    <table aria-hidden="true" style="width: 100%;margin-top: 1rem">
-        <tr>
-            <td>
-                Jakarta, {{ date('d F Y') }}
-            </td>
-            <td></td>
-            <td style="text-align: center;">
-                Mahasiswa/i
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-        </tr>
-    </table>
+            $day = $dateNow->format('d');
+            $month = $dateNow->translatedFormat('F'); // Nama bulan dalam bahasa Indonesia
+            $year = $dateNow->format('Y');
+
+            $dataFormat = "Jakarta, {$day} {$month} {$year}";
+        @endphp
+        <div style="width: 66%;">
+            <table class="table-container" aria-hidden="true" style="padding: 0">
+                @foreach (explode(',', $krs->dosenPa) as $key => $dosenPa)
+                    @if ($key % 2 == 0)
+                        <tr>
+                            <td class="table-item">
+                                <p>{{ $dataFormat }}</p>
+                                <div style="height: 7rem"></div>
+                                <p>{{ $dosenPa }}</p>
+                            </td>
+                        @else
+                            <td class="table-item">
+                                <p>{{ $dataFormat }}</p>
+                                <div style="height: 7rem"></div>
+                                <p>{{ $dosenPa }}</p>
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            </table>
+        </div>
+    </div>
 @endsection

@@ -169,6 +169,18 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <table aria-hidden="true" style="margin-top: 1rem">
+                <tr>
+                    <td>Jakarta, {{ date('d F Y') }}</td>
+                </tr>
+                <tr>
+                    <td style="height: 7rem"></td>
+                </tr>
+                <tr>
+                    <td>Yuyun Lusini, M.Si</td>
+                </tr>
+            </table>
     </main>
 </body>
 
