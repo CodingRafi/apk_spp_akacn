@@ -75,7 +75,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="matkul_id" class="form-label">Mata Kuliah</label>
-                            <select class="form-select" name="matkul_id" id="matkul_id">
+                            <select class="form-select select2" name="matkul_id" id="matkul_id" style="width: 100%">
                                 <option value="">Pilih Mata Kuliah</option>
                             </select>
                         </div>
