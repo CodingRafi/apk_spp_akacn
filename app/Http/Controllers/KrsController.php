@@ -187,7 +187,7 @@ class KrsController extends Controller
         }
 
         $mhs = DB::table('profile_mahasiswas')
-            ->select('profile_mahasiswas.rombel_id')
+            ->select('profile_mahasiswas.rombel_id', 'profile_mahasiswas.tahun_masuk_id')
             ->where('user_id', $mhs_id)
             ->first();
 
@@ -214,6 +214,7 @@ class KrsController extends Controller
             ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
             ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
             ->whereNotIn('tahun_matkul.id', $krsMatkul)
+            ->where('tahun_matkul.tahun_ajaran_id', $mhs->tahun_masuk_id)
             ->get();
 
         $matkul = $getMatkul->groupBy('id')->map(function ($group) {
@@ -314,11 +315,11 @@ class KrsController extends Controller
             ->whereIn('tahun_matkul.id', $request->tahun_matkul_id)
             ->sum('matkuls.sks_mata_kuliah');
 
-        if (($sumSKSMatkulRequest + $sumSKSMatkulDipilih) > $tahun_semester->jatah_sks) {
-            return response()->json([
-                'message' => 'Total SKS Tidak Boleh Lebih Besar Dari Jatah SKS'
-            ], 400);
-        }
+        // if (($sumSKSMatkulRequest + $sumSKSMatkulDipilih) > $tahun_semester->jatah_sks) {
+        //     return response()->json([
+        //         'message' => 'Total SKS Tidak Boleh Lebih Besar Dari Jatah SKS'
+        //     ], 400);
+        // }
 
         DB::beginTransaction();
         try {

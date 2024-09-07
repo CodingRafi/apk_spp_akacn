@@ -147,12 +147,13 @@ class PresensiController extends Controller
         ], 200);
     }
 
-    public function getSemester($prodi_id)
+    public function getSemester($tahun_ajaran_id, $prodi_id)
     {
         $data = DB::table('tahun_semester')
             ->select('tahun_semester.id', 'semesters.nama')
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.prodi_id', $prodi_id)
+            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
             ->get();
 
         return response()->json([
@@ -160,12 +161,13 @@ class PresensiController extends Controller
         ], 200);
     }
 
-    public function getMatkul($prodi_id)
+    public function getMatkul($tahun_ajaran_id, $prodi_id)
     {
         $data = DB::table('tahun_matkul')
             ->select('matkuls.nama', 'tahun_matkul.id')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.prodi_id', $prodi_id)
+            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
             ->when(Auth::user()->hasRole('dosen'), function ($q) {
                 $q->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
                     ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);

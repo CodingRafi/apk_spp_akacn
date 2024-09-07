@@ -229,7 +229,7 @@
             let prodi_id = $('#filter-prodi').val();
             $('#filter-tahun-semester').empty().append(`<option value="">Pilih Semester</option>`);
             $.ajax({
-                url: '{{ route('kelola-presensi.presensi.getSemester', ':prodi_id') }}'.replace(':prodi_id',
+                url: '{{ route('kelola-presensi.presensi.getSemester', ['prodi_id' => ':prodi_id', 'tahun_ajaran_id' => request('tahun_ajaran_id')]) }}'.replace(':prodi_id',
                     prodi_id),
                 type: 'GET',
                 dataType: 'json',
@@ -248,7 +248,7 @@
             let prodi_id = $('#filter-prodi').val();
             $('#filter-tahun-matkul').empty().append(`<option value="">Pilih Matkul</option>`);
             $.ajax({
-                url: '{{ route('kelola-presensi.presensi.getMatkul', ['prodi_id' => ':prodi_id']) }}'
+                url: '{{ route('kelola-presensi.presensi.getMatkul', ['prodi_id' => ':prodi_id', 'tahun_ajahan_id' => request('tahun_ajaran_id')]) }}'
                     .replace(':prodi_id', prodi_id),
                 type: 'GET',
                 dataType: 'json',

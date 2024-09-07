@@ -79,8 +79,8 @@
                                 @endif
                             @endif
                             @if (
-                                (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '0')) ||
-                                    (!$krs && $validation))
+                                (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '0') ||
+                                    (!$krs && !$validation))))
                                 <form
                                     action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                     method="post">
@@ -91,8 +91,8 @@
                                 </form>
                             @endif
                             @if (
-                                (Auth::user()->hasRole('admin') && ($krs && $krs->status == 'pending' && $krs->lock == '1')) ||
-                                    (!$krs && !$validation))
+                                (Auth::user()->hasRole('admin') && (($krs && $krs->status == 'pending' && $krs->lock == '1') ||
+                                    (!$krs && $validation))))
                                 <form
                                     action="{{ route('krs.updateLock', ['mhs_id' => $mhs_id, 'tahun_semester_id' => $tahun_semester->id]) }}"
                                     method="post">

@@ -14,13 +14,14 @@ class SemesterController extends Controller
     {
         $data = DB::table('semesters')
             ->select('semesters.*')
-            ->leftJoin('tahun_semester', function ($join) use ($prodi_id) {
+            ->leftJoin('tahun_semester', function ($join) use ($prodi_id, $tahun_ajaran_id) {
                 $join->on('tahun_semester.semester_id', 'semesters.id')
-                    ->where('tahun_semester.prodi_id', $prodi_id);
+                    ->where('tahun_semester.prodi_id', $prodi_id)
+                    ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id);
             })
             ->join('tahun_ajarans', 'tahun_ajarans.id', 'semesters.tahun_ajaran_id')
             ->whereNull('tahun_semester.semester_id')
-            ->where('tahun_ajarans.id', $tahun_ajaran_id)
+            ->where('tahun_ajarans.id', '>=', $tahun_ajaran_id)
             ->where('semesters.status', "1")
             ->when(request('semester_id') && request('semester_id') != '', function ($q) {
                 $q->orWhere('tahun_semester.semester_id', request('semester_id'));

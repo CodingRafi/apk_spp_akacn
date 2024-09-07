@@ -30,10 +30,7 @@ class SemesterController extends Controller
                         <i class='ti-pencil'></i>
                         Edit
                     </button>";
-
-            // $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.semester.destroy', ['semester_id' => $data->id]) . "`, () => {tableSemester.ajax.reload()})' type='button'>
-            //                                     Hapus
-            //                                 </button>";
+                    
             $data->options = $options;
         }
 

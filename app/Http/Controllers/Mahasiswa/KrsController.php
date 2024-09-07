@@ -132,9 +132,14 @@ class KrsController extends Controller
             ];
         }
 
+        $tahunPembayaran = DB::table('tahun_pembayaran')
+                            ->select('id')
+                            ->where('tahun_semester_id', $tahun_semester_id)
+                            ->first();
+
         $cekPembayaran = DB::table('rekap_pembayaran')
             ->where('type', 'semester')
-            ->where('untuk', $tahun_semester_id)
+            ->where('untuk', $tahunPembayaran->id)
             ->where('user_id', $mhs_id)
             ->first();
 

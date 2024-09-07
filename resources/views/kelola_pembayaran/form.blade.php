@@ -47,7 +47,7 @@
                                         <div class="mb-3">
                                             <label for="rombel" class="form-label">Rombel</label>
                                             <input class="form-control" type="text"
-                                                value="{{ $data->mahasiswa->mahasiswa->rombel->nama }}" id="rombel"
+                                                value="{{ $data->mahasiswa->mahasiswa->rombel ? $data->mahasiswa->mahasiswa->rombel->nama: '' }}" id="rombel"
                                                 disabled />
                                         </div>
                                     </div>

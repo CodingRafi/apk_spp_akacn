@@ -437,11 +437,11 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 [KelolaPresensiController::class, 'getPengawas']
             )->name('getPengawas');
             Route::get(
-                '/{prodi_id}/get-semester',
+                '/{tahun_ajaran_id}/{prodi_id}/get-semester',
                 [KelolaPresensiController::class, 'getSemester']
             )->name('getSemester');
             Route::get(
-                '/{prodi_id}/get-matkul',
+                '/{tahun_ajahan_id}/{prodi_id}/get-matkul',
                 [KelolaPresensiController::class, 'getMatkul']
             )->name('getMatkul');
             Route::get(

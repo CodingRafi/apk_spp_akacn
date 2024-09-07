@@ -114,6 +114,7 @@ class MatkulController extends Controller
         try {
             $requestParse = $request->except('_method', '_token', 'rombel_id', 'ruang_id', 'dosen_id');
             $requestParse['tahun_ajaran_id'] = $tahun_ajaran_id;
+            $requestParse['cek_ip'] = $request->cek_ip == 'on' ? '1' : '0';
             $requestParse['created_at'] = now();
             $requestParse['updated_at'] = now();
             DB::table('tahun_matkul')->insert($requestParse);
@@ -194,6 +195,7 @@ class MatkulController extends Controller
         DB::beginTransaction();
         try {
             $requestParse = $request->except('_method', '_token', 'ruang_id', 'rombel_id', 'dosen_id');
+            $requestParse['cek_ip'] = $request->cek_ip == 'on' ? '1' : '0';
             DB::table('tahun_matkul')
                 ->where('id', $id)
                 ->where('tahun_ajaran_id', $tahun_ajaran_id)
