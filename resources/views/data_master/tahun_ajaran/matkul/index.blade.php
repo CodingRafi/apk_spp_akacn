@@ -437,7 +437,7 @@
                 dataType: 'json',
                 success: function(res) {
                     $.each(res.data, function(key, value) {
-                        $('#matkul_id').append(`<option value="${value.id}">${value.nama}</option>`);
+                        $('#matkul_id').append(`<option value="${value.id}">${value.kode} - ${value.nama}</option>`);
                     })
 
                     if (data.matkul_id) {
