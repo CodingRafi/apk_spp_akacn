@@ -163,7 +163,6 @@
 
         function getTotal() {
             $('.div-alert').empty();
-
             let id = $('#tahun_matkul_id').val();
             if (id) {
                 $.ajax({
@@ -172,6 +171,7 @@
                     type: 'GET',
                     dataType: 'json',
                     success: function(res) {
+                        $('.div-alert').empty();
                         if (res.total < 14) {
                             $('.div-alert').append(
                                 `<div class="alert alert-primary" role="alert">Sudah terjadi ${res.total} kali pelajaran</div>`
@@ -307,7 +307,7 @@
         }
 
         function clearForm(){
-            $('.div-ujian, .div-pengajar').empty();
+            $('.div-ujian, .div-pengajar, .div-alert').empty();
         }
 
         $('#type, #tahun_matkul_id').on('change', () => {

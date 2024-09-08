@@ -140,6 +140,7 @@ class PresensiController extends Controller
         $totalJadwal = DB::table('jadwal')
             ->where('tahun_matkul_id', $tahun_matkul_id)
             ->where('tahun_semester_id', $semesterAktif->id)
+            ->where('type', 'pertemuan')
             ->count();
 
         return response()->json([
