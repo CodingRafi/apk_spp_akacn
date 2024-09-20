@@ -91,7 +91,7 @@ class MahasiswaController extends Controller
         } catch (\Throwable $th) {
             DB::rollback();
             return response()->json([
-                'message' => $th->getMessage()
+                'message' => 'Terjadi kesalahan. Mohon periksa kembali data yang Anda masukkan.',
             ], 400);
         }
     }
