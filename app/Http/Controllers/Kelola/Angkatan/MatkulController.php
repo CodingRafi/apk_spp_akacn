@@ -68,6 +68,7 @@ class MatkulController extends Controller
             if (auth()->user()->can('edit_matkul')) {
                 $options = $options . "<a href='". route('data-master.tahun-ajaran.matkul.rekap.index', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) ."' class='btn btn-info mx-2'>Neo Feeder</a>";
                 $options = $options . "<a href='" . route('data-master.tahun-ajaran.matkul.dosen.index', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "' class='btn btn-primary mx-2'>Set Dosen</a>";
+                $options = $options . "<a href='" . route('data-master.tahun-ajaran.matkul.mhs.index', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "' class='btn btn-primary mx-2'>Set Mahasiswa (Ulang)</a>";
                 $options = $options . " <button class='btn btn-warning'
                         onclick='editForm(`" . route('data-master.tahun-ajaran.matkul.show', ['id' => $tahun_ajaran_id, 'matkul_id' => $data->id]) . "`, `Edit Mata Kuliah`, `#Matkul`, editTahunMatkul)'>
                         <i class='ti-pencil'></i>
@@ -265,9 +266,14 @@ class MatkulController extends Controller
     public function storeNeoFeeder(Request $request, $tahun_ajaran_id)
     {
         $data = json_decode($request->data);
+
         DB::beginTransaction();
         try {
             foreach ($data as $row) {
+                $angkatanUnique = array_unique(array_column($row->mahasiswa, 'angkatan'));
+
+                dd($angkatanUnique);
+
                 DB::table('tahun_matkul')->updateOrInsert([
                     'prodi_id' => $row->id_prodi,
                     'tahun_ajaran_id' => $tahun_ajaran_id,

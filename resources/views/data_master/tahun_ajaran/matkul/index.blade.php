@@ -211,7 +211,7 @@
 
             try {
                 while (keepRunning) {
-                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+                    showAlert(`Loop ${loop + 1} kelas kuliah sedang berjalan`, 'success');
 
                     raw.limit = limit;
                     raw.offset = loop * limit;
@@ -260,7 +260,7 @@
 
             try {
                 while (keepRunning) {
-                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+                    showAlert(`Loop ${loop + 1} mahasiswa sedang berjalan`, 'success');
 
                     raw.limit = limit;
                     raw.offset = loop * limit;
@@ -309,7 +309,7 @@
 
             try {
                 while (keepRunning) {
-                    showAlert(`Loop ${loop + 1} sedang berjalan`, 'success');
+                    showAlert(`Loop ${loop + 1} dosen sedang berjalan`, 'success');
 
                     raw.limit = limit;
                     raw.offset = loop * limit;
@@ -393,6 +393,7 @@
                     return {
                         id_mahasiswa: item.id_mahasiswa,
                         id_registrasi_mahasiswa: item.id_registrasi_mahasiswa,
+                        angkatan: item.angkatan,
                     };
                 })
 

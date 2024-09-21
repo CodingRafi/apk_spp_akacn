@@ -42,6 +42,7 @@ use App\Http\Controllers\{
 use App\Http\Controllers\Dosen\PresensiController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulDosenController;
+use App\Http\Controllers\Kelola\Angkatan\MatkulMhsController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeeder;
 use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulRekapController;
@@ -198,6 +199,15 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                     Route::get('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'show'])->name('show');
                     Route::put('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'update'])->name('update');
                     Route::delete('/{tahun_matkul_dosen_id}', [MatkulDosenController::class, 'destroy'])->name('destroy');
+                });
+
+                //? Mahasiswa Ulang
+                Route::prefix('{matkul_id}/mhs')->name('mhs.')->group(function () {
+                    Route::get('/', [MatkulMhsController::class, 'index'])->name('index');
+                    Route::post('/', [MatkulMhsController::class, 'store'])->name('store');
+                    Route::get('/data', [MatkulMhsController::class, 'data'])->name('data');
+                    Route::get('/{tahun_masuk_id}/get-mhs', [MatkulMhsController::class, 'getMhs'])->name('getMhs');
+                    Route::delete('/{tahun_matkul_mhs_id}', [MatkulMhsController::class, 'destroy'])->name('destroy');
                 });
 
                 //? Neo Feeder
