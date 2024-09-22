@@ -31,7 +31,7 @@ class MatkulRekapController extends Controller
                 ->join('tahun_semester as ts', 'ts.id', '=', 'k.tahun_semester_id')
                 ->leftJoin('kelas_kuliah as kk', 'kk.tahun_matkul_id', '=', 'tm.id')
                 ->where('ts.semester_id', request('semester_id'))
-                ->groupBy('m.nama', 'tm.id', 'ta.nama', 'kk.id')
+                ->groupBy('m.nama', 'tm.id', 'ta.nama', 'kk.id', 'm.kode')
                 ->select('tm.id', 'm.nama as matkul', 'm.kode as kode', 'ta.nama as tahun_ajaran', 'kk.id as kelas_kuliah')
                 ->get()
                 ->toArray();
