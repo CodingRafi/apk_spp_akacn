@@ -74,8 +74,9 @@ class PresensiController extends Controller
         }
 
         $krsMatkul = DB::table('krs_matkul')
-            ->select('krs_matkul.tahun_matkul_id', 'matkuls.nama')
+            ->select('krs_matkul.tahun_matkul_id', 'matkuls.nama', 'tahun_ajarans.nama as tahun_ajaran')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
+            ->join('tahun_ajarans', 'tahun_ajarans.id', 'tahun_matkul.tahun_ajaran_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
             ->where('krs_matkul.krs_id', $krs->id)
             ->get();
@@ -131,7 +132,7 @@ class PresensiController extends Controller
             }
 
             $data[$matkul->tahun_matkul_id] = [
-                'matkul' => $matkul->nama,
+                'matkul' => $matkul->nama . ' - ' . $matkul->tahun_ajaran,
                 'presensi' => $resPresensi
             ];
         }

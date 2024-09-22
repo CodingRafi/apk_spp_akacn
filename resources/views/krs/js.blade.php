@@ -47,7 +47,7 @@
             success: function(res) {
                 $.each(res.data, function(i, e) {
                     $('#tahun_matkul_id').append(
-                        `<option value="${e.id}" data-sks="${e.sks_mata_kuliah}">${e.kode} - ${e.nama} (${e.sks_mata_kuliah} SKS | ${e.dosen})</option>`
+                        `<option value="${e.id}" data-sks="${e.sks_mata_kuliah}">${e.kode} - ${e.nama} (${e.sks_mata_kuliah} SKS | ${e.dosen}) - ${e.tahun_ajaran}</option>`
                     )
                 })
                 $('#tahun_matkul_id').removeAttr('disabled');

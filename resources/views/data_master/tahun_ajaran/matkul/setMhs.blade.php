@@ -43,7 +43,7 @@
                         <div class="mb-3">
                             <label for="tahun_ajaran_id" class="form-label">Tahun Masuk</label>
                             <select class="form-select" name="tahun_ajaran_id" id="tahun_ajaran_id" onchange="getMhs()">
-                                <option value="">Pilih Mahasiswa</option>
+                                <option value="">Pilih Tahun Masuk</option>
                                 @foreach ($tahunMasuk as $tahun)
                                     <option value="{{ $tahun->id }}">{{ $tahun->nama }}
                                     </option>

@@ -186,7 +186,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 )->name('getMatkul');
                 Route::get('/data', [AngkatanMatkulController::class, 'data'])->name('data');
                 Route::post('/', [AngkatanMatkulController::class, 'store'])->name('store');
-                Route::post('/neo-feeder', [AngkatanMatkulController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
                 Route::get('/{matkul_id}', [AngkatanMatkulController::class, 'show'])->name('show');
                 Route::put('/{matkul_id}', [AngkatanMatkulController::class, 'update'])->name('update');
                 Route::delete('/{matkul_id}', [AngkatanMatkulController::class, 'destroy'])->name('destroy');
@@ -208,18 +207,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                     Route::get('/data', [MatkulMhsController::class, 'data'])->name('data');
                     Route::get('/{tahun_masuk_id}/get-mhs', [MatkulMhsController::class, 'getMhs'])->name('getMhs');
                     Route::delete('/{tahun_matkul_mhs_id}', [MatkulMhsController::class, 'destroy'])->name('destroy');
-                });
-
-                //? Neo Feeder
-                Route::prefix('{matkul_id}/rekap')->name('rekap.')->group(function () {
-                    Route::get('/', [MatkulRekapController::class, 'index'])->name('index');
-                    Route::get('/data', [MatkulRekapController::class, 'data'])->name('data');
-                    Route::get('/{tahun_semester_id}/get-data', [MatkulRekapController::class, 'getData'])->name('getData');
-                    Route::get('/{tahun_semester_id}/get-dosen', [MatkulRekapController::class, 'getDosen'])->name('getDosen');
-                    Route::get('/{tahun_semester_id}/get-mhs', [MatkulRekapController::class, 'getMhs'])->name('getMhs');
-                    Route::get('/{tahun_semester_id}', [MatkulRekapController::class, 'show'])->name('show');
-                    Route::patch('/{tahun_semester_id}', [MatkulRekapController::class, 'update'])->name('update');
-                    Route::patch('/{kelas_kuliah_id}/neo-feeder', [MatkulRekapController::class, 'updateNeoFeeder'])->name('updateNeoFeeder');
                 });
             });
         });
@@ -408,6 +395,18 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             Route::delete('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
         });
         Route::resource('rombel', RombelController::class);
+    });
+
+    Route::prefix('rekap-perkuliahan')->name('rekap-perkuliahan.')->group(function () {
+        Route::get('/', [MatkulRekapController::class, 'index'])->name('index');
+        Route::get('/data', [MatkulRekapController::class, 'data'])->name('data');
+        Route::post('/neo-feeder', [MatkulRekapController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+        Route::get('/{semester_id}/{tahun_matkul_id}/get-data', [MatkulRekapController::class, 'getData'])->name('getData');
+        Route::get('/{semester_id}/{tahun_matkul_id}/get-dosen', [MatkulRekapController::class, 'getDosen'])->name('getDosen');
+        Route::get('/{semester_id}/{tahun_matkul_id}/get-mhs', [MatkulRekapController::class, 'getMhs'])->name('getMhs');
+        Route::get('/{semester_id}/{tahun_matkul_id}', [MatkulRekapController::class, 'show'])->name('show');
+        Route::patch('/{tahun_matkul_id}', [MatkulRekapController::class, 'update'])->name('update');
+        Route::patch('/{kelas_kuliah_id}/neo-feeder', [MatkulRekapController::class, 'updateNeoFeeder'])->name('updateNeoFeeder');
     });
 
     Route::prefix('kelola-kuesioner')->name('kelola-kuesioner.')->group(function () {

@@ -267,6 +267,12 @@
                         <div data-i18n="Analytics">Penugasan Dosen</div>
                     </a>
                 </li>
+                <li class="menu-item {{ Request::is('rekap-perkuliahan*') ? 'active' : '' }}">
+                    <a href="{{ route('rekap-perkuliahan.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-file"></i>
+                        <div data-i18n="Analytics">Rekap Perkuliahan</div>
+                    </a>
+                </li>
             @endif
         @endcan
 

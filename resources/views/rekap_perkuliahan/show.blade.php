@@ -7,7 +7,7 @@
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
                         <a
-                            href="{{ route('data-master.tahun-ajaran.matkul.rekap.index', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}"><i
+                            href="{{ route('rekap-perkuliahan.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="mb-0">Rekap Kelas Perkuliahan</h5>
                     </div>
@@ -22,7 +22,7 @@
                         <div class="alert alert-warning">Belum dikirim ke neo feeder</div>
                     @endif
                     <form
-                        action="{{ route('data-master.tahun-ajaran.matkul.rekap.update', ['id' => request('id'), 'matkul_id' => request('matkul_id'), 'tahun_semester_id' => request('tahun_semester_id')]) }}"
+                        action="{{ route('rekap-perkuliahan.update', $tahunMatkul->id) }}"
                         method="post" class="mb-3">
                         @csrf
                         @method('patch')
@@ -190,14 +190,14 @@
 
 @push('js')
     @if (Auth::user()->hasRole('admin'))
-        @include('data_master.tahun_ajaran.matkul.neo_feeder')
+        @include('rekap_perkuliahan.neo_feeder')
     @endif
     <script>
         $(document).ready(function() {
             $('.table-dosen').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('data-master.tahun-ajaran.matkul.rekap.getDosen', ['id' => request('id'), 'matkul_id' => request('matkul_id'), 'tahun_semester_id' => request('tahun_semester_id')]) }}",
+                ajax: "{{ route('rekap-perkuliahan.getDosen', ['tahun_matkul_id' => request('tahun_matkul_id'), 'semester_id' => request('semester_id')]) }}",
                 columns: [{
                         "data": "DT_RowIndex"
                     },
@@ -228,7 +228,7 @@
             $('.table-mhs').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('data-master.tahun-ajaran.matkul.rekap.getMhs', ['id' => request('id'), 'matkul_id' => request('matkul_id'), 'tahun_semester_id' => request('tahun_semester_id')]) }}",
+                ajax: "{{ route('rekap-perkuliahan.getMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'semester_id' => request('semester_id')]) }}",
                 columns: [{
                         "data": "DT_RowIndex"
                     },

@@ -118,10 +118,12 @@ class KrsController extends Controller
                 'tahun_matkul.hari',
                 'tahun_matkul.jam_mulai',
                 'tahun_matkul.jam_akhir',
+                'tahun_ajarans.nama as tahun_ajaran'
             )
             ->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
             ->join('tahun_matkul', 'tahun_matkul.id', 'krs_matkul.tahun_matkul_id')
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->join('tahun_ajarans', 'tahun_ajarans.id', 'tahun_matkul.tahun_ajaran_id')
             ->where('krs.mhs_id', $mhs_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->get();
@@ -136,6 +138,9 @@ class KrsController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->editColumn('matkul', function($datas){
+                return $datas->matkul . ' ' . $datas->tahun_ajaran;
+            })
             ->addColumn('ruang', function ($datas) {
                 $ruang = DB::table('ruangs')
                     ->select('ruangs.kapasitas', 'ruangs.nama')
@@ -205,7 +210,7 @@ class KrsController extends Controller
             ->toArray();
 
         $getMatkul = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode', 'matkuls.sks_mata_kuliah', 'users.name as dosen')
+            ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode', 'matkuls.sks_mata_kuliah', 'users.name as dosen', 'tahun_ajarans.nama as tahun_ajaran')
             ->join('tahun_matkul_rombel', function ($join) use ($mhs) {
                 $join->on('tahun_matkul_rombel.tahun_matkul_id', '=', 'tahun_matkul.id')
                     ->where('tahun_matkul_rombel.rombel_id', '=', $mhs->rombel_id);
@@ -213,11 +218,25 @@ class KrsController extends Controller
             ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
             ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
             ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
+            ->join('tahun_ajarans', 'tahun_matkul.tahun_ajaran_id', 'tahun_ajarans.id')
             ->whereNotIn('tahun_matkul.id', $krsMatkul)
             ->where('tahun_matkul.tahun_ajaran_id', $mhs->tahun_masuk_id)
             ->get();
 
-        $matkul = $getMatkul->groupBy('id')->map(function ($group) {
+        //? Variabel ini untuk get matkul yang ngulang dll
+        $getMatkulPenambahan = DB::table('tahun_matkul')
+                                    ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode', 'matkuls.sks_mata_kuliah', 'users.name as dosen', 'tahun_ajarans.nama as tahun_ajaran')
+                                    ->join('tahun_matkul_mhs', 'tahun_matkul_mhs.tahun_matkul_id', '=', 'tahun_matkul.id')
+                                    ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+                                    ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
+                                    ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
+                                    ->join('tahun_ajarans', 'tahun_matkul.tahun_ajaran_id', 'tahun_ajarans.id')
+                                    ->where('tahun_matkul_mhs.mhs_id', $mhs_id)
+                                    ->get();
+
+        $mergeMatkul = $getMatkul->merge($getMatkulPenambahan);
+
+        $matkul = $mergeMatkul->groupBy('id')->map(function ($group) {
             $firstItem = $group->first();
             $firstItem->dosen = implode(', ', $group->pluck('dosen')->toArray());
             return $firstItem;

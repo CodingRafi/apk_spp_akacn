@@ -1,7 +1,6 @@
 @include('neo_feeder')
 
 <script>
-    const tahun_semester_id = '{{ request('tahun_semester_id') }}';
     let id_kelas_kuliah;
     let dosen = [];
     let mahasiswa = [];
@@ -13,7 +12,7 @@
     async function getData() {
         try {
             const res = await $.ajax({
-                url: '{{ route('data-master.tahun-ajaran.matkul.rekap.getData', ['id' => request('id'), 'matkul_id' => request('matkul_id'), 'tahun_semester_id' => request('tahun_semester_id')]) }}',
+                url: '{{ route('rekap-perkuliahan.getData', ['semester_id' => request('semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) }}',
                 type: 'GET',
                 dataType: 'json'
             });
@@ -26,9 +25,7 @@
 
     async function updateData(kelas_kuliah_id, data) {
         $.ajax({
-            url: '{{ route('data-master.tahun-ajaran.matkul.rekap.updateNeoFeeder', ['id' => request('id'), 'matkul_id' => request('matkul_id'), 'kelas_kuliah_id' => ':kelas_kuliah_id']) }}'
-                .replace(
-                    ':kelas_kuliah_id', kelas_kuliah_id),
+            url: '',
             type: 'PATCH',
             data: data,
             dataType: 'json'
@@ -38,7 +35,7 @@
     async function sendDataToNeoFeeder(idKelasKuliah) {
         $.LoadingOverlay("show");
         const res = await getData();
-        let token = await getToken()
+        let token = await getToken();
 
         if (token === null) {
             showAlert('GAGAL GET TOKEN', 'error');
@@ -68,9 +65,14 @@
         } else {
             id_kelas_kuliah = idKelasKuliah;
         }
-
-        sendDosenToNeoFeeder(token, res);
-        sendMahasiswaToNeoFeeder(token, res);
+        
+        if(res.dosen.length != 0 && res.mahasiswa.length != 0) {
+            sendDosenToNeoFeeder(token, res);
+            sendMahasiswaToNeoFeeder(token, res);
+        }else{
+            $.LoadingOverlay("hide");
+            showAlert('Data tidak ada yang berubah', 'success');
+        }
     }
 
     async function ajaxSendDosen(token, dataDosen) {
@@ -117,6 +119,7 @@
                         statusDosen = true;
 
                         if (statusMhs && statusDosen) {
+                            console.log('oke')
                             $.LoadingOverlay("hide");
                             showAlert('Data Berhasil dikirim', 'success');
 
@@ -217,13 +220,15 @@
         //? send kelas kuliah
         const dataKelasKuliah = {
             id_prodi: res.prodi_id,
-            id_semester: res.semester_id,
+            id_semester: '{{ request('semester_id') }}',
             id_matkul: res.matkul_id,
             nama_kelas_kuliah: res.nama,
             bahasan: res.bahasan,
             tanggal_mulai_efektif: res.tanggal_mulai_efektif,
             tanggal_akhir_efektif: res.tanggal_akhir_efektif,
         };
+
+        console.log(dataKelasKuliah)
 
         let settings = {
             url: url,

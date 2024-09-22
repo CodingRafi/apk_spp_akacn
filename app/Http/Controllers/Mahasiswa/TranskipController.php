@@ -25,7 +25,8 @@ class TranskipController extends Controller
                 'rekap_krs_matkul.*',
                 'semesters.nama as semester',
                 'matkuls.kode as kode_mk',
-                'matkuls.nama as matkul'
+                'matkuls.nama as matkul',
+                'matkuls.id as matkul_id'
             )
             ->join('tahun_semester', 'rekap_krs_matkul.tahun_semester_id', '=', 'tahun_semester.id')
             ->join('semesters', 'tahun_semester.semester_id', '=', 'semesters.id')
@@ -38,7 +39,7 @@ class TranskipController extends Controller
         foreach ($datas as $indexSemester =>  $data) {
             foreach ($data as $indexMatkul => $matkul) {
                 $cek = array_filter($loop, function ($item) use ($matkul) {
-                    return $item['tahun_matkul_id'] == $matkul->tahun_matkul_id;
+                    return $item['matkul_id'] == $matkul->matkul_id;
                 });
 
                 if (!empty($cek)) {
@@ -53,7 +54,7 @@ class TranskipController extends Controller
                     unset($datas[$indexSemester][$indexMatkul]);
                 } else {
                     $loop[] = [
-                        'tahun_matkul_id' => $matkul->tahun_matkul_id,
+                        'matkul_id' => $matkul->matkul_id,
                         'nilai_mutu' => $matkul->nilai_mutu,
                         'index_semester' => $indexSemester,
                         'index_matkul' => $indexMatkul
