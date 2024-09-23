@@ -38,6 +38,7 @@ class PresensiController extends Controller
             ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
             ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
             ->where('tahun_semester.prodi_id', $mhs->prodi_id)
+            ->orderBy('semesters.id', 'asc')
             ->get();
 
         return view('mahasiswa.presensi.index', compact('tahun_semester'));

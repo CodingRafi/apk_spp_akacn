@@ -66,6 +66,7 @@ class KrsController extends Controller
             })
             ->where('tahun_semester.prodi_id', $mhs->prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $mhs->tahun_masuk_id)
+            ->orderBy('semesters.id', 'asc')
             ->get();
 
         foreach ($datas as $data) {

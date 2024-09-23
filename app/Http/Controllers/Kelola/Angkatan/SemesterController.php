@@ -62,7 +62,7 @@ class SemesterController extends Controller
             }
 
             if (auth()->user()->can('delete_prodi')) {
-                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`)'>
+                $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.prodi.semester.destroy', ['prodi_id' => $prodi_id, 'tahun_ajaran_id' => $tahun_ajaran_id, 'tahun_semester_id' => $data->tahun_semester_id]) . "`, () => {tableSemester.ajax.reload()})'>
                                                     Hapus
                                                 </button>";
             }

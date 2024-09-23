@@ -33,6 +33,7 @@ class TranskipController extends Controller
             ->join('tahun_matkul', 'rekap_krs_matkul.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->where('mhs_id', $user->id)
+            ->orderBy('semesters.id', 'asc')
             ->get()
             ->groupBy('semester');
 
