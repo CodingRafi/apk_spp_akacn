@@ -4,14 +4,17 @@
     <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card mb-4">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5>Mahasiswa</h5>
-                        <button type="button" class="btn btn-primary"
-                            onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.mhs.store', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}', 'Tambah Mahasiswa', '#setMhs')">
-                            Tambah
-                        </button>
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <a
+                            href="{{ route('data-master.tahun-ajaran.matkul.index', ['id' => request('id')]) }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="mb-0">Mahasiswa</h5>
                     </div>
+                    <button type="button" class="btn btn-primary"
+                        onclick="addForm('{{ route('data-master.tahun-ajaran.matkul.mhs.store', ['id' => request('id'), 'matkul_id' => request('matkul_id')]) }}', 'Tambah Mahasiswa', '#setMhs')">
+                        Tambah
+                    </button>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
