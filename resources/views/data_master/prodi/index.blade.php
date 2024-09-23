@@ -24,9 +24,7 @@
                                     <th>Nama</th>
                                     <th>Jenjang</th>
                                     <th>Status</th>
-                                    @can('edit_prodi', 'delete_prodi')
-                                        <th>Aksi</th>
-                                    @endcan
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                         </table>
@@ -58,11 +56,9 @@
                     {
                         "data": "status"
                     },
-                    @can('edit_prodi', 'hapus_prodi')
-                        {
-                            "data": "options"
-                        }
-                    @endcan
+                    {
+                        "data": "options"
+                    }
                 ],
                 pageLength: 25,
                 responsive: true,
