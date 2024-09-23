@@ -140,6 +140,7 @@ class DashboardController extends Controller
                 ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
                 ->where('krs.status', 'diterima')
                 ->where('krs.mhs_id', auth()->user()->id)
+                ->orderBy('semesters.id', 'asc')
                 ->get();
 
         return view('dashboard.mahasiswa', compact('tagihan', 'krs'));

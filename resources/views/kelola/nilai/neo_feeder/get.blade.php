@@ -91,7 +91,7 @@
         return data
     }
 
-    function storeData(data) {
+    function storeData(data, func) {
         if (statusGetNilai) {
             const dataProcess = prosesData();
             const chunks = chunkArray(dataProcess, 50)
