@@ -49,6 +49,7 @@ class SemesterController extends Controller
             ->join('tahun_semester', 'tahun_semester.semester_id', 'semesters.id')
             ->where('tahun_semester.prodi_id', $prodi_id)
             ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
+            ->orderBy('semesters.id', 'asc')
             ->get();
 
         foreach ($datas as $data) {

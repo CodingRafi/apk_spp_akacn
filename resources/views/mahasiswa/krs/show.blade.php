@@ -6,31 +6,31 @@
             $dataEmpty = true;
             $lock = true;
 
-            // if ($krs) {
-            //     $lock = $krs->lock == '1' ? false : true;
-            //     $dataEmpty = false;
-            //     if ($krs->status == 'pending') {
-            //         $validation =
-            //             $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
-            //             $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
-            //             $tahun_semester->status &&
-            //             ($krs->lock == '1' && !Auth::user()->hasRole('admin') ? false : true);
-            //     } elseif ($krs->status == 'ditolak') {
-            //         $validation =
-            //             (Auth::user()->hasRole('admin')
-            //                 ? true
-            //                 : $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
-            //                     $tahun_semester->tgl_akhir_krs >= date('Y-m-d')) && $tahun_semester->status;
-            //     } else {
-            //         $validation = false;
-            //     }
-            // } else {
-            //     $validation =
-            //         $tahun_semester->status &&
-            //         $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
-            //         $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
-            //         (Auth::user()->hasRole('admin') ? true : $validationPembayaran['status']);
-            // }
+            if ($krs) {
+                $lock = $krs->lock == '1' ? false : true;
+                $dataEmpty = false;
+                if ($krs->status == 'pending') {
+                    $validation =
+                        $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                        $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
+                        $tahun_semester->status &&
+                        ($krs->lock == '1' && !Auth::user()->hasRole('admin') ? false : true);
+                } elseif ($krs->status == 'ditolak') {
+                    $validation =
+                        (Auth::user()->hasRole('admin')
+                            ? true
+                            : $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                                $tahun_semester->tgl_akhir_krs >= date('Y-m-d')) && $tahun_semester->status;
+                } else {
+                    $validation = false;
+                }
+            } else {
+                $validation =
+                    $tahun_semester->status &&
+                    $tahun_semester->tgl_mulai_krs <= date('Y-m-d') &&
+                    $tahun_semester->tgl_akhir_krs >= date('Y-m-d') &&
+                    (Auth::user()->hasRole('admin') ? true : $validationPembayaran['status']);
+            }
         @endphp
         <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
