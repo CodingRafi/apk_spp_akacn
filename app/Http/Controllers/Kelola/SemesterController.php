@@ -104,13 +104,6 @@ class SemesterController extends Controller
     public function update(SemesterRequest $request, $id)
     {
         $semester = Semester::find($id);
-        $cek = DB::table('tahun_semester')->where('semester_id', $id)->count();
-
-        if ($semester->status != $request->status && $cek > 0) {
-            return response()->json([
-                'message' => 'Semester ini sudah digunakan, tidak bisa ubah status'
-            ], 400);
-        }
 
         DB::beginTransaction();
         try {
