@@ -42,7 +42,9 @@
                     $('.table thead tr').empty();
 
                     const format = configData.format;
-                    format['active'] = 'active';
+                    if('{{ request('type') }}' != 'wilayah'){
+                        format['active'] = 'active';
+                    }
                     const uniq = configData.unique;
 
                     for (let key in format) {
