@@ -271,15 +271,20 @@ class MatkulRekapController extends Controller
         return response()->json($data, 200);
     }
 
-    public function updateNeoFeeder(Request $request, $tahun_ajaran_id, $matkul_id, $kelas_kuliah_id)
+    public function updateNeoFeeder(Request $request, $tahun_matkul_id)
     {
         if ($request->id_kelas_kuliah) {
             DB::table('kelas_kuliah')
-                ->where('id', $kelas_kuliah_id)
+                ->where('tahun_matkul_id', $tahun_matkul_id)
                 ->update([
                     'id_kelas_kuliah' => $request->id_kelas_kuliah
                 ]);
         }
+
+        $kelasKuliah = DB::table('kelas_kuliah')
+                    ->select('kelas_kuliah.id_kelas_kuliah', )
+                    ->where('tahun_matkul_id', $tahun_matkul_id)
+                    ->first();
 
         if ($request->dosen) {
             foreach ($request->dosen as $dosen) {
@@ -287,8 +292,9 @@ class MatkulRekapController extends Controller
                     ->insertOrIgnore([
                         'id_registrasi_dosen' => $dosen['id_registrasi_dosen'],
                         'id_aktivitas_mengajar' => $dosen['id_aktivitas_mengajar'],
-                        'tahun_matkul_id' => $matkul_id,
-                        'tahun_semester_id' => $dosen['tahun_semester_id'],
+                        'id_kelas_kuliah' => $kelasKuliah->id_kelas_kuliah,
+                        'created_at' => now(),
+                        'updated_at' => now()
                     ]);
             }
         }
@@ -296,11 +302,10 @@ class MatkulRekapController extends Controller
         if ($request->mahasiswa) {
             foreach ($request->mahasiswa as $mhs) {
                 DB::table('krs')
-                    ->join('krs_matkul', function ($q) use ($matkul_id) {
+                    ->join('krs_matkul', function ($q) use ($tahun_matkul_id) {
                         $q->on('krs_matkul.krs_id', '=', 'krs.id')
-                            ->where('krs_matkul.tahun_matkul_id', $matkul_id);
+                            ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
                     })
-                    ->where('krs.tahun_semester_id', $mhs['tahun_semester_id'])
                     ->where('krs.mhs_id', $mhs['mhs_id'])
                     ->update([
                         'krs_matkul.id_kelas_kuliah_neo_feeder' => $mhs['id_kelas_kuliah']

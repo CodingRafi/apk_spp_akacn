@@ -406,7 +406,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/{semester_id}/{tahun_matkul_id}/get-mhs', [MatkulRekapController::class, 'getMhs'])->name('getMhs');
         Route::get('/{semester_id}/{tahun_matkul_id}', [MatkulRekapController::class, 'show'])->name('show');
         Route::patch('/{tahun_matkul_id}', [MatkulRekapController::class, 'update'])->name('update');
-        Route::patch('/{kelas_kuliah_id}/neo-feeder', [MatkulRekapController::class, 'updateNeoFeeder'])->name('updateNeoFeeder');
+        Route::patch('/{tahun_matkul_id}/neo-feeder', [MatkulRekapController::class, 'updateNeoFeeder'])->name('updateNeoFeeder');
     });
 
     Route::prefix('kelola-kuesioner')->name('kelola-kuesioner.')->group(function () {

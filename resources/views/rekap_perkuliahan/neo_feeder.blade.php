@@ -23,9 +23,9 @@
         }
     }
 
-    async function updateData(kelas_kuliah_id, data) {
+    async function updateData(data) {
         $.ajax({
-            url: '',
+            url: '{{ route('rekap-perkuliahan.updateNeoFeeder', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
             type: 'PATCH',
             data: data,
             dataType: 'json'
@@ -55,18 +55,50 @@
 
             if (response.error_code == '0') {
                 id_kelas_kuliah = response.data.id_kelas_kuliah
-                updateData(res.kelas_kuliah_id, {
+                updateData({
                     id_kelas_kuliah: response.data.id_kelas_kuliah
                 })
             } else {
-                showAlert(response.error_desc, 'error');
-                return false;
+                if (response.error_code == '15') {
+                    let raw = {
+                        "act": "GetDetailKelasKuliah",
+                        "filter": `id_semester='{{ request('semester_id') }}' AND id_matkul='${res.matkul_id}'`,
+                        "order": "",
+                        "token": token.data.token,
+                        "limit": "1",
+                        "offset": "0",
+                    };
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const responseGetKelasKuliah = await $.ajax(settings);
+                    
+                    if (responseGetKelasKuliah.error_code == '0') {
+                        id_kelas_kuliah = responseGetKelasKuliah.data[0].id_kelas_kuliah
+                        updateData({
+                            id_kelas_kuliah: responseGetKelasKuliah.data[0].id_kelas_kuliah
+                        })
+                    }else{
+                        showAlert(responseGetKelasKuliah.error_desc, 'error');
+                    }
+                }else{
+                    showAlert(response.error_desc, 'error');
+                    return false;
+                }
             }
         } else {
             id_kelas_kuliah = idKelasKuliah;
         }
-        
-        if(res.dosen.length != 0 && res.mahasiswa.length != 0) {
+
+        if(res.dosen.length != 0 || res.mahasiswa.length != 0) {
             sendDosenToNeoFeeder(token, res);
             sendMahasiswaToNeoFeeder(token, res);
         }else{
@@ -94,7 +126,7 @@
     }
 
     async function sendDosenToNeoFeeder(token, res) {
-        res.dosen.forEach(e => {
+        for (const e of res.dosen) {  // Use for...of loop to allow await
             let dataDosen = {
                 id_registrasi_dosen: e.id_registrasi_dosen,
                 id_kelas_kuliah: id_kelas_kuliah,
@@ -104,35 +136,59 @@
                 id_jenis_evaluasi: e.jenis_evaluasi_id,
             };
 
-            ajaxSendDosen(token, dataDosen).then(function(responseDosen) {
-                if (responseDosen.error_code == '0') {
+            try {
+                let responseDosen = await ajaxSendDosen(token, dataDosen);
+
+                if (responseDosen.error_code === '0') {
                     dosen.push({
                         id_registrasi_dosen: e.id_registrasi_dosen,
                         id_aktivitas_mengajar: responseDosen.data.id_aktivitas_mengajar,
-                        tahun_semester_id: tahun_semester_id
-                    })
+                    });
 
-                    if (loopDosen == dosen.length) {
-                        updateData(res.kelas_kuliah_id, {
-                            dosen: dosen
-                        })
+                    if (loopDosen === dosen.length) {
+                        updateData({ dosen });
                         statusDosen = true;
 
                         if (statusMhs && statusDosen) {
-                            console.log('oke')
                             $.LoadingOverlay("hide");
                             showAlert('Data Berhasil dikirim', 'success');
-
                             setTimeout(() => {
                                 document.location.reload();
                             }, 300);
                         }
                     }
                 } else {
+                    let raw = {
+                        "act": "GetDosenPengajarKelasKuliah",
+                        "filter": `id_registrasi_dosen='${e.id_registrasi_dosen}' AND id_kelas_kuliah='${id_kelas_kuliah}'`,
+                        "order": "",
+                        "token": token.data.token,
+                        "limit": "1",
+                        "offset": "0",
+                    };
+
+                    let settings = {
+                        url: url,
+                        method: "POST",
+                        timeout: 0,
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        data: JSON.stringify(raw)
+                    };
+
+                    const responseGetDosen = await $.ajax(settings);
+                    
+                    if (responseGetDosen.error_code == '0') {
+                        let id_aktivitas_mengajar = responseGetDosen.data[0].id_aktivitas_mengajar;
+                        dosen.push({
+                            id_registrasi_dosen: e.id_registrasi_dosen,
+                            id_aktivitas_mengajar: id_aktivitas_mengajar,
+                        });
+                    }
+
                     showAlert(responseDosen.error_desc, 'error');
-                    updateData(res.kelas_kuliah_id, {
-                        dosen: dosen
-                    })
+                    updateData({ dosen });
                     statusDosen = true;
 
                     if (statusMhs && statusDosen) {
@@ -144,9 +200,13 @@
                     }
                     return false;
                 }
-            });
-        });
+            } catch (error) {
+                console.error(error);
+                showAlert('An error occurred', 'error');
+            }
+        }
     }
+
 
     async function ajaxSendMahasiswa(token, dataMhs) {
         let settingsMhs = {
@@ -174,15 +234,15 @@
             };
 
             ajaxSendMahasiswa(token, dataMhs).then(function(responseMhs) {
-                mahasiswa.push({
-                    mhs_id: e.mhs_id,
-                    id_kelas_kuliah: id_kelas_kuliah,
-                    tahun_semester_id: tahun_semester_id
-                })
-
-                if (responseMhs.error_code == '0') {
+                
+                if (responseMhs.error_code == '0' || responseMhs.error_code == '119') {
+                    mahasiswa.push({
+                        mhs_id: e.mhs_id,
+                        id_kelas_kuliah: id_kelas_kuliah,
+                    })
+                    
                     if (loopMhs == mahasiswa.length) {
-                        updateData(res.kelas_kuliah_id, {
+                        updateData({
                             mahasiswa: mahasiswa
                         })
 
@@ -197,7 +257,7 @@
                     }
                 } else {
                     showAlert(responseMhs.error_desc, 'error');
-                    updateData(res.kelas_kuliah_id, {
+                    updateData({
                         mahasiswa: mahasiswa
                     })
 
@@ -227,8 +287,6 @@
             tanggal_mulai_efektif: res.tanggal_mulai_efektif,
             tanggal_akhir_efektif: res.tanggal_akhir_efektif,
         };
-
-        console.log(dataKelasKuliah)
 
         let settings = {
             url: url,
