@@ -140,6 +140,16 @@
             .then(data => {
                 $('.table').DataTable().destroy();
 
+                data = data.map(item => {
+                    if (item.active) {
+                        item.active = "<i class='bx bx-check text-success'></i>"
+                    }else{
+                        item.active = "<i class='bx bx-x text-danger'></i>"
+                    }
+
+                    return item
+                })
+
                 $('.table').DataTable({
                     columns: columns,
                     data: data,

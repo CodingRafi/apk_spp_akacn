@@ -42,6 +42,7 @@
                     $('.table thead tr').empty();
 
                     const format = configData.format;
+                    format['active'] = 'active';
                     const uniq = configData.unique;
 
                     for (let key in format) {

@@ -18,8 +18,14 @@ class NeoFeederController extends Controller
 
     public function store(Request $request)
     {
+        DB::table($request->tbl)->update([
+            'active' => '0'
+        ]);
+        
         foreach ($request->data as $data) {
-            DB::table($request->tbl)->updateOrInsert($data[0], $data[1]);
+            $dataField = $data[1];
+            $dataField['active'] = 1;
+            DB::table($request->tbl)->updateOrInsert($data[0], $dataField);
         }
 
         return response()->json([
