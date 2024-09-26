@@ -18,10 +18,6 @@ class NeoFeederController extends Controller
 
     public function store(Request $request)
     {
-        DB::table($request->tbl)->update([
-            'active' => '0'
-        ]);
-        
         foreach ($request->data as $data) {
             $dataField = $data[1];
             $dataField['active'] = 1;
@@ -38,6 +34,14 @@ class NeoFeederController extends Controller
         $table = str_replace("-", "_", $type);
         $datas = DB::table("{$table}")->get();
         return response()->json($datas, 200);
+    }
+
+    public function nonActive($type)
+    {
+        DB::table($type)->update(['active' => 0]);
+        return response()->json([
+            'message' => 'Berhasil di not active'
+        ], 200);
     }
 
     public function get($type)

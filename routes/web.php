@@ -749,6 +749,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::post('/', [NeoFeederController::class, 'store'])->name('store');
         Route::get('/{type}/data', [NeoFeederController::class, 'data'])->name('data');
         Route::get('/{type}/get', [NeoFeederController::class, 'get'])->name('get');
+        Route::patch('/{type}/non-active', [NeoFeederController::class, 'nonActive'])->name('nonActive');
     });
 
     Route::get('get-wilayah', [WilayahController::class, 'getWilayah'])->name('get-wilayah');

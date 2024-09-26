@@ -8,6 +8,13 @@
     let process = 0;
     let processDone = 0;
 
+    async function nonActive() {
+        return $.ajax({
+            url: '{{ route('neo-feeder.nonActive', ['type' => ":type"]) }}'.replace(':type', configData.tbl),
+            type: 'PATCH',
+        })
+    }
+
     async function getData(rawParams = null, func) {
         if (confirm('Apakah anda yakin? semua data akan di update dengan data NEO FEEDER')) {
             $.LoadingOverlay("show");
@@ -25,6 +32,9 @@
 
             process = 0;
             processDone = 0;
+
+            //? Nonactive all data
+            await nonActive();
 
             try {
                 let raw = rawParams ?? configData.raw;
