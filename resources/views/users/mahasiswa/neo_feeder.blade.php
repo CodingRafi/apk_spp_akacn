@@ -333,6 +333,9 @@
             showAlert('BERHASIL', 'success');
             table.ajax.reload();
             return true
+        }else{
+            showAlert(responseRiwayat.error_desc, 'error');
+            return false
         }
     }
 </script>
