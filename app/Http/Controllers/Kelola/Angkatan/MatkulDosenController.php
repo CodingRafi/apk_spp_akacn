@@ -13,14 +13,19 @@ class MatkulDosenController extends Controller
 {
     public function index($tahun_ajaran_id, $id)
     {
-        $dosens = User::role('dosen')
-            ->select('users.*')
-            ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-            ->join('penugasan_dosens', function ($q) use ($tahun_ajaran_id) {
-                $q->on('users.id_neo_feeder', 'penugasan_dosens.id_dosen')
-                    ->where('penugasan_dosens.tahun_ajaran_id', $tahun_ajaran_id);
-            })
-            ->get();
+        $tahunAjaranAktif = DB::table('tahun_ajarans')->where('status', "1")->first();
+        $dosens = [];
+
+        if ($tahunAjaranAktif) {
+            $dosens = User::role('dosen')
+                ->select('users.*')
+                ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
+                ->join('penugasan_dosens', function ($q) use ($tahunAjaranAktif) {
+                    $q->on('users.id_neo_feeder', 'penugasan_dosens.id_dosen')
+                        ->where('penugasan_dosens.tahun_ajaran_id', $tahunAjaranAktif->id);
+                })
+                ->get();
+        }
 
         $jenisEvaluasi = JenisEvaluasi::all();
 
