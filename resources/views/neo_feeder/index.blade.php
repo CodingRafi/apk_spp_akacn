@@ -32,10 +32,12 @@
 
             process = 0;
             processDone = 0;
-
-            //? Nonactive all data
-            await nonActive();
-
+            
+            if (configData.with_is_active == null || configData.with_is_active == true){
+                //? Nonactive all data
+                await nonActive();
+            }
+            
             try {
                 let raw = rawParams ?? configData.raw;
                 raw.token = token.data.token;

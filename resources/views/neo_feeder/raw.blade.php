@@ -14,7 +14,8 @@
             format: {
                 id_agama: 'id',
                 nama_agama: 'nama'
-            }
+            },
+            with_is_active: true
         },
         mutu: {
             raw: {
@@ -27,7 +28,8 @@
             tbl: 'mutus',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         kategori_kegiatan: {
             raw: {
@@ -43,7 +45,8 @@
             format: {
                 id_kategori_kegiatan: 'id',
                 nama_kategori_kegiatan: 'nama'
-            }
+            },
+            with_is_active: true
         },
         jenis_tinggal: {
             raw: {
@@ -59,7 +62,8 @@
             format: {
                 id_jenis_tinggal: 'id',
                 nama_jenis_tinggal: 'nama'
-            }
+            },
+            with_is_active: true
         },
         jenis_evaluasi: {
             raw: {
@@ -75,7 +79,8 @@
             format: {
                 id_jenis_evaluasi: 'id',
                 nama_jenis_evaluasi: 'nama'
-            }
+            },
+            with_is_active: true
         },
         alat_transportasi: {
             raw: {
@@ -91,7 +96,8 @@
             format: {
                 id_alat_transportasi: 'id',
                 nama_alat_transportasi: 'nama'
-            }
+            },
+            with_is_active: true
         },
         jenis_aktivitas: {
             raw: {
@@ -108,7 +114,8 @@
                 id_jenis_aktivitas_mahasiswa: 'id',
                 nama_jenis_aktivitas_mahasiswa: 'nama',
                 untuk_kampus_merdeka: 'untuk_kampus_merdeka'
-            }
+            },
+            with_is_active: true
         },
         jenjang: {
             raw: {
@@ -124,7 +131,8 @@
             format: {
                 id_jenjang_didik: 'id',
                 nama_jenjang_didik: 'nama'
-            }
+            },
+            with_is_active: true
         },
         kewarganegaraan: {
             raw: {
@@ -140,7 +148,8 @@
             format: {
                 id_negara: 'id',
                 nama_negara: 'nama'
-            }
+            },
+            with_is_active: true
         },
         lembaga_pengangkat: {
             raw: {
@@ -156,7 +165,8 @@
             format: {
                 id_lembaga_angkat: 'id',
                 nama_lembaga_angkat: 'nama'
-            }
+            },
+            with_is_active: true
         },
         pekerjaan: {
             raw: {
@@ -172,7 +182,8 @@
             format: {
                 id_pekerjaan: 'id',
                 nama_pekerjaan: 'nama'
-            }
+            },
+            with_is_active: true
         },
         penghasilan: {
             raw: {
@@ -188,7 +199,8 @@
             format: {
                 id_penghasilan: 'id',
                 nama_penghasilan: 'nama'
-            }
+            },
+            with_is_active: true
         },
         pangkat_golongan: {
             raw: {
@@ -205,7 +217,8 @@
                 id_pangkat_golongan: 'id',
                 nama_pangkat: 'nama',
                 kode_golongan: 'kode'
-            }
+            },
+            with_is_active: true
         },
         wilayah: {
             raw: {
@@ -222,7 +235,8 @@
                 id_level_wilayah: 'id_level_wilayah',
                 id_negara: 'negara_id',
                 id_induk_wilayah: 'id_induk_wilayah'
-            }
+            },
+            with_is_active: false
         },
         tahun_ajaran: {
             raw: {
@@ -235,7 +249,8 @@
             tbl: 'tahun_ajarans',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         semester: {
             raw: {
@@ -248,7 +263,8 @@
             tbl: 'semesters',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         prodi: {
             raw: {
@@ -261,7 +277,8 @@
             tbl: 'prodi',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         kurikulum: {
             raw: {
@@ -274,7 +291,8 @@
             tbl: 'kurikulums',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         kurikulum_matkul: {
             raw: {
@@ -287,7 +305,8 @@
             tbl: 'kurikulum_matkul',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         dosen: {
             raw: {
@@ -295,11 +314,12 @@
                 "filter": "",
                 "order": "",
                 "limit": "100",
-                "offset": "0"
+                "offset": "0",
             },
             tbl: 'dosens',
             changeFormat: false,
-            format: {}
+            format: {},
+            with_is_active: false
         },
         mahasiswa: {
             raw: {
@@ -311,7 +331,8 @@
             },
             tbl: 'mahasiswas',
             changeFormat: false,
-            format: {}
+            format: {},
+            with_is_active: false
         },
         jenis_pembiayaan: {
             raw: {
@@ -327,7 +348,8 @@
             format: {
                 id_pembiayaan: 'id',
                 nama_pembiayaan: 'nama'
-            }
+            },
+            with_is_active: true
         },
         status_kepegawaian: {
             raw: {
@@ -343,7 +365,8 @@
             format: {
                 id_status_pegawai: 'id',
                 nama_status_pegawai: 'nama'
-            }
+            },
+            with_is_active: true
         },
         ikatan_kerja: {
             raw: {
@@ -359,7 +382,8 @@
             format: {
                 id_ikatan_kerja: 'id',
                 nama_ikatan_kerja: 'nama'
-            }
+            },
+            with_is_active: true
         },
         jenis_daftar: {
             raw: {
@@ -376,7 +400,8 @@
                 id_jenis_daftar: 'id',
                 nama_jenis_daftar: 'nama',
                 untuk_daftar_sekolah: 'untuk_daftar_sekolah'
-            }
+            },
+            with_is_active: true
         },
         jalur_masuk: {
             raw: {
@@ -392,7 +417,8 @@
             format: {
                 id_jalur_masuk: 'id',
                 nama_jalur_masuk: 'nama'
-            }
+            },
+            with_is_active: true
         },
         jenis_keluar: {
             raw: {
@@ -409,7 +435,8 @@
                 id_jenis_keluar: 'id',
                 jenis_keluar: 'jenis',
                 apa_mahasiswa: 'apa_mahasiswa'
-            }
+            },
+            with_is_active: true
         },
         matkul:{
             raw: {
@@ -422,7 +449,8 @@
             tbl: 'matkuls',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: false
         },
         penugasan_dosen:{
             raw: {
@@ -435,7 +463,8 @@
             tbl: 'penugasan_dosens',
             changeFormat: false,
             unique: [],
-            format: {}
+            format: {},
+            with_is_active: true
         }
     }
 </script>
