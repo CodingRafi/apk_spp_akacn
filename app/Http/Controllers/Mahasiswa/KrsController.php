@@ -190,19 +190,26 @@ class KrsController extends Controller
         return view('mahasiswa.krs.show', compact('tahun_semester', 'krs', 'mhs_id', 'validationPembayaran'));
     }
 
-    public function ajukan($tahun_semester_id)
+    public function ajukan($tahun_semester_id, $mhs_id = null)
     {
-        $validationPembayaran = $this->validatePembayaran($tahun_semester_id, Auth::user()->id);
-
-        if (!$validationPembayaran['status']) {
+        $mhs_id = $this->validateMhsId($mhs_id);
+        $validationPembayaran = $this->validatePembayaran($tahun_semester_id, $mhs_id);
+        
+        $krs = DB::table('krs')
+        ->where('krs.mhs_id', $mhs_id)
+        ->where('krs.tahun_semester_id', $tahun_semester_id)
+        ->first();
+        
+        if (!$validationPembayaran['status'] && ($krs && $krs->lock == '1')) {
             return redirect()->back()->with('error', $validationPembayaran['message']);
         }
-
+        
         DB::table('krs')
-            ->where('mhs_id', Auth::user()->id)
-            ->where('tahun_semester_id', $tahun_semester_id)->update([
-                'status' => 'pengajuan'
-            ]);
+        ->where('krs.mhs_id', $mhs_id)
+        ->where('krs.tahun_semester_id', $tahun_semester_id)
+        ->update([
+            'status' => 'pengajuan'
+        ]);
 
         return redirect()->back()->with('success', 'Data Berhasil Di Ajukan');
     }

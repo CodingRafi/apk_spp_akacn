@@ -54,7 +54,7 @@
                                     </button>
                                     @if ($dataEmpty || $krs->status == 'pending')
                                         @if (Auth::user()->hasRole('mahasiswa'))
-                                            <form action="{{ route('krs.ajukan', $tahun_semester->id) }}"
+                                            <form action="{{ route('krs.ajukan', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}"
                                                 class="form-ajukan" method="POST">
                                                 @csrf
                                                 <button type="button" class="btn btn-warning btn-ajukan">Ajukan

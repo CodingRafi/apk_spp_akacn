@@ -650,7 +650,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('krs/{tahun_semester_id}')->name('krs.')->group(function () {
-        Route::post('/ajukan', [KrsController::class, 'ajukan'])->name('ajukan');
+        Route::post('/ajukan/{mhs_id?}', [KrsController::class, 'ajukan'])->name('ajukan');
         Route::post('/simpan/{mhs_id?}', [ControllersKrsController::class, 'simpan'])->name('simpan');
         Route::patch('/update-lock/{mhs_id}', [KelolaKrsController::class, 'updateLock'])->name('updateLock');
         Route::get('/dataMatkul/{mhs_id?}', [ControllersKrsController::class, 'dataMatkul'])->name('dataMatkul');
