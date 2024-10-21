@@ -96,5 +96,12 @@ return [
         '1' => 'Ketua',
         '2' => 'Anggota',
         '3' => 'Personal'
+    ],
+
+    'choice_kuesioner' => [
+        '1' => 'Tidak Baik',
+        '2' => 'Cukup Baik',
+        '3' => 'Baik',
+        '4' => 'Sangat Baik',
     ]
 ];

@@ -76,15 +76,15 @@
                 __PERTANYAAN__
             </div>
             <div class="d-flex" style="gap: 1rem;">
-                @for ($i = 1; $i <= 5; $i++)
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="__ID_KUESIONER__-{{ $i }}" required
-                            value="{{ $i }}" disabled>
-                        <label class="form-check-label" for="__ID_KUESIONER__-{{ $i }}">
-                            {{ $i }}
-                        </label>
-                    </div>
-                @endfor
+                @foreach (config('services.choice_kuesioner') as $i => $choice)
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="__ID_KUESIONER__-{{ $i }}" required
+                        value="{{ $i }}" disabled>
+                    <label class="form-check-label" for="__ID_KUESIONER__-{{ $i }}">
+                        {{ $choice }}
+                    </label>
+                </div>
+                @endforeach
             </div>
         </div>
     </template>

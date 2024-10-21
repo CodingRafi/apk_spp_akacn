@@ -70,18 +70,18 @@
                                             name="{{ $item->id }}" required />
                                     @else
                                         <div class="d-flex" style="gap: 1rem;">
-                                            @for ($i = 1; $i <= 5; $i++)
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio"
-                                                        name="{{ $item->id }}"
-                                                        id="{{ $item->id }}{{ $i }}" required
-                                                        value="{{ $i }}">
-                                                    <label class="form-check-label"
-                                                        for="{{ $item->id }}{{ $i }}">
-                                                        {{ $i }}
-                                                    </label>
-                                                </div>
-                                            @endfor
+                                            @foreach (config('services.choice_kuesioner') as $i => $choice)
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio"
+                                                    name="{{ $item->id }}"
+                                                    id="{{ $item->id }}{{ $i }}" required
+                                                    value="{{ $i }}">
+                                                <label class="form-check-label"
+                                                    for="{{ $item->id }}{{ $i }}">
+                                                    {{ $choice }}
+                                                </label>
+                                            </div>
+                                            @endforeach
                                         </div>
                                     @endif
                                 </div>
