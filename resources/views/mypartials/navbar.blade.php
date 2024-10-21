@@ -37,6 +37,9 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
+                        <a href="{{ route('password.ubah') }}" class="dropdown-item"><i class='bx bx-lock-alt'></i> Reset Password</a>
+                    </li>
+                    <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button class="dropdown-item"><i class="bx bx-power-off me-2"></i> Log Out</button>

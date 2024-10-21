@@ -37,6 +37,7 @@ class NewPasswordController extends Controller
             'password' => Hash::make($request->new_password)
         ]);
 
-        return redirect()->route('profile.index')->with('success', 'Berhasil direset!');
+
+        return redirect()->route('dashboard.' . $user->getRoleNames()[0])->with('success', 'Password Berhasil direset!');
     }
 }
