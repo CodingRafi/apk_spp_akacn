@@ -138,7 +138,7 @@
                 <thead>
                     <tr>
                         <th style="padding: 8px;">Kode</th>
-                        <th style="padding: 8px;">Mata Kuliah</th>
+                        <th style="padding: 8px;text-align:left;">Mata Kuliah</th>
                         <th style="padding: 8px;">SKS</th>
                         <th style="padding: 8px;">Nilai</th>
                     </tr>
@@ -151,7 +151,7 @@
                         @foreach ($row as $item)
                             <tr>
                                 <td style="padding: 5px;">{{ $item->kode_mk }}</td>
-                                <td style="padding: 5px;">{{ $item->matkul }}</td>
+                                <td style="padding: 5px;text-align:left;">{{ $item->matkul }}</td>
                                 @if ($item->kuesioner != null && $item->status == 1)
                                     <td style="padding: 5px;">{{ $item->jml_sks }}</td>
                                     <td style="padding: 5px;">{{ $item->mutu }}</td>
