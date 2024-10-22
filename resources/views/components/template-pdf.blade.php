@@ -81,7 +81,7 @@
     </header>
 
     <footer>
-        <p style="text-align: center;margin-bottom: 0;">Komplek Timah, Kelapa Dua Cimanggis Depok - 16951 Telp : (021)
+        <p style="text-align: center;margin-bottom: 0;font-size: 13px;">Komplek Timah, Kelapa Dua Cimanggis Depok - 16951 Telp : (021)
             8710001 Fax : (021)
             8728523 <br> email : akacaraka@yahoo.com.id, Info@akacn.ac.id Home page : www.akacn.ac.id</p>
     </footer>

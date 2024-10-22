@@ -19,51 +19,51 @@
 
     <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;">KARTU RENCANA STUDI</h2>
 
-    <div style="margin-top: 2rem;">
-        <table style="float: left;width: 50%" aria-hidden="true">
+    <div style="margin-top: 1rem;">
+        <table style="float: left;width: 50%;font-size: 13px;" aria-hidden="true">
             <tr>
-                <td style="width: 7rem">NIM</td>
-                <td>:</td>
-                <td style="font-weight: bold">{{ $krs->nim }}</td>
+                <td style="width: 7rem;padding:0 auto;">NIM</td>
+                <td style="padding:0 auto;">:</td>
+                <td style="font-weight: bold;padding:0 auto;">{{ $krs->nim }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Nama</td>
-                <td>:</td>
-                <td style="font-weight: bold">{{ $krs->name }}</td>
+                <td style="width: 7rem;padding:0 auto;">Nama</td>
+                <td style="padding:0 auto;">:</td>
+                <td style="font-weight: bold;padding:0 auto;">{{ $krs->name }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Dosen PA</td>
-                <td>:</td>
-                <td style="font-weight: bold">{{ $krs->dosenPa }}</td>
+                <td style="width: 7rem;padding:0 auto;">Dosen PA</td>
+                <td style="padding:0 auto;">:</td>
+                <td style="font-weight: bold;padding:0 auto;">{{ $krs->dosenPa }}</td>
             </tr>
         </table>
-        <table style="float: left" aria-hidden="true">
+        <table style="float: left;font-size: 13px;" aria-hidden="true">
             <tr>
-                <td style="width: 7rem">Semester</td>
-                <td>:</td>
-                <td style="font-weight: bold">{{ $krs->semester }}</td>
+                <td style="width: 7rem;padding:0 auto;">Semester</td>
+                <td style="padding:0 auto;">:</td>
+                <td style="font-weight: bold;padding:0 auto;">{{ $krs->semester }}</td>
             </tr>
             <tr>
-                <td style="width: 7rem">Prodi</td>
-                <td>:</td>
-                <td style="font-weight: bold">{{ $krs->prodi }}</td>
+                <td style="width: 7rem;padding:0 auto;">Prodi</td>
+                <td style="padding:0 auto;">:</td>
+                <td style="font-weight: bold;padding:0 auto;">{{ $krs->prodi }}</td>
             </tr>
         </table>
     </div>
 
     <div style="clear: both;"></div>
 
-    <div style="margin-top: 2rem;">
-        <table aria-label="table-matkul" class="bordered" style="width: 100%;text-align:center">
+    <div style="margin-top: 1rem;">
+        <table aria-label="table-matkul" class="bordered" style="width: 100%;font-size:13px;">
             <thead>
                 <tr>
-                    <th style="padding: 11px;">#</th>
-                    <th style="padding: 11px;">Hari</th>
-                    <th style="padding: 11px;">Jam Kuliah</th>
-                    <th style="padding: 11px;">Mata Kuliah</th>
-                    <th style="padding: 11px;">SKS</th>
-                    <th style="padding: 11px;">Dosen</th>
-                    <th style="padding: 11px;">Ruang</th>
+                    <th style="padding: 11px;text-align: center;width: 3%;">#</th>
+                    <th style="padding: 11px;text-align: center;width: 5%;">Hari</th>
+                    <th style="padding: 11px;text-align: center;width: 8%;">Jam Kuliah</th>
+                    <th style="padding: 11px;width: 15%;">Mata Kuliah</th>
+                    <th style="padding: 11px;text-align: center;width: 5%;">SKS</th> 
+                    <th style="padding: 11px;text-align: center;width: 10%;">Dosen</th>
+                    <th style="padding: 11px;text-align: center;width: 10%;">Ruang</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,14 +72,14 @@
                 @endphp
                 @foreach ($krsMatkul as $item)
                     <tr>
-                        <td style="padding: 8px;">{{ $loop->iteration }}</td>
-                        <td style="padding: 8px;">{{ $item->hari ? $configHari[$item->hari] : '' }}</td>
-                        <td style="padding: 8px;">{{ date('h:i', strtotime($item->jam_mulai)) }} -
+                        <td style="padding: 8px;text-align:center;">{{ $loop->iteration }}</td>
+                        <td style="padding: 8px;text-align:center;">{{ $item->hari ? $configHari[$item->hari] : '' }}</td>
+                        <td style="padding: 8px;text-align:center;">{{ date('h:i', strtotime($item->jam_mulai)) }} -
                             {{ date('h:i', strtotime($item->jam_akhir)) }}</td>
                         <td style="padding: 8px;">{{ $item->matkul }}</td>
-                        <td style="padding: 8px;">{{ $item->sks_mata_kuliah }}</td>
-                        <td style="padding: 8px;">{{ $item->dosen }}</td>
-                        <td style="padding: 8px;">{{ $item->ruang }}</td>
+                        <td style="padding: 8px;text-align:center;">{{ $item->sks_mata_kuliah }}</td>
+                        <td style="padding: 8px;text-align:center;">{{ $item->dosen }}</td>
+                        <td style="padding: 8px;text-align:center;">{{ $item->ruang }}</td>
                     </tr>
                     @php
                         $totalSks += $item->sks_mata_kuliah;
@@ -91,8 +91,8 @@
             </tbody>
         </table>
     </div>
-    <div style="margin-top: 1rem">
-        <div style="width: 32%;float: right">
+    <div style="margin-top: 1rem;font-size: 13px;">
+        <div style="width: 32%;float: right;">
             <table aria-hidden="true" style="width: 100%;margin-top: 1rem">
                 <tr>
                     <td style="text-align: center;">

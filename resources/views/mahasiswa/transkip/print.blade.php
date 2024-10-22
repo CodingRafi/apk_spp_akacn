@@ -72,7 +72,7 @@
     @endphp
     <header>
         <h3 style="text-align: center">TRANSKIP AKADEMIK MAHASISWA</h3>
-        <table aria-hidden="true" style="margin:auto">
+        <table aria-hidden="true" style="margin:auto;font-size: 13px">
             <tr>
                 <td>Nomor Seri Transkip Akademik</td>
                 <td>:</td>
@@ -134,7 +134,7 @@
 
     <main>
         <div>
-            <table aria-label="table-matkul" class="table bordered" style="width: 100%;text-align:center">
+            <table aria-label="table-matkul" class="table bordered" style="width: 100%;text-align:center;font-size: 13px">
                 <thead>
                     <tr>
                         <th style="padding: 8px;">Kode</th>
@@ -170,7 +170,7 @@
                 </tbody>
             </table>
 
-            <table aria-hidden="true" style="margin-top: 1rem">
+            <table aria-hidden="true" style="margin-top: 1rem;font-size: 13px">
                 <tr>
                     <td>Jakarta, {{ date('d F Y') }}</td>
                 </tr>
