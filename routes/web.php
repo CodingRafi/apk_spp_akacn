@@ -23,6 +23,7 @@ use App\Http\Controllers\Kelola\{
     RekapPresensiController,
     ResponseKuesionerController,
     RombelController,
+    RombelDosenPaController,
     RuangController,
     SemesterController as KelolaSemesterController,
     SettingController,
@@ -380,21 +381,29 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         });
 
         //? Rombel
-        Route::get('rombel/data', [RombelController::class, 'data'])->name('rombel.data');
-        Route::get(
-            'rombel/{rombel_id}/get-tahun-ajaran',
-            [RombelController::class, 'getTahunAjaran']
-        )->name('rombel.getTahunAjaran');
-        Route::get('rombel/get-dosen-pa', [RombelController::class, 'getDosenPa'])->name('rombel.getDosenPa');
-        Route::prefix('rombel/')->name('rombel.dosen-pa.')->group(function () {
-            Route::get('{rombel_id}/dosen-pa', [RombelController::class, 'indexDosenPa'])->name('index');
-            Route::post('{rombel_id}/dosen-pa', [RombelController::class, 'storeDosenPa'])->name('store');
-            Route::get('{rombel_id}/dosen-pa/data', [RombelController::class, 'dataDosenPa'])->name('data');
-            Route::get('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'showDosenPa'])->name('show');
-            Route::put('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'updateDosenPa'])->name('update');
-            Route::delete('{rombel_id}/dosen-pa/{tahun_masuk_id}', [RombelController::class, 'deleteDosenPa'])->name('destroy');
+        Route::prefix('rombel')->name('rombel.')->group(function () {
+            Route::get('/', [RombelController::class, 'index'])->name('index');
+            Route::get('/data', [RombelController::class, 'data'])->name('data');
+            Route::post('/', [RombelController::class, 'store'])->name('store');
+            Route::get('/{rombel_id}', [RombelController::class, 'show'])->name('show');
+            Route::put('/{rombel_id}', [RombelController::class, 'update'])->name('update');
+            Route::delete('/{rombel_id}', [RombelController::class, 'destroy'])->name('destroy');
+
+            Route::prefix('{rombel_id}/dosen-pa')->name('dosen-pa.')->group(function () {
+                Route::get('/', [RombelDosenPaController::class, 'index'])->name('index');
+                Route::get('/data-tahun-ajaran', [RombelDosenPaController::class, 'dataTahunAjaran'])->name('dataTahunAjaran');
+                Route::prefix('/{tahun_ajaran_id}')->group(function () {
+                    Route::get('/', [RombelDosenPaController::class, 'show'])->name('show');
+                    Route::get('/get-dosen', [RombelDosenPaController::class, 'getDosen'])->name('getDosen');
+                    Route::get('/data', [RombelDosenPaController::class, 'data'])->name('data');
+                    Route::post('/', [RombelDosenPaController::class, 'store'])->name('store');
+                    Route::delete('/{dosen_id}', [RombelDosenPaController::class, 'destroy'])->name('destroy');
+                    Route::get('/{dosen_id}/list-mahasiswa', [RombelDosenPaController::class, 'listMahasiswa'])->name('listMahasiswa');
+                    Route::get('/{dosen_id}/mahasiswa', [RombelDosenPaController::class, 'showMahasiswa'])->name('showMahasiswa');
+                    Route::put('/{dosen_id}/mahasiswa', [RombelDosenPaController::class, 'updateMahasiswa'])->name('updateMahasiswa');
+                });
+            });
         });
-        Route::resource('rombel', RombelController::class);
     });
 
     Route::prefix('rekap-perkuliahan')->name('rekap-perkuliahan.')->group(function () {
