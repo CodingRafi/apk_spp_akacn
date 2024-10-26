@@ -8,7 +8,8 @@
 
 <ul class="nav nav-tabs" id="profile">
     <li class="nav-item" style="white-space: nowrap;">
-        <button type="button" data-bs-toggle="tab" class="nav-link active a-tab" data-bs-target="#identitas">Identitas</button>
+        <button type="button" data-bs-toggle="tab" class="nav-link active a-tab"
+            data-bs-target="#identitas">Identitas</button>
     </li>
     <li class="nav-item" style="white-space: nowrap;">
         <button type="button" data-bs-toggle="tab" class="nav-link a-tab" data-bs-target="#ayah">Ayah</button>
@@ -57,8 +58,8 @@
                 <div class="mb-3">
                     <label for="no_ktp" class="form-label">No KTP</label>
                     <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('no_ktp') is-invalid @enderror"
-                        type="text" value="{{ isset($data) ? $data->mahasiswa->no_ktp : old('no_ktp') }}" id="no_ktp"
-                        placeholder="No KTP" name="no_ktp" />
+                        type="text" value="{{ isset($data) ? $data->mahasiswa->no_ktp : old('no_ktp') }}"
+                        id="no_ktp" placeholder="No KTP" name="no_ktp" />
                     @error('no_ktp')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -128,9 +129,10 @@
                 </div>
                 <div class="mb-3">
                     <label for="no_kps" class="form-label">No KPS</label>
-                    <input {{ $disabled ? 'disabled' : '' }} class="form-control @error('no_kps') is-invalid @enderror"
-                        type="text" value="{{ isset($data) ? $data->mahasiswa->no_kps : old('no_kps') }}"
-                        id="no_kps" placeholder="No KPS" name="no_kps" />
+                    <input {{ $disabled ? 'disabled' : '' }}
+                        class="form-control @error('no_kps') is-invalid @enderror" type="text"
+                        value="{{ isset($data) ? $data->mahasiswa->no_kps : old('no_kps') }}" id="no_kps"
+                        placeholder="No KPS" name="no_kps" />
                     @error('no_kps')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -169,9 +171,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="jenis_daftar_id" class="form-label">Jenis Daftar</label>
-                    <select class="form-select @error('jenis_daftar_id') is-invalid @enderror"
-                        name="jenis_daftar_id" id="jenis_daftar_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                    <select class="form-select @error('jenis_daftar_id') is-invalid @enderror" name="jenis_daftar_id"
+                        id="jenis_daftar_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Daftar</option>
                         @foreach ($jenisDaftar as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -188,9 +189,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="jalur_masuk_id" class="form-label">Jalur Masuk</label>
-                    <select class="form-select @error('jalur_masuk_id') is-invalid @enderror"
-                        name="jalur_masuk_id" id="jalur_masuk_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                    <select class="form-select @error('jalur_masuk_id') is-invalid @enderror" name="jalur_masuk_id"
+                        id="jalur_masuk_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jalur Masuk</option>
                         @foreach ($jalurMasuk as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -207,7 +207,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="tgl_daftar" class="form-label">Tanggal Daftar</label>
-                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar" {{ $page == 'profile' || $disabled ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->tgl_daftar : old('tgl_daftar') }}">
+                    <input type="date" class="form-control" name="tgl_daftar" id="tgl_daftar"
+                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}
+                        value="{{ isset($data) ? $data->mahasiswa->tgl_daftar : old('tgl_daftar') }}">
                     @error('tgl_daftar')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -216,7 +218,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="biaya_masuk" class="form-label">Biaya Masuk</label>
-                    <input type="number" min="0" step="0.01" class="form-control" name="biaya_masuk" id="biaya_masuk" {{ $page == 'profile' || $disabled ? 'disabled' : '' }} value="{{ isset($data) ? $data->mahasiswa->biaya_masuk : old('biaya_masuk') }}">
+                    <input type="number" min="0" step="0.01" class="form-control" name="biaya_masuk"
+                        id="biaya_masuk" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}
+                        value="{{ isset($data) ? $data->mahasiswa->biaya_masuk : old('biaya_masuk') }}">
                     @error('biaya_masuk')
                         <div class="invalid-feedback d-block">
                             {{ $message }}
@@ -225,9 +229,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="jenis_keluar_id" class="form-label">Jenis Keluar</label>
-                    <select class="form-select @error('jenis_keluar_id') is-invalid @enderror"
-                        name="jenis_keluar_id" id="jenis_keluar_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                    <select class="form-select @error('jenis_keluar_id') is-invalid @enderror" name="jenis_keluar_id"
+                        id="jenis_keluar_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Keluar</option>
                         @foreach ($jenisKeluar as $jenis)
                             <option value="{{ $jenis->id }}"
@@ -295,8 +298,7 @@
                 <div class="mb-3">
                     <label for="jenis_kelas_id" class="form-label">Jenis Kelas</label>
                     <select class="form-select @error('jenis_kelas_id') is-invalid @enderror" name="jenis_kelas_id"
-                        id="jenis_kelas_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
+                        id="jenis_kelas_id" {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
                         <option value="">Pilih Jenis Kelas</option>
                         @foreach ($jenisKelas as $item)
                             <option value="{{ $item->id }}"
@@ -310,19 +312,18 @@
                         </div>
                     @enderror
                 </div>
-                <div class="mb-3">
-                    <label for="rombel_id" class="form-label">Rombel</label>
-                    <select class="form-select @error('rombel_id') is-invalid @enderror" name="rombel_id"
-                        id="rombel_id"
-                        {{ $page == 'profile' || $disabled ? 'disabled' : '' }}>
-                        <option value="">Pilih Rombel</option>
-                    </select>
-                    @error('rombel_id')
-                        <div class="invalid-feedback d-block">
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
+                @if (isset($data))
+                    @php
+                        $rombel = getRombelMhs(request('id') ?? auth()->user()->id);
+                    @endphp
+                    <div class="mb-3">
+                        <label for="rombel" class="form-label">Rombel</label>
+                        <input disabled
+                            class="form-control" type="text"
+                            value="{{ $rombel['nama'] }} ({{ $rombel['dosen_pa'] }})" id="rombel"
+                            placeholder="Rombel" />
+                    </div>
+                @endif
                 <div class="mb-3">
                     <label for="kebutuhan_khusus" class="form-label">Kebutuhan Khusus?</label>
                     <div class="d-flex gap-3">
@@ -410,29 +411,6 @@
 @endif
 
 <script>
-    function getRombel() {
-        $('#rombel_id').empty().append(`<option value="">Pilih Rombel</option>`);
-        return $.ajax({
-            type: "GET",
-            url: "{{ route('data-master.rombel.getDosenPa') }}",
-            data: {
-                prodi_id: $('#prodi_id').val(),
-                tahun_ajaran_id: $('#tahun_masuk_id').val(),
-                jenis_kelas_id: $('#jenis_kelas_id').val()
-            },
-            success: function(res) {
-                $.each(res.data, function(i, e) {
-                    $('#rombel_id').append(
-                        `<option value="${e.id}">${e.nama} (${e.dosen_pa})</option>`
-                    );
-                })
-            },
-            error: function(err) {
-                console.error('Gagal get rombel')
-            }
-        })
-    }
-
     function getSemester() {
         $('#semester_id').empty().append(`<option value="">Pilih Semester</option>`);
         if ($('#tahun_masuk_id').val()) {
@@ -453,21 +431,16 @@
             })
         }
     }
-    
+
     $('#tahun_masuk_id').on('change', getSemester);
-    $('#tahun_masuk_id, #prodi_id, #jenis_kelas_id').on('change', getRombel)
 </script>
 
 @if (isset($data) || old('tahun_masuk_id') || old('prodi_id'))
     <script>
-        getRombel().done(() => {
-            $('#rombel_id').val('{{ isset($data) ? $data->mahasiswa->rombel_id : old('rombel_id') }}').trigger(
-                'change')
-        })
-
         getSemester().done(() => {
-            $('#semester_id').val('{{ isset($data) ? $data->mahasiswa->semester_id : old('semester_id') }}').trigger(
-                'change')
+            $('#semester_id').val('{{ isset($data) ? $data->mahasiswa->semester_id : old('semester_id') }}')
+                .trigger(
+                    'change')
         })
     </script>
 @endif

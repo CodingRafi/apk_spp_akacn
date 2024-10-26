@@ -241,6 +241,12 @@ class RombelDosenPaController extends Controller
                     'mhs_id' => $value,
                     'rombel_tahun_ajaran_id' => $rombel_tahun_ajaran->id
                 ]);
+
+                DB::table('profile_mahasiswas')
+                    ->where('user_id', $value)
+                    ->update([
+                        'rombel_id' => $rombel_id
+                    ]);
             }
 
             // Compare for delete
@@ -251,6 +257,12 @@ class RombelDosenPaController extends Controller
                     ->where('mhs_id', $value)
                     ->where('rombel_tahun_ajaran_id', $rombel_tahun_ajaran->id)
                     ->delete();
+
+                DB::table('profile_mahasiswas')
+                    ->where('user_id', $value)
+                    ->update([
+                        'rombel_id' => null
+                    ]);
             }
 
             return response()->json([

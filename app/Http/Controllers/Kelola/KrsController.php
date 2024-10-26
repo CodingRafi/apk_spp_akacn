@@ -131,7 +131,7 @@ class KrsController extends Controller
             ->where('krs.id', $id)
             ->first();
 
-        $getRombel = getRombelMhs($data->prodi_id, $data->tahun_masuk_id, $data->rombel_id);
+        $getRombel = getRombelMhs($data->mhs_id);
         
         $data->rombel = $getRombel['nama'];
         $data->dosen_pa = $getRombel['dosen_pa'];

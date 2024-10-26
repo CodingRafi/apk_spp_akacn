@@ -134,7 +134,7 @@ class TranskipController extends Controller
             ->where('users.id', $user->id)
             ->first();
 
-        $getRombel = getRombelMhs($data->prodi_id, $data->angkatan, $data->rombel_id);
+        $getRombel = getRombelMhs($user->id);
 
         $data->rombel = $getRombel['nama'];
         $data->dosenPa = $getRombel['dosen_pa'];

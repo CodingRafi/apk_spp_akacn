@@ -66,30 +66,22 @@ if (!function_exists('getUrlNeoFeeder')) {
 
 if (!function_exists('getRombelMhs')) {
 
-    function getRombelMhs($prodi_id, $tahun_masuk_id, $rombel_id)
+    function getRombelMhs($mhs_id)
     {
-        if ($rombel_id) {
-            $data = DB::table('rombels')
-                ->join('rombel_tahun_ajarans', 'rombels.id', '=', 'rombel_tahun_ajarans.rombel_id')
-                ->join('users', 'users.id', '=', 'rombel_tahun_ajarans.dosen_pa_id')
-                ->where('prodi_id', $prodi_id)
-                ->where('tahun_masuk_id', $tahun_masuk_id)
-                ->where('rombel_id', $rombel_id)
-                ->select('rombels.nama', 'users.name as dosen_pa')
-                ->get();
+        if ($mhs_id) {
+            $data = DB::table('rombel_mhs')
+                        ->join('rombel_tahun_ajarans', 'rombel_mhs.rombel_tahun_ajaran_id', '=', 'rombel_tahun_ajarans.id')
+                        ->join('rombels', 'rombel_tahun_ajarans.rombel_id', '=', 'rombels.id')
+                        ->join('users', 'users.id', '=', 'rombel_tahun_ajarans.dosen_pa_id')
+                        ->select('rombels.nama as nama', 'users.name as dosen_pa')
+                        ->where('mhs_id', $mhs_id)
+                        ->first();
 
-            // Langsung manipulasi data jika query mengembalikan hasil
-            if ($data->isNotEmpty()) {
-                $groupedData = $data->groupBy('nama');
-                $firstGroup = $groupedData->first();
-
-                // Pastikan grup memiliki elemen sebelum mencoba mengakses properti
-                if ($firstGroup->isNotEmpty()) {
-                    return [
-                        'nama' => $firstGroup->first()->nama,
-                        'dosen_pa' => $firstGroup->pluck('dosen_pa')->implode(', ')
-                    ];
-                }
+            if ($data) {
+                return [
+                    'nama' => $data->nama,
+                    'dosen_pa' => $data->dosen_pa
+                ];
             }
         }
 

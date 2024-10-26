@@ -125,7 +125,7 @@ class KhsController extends Controller
             ->where('users.id', Auth::user()->id)
             ->first();
 
-        $getRombel = getRombelMhs($data->prodi_id, $data->tahun_masuk_id, $data->rombel_id);
+        $getRombel = getRombelMhs(Auth::user()->id);
 
         $data->rombel = $getRombel['nama'];
         $data->dosenPa = $getRombel['dosen_pa'];

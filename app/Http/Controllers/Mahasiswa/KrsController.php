@@ -270,7 +270,7 @@ class KrsController extends Controller
             abort(404);
         }
 
-        $getRombel = getRombelMhs($krs->prodi_id, $krs->tahun_masuk_id, $krs->rombel_id);
+        $getRombel = getRombelMhs(Auth::user()->id);
         
         $krs->rombel = $getRombel['nama'];
         $krs->dosenPa = $getRombel['dosen_pa'];
