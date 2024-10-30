@@ -35,8 +35,8 @@
                         <input class="form-control input-pp @error('ttd') is-invalid @enderror" type="file"
                             name="ttd" id="ttd" accept="image/*" />
                         @endif
-                        @if (Auth::user()->ttd)
-                            <a href="{{ asset('storage/' . Auth::user()->ttd) }}" class="btn btn-primary"
+                        @if ($data->ttd)
+                            <a href="{{ asset('storage/' . $data->ttd) }}" class="btn btn-primary"
                                 target="_blank">Lihat</a>
                         @endif
                     </div>
