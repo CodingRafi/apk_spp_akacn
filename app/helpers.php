@@ -74,7 +74,7 @@ if (!function_exists('getRombelMhs')) {
                         ->join('rombels', 'rombel_tahun_ajarans.rombel_id', '=', 'rombels.id')
                         ->join('users', 'users.id', '=', 'rombel_tahun_ajarans.dosen_pa_id')
                         ->select('rombels.nama as nama', 'users.name as dosen_pa')
-                        ->where('mhs_id', $mhs_id)
+                        ->where('rombel_mhs.mhs_id', $mhs_id)
                         ->first();
 
             if ($data) {

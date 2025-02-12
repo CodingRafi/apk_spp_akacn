@@ -96,14 +96,14 @@ class PresensiController extends Controller
 
         $data = [];
 
-        foreach ($krsMatkul as $matkul) {
+        foreach ($krsMatkul as $i => $matkul) {
             $getPresensi = $jadwal->filter(function ($row) use ($matkul) {
                 return $row->tahun_matkul_id == $matkul->tahun_matkul_id;
-            });
+            })->values();
 
             $presensiPertemuan = $getPresensi->filter(function ($data) {
                 return $data->type == 'pertemuan';
-            });
+            })->values();
 
             $presensi = [];
 

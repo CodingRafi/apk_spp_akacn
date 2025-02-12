@@ -300,7 +300,7 @@ class PembayaranController extends Controller
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
@@ -313,7 +313,7 @@ class PembayaranController extends Controller
     {
         $data = Pembayaran::findOrFail($pembayaran_id);
 
-        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_semester_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
+        if ($data->mhs_id != Auth::user()->id || ($type == 'semester' ? $data->tahun_pembayaran_id != $id : $data->tahun_pembayaran_lain_id != $id) || $data->status == 'pengajuan') {
             return redirect()->back()->with('error', 'Maaf telah terjadi kesalahan');
         }
 
