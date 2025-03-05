@@ -23,7 +23,9 @@ class RekapPresensiController extends Controller
         ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
         ->join('tahun_matkul_dosen', function($q){
             $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
-                ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                ->when(!Auth::user()->hasRole('admin'), function ($q2) {
+                    $q2->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                });
         })
         ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
         ->where('tahun_matkul.prodi_id', request('prodi_id'))
