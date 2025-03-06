@@ -11,7 +11,7 @@
         $month = $dateNow->translatedFormat('F'); // Nama bulan dalam bahasa Indonesia
         $year = $dateNow->format('Y');
 
-        $dataFormat = "Jakarta, {$day} Bulan {$month} Tahun {$year}"
+        $dataFormat = "Jakarta, {$day} {$month} {$year}"
     @endphp
     <div class="daftar-hadir" style="page-break-after: always;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">DAFTAR HADIR KULIAH MAHASISWA
@@ -77,7 +77,7 @@
             </table>
             <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
                 <tr>
-                    <td>
+                    <td style="text-align: center;">
                         {{ $dataFormat }}
                     </td>
                 </tr>
@@ -145,7 +145,7 @@
             </table>
             <table aria-hidden="true" style="margin-top: 1rem;margin-left: 27.5rem;">
                 <tr>
-                    <td>
+                    <td style="text-align: center;">
                         {{ $dataFormat }}
                     </td>
                 </tr>
