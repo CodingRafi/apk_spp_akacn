@@ -1,4 +1,4 @@
-<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+f<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <a href="/dashboard" class="app-brand-link">
             <span
@@ -74,7 +74,7 @@
         @endcanany
 
         @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_ruang',
-            'view_kelola_template_surat', 'view_kelola_mutu'])
+            'view_kelola_template_surat', 'view_kelola_mutu', 'view_kelola_kalender_akademik'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -146,6 +146,13 @@
                                 </a>
                             </li>
                         @endif
+                    @endcan
+                    @can('view_kelola_kalender_akademik')
+                    <li class="menu-item {{ Request::is('data-master/kalender-akademik*') ? 'active' : '' }}">
+                        <a href="{{ route('data-master.kalender-akademik.index') }}" class="menu-link">
+                            <div data-i18n="kalender-akademik">Kalender Akademik</div>
+                        </a>
+                    </li>
                     @endcan
                 </ul>
             </li>

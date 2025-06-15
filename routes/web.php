@@ -27,7 +27,8 @@ use App\Http\Controllers\Kelola\{
     RuangController,
     SemesterController as KelolaSemesterController,
     SettingController,
-    TemplateSuratController
+    TemplateSuratController,
+    KalenderAkademikController
 };
 
 use App\Http\Controllers\{
@@ -252,6 +253,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Ruang
         Route::get('ruang/data', [RuangController::class, 'data'])->name('ruang.data');
         Route::resource('ruang', RuangController::class);
+
+        //? Kalender Akademik
+        Route::get('kalender-akademik/data', [KalenderAkademikController::class, 'data'])->name('kalender-akademik.data');
+        Route::resource('kalender-akademik', KalenderAkademikController::class);
 
         //? Jenis Kelas
         Route::get('jenis-kelas/data', [JenisKelasController::class, 'data'])->name('jenis-kelas.data');
