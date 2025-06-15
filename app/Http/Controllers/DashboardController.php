@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KalenderAkademik;
 use Illuminate\Http\Request;
 use App\Models\Pembayaran;
 use App\Models\User;
@@ -10,7 +11,8 @@ use Spatie\Permission\Models\Role;
 
 class DashboardController extends Controller
 {
-    private function validateRole($role){
+    private function validateRole($role)
+    {
         $getRole = getRole()->name;
 
         if ($getRole != $role) {
@@ -49,7 +51,7 @@ class DashboardController extends Controller
 
             $krs = DB::table('krs')
                 ->select('krs.status as name', DB::raw('count(*) as y'))
-                ->when(request('matkul'), function($q){
+                ->when(request('matkul'), function ($q) {
                     $q->join('krs_matkul', 'krs_matkul.krs_id', 'krs.id')
                         ->where('krs_matkul.tahun_matkul_id', request('matkul'));
                 })
@@ -63,7 +65,7 @@ class DashboardController extends Controller
                 ->join('jadwal_presensi', 'jadwal_presensi.jadwal_id', 'jadwal.id')
                 ->join('users', 'users.id', 'jadwal_presensi.mhs_id')
                 ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-                ->when(request('matkul'), function($q){
+                ->when(request('matkul'), function ($q) {
                     $q->where('jadwal.tahun_matkul_id', request('matkul'));
                 })
                 ->where('jadwal.tahun_semester_id', request('semester'))
@@ -77,7 +79,7 @@ class DashboardController extends Controller
                 ->join('users', 'users.id', 'mhs_nilai.mhs_id')
                 ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
                 ->join('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-                ->when(request('matkul'), function($q){
+                ->when(request('matkul'), function ($q) {
                     $q->where('mhs_nilai.tahun_matkul_id', request('matkul'));
                 })
                 ->where('mhs_nilai.tahun_semester_id', request('semester'))
@@ -87,6 +89,8 @@ class DashboardController extends Controller
                 ->get();
         }
 
+        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+
         return view('dashboard.admin', compact(
             'users',
             'tahunAjaran',
@@ -94,7 +98,8 @@ class DashboardController extends Controller
             'pembayaran',
             'krs',
             'presensi',
-            'nilai'
+            'nilai',
+            'kalenderAkademik'
         ));
     }
 
@@ -102,8 +107,8 @@ class DashboardController extends Controller
     {
         $this->validateRole('asdos');
         $totalMengajar = DB::table('jadwal')
-        ->where('pengajar_id', auth()->user()->id)
-        ->count();
+            ->where('pengajar_id', auth()->user()->id)
+            ->count();
         return view('dashboard.asdos', compact('totalMengajar'));
     }
 
@@ -111,8 +116,8 @@ class DashboardController extends Controller
     {
         $this->validateRole('dosen');
         $totalMengajar = DB::table('jadwal')
-                            ->where('pengajar_id', auth()->user()->id)
-                            ->count();
+            ->where('pengajar_id', auth()->user()->id)
+            ->count();
         return view('dashboard.dosen', compact('totalMengajar'));
     }
 
@@ -120,8 +125,8 @@ class DashboardController extends Controller
     {
         $this->validateRole('petugas');
         $totalVerifikasi = DB::table('pembayarans')
-                            ->where('verify_id', auth()->user()->id)
-                            ->count();
+            ->where('verify_id', auth()->user()->id)
+            ->count();
         return view('dashboard.petugas', compact('totalVerifikasi'));
     }
 
@@ -130,28 +135,29 @@ class DashboardController extends Controller
         $this->validateRole('mahasiswa');
 
         $tagihan = DB::table('rekap_pembayaran')
-                    ->select(DB::raw('SUM(sisa) as tagihan'))
-                    ->where('user_id', auth()->user()->id)
-                    ->first();
+            ->select(DB::raw('SUM(sisa) as tagihan'))
+            ->where('user_id', auth()->user()->id)
+            ->first();
 
         $krs = DB::table('krs')
-                ->select('krs.jml_sks_diambil', 'semesters.nama as semester')
-                ->join('tahun_semester', 'krs.tahun_semester_id', 'tahun_semester.id')
-                ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
-                ->where('krs.status', 'diterima')
-                ->where('krs.mhs_id', auth()->user()->id)
-                ->orderBy('semesters.id', 'asc')
-                ->get();
+            ->select('krs.jml_sks_diambil', 'semesters.nama as semester')
+            ->join('tahun_semester', 'krs.tahun_semester_id', 'tahun_semester.id')
+            ->join('semesters', 'tahun_semester.semester_id', 'semesters.id')
+            ->where('krs.status', 'diterima')
+            ->where('krs.mhs_id', auth()->user()->id)
+            ->orderBy('semesters.id', 'asc')
+            ->get();
 
         return view('dashboard.mahasiswa', compact('tagihan', 'krs'));
     }
 
-    public function adminGetMatkul(){
+    public function adminGetMatkul()
+    {
         $data = DB::table('tahun_matkul')
-                    ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
-                    ->where('tahun_matkul.prodi_id', request('prodi'))
-                    ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran'))
-                    ->get();
+            ->join('matkuls', 'matkuls.id', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.prodi_id', request('prodi'))
+            ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran'))
+            ->get();
 
         return response()->json($data, 200);
     }
