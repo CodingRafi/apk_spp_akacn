@@ -107,7 +107,7 @@ class PresensiController extends Controller
 
             $presensi = [];
 
-            for ($i = 0; $i <= config('services.max_pertemuan'); $i++) {
+            for ($i = 0; $i < config('services.max_pertemuan'); $i++) {
                 $presensi[$i] = [
                     'jadwal_id' => $presensiPertemuan->get($i)->jadwal_id ?? null,
                     'status' => $presensiPertemuan->get($i)->status ?? null

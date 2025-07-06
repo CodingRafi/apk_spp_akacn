@@ -153,7 +153,7 @@ class UserController extends Controller
                 'jalurMasuk' => $jalurMasuk,
                 'jenisKeluar' => $jenisKeluar,
             ];
-        } elseif ($role == 'asdos') {
+        } elseif ($role == 'asisten') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
@@ -234,12 +234,15 @@ class UserController extends Controller
                 'jalurMasuk' => $jalurMasuk,
                 'jenisKeluar' => $jenisKeluar,
             ];
-        } elseif ($role == 'asdos') {
+        } elseif ($role == 'asisten') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();
+
+            $data->dosen_id = $data->asdos_dosen->pluck('id')->toArray();
+            
             $return += [
                 'dosen' => $dosen,
             ];
@@ -408,12 +411,13 @@ class UserController extends Controller
                 'jalurMasuk' => $jalurMasuk,
                 'jenisKeluar' => $jenisKeluar,
             ];
-        } elseif ($role == 'asdos') {
+        } elseif ($role == 'asisten') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();
+                
             $return += [
                 'dosen' => $dosen
             ];

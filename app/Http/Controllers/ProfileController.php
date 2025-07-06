@@ -65,7 +65,7 @@ class ProfileController extends Controller
                 'jalurMasuk' => $jalurMasuk,
                 'jenisKeluar' => $jenisKeluar,
             ];
-        } elseif ($role == 'asdos') {
+        } elseif ($role == 'asisten') {
             $dosen = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')

@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
                 'permission' => array_map('strval', range(81, 86))
             ],
             [
-                'role' => 'asdos',
+                'role' => 'asisten',
                 'permission' => array_map('strval', range(81, 86))
             ],
             [

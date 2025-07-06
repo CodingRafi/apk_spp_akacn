@@ -105,7 +105,7 @@ class DashboardController extends Controller
 
     public function asdos()
     {
-        $this->validateRole('asdos');
+        $this->validateRole('asisten');
         $totalMengajar = DB::table('jadwal')
             ->where('pengajar_id', auth()->user()->id)
             ->count();

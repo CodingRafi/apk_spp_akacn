@@ -14,7 +14,17 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <select id="prodi_id" class="form-control mb-3" onchange="get_rombel();get_matkul();get_semester();">
+                            <select id="tahun_ajaran_id" class="select2 mb-2 "
+                                onchange="get_rombel();get_matkul();get_semester();">
+                                <option value="">Pilih Tahun Ajaran</option>
+                                @foreach ($tahunAjarans as $tahunAjaran)
+                                    <option value="{{ $tahunAjaran->id }}">{{ $tahunAjaran->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="prodi_id" class="form-control mb-2"
+                                onchange="get_rombel();get_matkul();get_semester();">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
@@ -22,18 +32,18 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select id="tahun_matkul_id" class="form-control mb-3" onchange="get_rombel()">
+                            <select id="tahun_semester_id" class="form-control mb-2" onchange="get_presensi()">
+                                <option value="">Pilih Semester</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select id="tahun_matkul_id" class="form-control mb-2" onchange="get_rombel()">
                                 <option value="">Pilih Mata Kuliah</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select id="rombel_id" class="form-control mb-3" onchange="get_presensi()">
+                            <select id="rombel_id" class="form-control mb-2" onchange="get_presensi()">
                                 <option value="">Pilih Rombel</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <select id="tahun_semester_id" class="form-control mb-3" onchange="get_presensi()">
-                                <option value="">Pilih Semester</option>
                             </select>
                         </div>
                     </div>
@@ -149,48 +159,63 @@
         }
 
         function get_matkul() {
-            $('#tahun_matkul_id').empty().append(`<option value="">Pilih Mata Kuliah</option>`);
-            $.ajax({
-                url: "{{ route('kelola-presensi.rekap.getMatkul', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
-                type: 'GET',
-                dataType: "json",
-                data: {
-                    prodi_id: $('#prodi_id').val()
-                },
-                success: function(res) {
-                    res.data.forEach(e => {
-                        $('#tahun_matkul_id').append(`<option value="${e.id}">${e.nama}</option>`)
-                    })
-                },
-                error: function() {
-                    alert('Gagal get matkul')
-                }
-            })
+            const tahun_ajaran_id = $('#tahun_ajaran_id').val();
+            const prodi_id = $('#prodi_id').val();
+
+            if (tahun_ajaran_id != '' && prodi_id != '') {
+                $('#tahun_matkul_id').empty().append(`<option value="">Pilih Mata Kuliah</option>`);
+                $.ajax({
+                    url: "{{ route('kelola-presensi.rekap.getMatkul', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}".replace(':tahun_ajaran_id', tahun_ajaran_id),
+                    type: 'GET',
+                    dataType: "json",
+                    data: {
+                        prodi_id: prodi_id
+                    },
+                    success: function(res) {
+                        res.data.forEach(e => {
+                            $('#tahun_matkul_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                        })
+                    },
+                    error: function() {
+                        alert('Gagal get matkul')
+                    }
+                })
+            }
         }
 
         function get_semester() {
-            $('#tahun_semester_id').empty().append(`<option value="">Pilih Semester</option>`);
-            $.ajax({
-                url: "{{ route('kelola-presensi.rekap.getSemester', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
-                type: 'GET',
-                dataType: "json",
-                data: {
-                    prodi_id: $('#prodi_id').val()
-                },
-                success: function(res) {
-                    res.data.forEach(e => {
-                        $('#tahun_semester_id').append(`<option value="${e.id}">${e.nama}</option>`)
-                    })
-                },
-                error: function() {
-                    alert('Gagal get semester')
-                }
-            })
+            const tahun_ajaran_id = $('#tahun_ajaran_id').val();
+            const prodi_id = $('#prodi_id').val();
+
+            if (tahun_ajaran_id != '' && prodi_id != '') {
+                $('#tahun_semester_id').empty().append(`<option value="">Pilih Semester</option>`);
+                $.ajax({
+                    url: "{{ route('kelola-presensi.rekap.getSemester', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}".replace(':tahun_ajaran_id', tahun_ajaran_id),
+                    type: 'GET',
+                    dataType: "json",
+                    data: {
+                        prodi_id: prodi_id
+                    },
+                    success: function(res) {
+                        res.data.forEach(e => {
+                            $('#tahun_semester_id').append(`<option value="${e.id}">${e.nama}</option>`)
+                        })
+                    },
+                    error: function() {
+                        alert('Gagal get semester')
+                    }
+                })
+            }
         }
 
         function get_presensi() {
+            const tahun_ajaran_id = $('#tahun_ajaran_id').val();
+            const rombel_id =  $('#rombel_id').val();
+            const tahun_semester_id =  $('#tahun_semester_id').val();
+            const tahun_matkul_id =  $('#tahun_matkul_id').val();
+
             $('.table-presensi tbody').empty();
-            if ($('#rombel_id').val() != '' && $('#tahun_semester_id').val() != '') {
+            if (tahun_ajaran_id != '' && rombel_id != '' && tahun_semester_id != '' && tahun_matkul_id != '') {
                 $('.table-presensi tbody').append(`<tr>
                                                     <td colspan="17" class="text-center py-4">
                                                         <div class="spinner-border" role="status">
@@ -199,13 +224,13 @@
                                                     </td>
                                                 </tr>`);
                 $.ajax({
-                    url: "{{ route('kelola-presensi.rekap.getPresensi', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}",
+                    url: "{{ route('kelola-presensi.rekap.getPresensi', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}".replace(':tahun_ajaran_id', tahun_ajaran_id),
                     type: 'GET',
                     dataType: "json",
                     data: {
-                        tahun_semester_id: $('#tahun_semester_id').val(),
-                        rombel_id: $('#rombel_id').val(),
-                        tahun_matkul_id: $('#tahun_matkul_id').val(),
+                        tahun_semester_id: tahun_semester_id,
+                        rombel_id: rombel_id,
+                        tahun_matkul_id: tahun_matkul_id,
                     },
                     success: function(res) {
                         generate_table(res.data)

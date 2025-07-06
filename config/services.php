@@ -79,7 +79,7 @@ return [
         [
             'key' => 'uas',
             'value' => 'UAS',
-            'indexStart' => 8
+            'indexStart' => 7
         ]
     ],
 

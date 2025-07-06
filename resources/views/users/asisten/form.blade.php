@@ -36,10 +36,9 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="dosen_id" class="form-label">Dosen</label>
-                    <select {{ $disabled ? 'disabled' : '' }} name="dosen_id" id="dosen_id" class="form-control" {{ $page == 'profile' ? 'disabled' : '' }}>
-                        <option value="">Pilih Dosen</option>
+                    <select {{ $disabled ? 'disabled' : '' }} name="dosen_id[]" id="dosen_id" class="select2" multiple {{ $page == 'profile' ? 'disabled' : '' }}>
                         @foreach ($dosen as $row)
-                        <option value="{{ $row->id }}" {{ isset($data) ? ($data->asdos->dosen_id == $row->id ? 'selected' : '') : (old('dosen_id') == $row->id ? 'selected' : '') }}>{{ $row->name }} | {{ $row->login_key }}</option>
+                        <option value="{{ $row->id }}" {{ isset($data) ? (in_array($row->id, $data->dosen_id) ? 'selected' : '') : (in_array($row->id, old('dosen_id', [])) ? 'selected' : '') }}>{{ $row->name }} | {{ $row->login_key }}</option>
                         @endforeach
                     </select>
                     @error('dosen_id')

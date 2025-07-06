@@ -7,7 +7,7 @@
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
                         <a
-                            href="{{ route('kelola-presensi.presensi.show', ['tahun_ajaran_id' => request('tahun_ajaran_id')]) }}"><i
+                            href="{{ route('kelola-presensi.jadwal.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">{{ $data->type }}</h5>
                     </div>
@@ -197,7 +197,7 @@
 @push('js')
     <script>
         const url_edit_presensi =
-            "{{ route('kelola-presensi.presensi.getPresensiMhs', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
+            "{{ route('kelola-presensi.jadwal.getPresensiMhs', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
 
         function generate_table(data) {
             let table = '';
@@ -229,7 +229,7 @@
                                                         </td>
                                                     </tr>`);
                 $.ajax({
-                    url: "{{ route('kelola-presensi.presensi.getPresensi', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id']) }}"
+                    url: "{{ route('kelola-presensi.jadwal.getPresensi', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id']) }}"
                         .replace(':rombel_id', $('#rombel_id').val()),
                     type: 'GET',
                     dataType: "json",
