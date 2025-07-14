@@ -10,7 +10,7 @@
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Nilai</h5>
                     </div>
-                    <div class="d-flex flex-wrap" style="gap: 1rem">
+                    <div class="d-flex flex-wrap mt-3" style="gap: 1rem">
                         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"
                             aria-expanded="false" aria-controls="petunjuk">
                             Petunjuk Import Nilai
@@ -122,6 +122,9 @@
                                     <th>Nama</th>
                                     <th>NIM</th>
                                     <th>Presensi</th>
+                                    <th>Aktivitas Partisipatif</th>
+                                    <th>Hasil Proyek</th>
+                                    <th>Quizz</th>
                                     <th>Tugas</th>
                                     <th>UTS</th>
                                     <th>UAS</th>
@@ -161,6 +164,21 @@
                         <div class="mb-3">
                             <label for="presensi" class="form-label">Presensi</label>
                             <input class="form-control" type="number" id="presensi" name="presensi" min="0"
+                                step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="aktivitas_partisipatif" class="form-label">Aktivitas Partisipatif</label>
+                            <input class="form-control" type="number" id="aktivitas_partisipatif" name="aktivitas_partisipatif" min="0"
+                                step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="hasil_proyek" class="form-label">Hasil Proyek</label>
+                            <input class="form-control" type="number" id="hasil_proyek" name="hasil_proyek" min="0"
+                                step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="quizz" class="form-label">Quizz</label>
+                            <input class="form-control" type="number" id="quizz" name="quizz" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
@@ -258,6 +276,15 @@
                     },
                     {
                         "data": "presensi"
+                    },
+                    {
+                        "data": "aktivitas_partisipatif"
+                    },
+                    {
+                        "data": "hasil_proyek"
+                    },
+                    {
+                        "data": "quizz"
                     },
                     {
                         "data": "tugas"
