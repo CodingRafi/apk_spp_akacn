@@ -392,7 +392,7 @@
             </li>
         @endcan
 
-        @can('view_report_gaji')
+        @can('view_gaji')
             <li class="menu-item {{ Request::is('gaji*') ? 'active' : '' }}">
                 <a href="{{ route('gaji.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-file"></i>

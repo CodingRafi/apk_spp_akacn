@@ -74,7 +74,8 @@ class GajiController extends Controller
                     ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
                     ->join('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
                     ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
-                    ->where('jadwal.tgl', '<=', $gaji->tgl_akhir);
+                    ->where('jadwal.tgl', '<=', $gaji->tgl_akhir)
+                    ->where('jadwal.approved', '2');
             }, 'roles'])
             ->get();
 

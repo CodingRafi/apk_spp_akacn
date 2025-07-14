@@ -109,7 +109,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('/mahasiswa', [DashboardController::class, 'mahasiswa'])->name('mahasiswa');
         Route::get('/dosen', [DashboardController::class, 'dosen'])->name('dosen');
         Route::get('/petugas', [DashboardController::class, 'petugas'])->name('petugas');
-        Route::get('/asdos', [DashboardController::class, 'asdos'])->name('asdos');
+        Route::get('/asisten', [DashboardController::class, 'asisten'])->name('asisten');
     });
 
     Route::resource('roles', RoleController::class);
@@ -464,6 +464,28 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 [JadwalController::class, 'store']
             )->name('store');
 
+            Route::put(
+                '/{jadwal_id}/mulai',
+                [JadwalController::class, 'mulaiJadwal']
+            )->name('mulaiJadwal');
+            Route::put(
+                '/{jadwal_id}/selesai',
+                [JadwalController::class, 'selesaiJadwal']
+            )->name('selesaiJadwal');
+            Route::put(
+                '/{jadwal_id}/jadwal',
+                [JadwalController::class, 'updateJadwalMengajar']
+            )->name('updateJadwalMengajar');
+
+            Route::post(
+                '{jadwal_id}/approval',
+                [JadwalController::class, 'storeApproval']
+            )->name('storeApproval');
+            Route::post(
+                '{jadwal_id}/revisi-approval',
+                [JadwalController::class, 'RevisiApproval']
+            )->name('revisiApproval');
+
             Route::prefix('{tahun_ajaran_id}')->group(function () {
                 Route::prefix('{jadwal_id}')->group(function () {
                     Route::get(
@@ -471,7 +493,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                         [JadwalController::class, 'show']
                     )->name('show');
                     Route::put(
-                        '/',
+                        '/edit',
                         [JadwalController::class, 'update']
                     )->name('update');
                     Route::get(
@@ -531,20 +553,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 '/get-pengawas',
                 [JadwalController::class, 'getPengawas']
             )->name('getPengawas');
-
-
-            // Route::put(
-            //     '/{jadwal_id}/jadwal',
-            //     [JadwalController::class, 'updateJadwalEdit']
-            // )->name('updateJadwalEdit');
-            Route::put(
-                '/{jadwal_id}/mulai',
-                [JadwalController::class, 'mulaiJadwal']
-            )->name('mulaiJadwal');
-            Route::put(
-                '/{jadwal_id}/selesai',
-                [JadwalController::class, 'selesaiJadwal']
-            )->name('selesaiJadwal');
         });
 
         //? Rekap Presensi

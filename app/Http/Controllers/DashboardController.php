@@ -103,22 +103,42 @@ class DashboardController extends Controller
         ));
     }
 
-    public function asdos()
+    public function asisten()
     {
         $this->validateRole('asisten');
-        $totalMengajar = DB::table('jadwal')
+        $rekap = DB::table('jadwal')
+            ->select('approved', DB::raw('count(*) as total'))
             ->where('pengajar_id', auth()->user()->id)
-            ->count();
-        return view('dashboard.asdos', compact('totalMengajar'));
+            ->groupBy('approved')
+            ->pluck('total', 'approved');
+
+        $totalMengajar = $rekap->sum();
+        $totalMengajarMenunggu = $rekap[1] ?? 0;
+        $totalMengajarDisetujui = $rekap[2] ?? 0;
+        $totalMengajarDitolak = $rekap[3] ?? 0;
+
+        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+
+        return view('dashboard.asisten', compact('totalMengajar', 'totalMengajarMenunggu', 'totalMengajarDisetujui', 'totalMengajarDitolak', 'kalenderAkademik'));
     }
 
     public function dosen()
     {
         $this->validateRole('dosen');
-        $totalMengajar = DB::table('jadwal')
+        $rekap = DB::table('jadwal')
+            ->select('approved', DB::raw('count(*) as total'))
             ->where('pengajar_id', auth()->user()->id)
-            ->count();
-        return view('dashboard.dosen', compact('totalMengajar'));
+            ->groupBy('approved')
+            ->pluck('total', 'approved');
+
+        $totalMengajar = $rekap->sum();
+        $totalMengajarMenunggu = $rekap[1] ?? 0;
+        $totalMengajarDisetujui = $rekap[2] ?? 0;
+        $totalMengajarDitolak = $rekap[3] ?? 0;
+
+        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+
+        return view('dashboard.dosen', compact('totalMengajar', 'totalMengajarMenunggu', 'totalMengajarDisetujui', 'totalMengajarDitolak', 'kalenderAkademik'));
     }
 
     public function petugas()
@@ -127,7 +147,10 @@ class DashboardController extends Controller
         $totalVerifikasi = DB::table('pembayarans')
             ->where('verify_id', auth()->user()->id)
             ->count();
-        return view('dashboard.petugas', compact('totalVerifikasi'));
+
+        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+
+        return view('dashboard.petugas', compact('totalVerifikasi', 'kalenderAkademik'));
     }
 
     public function mahasiswa()
@@ -148,7 +171,9 @@ class DashboardController extends Controller
             ->orderBy('semesters.id', 'asc')
             ->get();
 
-        return view('dashboard.mahasiswa', compact('tagihan', 'krs'));
+        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+
+        return view('dashboard.mahasiswa', compact('tagihan', 'krs', 'kalenderAkademik'));
     }
 
     public function adminGetMatkul()

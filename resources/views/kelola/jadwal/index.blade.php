@@ -50,6 +50,14 @@
                                 <option value="">Pilih Mata Kuliah</option>
                             </select>
                         </div>
+                        <div class="col-md-3 mb-3">
+                            <select id="filter-status" class="form-select">
+                                <option value="all">Pilih Status</option>
+                                <option value="1">Menunggu Verifikasi</option>
+                                <option value="2">Disetujui</option>
+                                <option value="3">Ditolak</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="table-responsive mt-3">
                         <table class="table">
@@ -60,6 +68,7 @@
                                     <th>Kode Matkul</th>
                                     <th>Tanggal</th>
                                     <th>Matkul</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -94,13 +103,13 @@
                             <select name="tahun_ajaran_id" id="tahun_ajaran_id" style="width: 100%" onchange="getPelajaran()">
                                 <option value="">Pilih Tahun Ajaran</option>
                                 @foreach ($tahunAjarans as $tahun_ajaran)
-                                    <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
+                                <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="tahun_matkul_id" class="form-label">Pelajaran</label>
-                            <select name="tahun_matkul_id" id="tahun_matkul_id" class="form-select">
+                            <select name="tahun_matkul_id" id="tahun_matkul_id" style="width: 100%">
                                 <option value="">Pilih Pelajaran</option>
                             </select>
                         </div>
@@ -189,7 +198,7 @@
             $('.div-alert').empty();
             const tahun_ajaran_id = $('#tahun_ajaran_id').val();
             const tahun_matkul_id = $('#tahun_matkul_id').val();
-            if (tahun_ajaran_id != '' && tahun_matkul_id != '') {
+            if (tahun_ajaran_id && tahun_matkul_id) {
                 $.ajax({
                     url: "{{ route('kelola-presensi.jadwal.getTotalPelajaran', ['tahun_ajaran_id' => ':tahun_ajaran_id', 'tahun_matkul_id' => ':tahun_matkul_id']) }}"
                         .replace(':tahun_matkul_id', tahun_matkul_id).replace(':tahun_ajaran_id', tahun_ajaran_id),
@@ -218,15 +227,18 @@
 
         function get_materi(data = {}) {
             $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
-            const tahun_matkul_id = $('#tahun_matkul_id').val();
-            const tahun_ajaran_id = $('#tahun_ajaran_id').val();
+            const tahun_matkul_id = data.tahun_matkul_id ?? $('#tahun_matkul_id').val();
+            const tahun_ajaran_id = data.tahun_ajaran_id ?? $('#tahun_ajaran_id').val();
 
             @if (getRole()->name == 'admin')
-                const check = tahun_matkul_id != '' && tahun_ajaran_id != '' && $('#type').val() != '' && $('#type')
+                const check = tahun_matkul_id && tahun_ajaran_id && $('#type').val() && $('#type')
                 .val() == 'pertemuan';
             @else
-                const check = tahun_matkul_id != '' && tahun_ajaran_id != '';
+                const check = tahun_matkul_id && tahun_ajaran_id;
             @endif
+
+            console.log(tahun_matkul_id)
+            console.log(tahun_ajaran_id)
 
             if (check) {
                 $.ajax({
@@ -258,7 +270,7 @@
             const prodi_id = $('#filter-prodi').val();
             const tahun_ajaran_id = $('#filter-tahun-ajaran').val();
 
-            if (prodi_id != '' && tahun_ajaran_id != '') {
+            if (prodi_id && tahun_ajaran_id) {
                 $('#filter-tahun-semester').empty().append(`<option value="">Pilih Semester</option>`);
                 $.ajax({
                     url: '{{ route('kelola-presensi.jadwal.getSemester', ['prodi_id' => ':prodi_id', 'tahun_ajaran_id' => ':tahun_ajaran_id']) }}'
@@ -283,7 +295,7 @@
             const prodi_id = $('#filter-prodi').val();
             const tahun_ajaran_id = $('#filter-tahun-ajaran').val();
             $('#filter-tahun-matkul').empty().append(`<option value="">Pilih Matkul</option>`);
-            if (prodi_id != '' && tahun_ajaran_id != '') {
+            if (prodi_id && tahun_ajaran_id) {
                 $.ajax({
                     url: '{{ route('kelola-presensi.jadwal.getMatkul', ['prodi_id' => ':prodi_id', 'tahun_ajaran_id' => ':tahun_ajaran_id']) }}'
                         .replace(':prodi_id', prodi_id).replace(':tahun_ajaran_id', tahun_ajaran_id),
@@ -305,8 +317,8 @@
         function getPelajaran() {
             const prodi_id = $('#prodi_id').val();
             const tahun_ajaran_id = $('#tahun_ajaran_id').val();
-            $('#tahun_matkul_id').empty().append(`<option value="">Pilih Pelajaran</option>`);
-            if (prodi_id != '' && tahun_ajaran_id != '') {
+            if (prodi_id && tahun_ajaran_id) {
+                $('#tahun_matkul_id').empty().append(`<option value="">Pilih Pelajaran</option>`);
                 $.ajax({
                     url: '{{ route('kelola-presensi.jadwal.getPelajaran', ['prodi_id' => ':prodi_id', 'tahun_ajaran_id' => ':tahun_ajaran_id']) }}'
                         .replace(':prodi_id', prodi_id).replace(':tahun_ajaran_id', tahun_ajaran_id),
@@ -326,7 +338,8 @@
         }
 
         function getPengajar(tahun_ajaran_id, tahun_matkul_id, data = {}) {
-            if (tahun_ajaran_id != '' && tahun_matkul_id != '') {
+            $('#pengajar_id').empty().append(`<option value="">Pilih Pengajar</option>`);
+            if (tahun_ajaran_id && tahun_matkul_id) {
                 $.ajax({
                     url: '{{ route('kelola-presensi.jadwal.getPengajar', ['tahun_ajaran_id' => ':tahun_ajaran_id', 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
                         .replace(':tahun_matkul_id', tahun_matkul_id).replace(':tahun_ajaran_id', tahun_ajaran_id),
@@ -339,6 +352,7 @@
                         })
 
                         if (data.pengajar_id) {
+                            console.log(res.data)
                             $('#pengajar_id').val(data.pengajar_id);
                         }
                     },
@@ -350,6 +364,7 @@
         }
 
         function getPengawas(data = {}) {
+            $('#pengajar_id').empty().append(`<option value="">Pilih Pengawas</option>`);
             $.ajax({
                 url: '{{ route('kelola-presensi.jadwal.getPengawas') }}',
                 type: 'GET',
@@ -361,6 +376,7 @@
                     })
 
                     if (data.pengajar_id) {
+                        console.log(data.pengajar_id)
                         $('#pengajar_id').val(data.pengajar_id);
                     }
                 },
@@ -371,18 +387,19 @@
         }
 
         function clearForm() {
+            $(`#tahun_ajaran_id, #tahun_matkul_id`).trigger("change");
             $('.div-ujian, .div-pengajar, .div-alert').empty();
         }
 
-        $('#type, #tahun_matkul_id').on('change', () => {
-            if ($('#type').val() == '' || $('#tahun_matkul_id').val() == '') {
-                clearForm();
-            }
-        });
+        // $('#type, #tahun_matkul_id').on('change', () => {
+        //     if ($('#type').val() || $('#tahun_matkul_id').val()) {
+        //         clearForm();
+        //     }
+        // });
 
         function editJadwal(data) {
             clearForm();
-            $(`#tahun_ajaran_id`).trigger("change");
+            $(`#tahun_ajaran_id, #tahun_matkul_id`).trigger("change");
             generateForm(data)
         }
 
@@ -391,7 +408,7 @@
             let tahun_matkul_id = data.tahun_matkul_id ?? $('#tahun_matkul_id').val();
             let tahun_ajaran_id = data.tahun_ajaran_id ?? $('#tahun_ajaran_id').val();
 
-            if (type != '' && tahun_matkul_id != '' && tahun_ajaran_id != '') {
+            if (type && tahun_matkul_id && tahun_ajaran_id) {
                 $('.div-ujian, .div-pengajar, .div-alert').empty();
                 $('.div-pengajar').html($('#select-pengajar').html());
                 $('#pengajar_id').empty();
@@ -405,6 +422,7 @@
                     $('label[for="pengajar_id"]').text('Pengajar');
                     $('#pengajar_id').append('<option value="">Pilih Pengajar</option>');
                     $('.div-pengajar').append($('#select-materi').html());
+                    console.log(data)
                     if (data.materi_id) {
                         get_materi(data);
                     }
@@ -418,7 +436,7 @@
         }
 
         function getJenisUjian(tahun_ajaran_id, tahun_matkul_id, data = {}) {
-            if (tahun_ajaran_id != '' && tahun_matkul_id != '') {
+            if (tahun_ajaran_id && tahun_matkul_id) {
                 $.ajax({
                     url: '{{ route('kelola-presensi.jadwal.getJenisUjian', ['tahun_ajaran_id' => ':tahun_ajaran_id', 'tahun_matkul_id' => ':tahun_matkul_id']) }}'
                         .replace(':tahun_matkul_id', tahun_matkul_id).replace(':tahun_ajaran_id', tahun_ajaran_id),
@@ -448,7 +466,7 @@
 
         let table;
         $(document).ready(function() {
-            $('#tahun_ajaran_id').select2({
+            $('#tahun_ajaran_id, #tahun_matkul_id').select2({
                 dropdownParent: $("#jadwal")
             })
 
@@ -463,6 +481,7 @@
                         p.tahun_semester_id = $('#filter-tahun-semester').val();
                         p.tahun_matkul_id = $('#filter-tahun-matkul').val();
                         p.tahun_ajaran_id = $('#filter-tahun-ajaran').val();
+                        p.status = $('#filter-status').val();
                     }
                 },
                 columns: [{
@@ -481,6 +500,9 @@
                         "data": "matkul"
                     },
                     {
+                        "data": "status"
+                    },
+                    {
                         "data": "options"
                     }
                 ],
@@ -488,7 +510,7 @@
             });
         });
 
-        $('#filter-tahun-semester, #filter-tahun-matkul, #filter-prodi').on('change', function() {
+        $('#filter-tahun-semester, #filter-tahun-matkul, #filter-prodi, #filter-status, #filter-tahun-ajaran').on('change', function() {
             table.ajax.reload();
         })
     </script>

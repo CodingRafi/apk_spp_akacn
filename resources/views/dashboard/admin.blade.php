@@ -125,13 +125,7 @@
                 </div>
             </div>
             @can('view_kalender_akademik')
-            <div class="col-md-6">
-                <div class="card mt-3">
-                    <div class="card-body">
-                        <div id="calender"></div>
-                    </div>
-                </div>
-            </div>
+                @include('dashboard.partials.kalender')
             @endcan
         </div>
     </div>
@@ -417,21 +411,4 @@
             })
         </script>
     @endif
-    @can('view_kalender_akademik')
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.17/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.17/index.global.min.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const calendarEl = document.getElementById('calender');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: @json($kalenderAkademik),
-                eventDidMount: function(info) {
-                    info.el.setAttribute("title", info.event.title);
-                }
-            });
-            calendar.render();
-        });
-    </script>
-    @endcan
 @endpush

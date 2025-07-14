@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('jadwal', function (Blueprint $table) {
-            //
+            $table->enum('approved', ['1', '2', '3'])->nullable()->comment('1 = Menunggu, 2 = Disetujui, 3 = Ditolak');
+            $table->text('ket_approved')->nullable();
         });
     }
 
@@ -26,7 +27,8 @@ return new class extends Migration
     public function down()
     {
         Schema::table('jadwal', function (Blueprint $table) {
-            //
+            $table->dropColumn('approved');
+            $table->dropColumn('ket_approved');
         });
     }
 };

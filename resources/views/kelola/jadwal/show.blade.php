@@ -6,8 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a
-                            href="{{ route('kelola-presensi.jadwal.index') }}"><i
+                        <a href="{{ route('kelola-presensi.jadwal.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">{{ $data->type }}</h5>
                     </div>
@@ -15,12 +14,12 @@
                         <div class="d-flex align-items-center" style="gap: 1rem;">
                             @if ($data->pengajar_id == Auth::user()->id)
                                 @if ($data->type == 'pertemuan')
-                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
-                                    Jadwal</button>
+                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
+                                        Jadwal</button>
                                 @endif
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
-                                        action="{{ route('kelola-presensi.presensi.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
+                                        action="{{ route('kelola-presensi.jadwal.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
                                         method="post">
                                         @csrf
                                         @method('put')
@@ -28,7 +27,7 @@
                                     </form>
                                 @elseif(!$data->presensi_mulai)
                                     <form
-                                        action="{{ route('kelola-presensi.presensi.mulaiJadwal', ['jadwal_id' => $data->id]) }}"
+                                        action="{{ route('kelola-presensi.jadwal.mulaiJadwal', ['jadwal_id' => $data->id]) }}"
                                         method="post">
                                         @csrf
                                         @method('put')
@@ -37,15 +36,89 @@
                                 @endif
                             @endif
                         </div>
+                    @else
+                        @can('jadwal_approval')
+                            @if ($data->approved != null)
+                                @if ($data->approved == '1')
+                                    <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
+                                        method="post" id="form-approval">
+                                        @csrf
+                                        <input type="hidden" name="status">
+                                        <input type="hidden" name="ket_approved">
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-success" data-value="2"
+                                                onclick="submitFormApproval(this)">Setujui</button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#ModalApproval">
+                                                Tolak
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header pb-0">
+                                                    <h1 class="modal-title fs-5" id="ModalApprovalLabel">Jadwal Ditolak</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <label for="ket_approval" class="form-label">Keterangan</label>
+                                                    <textarea class="form-control" id="ket_approval" rows="3" name="ket_approval"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Tutup</button>
+                                                    <button type="button" class="btn btn-primary" onclick="submitFormApproval(this)"
+                                                        data-value="3">Simpan</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <script>
+                                        function submitFormApproval(el) {
+                                            const status = el.getAttribute('data-value');
+                                            const ket_approved = document.getElementById('ket_approval').value;
+                                            document.querySelector('input[name=status]').value = status;
+                                            document.querySelector('input[name=ket_approved]').value = ket_approved;
+                                            document.querySelector('#form-approval').submit();
+                                        }
+                                    </script>
+                                @else
+                                    <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}" method="post">
+                                        @csrf
+                                        <button class="btn btn-warning" type="submit" onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
+                                    </form>
+                                @endif
+                            @endif
+                        @endcan
                     @endif
                 </div>
                 @php
                     $typeUser = $data->type == 'pertemuan' ? 'Pengajar' : 'Pengawas';
                 @endphp
                 <div class="card-body">
+                    @if ($data->approved != null)
+                        @if ($data->approved == '1')
+                            <div class="alert alert-warning">
+                                Jadwal ini sedang menunggu verifikasi
+                            </div>
+                        @elseif($data->approved == '2')
+                            <div class="alert alert-success">
+                                Jadwal ini telah disetujui
+                            </div>
+                        @else
+                            <div class="alert alert-danger">
+                                Jadwal ini telah ditolak
+                                <br>
+                                Keterangan : {{ $data->ket_approved }}
+                            </div>
+                        @endif
+                    @endif
                     <div class="row">
                         <div class="col-md-6">
-                            <table class="table">
+                            <table class="table" aria-hidden="true">
                                 <tr>
                                     <td class="col-6">Kode Presensi</td>
                                     <td class="col-6">{{ $data->kode }}</td>
@@ -75,10 +148,10 @@
                                     <td class="col-6">{{ $data->matkul }}</td>
                                 </tr>
                                 @if ($data->type == 'pertemuan')
-                                <tr>
-                                    <td class="col-6">Materi</td>
-                                    <td class="col-6">{{ $data->materi }}</td>
-                                </tr>
+                                    <tr>
+                                        <td class="col-6">Materi</td>
+                                        <td class="col-6">{{ $data->materi }}</td>
+                                    </tr>
                                 @endif
                             </table>
                         </div>
@@ -120,48 +193,49 @@
         </div>
     </div>
     @if (!$data->presensi_selesai || Auth::user()->hasRole('admin'))
-    <div class="modal fade" id="presensi" tabindex="-1" aria-labelledby="presensiLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <form action="">
-                    @method('post')
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="presensiLabel">Edit Presensi</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nama</label>
-                            <input class="form-control" type="text" id="name" name="name" disabled />
+        <div class="modal fade" id="presensi" tabindex="-1" aria-labelledby="presensiLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="">
+                        @method('post')
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="presensiLabel">Edit Presensi</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
-                        <div class="mb-3">
-                            <label for="login_key" class="form-label">NIM</label>
-                            <input class="form-control" type="text" id="login_key" name="login_key" disabled />
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Nama</label>
+                                <input class="form-control" type="text" id="name" name="name" disabled />
+                            </div>
+                            <div class="mb-3">
+                                <label for="login_key" class="form-label">NIM</label>
+                                <input class="form-control" type="text" id="login_key" name="login_key" disabled />
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">Pilih Status</option>
+                                    @foreach (config('services.statusPresensi') as $key => $status)
+                                        <option value="{{ $key }}">{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="">Pilih Status</option>
-                                @foreach (config('services.statusPresensi') as $key => $status)
-                                    <option value="{{ $key }}">{{ $status }}</option>
-                                @endforeach
-                            </select>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary"
+                                onclick="submitForm(this.form, this, () => get_presensi())">Simpan</button>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary"
-                            onclick="submitForm(this.form, this, () => get_presensi())">Simpan</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
     @endif
     @if ($data->pengajar_id == Auth::user()->id)
         <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
-                    <form action="{{ route('kelola-presensi.presensi.updateJadwal', ['jadwal_id' => $data->id]) }}">
+                    <form action="{{ route('kelola-presensi.jadwal.updateJadwalMengajar', ['jadwal_id' => $data->id]) }}">
                         @method('put')
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="jadwalLabel">Edit Jadwal</h1>
@@ -171,10 +245,14 @@
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label for="materi_id" class="form-label">Materi</label>
-                                <select name="materi_id" id="materi_id" class="form-control" {{ $data->presensi_selesai ? 'readonly' : '' }}>
+                                <select name="materi_id" id="materi_id" class="form-control"
+                                    {{ $data->presensi_selesai ? 'readonly' : '' }}>
                                     <option value="">Pilih Materi</option>
                                     @foreach ($materi as $row)
-                                        <option value="{{ $row->id }}" {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }} ({{ $row->type }})</option>
+                                        <option value="{{ $row->id }}"
+                                            {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }}
+                                            ({{ $row->type }})
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

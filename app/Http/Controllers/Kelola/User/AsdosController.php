@@ -58,11 +58,16 @@ class AsdosController extends Controller
     public function update(AsdosRequest $request, $id){
         $role = getRole();
         $user = User::findOrFail($id);
+
+        $oldDosenId = $user->asdos_dosen->pluck('id')->toArray();
+
+        $yang_dihapus = array_diff($oldDosenId, $request->dosen_id);
+        $yang_ditambahkan = array_diff($request->dosen_id, $oldDosenId);
         
-        if ($role->name == 'admin' && $user->asdos->dosen_id != $request->dosen_id) {
+        if ($role->name == 'admin' && (!empty($yang_dihapus) || !empty($yang_ditambahkan))) {
             $cek = DB::table('jadwal')->where('pengajar_id', $id)->count();
             if ($cek > 0) {
-                return redirect()->back()->with('error', 'Dosen tidak bisa diubah!');
+                return redirect()->back()->with('error', 'Asisten tidak bisa diubah!');
             }
         }
 

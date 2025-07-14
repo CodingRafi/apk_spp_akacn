@@ -12,13 +12,14 @@ use Yajra\DataTables\Facades\DataTables;
 
 class JadwalController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('permission:view_kelola_presensi', ['only' => ['index', 'show', 'showJadwal']]);
-    //     $this->middleware('permission:add_kelola_presensi', ['only' => ['create', 'store']]);
-    //     $this->middleware('permission:edit_kelola_presensi', ['only' => ['edit', 'update']]);
-    //     $this->middleware('permission:delete_kelola_presensi', ['only' => ['destroy']]);
-    // }
+    public function __construct()
+    {
+        $this->middleware('permission:view_kelola_presensi', ['only' => ['index', 'data', 'show']]);
+        $this->middleware('permission:add_kelola_presensi', ['only' => ['create', 'store']]);
+        $this->middleware('permission:edit_kelola_presensi', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:delete_kelola_presensi', ['only' => ['destroy']]);
+        $this->middleware('permission:jadwal_approval', ['only' => ['destroy']]);
+    }
 
     private function getSemesterAktif($tahun_ajaran_id, $prodi_id)
     {
@@ -60,12 +61,12 @@ class JadwalController extends Controller
                 ->when(request('tahun_matkul_id'), function ($q) {
                     $q->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'));
                 })
-                // ->when($role->name == 'dosen', function ($q) { -> cek lagi
-                //     $q->where('pengajar_id', Auth::user()->id);
-                // })
-                // ->when($role->name == 'asisten', function ($q) {
-                //     $q->where('asisten_id', Auth::user()->id);
-                // })
+                ->when(request('status') && request('status') != 'all', function ($q) {
+                    $q->where('jadwal.approved', request('status'));
+                })
+                ->when($role->name == 'asisten' || $role->name == 'dosen', function ($q) {
+                    $q->where('pengajar_id', Auth::user()->id);
+                })
                 ->orderBy('id', 'desc')
                 ->get();
         }
@@ -100,6 +101,17 @@ class JadwalController extends Controller
             ->editColumn('tgl', function ($datas) {
                 return parseDate($datas->tgl);
             })
+            ->addColumn('status', function ($datas) {
+                if (!is_null($datas->approved)) {
+                    if ($datas->approved == 1) {
+                        return '<span class="badge bg-warning text-white">Menunggu Verifikasi</span>';
+                    }elseif ($datas->approved == 2) {
+                        return '<span class="badge bg-success text-white">Disetujui</span>';
+                    }else{
+                        return '<span class="badge bg-danger text-white">Ditolak</span>';
+                    }
+                }
+            })
             ->rawColumns(['options', 'status'])
             ->make(true);
     }
@@ -120,6 +132,12 @@ class JadwalController extends Controller
         if ($request->type == 'pertemuan') {
             $validate += [
                 'materi_id' => 'required',
+            ];
+        }
+
+        if ($roleUser->name == 'admin') {
+            $validate += [
+                'tgl' => 'required',
             ];
         }
 
@@ -366,13 +384,31 @@ class JadwalController extends Controller
 
     public function getPengajar($tahun_ajaran_id, $tahun_matkul_id)
     {
-        $data = DB::table('tahun_matkul')
-            ->select('users.id', 'users.login_key', 'users.name')
-            ->join('tahun_matkul_dosen', 'tahun_matkul_dosen.tahun_matkul_id', 'tahun_matkul.id')
-            ->join('users', 'users.id', 'tahun_matkul_dosen.dosen_id')
-            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->where('tahun_matkul.id', $tahun_matkul_id)
-            ->get();
+        $data = DB::select(DB::raw("
+            WITH dosen_utama AS (
+                SELECT
+                    users.id,
+                    users.login_key,
+                    users.name
+                FROM tahun_matkul
+                INNER JOIN tahun_matkul_dosen ON tahun_matkul_dosen.tahun_matkul_id = tahun_matkul.id
+                INNER JOIN users ON users.id = tahun_matkul_dosen.dosen_id
+                WHERE tahun_matkul.tahun_ajaran_id = :tahun_ajaran_id
+                AND tahun_matkul.id = :tahun_matkul_id
+            )
+            SELECT * FROM dosen_utama
+            UNION
+            SELECT
+                users.id,
+                users.login_key,
+                users.name
+            FROM dosen_asdos
+            JOIN users ON users.id = dosen_asdos.asdos_id
+            WHERE dosen_asdos.dosen_id IN (SELECT id FROM dosen_utama)
+        "), [
+            'tahun_ajaran_id' => $tahun_ajaran_id,
+            'tahun_matkul_id' => $tahun_matkul_id,
+        ]);
 
         return response()->json([
             'data' => $data
@@ -610,10 +646,6 @@ class JadwalController extends Controller
             ], 400);
         }
 
-        $materi = DB::table('matkul_materi')
-            ->where('id', $request->materi_id)
-            ->first();
-
         $data = [
             'tgl' => $request->tgl,
             'tahun_matkul_id' => $request->tahun_matkul_id,
@@ -678,5 +710,137 @@ class JadwalController extends Controller
                 'message' => 'Gagal dihapus',
             ], 400);
         }
+    }
+
+    public function updateJadwalMengajar(Request $request, $jadwal_id)
+    {
+        $request->validate([
+            'materi_id' => 'required'
+        ]);
+
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
+
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update([
+                'materi_id' => $request->materi_id,
+                'materi' => $materi->materi,
+                'ket' => $request->ket
+            ]);
+
+        return response()->json([
+            'message' => 'Berhasil diupdate'
+        ], 200);
+    }
+
+    public function mulaiJadwal(Request $request, $jadwal_id)
+    {
+        $jadwal = DB::table('jadwal')
+            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'jadwal.presensi_mulai', 'jadwal.tgl', 'tahun_matkul.cek_ip', 'tahun_matkul.jam_mulai', 'tahun_matkul.jam_akhir', 'jadwal.type')
+            ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
+            ->where('jadwal.id', $jadwal_id)
+            ->first();
+
+        if (!$jadwal) {
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan');
+        }
+
+        if ($jadwal->presensi_mulai) {
+            return redirect()->back()->with('error', 'Jadwal sudah dimulai');
+        }
+
+        if ($jadwal->cek_ip == '1') {
+            $whitelist_ip = DB::table('whitelist_ip')->get()->pluck('ip')->toArray();
+            if (!in_array($request->ip(), $whitelist_ip)) {
+                return redirect()->back()->with('error', 'Jaringan tidak valid');
+            }
+        }
+
+        $today = Carbon::now();
+        if ($jadwal->tgl != $today->format('Y-m-d')) {
+            return redirect()->back()->with('error', 'Tanggal tidak valid');
+        }
+
+        if ($jadwal->type == 'pertemuan') {
+            if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
+                ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
+            ) {
+                return redirect()->back()->with('error', 'Waktu tidak valid');
+            }
+        }
+
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update([
+                'presensi_mulai' => $today
+            ]);
+
+        return redirect()->back()->with('success', 'Berhasil disimpan!');
+    }
+
+    public function selesaiJadwal(Request $request, $jadwal_id)
+    {
+        $jadwal = DB::table('jadwal')
+            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'tahun_matkul.cek_ip')
+            ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
+            ->where('jadwal.id', $jadwal_id)
+            ->first();
+
+        if (!$jadwal) {
+            return redirect()->back()->with('error', 'Jadwal tidak ditemukan');
+        }
+
+        if ($jadwal->presensi_selesai) {
+            return redirect()->back()->with('error', 'Jadwal sudah diselesaikan');
+        }
+
+        if ($jadwal->cek_ip == '1') {
+            $whitelist_ip = DB::table('whitelist_ip')->get()->pluck('ip')->toArray();
+            if (!in_array($request->ip(), $whitelist_ip)) {
+                return redirect()->back()->with('error', 'Jaringan tidak valid');
+            }
+        }
+
+        $today = Carbon::now();
+        if ($today->format('H:i') < date("H:i", strtotime($jadwal->jam_akhir))) {
+            return redirect()->back()->with('error', 'Tidak bisa selesaikan jadwal sebelum jam pelajaran berakhir');
+        }
+
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update([
+                'presensi_selesai' => $today,
+                'approved' => 1
+            ]);
+
+        return redirect()->back()->with('success', 'Jadwal Berhasil diselesaikan!');
+    }
+
+    public function storeApproval(Request $request, $jadwal_id){
+        $request->validate([
+            'status' => 'required',
+        ]);
+
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update([
+                'approved' => $request->status,
+                'ket_approved' => $request->ket_approved
+            ]);
+
+        return redirect()->back()->with('success', 'Berhasil disimpan!');
+    }
+    
+    public function RevisiApproval(Request $request, $jadwal_id){
+        DB::table('jadwal')
+            ->where('id', $jadwal_id)
+            ->update([
+                'approved' => 1,
+                'ket_approved' => null
+            ]);
+
+        return redirect()->back()->with('success', 'Berhasil direvisi!');
     }
 }

@@ -150,8 +150,6 @@ class PermissionTableSeeder extends Seeder
 
             'view_kalender_akademik',
 
-            'view_report_gaji',
-
             'view_kelola_kalender_akademik',
             'add_kelola_kalender_akademik',
             'edit_kelola_kalender_akademik',
@@ -165,6 +163,8 @@ class PermissionTableSeeder extends Seeder
             'view_khs',
             'view_transkrip',
             'view_mbkm',
+
+            'jadwal_approval',
         ];
 
         foreach ($permissions as $permission) {
