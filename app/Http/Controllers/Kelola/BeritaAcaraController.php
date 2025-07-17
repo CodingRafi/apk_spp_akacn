@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\Jadwal;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
