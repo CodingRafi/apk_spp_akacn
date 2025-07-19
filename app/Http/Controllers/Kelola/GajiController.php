@@ -72,7 +72,7 @@ class GajiController extends Controller
                 $q->select('jadwal.*', 'matkuls.sks_mata_kuliah', 'matkul_materi.type as type_materi')
                     ->join('tahun_matkul', 'tahun_matkul.id', '=', 'jadwal.tahun_matkul_id')
                     ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
-                    ->join('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
+                    ->leftJoin('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
                     ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
                     ->where('jadwal.tgl', '<=', $gaji->tgl_akhir)
                     ->where('jadwal.approved', '2');

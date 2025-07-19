@@ -13,6 +13,10 @@ class BeritaAcaraController extends Controller
 {
     public function index()
     {
+        if (!Auth::user()->hasRole('dosen')) {
+            abort(403);
+        }
+
         $tahunAjarans = DB::table('tahun_ajarans')->get();
         $prodis = DB::table('prodi')->get();
         return view('kelola.berita_acara.index', compact('prodis', 'tahunAjarans'));

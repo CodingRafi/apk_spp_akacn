@@ -208,11 +208,13 @@
                                 <div data-i18n="presensi">Rekap</div>
                             </a>
                         </li>
+                        @if (Auth::user()->hasRole('dosen'))
                         <li class="menu-item {{ Request::is('kelola-presensi/berita-acara*') ? 'active' : '' }}">
                             <a href="{{ route('kelola-presensi.berita-acara.index') }}" class="menu-link">
                                 <div data-i18n="presensi">Berita Acara</div>
                             </a>
                         </li>
+                        @endif
                     @endcan
                 </ul>
             </li>

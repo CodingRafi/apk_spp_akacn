@@ -783,7 +783,7 @@ class JadwalController extends Controller
     public function selesaiJadwal(Request $request, $jadwal_id)
     {
         $jadwal = DB::table('jadwal')
-            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'tahun_matkul.cek_ip')
+            ->select('tahun_matkul.jam_akhir', 'jadwal.presensi_selesai', 'tahun_matkul.cek_ip', 'jadwal.type')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->where('jadwal.id', $jadwal_id)
             ->first();
@@ -804,7 +804,7 @@ class JadwalController extends Controller
         }
 
         $today = Carbon::now();
-        if ($today->format('H:i') < date("H:i", strtotime($jadwal->jam_akhir))) {
+        if ($jadwal->type == 'pertemuan' && $today->format('H:i') < date("H:i", strtotime($jadwal->jam_akhir))) {
             return redirect()->back()->with('error', 'Tidak bisa selesaikan jadwal sebelum jam pelajaran berakhir');
         }
 

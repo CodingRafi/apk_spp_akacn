@@ -187,7 +187,6 @@
                     url: "{{ route('khs.data', ['tahun_semester_id' => $tahun_semester->id, 'mhs_id' => $mhs_id]) }}",
                     dataType: "json",
                     success: function(res) {
-                        console.log(res)
                         let table = generate_table(res.data, res.ipk)
                         $('.table-matkul tbody').empty().append(table);
                     },

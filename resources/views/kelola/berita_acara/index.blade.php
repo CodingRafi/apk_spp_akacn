@@ -6,9 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('kelola-presensi.presensi.index') }}"><i
-                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                        <h5 class="text-capitalize mb-0">Berita Acara {{ request('tahun_ajaran_id') }}</h5>
+                        <h5 class="text-capitalize mb-0">Berita Acara</h5>
                     </div>
                 </div>
                 <div class="card-body">
