@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('kelola-users.index', ['role' => 'asdos']) }}"><i
+                        <a href="{{ route('kelola-users.index', ['role' => 'asisten']) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Detail Asdos</h5>
                     </div>
@@ -14,7 +14,7 @@
                 <div class="card-body">
                     @include('users.asdos.form', [
                         'disabled' => true,
-                        'role' == 'asdos',
+                        'role' == 'asisten',
                     ])
                 </div>
             </div>

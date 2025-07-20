@@ -4,8 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
@@ -31,7 +29,7 @@ class UserSeeder extends Seeder
                 'permission' => array_map('strval', range(81, 86))
             ],
             [
-                'role' => 'asdos',
+                'role' => 'asisten',
                 'permission' => array_map('strval', range(81, 86))
             ],
             [

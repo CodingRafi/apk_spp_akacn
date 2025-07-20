@@ -73,7 +73,7 @@
                                     <th class="col-2">Nama</th>
                                     @if (request('role') == 'mahasiswa')
                                         <th class="col-2">NIM</th>
-                                    @elseif(request('role') == 'dosen' || request('role') == 'asdos')
+                                    @elseif(request('role') == 'dosen' || request('role') == 'asisten')
                                         <th class="col-2">NIDN</th>
                                     @else
                                         <th class="col-2">Email</th>

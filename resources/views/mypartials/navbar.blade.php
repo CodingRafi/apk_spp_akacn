@@ -37,7 +37,7 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <a href="{{ route('password.ubah') }}" class="dropdown-item"><i class='bx bx-lock-alt'></i> Reset Password</a>
+                        <a href="{{ route('password.ubah') }}" class="dropdown-item"><i class='bx bx-lock-alt me-2'></i> Reset Password</a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">

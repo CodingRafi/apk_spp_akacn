@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\Facades\DataTables;
 
 class RekapPresensiController extends Controller
 {
-    public function index($tahun_ajaran_id)
+    public function index()
     {
+        $tahunAjarans = DB::table('tahun_ajarans')->get();
         $prodis = DB::table('prodi')->get();
-        return view('kelola.rekap_presensi.index', compact('prodis'));
+        return view('kelola.rekap_presensi.index', compact('prodis', 'tahunAjarans'));
     }
 
     public function getMatkul($tahun_ajaran_id){

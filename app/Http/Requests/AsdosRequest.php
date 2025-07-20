@@ -47,8 +47,8 @@ class AsdosRequest extends FormRequest
             ];
         } else {
             $validate += [
-                'email' => 'required|unique:users,email,' . $this->asdo,
-                'login_key' => 'required|unique:users,login_key,' . $this->asdo
+                'email' => 'required|unique:users,email,' . $this->asisten,
+                'login_key' => 'required|unique:users,login_key,' . $this->asisten
             ];
         }
 

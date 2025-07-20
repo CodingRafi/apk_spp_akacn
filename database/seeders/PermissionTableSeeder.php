@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
 
 class PermissionTableSeeder extends Seeder
 {
@@ -149,6 +148,13 @@ class PermissionTableSeeder extends Seeder
             'edit_pembayaran',
             'delete_pembayaran',
 
+            'view_kalender_akademik',
+
+            'view_kelola_kalender_akademik',
+            'add_kelola_kalender_akademik',
+            'edit_kelola_kalender_akademik',
+            'delete_kelola_kalender_akademik',
+
             'view_krs',
             'add_krs',
             'edit_krs',
@@ -157,10 +163,17 @@ class PermissionTableSeeder extends Seeder
             'view_khs',
             'view_transkrip',
             'view_mbkm',
+
+            'jadwal_approval',
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
-       }
+            DB::table('permissions')->insertOrIgnore([
+                'name' => $permission,
+                'guard_name' => 'web',
+                'created_at' => now(),
+                'updated_at' => now()]
+            );
+        }
     }
 }
