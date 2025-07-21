@@ -63,7 +63,9 @@
                 </div>
             </div>
             @can('view_kalender_akademik')
-                @include('dashboard.partials.kalender')
+                @if ($kalenderAkademik)
+                    @include('dashboard.partials.kalender')
+                @endif
             @endcan
         </div>
     </div>

@@ -8,7 +8,7 @@
                     <div class="d-flex align-items-center">
                         <a href="{{ route('data-master.kalender-akademik.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                        <h5 class="mb-0">Kalender Akademik {{ $data->nama }}</h5>
+                        <h5 class="mb-0">{{ $data->nama }}</h5>
                     </div>
                     @can('add_kelola_kalender_akademik')
                         <button type="button" class="btn btn-primary"

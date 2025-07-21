@@ -15,4 +15,10 @@ class KalenderAkademik extends Model
     {
         return $this->hasMany(KalenderAkademikDetail::class);
     }
+
+    public static function getKalenderAkademikAktif(){
+        return KalenderAkademik::with('kalenderAkademikDetail')
+            ->where('is_active', 1)
+            ->first();
+    }
 }
