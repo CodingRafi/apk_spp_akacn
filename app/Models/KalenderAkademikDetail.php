@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KalenderAkademik extends Model
+class KalenderAkademikDetail extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function KalenderAkademikDetail()
+    public function KalenderAkademik()
     {
-        return $this->hasMany(KalenderAkademikDetail::class);
+        return $this->belongsTo(KalenderAkademik::class);
     }
 }

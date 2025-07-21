@@ -20,7 +20,6 @@ use App\Http\Controllers\Kelola\{
     TahunAjaranController,
     ProdiController,
     PotonganController as KelolaPotonganController,
-    PresensiController as KelolaPresensiController,
     RekapPresensiController,
     ResponseKuesionerController,
     RombelController,
@@ -29,7 +28,8 @@ use App\Http\Controllers\Kelola\{
     SemesterController as KelolaSemesterController,
     SettingController,
     TemplateSuratController,
-    KalenderAkademikController
+    KalenderAkademikController,
+    KalenderAkademikDetailController
 };
 
 use App\Http\Controllers\{
@@ -42,12 +42,9 @@ use App\Http\Controllers\{
     WhitelistIPController,
     WilayahController
 };
-use App\Http\Controllers\Dosen\PresensiController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulDosenController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulMhsController;
-use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeeder;
-use App\Http\Controllers\Kelola\Angkatan\MatkulNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulRekapController;
 use App\Http\Controllers\Kelola\Angkatan\MBKMController;
 use App\Http\Controllers\Kelola\Angkatan\MBKMDosenPembimbingController;
@@ -258,6 +255,16 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Kalender Akademik
         Route::get('kalender-akademik/data', [KalenderAkademikController::class, 'data'])->name('kalender-akademik.data');
         Route::resource('kalender-akademik', KalenderAkademikController::class);
+
+        //? Kalender Akademik Detail
+        Route::prefix('kalender-akademik/{kalender_akademik_id}/detail')->name('kalender-akademik-detail.')->group(function () {
+            Route::get('/', [KalenderAkademikDetailController::class, 'index'])->name('index');
+            Route::post('/', [KalenderAkademikDetailController::class, 'store'])->name('store');
+            Route::get('/data', [KalenderAkademikDetailController::class, 'data'])->name('data');
+            Route::get('/{kalender_akademik_detail_id}', [KalenderAkademikDetailController::class, 'show'])->name('show');
+            Route::put('/{kalender_akademik_detail_id}', [KalenderAkademikDetailController::class, 'update'])->name('update');
+            Route::delete('/{kalender_akademik_detail_id}', [KalenderAkademikDetailController::class, 'destroy'])->name('destroy');
+        });
 
         //? Jenis Kelas
         Route::get('jenis-kelas/data', [JenisKelasController::class, 'data'])->name('jenis-kelas.data');
