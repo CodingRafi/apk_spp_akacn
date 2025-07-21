@@ -89,7 +89,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+        $kalenderAkademik = KalenderAkademik::getKalenderAkademikAktif();
 
         return view('dashboard.admin', compact(
             'users',
@@ -117,7 +117,7 @@ class DashboardController extends Controller
         $totalMengajarDisetujui = $rekap[2] ?? 0;
         $totalMengajarDitolak = $rekap[3] ?? 0;
 
-        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+        $kalenderAkademik = KalenderAkademik::getKalenderAkademikAktif();
 
         return view('dashboard.asisten', compact('totalMengajar', 'totalMengajarMenunggu', 'totalMengajarDisetujui', 'totalMengajarDitolak', 'kalenderAkademik'));
     }
@@ -136,7 +136,7 @@ class DashboardController extends Controller
         $totalMengajarDisetujui = $rekap[2] ?? 0;
         $totalMengajarDitolak = $rekap[3] ?? 0;
 
-        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+        $kalenderAkademik = KalenderAkademik::getKalenderAkademikAktif();
 
         return view('dashboard.dosen', compact('totalMengajar', 'totalMengajarMenunggu', 'totalMengajarDisetujui', 'totalMengajarDitolak', 'kalenderAkademik'));
     }
@@ -148,7 +148,7 @@ class DashboardController extends Controller
             ->where('verify_id', auth()->user()->id)
             ->count();
 
-        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+        $kalenderAkademik = KalenderAkademik::getKalenderAkademikAktif();
 
         return view('dashboard.petugas', compact('totalVerifikasi', 'kalenderAkademik'));
     }
@@ -171,7 +171,7 @@ class DashboardController extends Controller
             ->orderBy('semesters.id', 'asc')
             ->get();
 
-        $kalenderAkademik = KalenderAkademik::select('start_time as start', 'finish_time as end', 'comments as title')->get();
+        $kalenderAkademik = KalenderAkademik::getKalenderAkademikAktif();
 
         return view('dashboard.mahasiswa', compact('tagihan', 'krs', 'kalenderAkademik'));
     }

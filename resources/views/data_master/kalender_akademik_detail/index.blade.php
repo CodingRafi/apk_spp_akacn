@@ -5,10 +5,14 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize mb-0">Kalender Akademik</h5>
+                    <div class="d-flex align-items-center">
+                        <a href="{{ route('data-master.kalender-akademik.index') }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="mb-0">{{ $data->nama }}</h5>
+                    </div>
                     @can('add_kelola_kalender_akademik')
                         <button type="button" class="btn btn-primary"
-                            onclick="addForm('{{ route('data-master.kalender-akademik.store', ['kalender_akademik_id' => request('kalender_akademik_id')]) }}', 'Kalender Akademik', '#kalender_akademik')">
+                            onclick="addForm('{{ route('data-master.kalender-akademik-detail.store', ['kalender_akademik_id' => request('kalender_akademik_id')]) }}', 'Kalender Akademik', '#kalender_akademik')">
                             Tambah
                         </button>
                     @endcan
@@ -40,20 +44,17 @@
                 <form action="" method="post">
                     @method('post')
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="kalender_akademikLabel">Tambah Kalender Akademik</h1>
+                        <h1 class="modal-title fs-5" id="kalender_akademikLabel">Tambah</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Nama</label>
-                            <input class="form-control" type="text" id="nama" name="nama" />
+                            <label for="tgl" class="form-label">Tanggal</label>
+                            <input class="form-control" type="text" id="tgl" name="tgl" />
                         </div>
-                        <div>
-                            <label for="is_active" class="form-label">Aktif</label>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" name="is_active" value="1"
-                                    id="is_active">
-                            </div>
+                        <div class="mb-3">
+                            <label for="ket" class="form-label">Keterangan</label>
+                            <input class="form-control" type="text" id="ket" name="ket" />
                         </div>
                     </div>
                     <div class="modal-footer justify-content-start px-3">
@@ -73,15 +74,15 @@
                 processing: true,
                 serverSide: true,
                 responsive: true,
-                ajax: '{{ route('data-master.kalender-akademik.data') }}',
+                ajax: '{{ route('data-master.kalender-akademik-detail.data', ['kalender_akademik_id' => request('kalender_akademik_id')]) }}',
                 columns: [{
                         "data": "DT_RowIndex"
                     },
                     {
-                        "data": "nama"
+                        "data": "tgl"
                     },
                     {
-                        "data": "is_active"
+                        "data": "ket"
                     },
                     @canany(['edit_kelola_kalender_akademik', 'delete_kelola_kalender_akademik'])
                         {
