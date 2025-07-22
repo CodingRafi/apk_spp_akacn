@@ -6,10 +6,10 @@
             <th>Presensi</th>
             <th>Aktivitas Partisipatif</th>
             <th>Hasil Proyek</th>
-            <th>Quizz</th>
-            <th>Tugas</th>
-            <th>UTS</th>
-            <th>UAS</th>
+            <th>Kognitif/Pengetahuan Quiz</th>
+            <th>Kognitif/Pengetahuan Tugas</th>
+            <th>Kognitif/Pengetahuan Ujian Tengah Semester</th>
+            <th>Kognitif/Pengetahuan Ujian Akhir Semester</th>
             <th>Nilai Akhir</th>
             <th>Mutu</th>
             <th>Publish</th>
