@@ -466,10 +466,41 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 '/data',
                 [JadwalController::class, 'data']
             )->name('data');
-            Route::post(
-                '/',
-                [JadwalController::class, 'store']
-            )->name('store');
+            Route::get(
+                '/get-pengawas',
+                [JadwalController::class, 'getPengawas']
+            )->name('getPengawas');
+
+            Route::prefix('{tahun_matkul_id}')->name('tahun_matkul.')->group(function () {
+                Route::get(
+                    '/',
+                    [JadwalController::class, 'indexTahunMatkul']
+                )->name('indexTahunMatkul');
+                Route::get(
+                    '/data-tahun-matkul',
+                    [JadwalController::class, 'dataTahunMatkul']
+                )->name('data');
+                Route::post(
+                    '/',
+                    [JadwalController::class, 'store']
+                )->name('store');
+                Route::get(
+                    '/total',
+                    [JadwalController::class, 'getTotalPelajaran']
+                )->name('getTotalPelajaran');
+                Route::get(
+                    '/get-materi',
+                    [JadwalController::class, 'getMateri']
+                )->name('getMateri');
+                Route::get(
+                    '/get-pengajar',
+                    [JadwalController::class, 'getPengajar']
+                )->name('getPengajar');
+                Route::get(
+                    '/get-ujian',
+                    [JadwalController::class, 'getJenisUjian']
+                )->name('getJenisUjian');
+            });
 
             Route::put(
                 '/{jadwal_id}/mulai',
@@ -526,40 +557,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                         [JadwalController::class, 'updatePresensiMhs']
                     )->name('updatePresensiMhs');
                 });
-
-                Route::get(
-                    '/{prodi_id}/get-semester',
-                    [JadwalController::class, 'getSemester']
-                )->name('getSemester');
-                Route::get(
-                    '/{prodi_id}/get-matkul',
-                    [JadwalController::class, 'getMatkul']
-                )->name('getMatkul');
-                Route::get(
-                    '/{prodi_id}/get-pelajaran',
-                    [JadwalController::class, 'getPelajaran']
-                )->name('getPelajaran');
-                Route::get(
-                    '/{tahun_matkul_id}/total',
-                    [JadwalController::class, 'getTotalPelajaran']
-                )->name('getTotalPelajaran');
-                Route::get(
-                    '/{tahun_matkul_id}/get-materi',
-                    [JadwalController::class, 'getMateri']
-                )->name('getMateri');
-                Route::get(
-                    '/{tahun_matkul_id}/get-pengajar',
-                    [JadwalController::class, 'getPengajar']
-                )->name('getPengajar');
-                Route::get(
-                    '/{tahun_matkul_id}/get-ujian',
-                    [JadwalController::class, 'getJenisUjian']
-                )->name('getJenisUjian');
+                
             });
-            Route::get(
-                '/get-pengawas',
-                [JadwalController::class, 'getPengawas']
-            )->name('getPengawas');
         });
 
         //? Rekap Presensi

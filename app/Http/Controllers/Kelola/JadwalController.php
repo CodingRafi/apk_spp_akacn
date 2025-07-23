@@ -33,97 +33,76 @@ class JadwalController extends Controller
 
     public function index()
     {
-        $prodis = DB::table('prodi')->get();
         $tahunAjarans = DB::table('tahun_ajarans')->get();
 
-        return view('kelola.jadwal.index', compact('prodis', 'tahunAjarans'));
+        return view('kelola.jadwal.index', compact('tahunAjarans'));
     }
 
     public function data()
     {
-        $role = getRole();
         $tahun_ajaran_id = request('tahun_ajaran_id');
 
         if ($tahun_ajaran_id) {
-            $jadwals = DB::table('jadwal')
-                ->select('jadwal.*', 'matkuls.nama as matkul', 'matkuls.kode as kode_matkul')
-                ->join('tahun_matkul', function ($q) use ($tahun_ajaran_id) {
-                    $q->on('jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
-                        ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id);
-                })
-                ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
-                ->when(request('prodi_id'), function ($q) {
-                    $q->where('tahun_matkul.prodi_id', request('prodi_id'));
-                })
-                ->when(request('tahun_semester_id'), function ($q) {
-                    $q->where('jadwal.tahun_semester_id', request('tahun_semester_id'));
-                })
-                ->when(request('tahun_matkul_id'), function ($q) {
-                    $q->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'));
-                })
-                ->when(request('status') && request('status') != 'all', function ($q) {
-                    $q->where('jadwal.approved', request('status'));
-                })
-                ->when($role->name == 'asisten' || $role->name == 'dosen', function ($q) {
-                    $q->where('pengajar_id', Auth::user()->id);
-                })
-                ->orderBy('id', 'desc')
-                ->get();
+            if (!Auth::user()->hasRole('admin')) {
+                $query = "
+                    WITH cte_nama_matkul AS (
+                        SELECT DISTINCT j.tahun_matkul_id
+                        FROM jadwal j
+                        JOIN tahun_matkul tm ON tm.id = j.tahun_matkul_id AND tm.tahun_ajaran_id = ?
+                        WHERE j.pengajar_id = ?
+                    )
+                    SELECT
+                        s.kode as kode_matkul,
+                        s.nama AS matkul,
+                        cnm.tahun_matkul_id
+                    FROM cte_nama_matkul cnm
+                    JOIN tahun_matkul tm ON tm.id = cnm.tahun_matkul_id
+                    JOIN matkuls s ON s.id = tm.matkul_id
+                ";
+                $bindings = [$tahun_ajaran_id, Auth::user()->id];
+            } else {
+                $query = "
+                    SELECT
+                        s.kode as kode_matkul,
+                        s.nama AS matkul,
+                        tm.id AS tahun_matkul_id
+                    FROM tahun_matkul tm
+                    JOIN matkuls s ON s.id = tm.matkul_id
+                    WHERE tm.tahun_ajaran_id = ?
+                ";
+                $bindings = [$tahun_ajaran_id];
+            }
+            
+            $jadwals = DB::select($query, $bindings);
         }
 
         $datas = isset($jadwals) ? $jadwals : [];
 
         foreach ($datas as $data) {
-            $options = "<div class='d-flex'>";
-            $options .= "<a href='" . route('kelola-presensi.jadwal.show', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "' class='btn btn-info mx-2'>Detail</a>";
-
-            if (auth()->user()->can('edit_kelola_presensi')) {
-                $options .= " <button class='btn btn-warning'
-                        onclick='editForm(`" . route('kelola-presensi.jadwal.edit', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "`, `Edit Jadwal`, `#jadwal`, editJadwal)'>
-                        <i class='ti-pencil'></i>
-                        Edit
-                    </button>";
-            }
-
-            if (auth()->user()->can('delete_kelola_presensi')) {
-                $options .= "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('kelola-presensi.jadwal.delete', ['tahun_ajaran_id' => $tahun_ajaran_id, 'jadwal_id' => $data->id]) . "`)' type='button'>
-                                        Hapus
-                                    </button>";
-            }
-
-            $options .= "</div>";
-
-            $data->options = $options;
+            $data->options = "<a href='" . route('kelola-presensi.jadwal.tahun_matkul.indexTahunMatkul', ['tahun_matkul_id' => $data->tahun_matkul_id]) . "' class='btn btn-info mx-2'>Detail</a>";
         }
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->editColumn('tgl', function ($datas) {
-                return parseDate($datas->tgl);
-            })
-            ->addColumn('status', function ($datas) {
-                if (!is_null($datas->approved)) {
-                    if ($datas->approved == 1) {
-                        return '<span class="badge bg-warning text-white">Menunggu Verifikasi</span>';
-                    }elseif ($datas->approved == 2) {
-                        return '<span class="badge bg-success text-white">Disetujui</span>';
-                    }else{
-                        return '<span class="badge bg-danger text-white">Ditolak</span>';
-                    }
-                }
-            })
-            ->rawColumns(['options', 'status'])
+            ->rawColumns(['options'])
             ->make(true);
     }
 
-    public function store(Request $request)
+    public function indexTahunMatkul($tahun_matkul_id){
+        $matkul = DB::table('tahun_matkul')
+            ->select('matkuls.nama as matkul')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->first();
+
+        return view('kelola.jadwal.tahun_matkul.index', compact('matkul'));
+    }
+
+    public function store(Request $request, $tahun_matkul_id)
     {
         $roleUser = getRole();
 
         $validate = [
-            'prodi_id' => 'required',
-            'tahun_ajaran_id' => 'required',
-            'tahun_matkul_id' => 'required',
             'kode' => 'required|max:6|min:6',
             'type' => 'required',
             'pengajar_id' => 'required',
@@ -142,32 +121,32 @@ class JadwalController extends Controller
         }
 
         $request->validate($validate);
-
+            
         if ($request->type == 'pertemuan') {
-            $cek = $this->getTotalPelajaran($request->tahun_ajaran_id, $request->tahun_matkul_id);
-            $statusCodeCek = $cek->getStatusCode();
-            $cek = json_decode($cek->getContent());
-
-            //? Validasi jumlah pembelajaran yang sudah terjadi
-            if ($statusCodeCek == 200) {
-                if ($cek->total >= 14) {
+                $cek = $this->getTotalPelajaran($tahun_matkul_id);
+                $statusCodeCek = $cek->getStatusCode();
+                $cek = json_decode($cek->getContent());
+                
+                //? Validasi jumlah pembelajaran yang sudah terjadi
+                if ($statusCodeCek == 200) {
+                    if ($cek->total >= 14) {
+                        return response()->json([
+                            'message' => 'Maksimal 14 pelajaran'
+                        ], 400);
+                    }
+                } else {
                     return response()->json([
-                        'message' => 'Maksimal 14 pelajaran'
-                    ], 400);
-                }
-            } else {
-                return response()->json([
-                    'message' => $cek->message
+                        'message' => $cek->message
                 ], 400);
             }
         }
 
         $tahun_matkul = DB::table('tahun_matkul')
-            ->select('prodi_id')
-            ->where('id', $request->tahun_matkul_id)
+            ->select('prodi_id', 'tahun_ajaran_id')
+            ->where('id', $tahun_matkul_id)
             ->first();
 
-        $getTahunSemesterAktif = $this->getSemesterAktif($request->tahun_ajaran_id, $tahun_matkul->prodi_id);
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_matkul->tahun_ajaran_id, $tahun_matkul->prodi_id);
 
         //? Validasi tahun semester
         if (!$getTahunSemesterAktif) {
@@ -177,7 +156,7 @@ class JadwalController extends Controller
         }
 
         $getTahunMatkul = DB::table('tahun_matkul')
-            ->where('id', $request->tahun_matkul_id)
+            ->where('id', $tahun_matkul_id)
             ->first();
 
         if (!$getTahunMatkul) {
@@ -189,7 +168,7 @@ class JadwalController extends Controller
         //? Validasi sudah dibikin belum
         $tgl = $roleUser->name == 'admin' ? $request->tgl : Carbon::now()->format('Y-m-d');
         $cekJadwalHari = DB::table('jadwal')
-            ->where('tahun_matkul_id', $request->tahun_matkul_id)
+            ->where('tahun_matkul_id', $tahun_matkul_id)
             ->where('tgl', $tgl)
             ->count();
 
@@ -237,7 +216,7 @@ class JadwalController extends Controller
 
         $data = [
             'tgl' => $tgl,
-            'tahun_matkul_id' => $request->tahun_matkul_id,
+            'tahun_matkul_id' => $tahun_matkul_id,
             'tahun_semester_id' => $getTahunSemesterAktif->id,
             'ket' => $request->ket,
             'kode' => $request->kode,
@@ -348,14 +327,14 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function getMateri($tahun_ajaran_id, $tahun_matkul_id)
+    public function getMateri($tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
-            ->select('prodi_id')
+            ->select('prodi_id', 'tahun_ajaran_id')
             ->where('id', $tahun_matkul_id)
             ->first();
 
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_matkul->tahun_ajaran_id, $tahun_matkul->prodi_id);
 
         if (!$getTahunSemesterAktif) {
             return response()->json([
@@ -382,7 +361,7 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function getPengajar($tahun_ajaran_id, $tahun_matkul_id)
+    public function getPengajar($tahun_matkul_id)
     {
         $data = DB::select(DB::raw("
             WITH dosen_utama AS (
@@ -393,8 +372,7 @@ class JadwalController extends Controller
                 FROM tahun_matkul
                 INNER JOIN tahun_matkul_dosen ON tahun_matkul_dosen.tahun_matkul_id = tahun_matkul.id
                 INNER JOIN users ON users.id = tahun_matkul_dosen.dosen_id
-                WHERE tahun_matkul.tahun_ajaran_id = :tahun_ajaran_id
-                AND tahun_matkul.id = :tahun_matkul_id
+                WHERE tahun_matkul.id = :tahun_matkul_id
             )
             SELECT * FROM dosen_utama
             UNION
@@ -406,7 +384,6 @@ class JadwalController extends Controller
             JOIN users ON users.id = dosen_asdos.asdos_id
             WHERE dosen_asdos.dosen_id IN (SELECT id FROM dosen_utama)
         "), [
-            'tahun_ajaran_id' => $tahun_ajaran_id,
             'tahun_matkul_id' => $tahun_matkul_id,
         ]);
 
@@ -424,14 +401,14 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function getTotalPelajaran($tahun_ajaran_id, $tahun_matkul_id)
+    public function getTotalPelajaran($tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
-            ->select('prodi_id')
+            ->select('prodi_id', 'tahun_ajaran_id')
             ->where('id', $tahun_matkul_id)
             ->first();
 
-        $semesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
+        $semesterAktif = $this->getSemesterAktif($tahun_matkul->tahun_ajaran_id, $tahun_matkul->prodi_id);
 
         if (!$semesterAktif) {
             return response()->json([
@@ -450,14 +427,14 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function getJenisUjian($tahun_ajaran_id, $tahun_matkul_id)
+    public function getJenisUjian($tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
-            ->select('prodi_id')
+            ->select('prodi_id', 'tahun_ajaran_id')
             ->where('id', $tahun_matkul_id)
             ->first();
 
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_ajaran_id, $tahun_matkul->prodi_id);
+        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_matkul->tahun_ajaran_id, $tahun_matkul->prodi_id);
         $jadwalUjian = DB::table('jadwal')
             ->select('jenis_ujian')
             ->where('type', 'ujian')
@@ -465,6 +442,7 @@ class JadwalController extends Controller
             ->where('tahun_matkul_id', $tahun_matkul_id)
             ->get()
             ->pluck('jenis_ujian');
+
         $defaultUjian = array_column(config('services.ujian'), 'key');
 
         if (request('except')) {
