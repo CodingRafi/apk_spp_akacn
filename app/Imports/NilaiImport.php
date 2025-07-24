@@ -28,19 +28,20 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
 
     public function rules(): array
     {
-        $mutu = $this->mutu->pluck('id')->implode(',');
         return [
-            '1' => 'required',
+            '0' => 'required',
+            '1' => 'required|numeric',
             '2' => 'required|numeric',
-            '3' => 'required|numeric',
+            '3' => 'required',
             '4' => 'required|numeric',
             '5' => 'required|numeric',
             '6' => 'required|numeric',
             '7' => 'required|numeric',
             '8' => 'required|numeric',
             '9' => 'required|numeric',
-            '10' => 'required|numeric|in:' . $mutu,
-            '11' => 'required|in:0,1'
+            '10' => 'required|numeric',
+            '11' => 'required|numeric',
+            '12' => 'required|in:0,1'
         ];
     }
 
@@ -56,7 +57,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             ->first();
 
         $nilai = $this->mutu->filter(function ($item) use ($row) {
-            return $item->id == $row[10];
+            return trim(strtolower($item->nama)) == trim(strtolower($row[3]));
         })->first();
         
         if ($user && $nilai) {
@@ -66,17 +67,18 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                     'tahun_semester_id' => $this->tahunSemesterId,
                     'tahun_matkul_id' => $this->tahunMatkulId,
                 ], [
-                    'presensi' => $row[2],
-                    'aktivitas_partisipatif' => $row[3],
-                    'hasil_proyek' => $row[4],
-                    'quizz' => $row[5],
-                    'tugas' => $row[6],
-                    'uts' => $row[7],
-                    'uas' => $row[8],
-                    'nilai_akhir' => $row[9],
-                    'mutu_id' => $row[10],
+                    'mutu_id' => $nilai->id,
                     'nilai_mutu' => $nilai->nilai,
-                    'publish' => (string) $row[11],
+                    'nilai_angka' => $row[2],
+                    'presensi' => $row[4],
+                    'aktivitas_partisipatif' => $row[5],
+                    'hasil_proyek' => $row[6],
+                    'quizz' => $row[7],
+                    'tugas' => $row[8],
+                    'uts' => $row[9],
+                    'uas' => $row[10],
+                    'nilai_akhir' => $row[11],
+                    'publish' => (string) $row[12],
                     'jml_sks' => $this->matkul->sks_mata_kuliah,
                     'updated_at' => now()
                 ]);
