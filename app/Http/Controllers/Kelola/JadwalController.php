@@ -837,7 +837,7 @@ class JadwalController extends Controller
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'approved' => 1,
+                'approved' => null,
                 'ket_approved' => null
             ]);
 
