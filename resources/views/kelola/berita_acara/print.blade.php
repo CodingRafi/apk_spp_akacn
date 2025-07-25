@@ -205,17 +205,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                            <td style="text-align: left; padding: 2px;">test</td>
-                        </tr>
                         @foreach ($nilai as $item)
                             <tr>
                                 <td style="text-align: left; padding: 2px;">{{ $loop->iteration }}</td>

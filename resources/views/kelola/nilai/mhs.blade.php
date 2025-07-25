@@ -128,7 +128,6 @@
                                     <th>Kognitif/Pengetahuan Tugas</th>
                                     <th>Kognitif/Pengetahuan Ujian Tengah Semester</th>
                                     <th>Kognitif/Pengetahuan Ujian Akhir Semester</th>
-                                    <th>Nilai Akhir</th>
                                     <th>Jumlah SKS</th>
                                     <th>Publish</th>
                                     <th>Send Neo Feeder</th>
@@ -160,8 +159,8 @@
                             <input class="form-control" type="text" id="nim" name="login_key" disabled />
                         </div>
                         <div class="mb-3">
-                            <label for="nilai_angka" class="form-label">Angka</label>
-                            <input class="form-control" type="number" id="nilai_angka" name="nilai_angka"
+                            <label for="nilai_akhir" class="form-label">Angka</label>
+                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir"
                                 min="0" step="0.01" />
                         </div>
                         <div class="mb-3">
@@ -207,11 +206,6 @@
                             <label for="uas" class="form-label">Kognitif/Pengetahuan Ujian Akhir Semester</label>
                             <input class="form-control" type="number" id="uas" name="uas" min="0"
                                 step="0.01" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="nilai_akhir" class="form-label">Nilai Akhir</label>
-                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir"
-                                min="0" step="0.01" />
                         </div>
                         <div class="mb-3">
                             <label for="publish" class="form-label">Publish</label>
@@ -278,7 +272,7 @@
                         "data": "login_key"
                     },
                     {
-                        "data": "nilai_angka"
+                        "data": "nilai_akhir"
                     },
                     {
                         "data": "mutu"
@@ -303,9 +297,6 @@
                     },
                     {
                         "data": "uas"
-                    },
-                    {
-                        "data": "nilai_akhir"
                     },
                     {
                         "data": "jml_sks"

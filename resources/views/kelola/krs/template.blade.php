@@ -12,7 +12,6 @@
             <th>Kognitif/Pengetahuan Tugas</th>
             <th>Kognitif/Pengetahuan Ujian Tengah Semester</th>
             <th>Kognitif/Pengetahuan Ujian Akhir Semester</th>
-            <th>Nilai Akhir</th>
             <th>Publish</th>
         </tr>
     </thead>
@@ -21,7 +20,6 @@
         <tr>
             <td>{{ $data->name }}</td>
             <td>{{ $data->login_key }}</td>
-            <td></td>
             <td></td>
             <td></td>
             <td></td>

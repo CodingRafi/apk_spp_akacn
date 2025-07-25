@@ -40,8 +40,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             '8' => 'required|numeric',
             '9' => 'required|numeric',
             '10' => 'required|numeric',
-            '11' => 'required|numeric',
-            '12' => 'required|in:0,1'
+            '11' => 'required|in:0,1'
         ];
     }
 
@@ -69,7 +68,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                 ], [
                     'mutu_id' => $nilai->id,
                     'nilai_mutu' => $nilai->nilai,
-                    'nilai_angka' => $row[2],
+                    'nilai_akhir' => $row[2],
                     'presensi' => $row[4],
                     'aktivitas_partisipatif' => $row[5],
                     'hasil_proyek' => $row[6],
@@ -77,8 +76,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                     'tugas' => $row[8],
                     'uts' => $row[9],
                     'uas' => $row[10],
-                    'nilai_akhir' => $row[11],
-                    'publish' => (string) $row[12],
+                    'publish' => (string) $row[11],
                     'jml_sks' => $this->matkul->sks_mata_kuliah,
                     'updated_at' => now()
                 ]);
