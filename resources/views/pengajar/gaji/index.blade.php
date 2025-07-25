@@ -17,7 +17,7 @@
                                     <th>Total Kehadiran</th>
                                     <th>Uang Transport</th>
                                     <th>Total Uang Transport</th>
-                                    <th>Total</th>
+                                    <th>Total Gaji</th>
                                 </tr>
                             </thead>
                         </table>
@@ -36,14 +36,15 @@
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('gaji.data') }}',
-                columns: [{
-                        "data": "DT_RowIndex"
-                    },
+                columns: [
                     {
                         "data": "nama"
                     },
                     {
                         "data": "tunjangan"
+                    },
+                    {
+                        "data": "total_kehadiran"
                     },
                     {
                         "data": "fee_transport"
@@ -52,7 +53,7 @@
                         "data": "total_fee_transport"
                     },
                     {
-                        "data": "total_fee_transport"
+                        "data": "total"
                     }
                 ],
                 pageLength: 25,

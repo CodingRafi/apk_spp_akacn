@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Kelola;
 use App\Http\Controllers\Controller;
 use App\Models\TemplateSurat;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\Facades\DataTables;
 

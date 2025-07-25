@@ -48,7 +48,7 @@ class User extends Authenticatable
         return $this->hasOne(ProfileMahasiswa::class, 'user_id', 'id');
     }
 
-    public function asdos(){
+    public function asisten(){
         return $this->hasOne(ProfileAsdos::class, 'user_id', 'id');
     }
 
@@ -62,5 +62,16 @@ class User extends Authenticatable
 
     public function jadwalPengajar(){
         return $this->hasMany(Jadwal::class, 'pengajar_id');
+    }
+
+    // Buat get dari dosen punya asdosnya siapa aja
+    public function dosen_asdos(){
+        return $this->belongsToMany(User::class, 'dosen_asdos', 'dosen_id', 'asdos_id');
+    }
+
+    // buat get dari asdos, dosen punya siapa aja
+    public function asdos_dosen()
+    {
+        return $this->belongsToMany(User::class, 'dosen_asdos', 'asdos_id', 'dosen_id');
     }
 }

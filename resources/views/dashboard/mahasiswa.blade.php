@@ -89,6 +89,11 @@
                     </div>
                 </div>
             </div>
+            @can('view_kalender_akademik')
+                @if ($kalenderAkademik)
+                    @include('dashboard.partials.kalender')
+                @endif
+            @endcan
         </div>
     </div>
 @endsection

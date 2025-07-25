@@ -22,15 +22,33 @@ class AsdosController extends Controller
                 'password' => Hash::make('000000')
             ]);
 
-            $user->assignRole('asdos');
+            $user->assignRole('asisten');
 
-            $dataRequest = $request->all();
-            $dataRequest['user_id'] = $user->id;
-            $dataRequest['status'] = $request->status ? "1" : "0";
-            $user->asdos()->create($dataRequest);
+            $user->asisten()->create([
+                'user_id' => $user->id,
+                'tempat_lahir' => $request->tempat_lahir,
+                'tgl_lahir' => $request->tgl_lahir,
+                'jk' => $request->jk,
+                'agama_id' => $request->agama_id,
+                'status' => $request->status ? "1" : "0",
+                'jalan' => $request->jalan,
+                'dusun' => $request->dusun,
+                'rt' => $request->rt,
+                'rw' => $request->rw,
+                'kode_pos' => $request->kode_pos,
+                'kewarganegaraan_id' => $request->kewarganegaraan_id,
+                'wilayah_id' => $request->wilayah_id,
+                'telepon' => $request->telepon,
+                'handphone' => $request->handphone,
+                'mampu_handle_kebutuhan_khusus' => $request->mampu_handle_kebutuhan_khusus,
+                'mampu_handle_kebutuhan_braille' => $request->mampu_handle_kebutuhan_braille,
+                'mampu_handle_kebutuhan_bahasa_isyarat' => $request->mampu_handle_kebutuhan_bahasa_isyarat,
+            ]);
+
+            $user->asdos_dosen()->sync($request->dosen_id);
 
             DB::commit();
-            return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil disimpan');
+            return redirect()->route('kelola-users.index', ['role' => 'asisten'])->with('success', 'Berhasil disimpan');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->back()->with('error', $th->getMessage());
@@ -40,11 +58,16 @@ class AsdosController extends Controller
     public function update(AsdosRequest $request, $id){
         $role = getRole();
         $user = User::findOrFail($id);
+
+        $oldDosenId = $user->asdos_dosen->pluck('id')->toArray();
+
+        $yang_dihapus = array_diff($oldDosenId, $request->dosen_id);
+        $yang_ditambahkan = array_diff($request->dosen_id, $oldDosenId);
         
-        if ($role->name == 'admin' && $user->asdos->dosen_id != $request->dosen_id) {
+        if ($role->name == 'admin' && (!empty($yang_dihapus) || !empty($yang_ditambahkan))) {
             $cek = DB::table('jadwal')->where('pengajar_id', $id)->count();
             if ($cek > 0) {
-                return redirect()->back()->with('error', 'Dosen tidak bisa diubah!');
+                return redirect()->back()->with('error', 'Asisten tidak bisa diubah!');
             }
         }
 
@@ -66,20 +89,21 @@ class AsdosController extends Controller
             $user->update($dataRequestUser);
 
             $dataRequest = $request->all();
-            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'path_profile', 'profile'];
+            $removeColumn = ['_token', '_method', 'name', 'email', 'login_key', 'path_profile', 'profile', 'dosen_id'];
             $dataRequest = $request->all();
             if ($role->name != 'admin') {
-                $removeColumn[] = 'dosen_id';
                 $removeColumn[] = 'status';
             }else{
                 $dataRequest['status'] = $request->status ? "1" : "0";
             }
             $dataRequest = array_diff_key($dataRequest, array_flip($removeColumn));
-            $user->asdos()->update($dataRequest);
+            $user->asisten()->update($dataRequest);
+
+            $user->asdos_dosen()->sync($request->dosen_id);
 
             DB::commit();
             if ($role->name == 'admin') {
-                return redirect()->route('kelola-users.index', ['role' => 'asdos'])->with('success', 'Berhasil diubah');
+                return redirect()->route('kelola-users.index', ['role' => 'asisten'])->with('success', 'Berhasil diubah');
             }else{
                 return redirect()->back()->with('success', 'Berhasil diubah');
             }
@@ -94,7 +118,7 @@ class AsdosController extends Controller
         DB::beginTransaction();
         try {
             $data = User::findOrFail($id);
-            $data->asdos()->delete();
+            $data->asisten()->delete();
             $data->delete();
             DB::commit();
             return redirect()->back()->with('success', 'Berhasil dihapus');

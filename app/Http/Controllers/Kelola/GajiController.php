@@ -60,7 +60,7 @@ class GajiController extends Controller
         $defaultFeeSksPraktekDosen = (int) $default[4]->value;
         $defaultFeeSksPraktekAsdos = (int) $default[5]->value;
 
-        $pengajar = User::role(['dosen', 'asdos'])
+        $pengajar = User::role(['dosen', 'asisten'])
             ->select('users.*', 'profile_dosens.nominal_tunjangan as tunjangan')
             ->leftJoin('profile_dosens', 'profile_dosens.user_id', 'users.id')
             ->leftJoin('profile_asdos', 'profile_asdos.user_id', 'users.id')
@@ -72,9 +72,10 @@ class GajiController extends Controller
                 $q->select('jadwal.*', 'matkuls.sks_mata_kuliah', 'matkul_materi.type as type_materi')
                     ->join('tahun_matkul', 'tahun_matkul.id', '=', 'jadwal.tahun_matkul_id')
                     ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
-                    ->join('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
+                    ->leftJoin('matkul_materi', 'matkul_materi.id', '=', 'jadwal.materi_id')
                     ->where('jadwal.tgl', '>=', $gaji->tgl_awal)
-                    ->where('jadwal.tgl', '<=', $gaji->tgl_akhir);
+                    ->where('jadwal.tgl', '<=', $gaji->tgl_akhir)
+                    ->where('jadwal.approved', '2');
             }, 'roles'])
             ->get();
 

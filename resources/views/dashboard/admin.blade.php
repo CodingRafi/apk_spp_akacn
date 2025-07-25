@@ -124,6 +124,11 @@
                     </div>
                 </div>
             </div>
+            @can('view_kalender_akademik')
+                @if ($kalenderAkademik)
+                    @include('dashboard.partials.kalender')
+                @endif
+            @endcan
         </div>
     </div>
 @endsection
@@ -143,6 +148,10 @@
                     } = series;
 
                 function fanAnimate(point, startAngleRad) {
+                    if (!point) {
+                        return;
+                    }
+
                     const graphic = point.graphic,
                         args = point.shapeArgs;
 
@@ -387,7 +396,7 @@
 
                         if (matkul_id != null) {
                             $('#filter-matkul').val(matkul_id);
-                        }   
+                        }
                     },
                     error: function(err) {
                         alert('Gagal get matkul');

@@ -3,15 +3,16 @@
         <tr>
             <th>Nama</th>
             <th>NIM</th>
+            <th>Angka</th>
+            <th>Huruf</th>
             <th>Presensi</th>
             <th>Aktivitas Partisipatif</th>
             <th>Hasil Proyek</th>
-            <th>Quizz</th>
-            <th>Tugas</th>
-            <th>UTS</th>
-            <th>UAS</th>
+            <th>Kognitif/Pengetahuan Quiz</th>
+            <th>Kognitif/Pengetahuan Tugas</th>
+            <th>Kognitif/Pengetahuan Ujian Tengah Semester</th>
+            <th>Kognitif/Pengetahuan Ujian Akhir Semester</th>
             <th>Nilai Akhir</th>
-            <th>Mutu</th>
             <th>Publish</th>
         </tr>
     </thead>
@@ -20,6 +21,7 @@
         <tr>
             <td>{{ $data->name }}</td>
             <td>{{ $data->login_key }}</td>
+            <td></td>
             <td></td>
             <td></td>
             <td></td>

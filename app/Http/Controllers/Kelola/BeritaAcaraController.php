@@ -11,10 +11,15 @@ use Yajra\DataTables\Facades\DataTables;
 
 class BeritaAcaraController extends Controller
 {
-    public function index($tahun_ajaran_id)
+    public function index()
     {
+        if (!Auth::user()->hasRole('dosen')) {
+            abort(403);
+        }
+
+        $tahunAjarans = DB::table('tahun_ajarans')->get();
         $prodis = DB::table('prodi')->get();
-        return view('kelola.berita_acara.index', compact('prodis'));
+        return view('kelola.berita_acara.index', compact('prodis', 'tahunAjarans'));
     }
 
     public function getSemester($tahun_ajaran_id)
@@ -33,7 +38,7 @@ class BeritaAcaraController extends Controller
 
     public function data()
     {
-        if (request('prodi_id') && request('tahun_semester_id')) {
+        if (request('prodi_id') && request('tahun_semester_id') && request('tahun_ajaran_id')) {
             $datas = DB::table('tahun_matkul')
                 ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
                 ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')

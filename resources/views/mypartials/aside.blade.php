@@ -74,7 +74,7 @@
         @endcanany
 
         @canany(['view_tahun_ajaran', 'view_prodi', 'view_rombel', 'view_kurikulum', 'view_ruang',
-            'view_kelola_template_surat', 'view_kelola_mutu'])
+            'view_kelola_template_surat', 'view_kelola_mutu', 'view_kelola_kalender_akademik'])
             <li class="menu-item {{ Request::is('data-master*') ? 'active open' : '' }}">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                     <i class="menu-icon tf-icons bx bx-archive"></i>
@@ -147,6 +147,13 @@
                             </li>
                         @endif
                     @endcan
+                    @can('view_kelola_kalender_akademik')
+                        <li class="menu-item {{ Request::is('data-master/kalender-akademik*') ? 'active' : '' }}">
+                            <a href="{{ route('data-master.kalender-akademik.index') }}" class="menu-link">
+                                <div data-i18n="kalender-akademik">Kalender Akademik</div>
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcanany
@@ -191,11 +198,23 @@
                         </li>
                     @endcan
                     @can('view_kelola_presensi')
-                        <li class="menu-item {{ Request::is('kelola-presensi/presensi*') ? 'active' : '' }}">
-                            <a href="{{ route('kelola-presensi.presensi.index') }}" class="menu-link">
-                                <div data-i18n="presensi">Presensi</div>
+                        <li class="menu-item {{ Request::is('kelola-presensi/jadwal*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-presensi.jadwal.index') }}" class="menu-link">
+                                <div data-i18n="presensi">Jadwal</div>
                             </a>
                         </li>
+                        <li class="menu-item {{ Request::is('kelola-presensi/rekap*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-presensi.rekap.index') }}" class="menu-link">
+                                <div data-i18n="presensi">Rekap</div>
+                            </a>
+                        </li>
+                        @if (Auth::user()->hasRole('dosen'))
+                        <li class="menu-item {{ Request::is('kelola-presensi/berita-acara*') ? 'active' : '' }}">
+                            <a href="{{ route('kelola-presensi.berita-acara.index') }}" class="menu-link">
+                                <div data-i18n="presensi">Berita Acara</div>
+                            </a>
+                        </li>
+                        @endif
                     @endcan
                 </ul>
             </li>
@@ -246,7 +265,7 @@
                 <ul class="menu-sub">
                     @php
                         if (Auth::user()->hasRole('dosen')) {
-                            $without = ['dosen', 'petugas', 'asdos', 'admin'];
+                            $without = ['dosen', 'petugas', 'asisten', 'admin'];
                         } else {
                             $without = ['admin'];
                         }
@@ -371,6 +390,15 @@
                 <a href="{{ route('mbkm.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-file"></i>
                     <div data-i18n="Analytics">MBKM</div>
+                </a>
+            </li>
+        @endcan
+
+        @can('view_gaji')
+            <li class="menu-item {{ Request::is('gaji*') ? 'active' : '' }}">
+                <a href="{{ route('gaji.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-file"></i>
+                    <div data-i18n="Analytics">Report Gaji</div>
                 </a>
             </li>
         @endcan

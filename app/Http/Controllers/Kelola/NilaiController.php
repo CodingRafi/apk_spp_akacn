@@ -217,6 +217,7 @@ class NilaiController extends Controller
                 'mhs_nilai.tugas',
                 'mhs_nilai.uts',
                 'mhs_nilai.uas',
+                'mhs_nilai.nilai_angka',
                 'mhs_nilai.nilai_akhir',
                 'mhs_nilai.nilai_mutu',
                 'mutu.nama as mutu',
@@ -299,6 +300,7 @@ class NilaiController extends Controller
                 'uts' => $request->uts,
                 'uas' => $request->uas,
                 'nilai_akhir' => $request->nilai_akhir,
+                'nilai_angka' => $request->nilai_angka,
                 'mutu_id' => $request->mutu_id,
                 'nilai_mutu' => $request->mutu_id ? $mutu->nilai : null,
                 'publish' => $request->publish ?? '0',
@@ -340,6 +342,7 @@ class NilaiController extends Controller
                 'message' => 'Berhasil disimpan'
             ], 200);
         } catch (\Throwable $th) {
+            dd($th);
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);
