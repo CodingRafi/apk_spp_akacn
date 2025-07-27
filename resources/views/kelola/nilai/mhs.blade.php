@@ -46,13 +46,12 @@
                                     Klik tombol "Download Template" untuk mengunduh template yang diperlukan.
                                 </li>
                                 <li class="mb-2">
-                                    Untuk mutu menggunakan id mutu seperti dibawah ini
+                                    Untuk mutu menggunakan nama mutu seperti dibawah ini
                                     <br>
                                     <div class="w-50">
                                         <table class="table mt-2" aria-label="table-mutu">
                                             <thead>
                                                 <tr>
-                                                    <th>Id</th>
                                                     <th>Nama</th>
                                                     <th>Nilai</th>
                                                 </tr>
@@ -60,7 +59,6 @@
                                             <tbody>
                                                 @foreach ($mutu as $row)
                                                     <tr>
-                                                        <td>{{ $row->id }}</td>
                                                         <td>{{ $row->nama }}</td>
                                                         <td>{{ $row->nilai }}</td>
                                                     </tr>
@@ -121,16 +119,15 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     <th>NIM</th>
+                                    <th>Angka</th>
+                                    <th>Huruf</th>
                                     <th>Presensi</th>
                                     <th>Aktivitas Partisipatif</th>
                                     <th>Hasil Proyek</th>
-                                    <th>Quizz</th>
-                                    <th>Tugas</th>
-                                    <th>UTS</th>
-                                    <th>UAS</th>
-                                    <th>Nilai Akhir</th>
-                                    <th>Mutu</th>
-                                    <th>Nilai Mutu</th>
+                                    <th>Kognitif/Pengetahuan Quiz</th>
+                                    <th>Kognitif/Pengetahuan Tugas</th>
+                                    <th>Kognitif/Pengetahuan Ujian Tengah Semester</th>
+                                    <th>Kognitif/Pengetahuan Ujian Akhir Semester</th>
                                     <th>Jumlah SKS</th>
                                     <th>Publish</th>
                                     <th>Send Neo Feeder</th>
@@ -162,6 +159,20 @@
                             <input class="form-control" type="text" id="nim" name="login_key" disabled />
                         </div>
                         <div class="mb-3">
+                            <label for="nilai_akhir" class="form-label">Angka</label>
+                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir"
+                                min="0" step="0.01" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="mutu_id" class="form-label">Huruf</label>
+                            <select name="mutu_id" id="mutu_id" class="form-control">
+                                <option value="">Pilih Huruf</option>
+                                @foreach ($mutu as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label for="presensi" class="form-label">Presensi</label>
                             <input class="form-control" type="number" id="presensi" name="presensi" min="0"
                                 step="0.01" />
@@ -177,38 +188,24 @@
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
-                            <label for="quizz" class="form-label">Quizz</label>
+                            <label for="quizz" class="form-label">Kognitif/Pengetahuan Quiz</label>
                             <input class="form-control" type="number" id="quizz" name="quizz" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
-                            <label for="tugas" class="form-label">Tugas</label>
+                            <label for="tugas" class="form-label">Kognitif/Pengetahuan Tugas</label>
                             <input class="form-control" type="number" id="tugas" name="tugas" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
-                            <label for="uts" class="form-label">UTS</label>
+                            <label for="uts" class="form-label">Kognitif/Pengetahuan Ujian Tengah Semester</label>
                             <input class="form-control" type="number" id="uts" name="uts" min="0"
                                 step="0.01" />
                         </div>
                         <div class="mb-3">
-                            <label for="uas" class="form-label">UAS</label>
+                            <label for="uas" class="form-label">Kognitif/Pengetahuan Ujian Akhir Semester</label>
                             <input class="form-control" type="number" id="uas" name="uas" min="0"
                                 step="0.01" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="nilai_akhir" class="form-label">Nilai Akhir</label>
-                            <input class="form-control" type="number" id="nilai_akhir" name="nilai_akhir"
-                                min="0" step="0.01" />
-                        </div>
-                        <div class="mb-3">
-                            <label for="mutu_id" class="form-label">Mutu</label>
-                            <select name="mutu_id" id="mutu_id" class="form-control">
-                                <option value="">Pilih Mutu</option>
-                                @foreach ($mutu as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="publish" class="form-label">Publish</label>
@@ -275,6 +272,12 @@
                         "data": "login_key"
                     },
                     {
+                        "data": "nilai_akhir"
+                    },
+                    {
+                        "data": "mutu"
+                    },
+                    {
                         "data": "presensi"
                     },
                     {
@@ -294,15 +297,6 @@
                     },
                     {
                         "data": "uas"
-                    },
-                    {
-                        "data": "nilai_akhir"
-                    },
-                    {
-                        "data": "mutu"
-                    },
-                    {
-                        "data": "nilai_mutu"
                     },
                     {
                         "data": "jml_sks"

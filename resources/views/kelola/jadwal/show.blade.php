@@ -38,59 +38,57 @@
                         </div>
                     @else
                         @can('jadwal_approval')
-                            @if ($data->approved != null)
-                                @if ($data->approved == '1')
-                                    <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
-                                        method="post" id="form-approval">
-                                        @csrf
-                                        <input type="hidden" name="status">
-                                        <input type="hidden" name="ket_approved">
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-success" data-value="2"
-                                                onclick="submitFormApproval(this)">Setujui</button>
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                                data-bs-target="#ModalApproval">
-                                                Tolak
-                                            </button>
-                                        </div>
-                                    </form>
-                                    <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
-                                        aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header pb-0">
-                                                    <h1 class="modal-title fs-5" id="ModalApprovalLabel">Jadwal Ditolak</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <label for="ket_approval" class="form-label">Keterangan</label>
-                                                    <textarea class="form-control" id="ket_approval" rows="3" name="ket_approval"></textarea>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Tutup</button>
-                                                    <button type="button" class="btn btn-primary" onclick="submitFormApproval(this)"
-                                                        data-value="3">Simpan</button>
-                                                </div>
+                            @if ($data->approved == null)
+                                <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
+                                    method="post" id="form-approval">
+                                    @csrf
+                                    <input type="hidden" name="status">
+                                    <input type="hidden" name="ket_approved">
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-success" data-value="2"
+                                            onclick="submitFormApproval(this)">Setujui</button>
+                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                            data-bs-target="#ModalApproval">
+                                            Tolak
+                                        </button>
+                                    </div>
+                                </form>
+                                <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header pb-0">
+                                                <h1 class="modal-title fs-5" id="ModalApprovalLabel">Jadwal Ditolak</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <label for="ket_approval" class="form-label">Keterangan</label>
+                                                <textarea class="form-control" id="ket_approval" rows="3" name="ket_approval"></textarea>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Tutup</button>
+                                                <button type="button" class="btn btn-primary" onclick="submitFormApproval(this)"
+                                                    data-value="3">Simpan</button>
                                             </div>
                                         </div>
                                     </div>
-                                    <script>
-                                        function submitFormApproval(el) {
-                                            const status = el.getAttribute('data-value');
-                                            const ket_approved = document.getElementById('ket_approval').value;
-                                            document.querySelector('input[name=status]').value = status;
-                                            document.querySelector('input[name=ket_approved]').value = ket_approved;
-                                            document.querySelector('#form-approval').submit();
-                                        }
-                                    </script>
-                                @else
-                                    <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}" method="post">
-                                        @csrf
-                                        <button class="btn btn-warning" type="submit" onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
-                                    </form>
-                                @endif
+                                </div>
+                                <script>
+                                    function submitFormApproval(el) {
+                                        const status = el.getAttribute('data-value');
+                                        const ket_approved = document.getElementById('ket_approval').value;
+                                        document.querySelector('input[name=status]').value = status;
+                                        document.querySelector('input[name=ket_approved]').value = ket_approved;
+                                        document.querySelector('#form-approval').submit();
+                                    }
+                                </script>
+                            @else
+                                <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}" method="post">
+                                    @csrf
+                                    <button class="btn btn-warning" type="submit" onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
+                                </form>
                             @endif
                         @endcan
                     @endif

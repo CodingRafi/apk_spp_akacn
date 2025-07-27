@@ -340,6 +340,7 @@ class NilaiController extends Controller
                 'message' => 'Berhasil disimpan'
             ], 200);
         } catch (\Throwable $th) {
+            dd($th);
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);
