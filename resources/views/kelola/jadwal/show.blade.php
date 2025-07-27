@@ -6,7 +6,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('kelola-presensi.jadwal.index') }}"><i
+                        <a href="{{ route('kelola-presensi.jadwal.tahun_matkul.indexTahunMatkul', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">{{ $data->type }}</h5>
                     </div>
@@ -15,7 +15,7 @@
                             @if ($data->pengajar_id == Auth::user()->id)
                                 @if ($data->type == 'pertemuan')
                                     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
-                                        Jadwal</button>
+                                        Materi</button>
                                 @endif
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
@@ -155,7 +155,7 @@
                         </div>
                         <div class="col-md-12">
                             <div class="mt-3">
-                                <label for="ket" class="form-label">Keterangan</label>
+                                <label for="ket" class="form-label">Detail Materi</label>
                                 <textarea class="form-control" disabled>{{ $data->ket }}</textarea>
                             </div>
                         </div>
@@ -236,7 +236,7 @@
                     <form action="{{ route('kelola-presensi.jadwal.updateJadwalMengajar', ['jadwal_id' => $data->id]) }}">
                         @method('put')
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit Jadwal</h1>
+                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit Materi</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
@@ -244,7 +244,7 @@
                             <div class="mb-3">
                                 <label for="materi_id" class="form-label">Materi</label>
                                 <select name="materi_id" id="materi_id" class="form-control"
-                                    {{ $data->presensi_selesai ? 'readonly' : '' }}>
+                                    {{ $data->presensi_selesai ? 'readonly' : '' }} disabled>
                                     <option value="">Pilih Materi</option>
                                     @foreach ($materi as $row)
                                         <option value="{{ $row->id }}"
@@ -255,7 +255,7 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="ket" class="form-label">Keterangan</label>
+                                <label for="ket" class="form-label">Detail Materi</label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket">{{ $data->ket }}</textarea>
                             </div>
                         </div>
@@ -273,7 +273,7 @@
 @push('js')
     <script>
         const url_edit_presensi =
-            "{{ route('kelola-presensi.jadwal.getPresensiMhs', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
+            "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensiMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
 
         function generate_table(data) {
             let table = '';
@@ -305,7 +305,7 @@
                                                         </td>
                                                     </tr>`);
                 $.ajax({
-                    url: "{{ route('kelola-presensi.jadwal.getPresensi', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id']) }}"
+                    url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensi', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id']) }}"
                         .replace(':rombel_id', $('#rombel_id').val()),
                     type: 'GET',
                     dataType: "json",
