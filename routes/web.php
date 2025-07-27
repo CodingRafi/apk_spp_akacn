@@ -520,6 +520,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                     )->name('delete');
                     
                     //? Mahasiswa
+                    Route::post(
+                        '/',
+                        [JadwalController::class, 'updatePresensiManyMhs']
+                    )->name('updatePresensiManyMhs');
                     Route::get(
                         '/{rombel_id}/get-presensi',
                         [JadwalController::class, 'getPresensi']
