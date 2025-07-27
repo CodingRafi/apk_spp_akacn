@@ -138,7 +138,7 @@
                             <td>{{ $item->created_at }}</td>
                             <td>{{ $item->mahasiswa()->where('status', 'H')->count() }}</td>
                             <td>{{ $item->mahasiswa()->where('status', '!=', 'H')->count() }}</td>
-                            <td>{{ $item->materi }}</td>
+                            <td>{{ $item->ket }}</td>
                         </tr>
                     @endforeach
                 </tbody>

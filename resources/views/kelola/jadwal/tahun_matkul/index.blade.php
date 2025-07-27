@@ -5,7 +5,12 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card" id="card-list-jadwal">
                 <div class="card-header d-flex justify-content-between">
-                    <h5 class="text-capitalize mb-0">Mata Kuliah : {{ $matkul->matkul }}</h5>
+                    <div class="d-flex align-items-center">
+                        <a
+                            href="{{ route('kelola-presensi.jadwal.index') }}"><i
+                                class="menu-icon tf-icons bx bx-chevron-left"></i></a>
+                        <h5 class="text-capitalize mb-0">Mata Kuliah : {{ $matkul->matkul }}</h5>
+                    </div>
                     @can('add_kelola_presensi')
                         <button type="button" class="btn btn-primary"
                             onclick="addForm('{{ route('kelola-presensi.jadwal.tahun_matkul.store', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}', 'Tambah Jadwal', '#jadwal', clearForm)">
@@ -19,8 +24,11 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Kode Presensi</th>
                                     <th>Kode Matkul</th>
-                                    <th>Mata Kuliah</th>
+                                    <th>Tanggal</th>
+                                    <th>Matkul</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -41,6 +49,10 @@
                     </div>
                     <div class="modal-body">
                         <div class="div-alert"></div>
+                        <div class="mb-3">
+                            <label class="form-label">Mata Kuliah</label>
+                            <input class="form-control" type="text" value="{{ $matkul->matkul }}" disabled />
+                        </div>
                         <div class="mb-3">
                             <label for="kode" class="form-label">Kode Presensi</label>
                             <div class="d-flex" style="gap: 1rem;">
@@ -128,7 +140,7 @@
         function getTotal(data = {}) {
             $('.div-alert').empty();
             $.ajax({
-                url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getTotalPelajaran', ['tahun_matkul_id' => request("tahun_matkul_id")]) }}",
+                url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getTotalPelajaran', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}",
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
@@ -151,14 +163,12 @@
 
         // Modified get_materi to handle unbinding/rebinding
         function get_materi(data = {}) {
-            $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
-
+            
             @if (getRole()->name == 'admin')
-                const check = $('#type').val() && $('#type').val() == 'pertemuan';
-            @else
-                const check = true;
+            const check = $('#type').val() && $('#type')
+            .val() == 'pertemuan';
             @endif
-
+            
             if (check) {
                 $.ajax({
                     url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getMateri', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}",
@@ -168,6 +178,8 @@
                         except: data.materi_id
                     },
                     success: function(res) {
+                        $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
+
                         $.each(res.data, function(i, e) {
                             $('#materi_id').append(
                                 `<option value="${e.id}">${e.materi} (${e.type})</option>`)
@@ -192,7 +204,7 @@
         function getPengajar(data = {}) {
             $('#pengajar_id').empty().append(`<option value="">Pilih Pengajar</option>`);
             $.ajax({
-                url: '{{ route('kelola-presensi.jadwal.tahun_matkul.getPengajar', ['tahun_matkul_id' => request('tahun_matkul_id') ]) }}',
+                url: '{{ route('kelola-presensi.jadwal.tahun_matkul.getPengajar', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
@@ -331,16 +343,28 @@
                 serverSide: true,
                 responsive: true,
                 ajax: {
-                    url: '{{ route('kelola-presensi.jadwal.data') }}',
+                    url: '{{ route('kelola-presensi.jadwal.tahun_matkul.dataTahunMatkul', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
+                    data: function(p) {
+                        p.status = $('#filter-status').val();
+                    }
                 },
                 columns: [{
                         "data": "DT_RowIndex"
                     },
                     {
+                        "data": "kode"
+                    },
+                    {
                         "data": "kode_matkul"
                     },
                     {
+                        "data": "tgl"
+                    },
+                    {
                         "data": "matkul"
+                    },
+                    {
+                        "data": "status"
                     },
                     {
                         "data": "options"
@@ -348,6 +372,12 @@
                 ],
                 pageLength: 25,
             });
+
+            // Filter change events to reload DataTable
+            $('#filter-status')
+                .on('change', function() {
+                    table.ajax.reload();
+                });
         });
     </script>
 @endpush

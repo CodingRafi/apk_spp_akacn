@@ -6,12 +6,6 @@
             <div class="card" id="card-list-jadwal">
                 <div class="card-header d-flex justify-content-between">
                     <h5 class="text-capitalize mb-0">Jadwal</h5>
-                    @can('add_kelola_presensi')
-                        <button type="button" class="btn btn-primary"
-                            onclick="addForm('{{ route('kelola-presensi.jadwal.store') }}', 'Tambah Jadwal', '#jadwal', clearForm)">
-                            Tambah
-                        </button>
-                    @endcan
                 </div>
                 <div class="card-body">
                     <div class="row">
