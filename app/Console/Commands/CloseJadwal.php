@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CloseJadwal extends Command
 {
@@ -35,6 +36,7 @@ class CloseJadwal extends Command
             'status_close' => '2',
             'approved' => '1'
         ]);
+        Log::info('Command jadwal:close berhasil dijalankan pada ' . now());
         return Command::SUCCESS;
     }
 }
