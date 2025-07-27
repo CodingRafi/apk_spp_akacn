@@ -174,6 +174,7 @@
                                         <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                     @endforeach
                                 </select>
+                                @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                                 <select id="status_presensi" class="form-control" style="width: 10rem;">
                                     <option value="">Pilih Status</option>
                                     @foreach (config('services.statusPresensi') as $key => $status)
@@ -182,13 +183,16 @@
                                 </select>
                                 <button type="button" class="btn btn-primary"
                                     onclick="update_presensi_many_mhs()">Simpan</button>
+                                @endif
                             </div>
                             <div class="table-responsive mt-3">
                                 <table class="table table-presensi" aria-hidden="true">
                                     <thead>
                                         <tr>
+                                            @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                                             <td style="width: 15px;"><input type="checkbox" onchange="checkAll(this)"
                                                     id="checkAll"></td>
+                                            @endif
                                             <td>Nama</td>
                                             <td>Nim</td>
                                             <td>Status</td>
@@ -303,13 +307,15 @@
             data.forEach(e => {
                 table +=
                     `<tr>
+                        @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                         <td style="width: 15px;"><input type="checkbox" name="mhs_id[]" id="mhs_id" value="${e.id}"></td>
+                        @endif
                         <td>${e.name}</td>
                         <td>${e.login_key}</td>
-                        @if ($data->presensi_selesai && Auth::user()->hasRole('dosen'))
-                        <td>${e.status ?? '-'}</td>
-                        @else
+                        @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                         <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status ?? ''}</button></td>
+                        @else
+                        <td>${e.status ?? '-'}</td>
                         @endif
                     </tr>`;
             });
@@ -321,7 +327,11 @@
             $('.table-presensi tbody').empty();
             if ($('#rombel_id').val() != '') {
                 $('.table-presensi tbody').append(`<tr>
+                                                        @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                                                         <td colspan="4" class="text-center py-4">
+                                                        @else
+                                                        <td colspan="3" class="text-center py-4">
+                                                        @endif
                                                             <div class="spinner-border" role="status">
                                                                 <span class="visually-hidden">Loading...</span>
                                                             </div>
