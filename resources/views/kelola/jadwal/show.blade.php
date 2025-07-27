@@ -6,7 +6,8 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a href="{{ route('kelola-presensi.jadwal.tahun_matkul.indexTahunMatkul', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}"><i
+                        <a
+                            href="{{ route('kelola-presensi.jadwal.tahun_matkul.indexTahunMatkul', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">{{ $data->type }}</h5>
                     </div>
@@ -69,8 +70,8 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-bs-dismiss="modal">Tutup</button>
-                                                <button type="button" class="btn btn-primary" onclick="submitFormApproval(this)"
-                                                    data-value="3">Simpan</button>
+                                                <button type="button" class="btn btn-primary"
+                                                    onclick="submitFormApproval(this)" data-value="3">Simpan</button>
                                             </div>
                                         </div>
                                     </div>
@@ -85,9 +86,11 @@
                                     }
                                 </script>
                             @else
-                                <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}" method="post">
+                                <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}"
+                                    method="post">
                                     @csrf
-                                    <button class="btn btn-warning" type="submit" onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
+                                    <button class="btn btn-warning" type="submit"
+                                        onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
                                 </form>
                             @endif
                         @endcan
@@ -136,7 +139,7 @@
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <table class="table">
+                            <table class="table" aria-hidden="true">
                                 <tr>
                                     <td class="col-6">Tanggal</td>
                                     <td class="col-6">{{ parseDate($data->tgl) }}</td>
@@ -164,23 +167,34 @@
                             <div class="alert alert-info">
                                 Harap pilih rombel untuk melihat presensi
                             </div>
-                            <select id="rombel_id" class="form-control" onchange="get_presensi()">
-                                <option value="">Pilih Rombel</option>
-                                @foreach ($rombel as $item)
-                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                @endforeach
-                            </select>
+                            <div class="d-flex gap-3">
+                                <select id="rombel_id" class="form-control" onchange="get_presensi()">
+                                    <option value="">Pilih Rombel</option>
+                                    @foreach ($rombel as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                <select id="status_presensi" class="form-control" style="width: 10rem;">
+                                    <option value="">Pilih Status</option>
+                                    @foreach (config('services.statusPresensi') as $key => $status)
+                                        <option value="{{ $key }}">{{ $status }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="button" class="btn btn-primary"
+                                    onclick="update_presensi_many_mhs()">Simpan</button>
+                            </div>
                             <div class="table-responsive mt-3">
-                                <table class="table table-presensi">
+                                <table class="table table-presensi" aria-hidden="true">
                                     <thead>
                                         <tr>
+                                            <td style="width: 15px;"><input type="checkbox" onchange="checkAll(this)"
+                                                    id="checkAll"></td>
                                             <td>Nama</td>
                                             <td>Nim</td>
                                             <td>Status</td>
                                         </tr>
                                     </thead>
                                     <tbody>
-
                                     </tbody>
                                 </table>
                             </div>
@@ -275,12 +289,21 @@
         const url_edit_presensi =
             "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensiMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
 
+        function checkAll(e) {
+            if (e.checked) {
+                $('input[name="mhs_id[]"]').prop('checked', true);
+            } else {
+                $('input[name="mhs_id[]"]').prop('checked', false);
+            }
+        }
+
         function generate_table(data) {
             let table = '';
 
             data.forEach(e => {
                 table +=
                     `<tr>
+                        <td style="width: 15px;"><input type="checkbox" name="mhs_id[]" id="mhs_id" value="${e.id}"></td>
                         <td>${e.name}</td>
                         <td>${e.login_key}</td>
                         @if ($data->presensi_selesai && Auth::user()->hasRole('dosen'))
@@ -298,7 +321,7 @@
             $('.table-presensi tbody').empty();
             if ($('#rombel_id').val() != '') {
                 $('.table-presensi tbody').append(`<tr>
-                                                        <td colspan="3" class="text-center py-4">
+                                                        <td colspan="4" class="text-center py-4">
                                                             <div class="spinner-border" role="status">
                                                                 <span class="visually-hidden">Loading...</span>
                                                             </div>
@@ -310,6 +333,7 @@
                     type: 'GET',
                     dataType: "json",
                     success: function(res) {
+                        $('#checkAll').prop('checked', false);
                         generate_table(res.data)
                     },
                     error: function() {
@@ -317,6 +341,42 @@
                     }
                 })
             }
+        }
+
+        function update_presensi_many_mhs() {
+            const mhs_ids = $('input[name="mhs_id[]"]:checked')
+                .map(function() {
+                    return $(this).val();
+                }).get();
+
+            const status = $('#status_presensi').val();
+
+            if (mhs_ids.length == 0) {
+                showAlert('Tidak ada mahasiswa yang dipilih', 'error');
+                return;
+            }
+
+            if (status == '') {
+                showAlert('Status presensi tidak boleh kosong', 'error');
+                return;
+            }
+
+            $.ajax({
+                url: '{{ route('kelola-presensi.jadwal.tahun_matkul.updatePresensiManyMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id')]) }}',
+                method: 'POST',
+                data: {
+                    mhs_ids: mhs_ids,
+                    status: status
+                },
+                success: function (response) {
+                    showAlert(response.message, 'success');
+                    get_presensi();
+                    $('#status_presensi').val('');
+                },
+                error: function (err) {
+                    console.error('Gagal:', err);
+                }
+            });
         }
     </script>
 @endpush

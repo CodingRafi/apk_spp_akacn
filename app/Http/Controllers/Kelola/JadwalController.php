@@ -652,6 +652,32 @@ class JadwalController extends Controller
         ], 200);
     }
 
+    public function updatePresensiManyMhs(Request $request, $tahun_matkul_id, $jadwal_id){
+        $request->validate([
+            'status' => 'required',
+        ]);
+
+        foreach ($request->mhs_ids as $mhs_id) {
+            DB::table('jadwal_presensi')->updateOrInsert(
+                [
+                    'jadwal_id' => $jadwal_id,
+                    'mhs_id' => $mhs_id,
+                ],
+                [
+                    'status' => $request->status,
+                    'updated_at' => Carbon::now(),
+
+                    'created_id' => Auth::user()->id,
+                    'created_at' => Carbon::now(),
+                ]
+            );
+        }
+
+        return response()->json([
+            'message' => 'Berhasil disimpan'
+        ], 200);
+    }
+
     public function edit($tahun_ajaran_id, $jadwal_id)
     {
         $data = DB::table('jadwal as j')
