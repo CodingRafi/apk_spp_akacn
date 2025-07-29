@@ -11,7 +11,7 @@
         $month = $dateNow->translatedFormat('F'); // Nama bulan dalam bahasa Indonesia
         $year = $dateNow->format('Y');
 
-        $dataFormat = "Jakarta, {$day} {$month} {$year}"
+        $dataFormat = "Jakarta, {$day} {$month} {$year}";
     @endphp
     <div class="daftar-hadir" style="page-break-after: always;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">DAFTAR HADIR KULIAH MAHASISWA
@@ -56,7 +56,8 @@
                     @foreach ($jadwal as $item)
                         <tr>
                             <td style="text-align: left; padding: 2px;">{{ $item->created_at }}</td>
-                            <td style="text-align: left; padding: 2px;">{{ date('d-m-Y', strtotime($item->created_at)) }}</td>
+                            <td style="text-align: left; padding: 2px;">{{ date('d-m-Y', strtotime($item->created_at)) }}
+                            </td>
                             <td style="text-align: left; padding: 2px;">{{ date('H:i', strtotime($matkul->jam_mulai)) }} -
                                 {{ date('H:i', strtotime($matkul->jam_akhir)) }}</td>
                             <td>
@@ -92,7 +93,7 @@
     <div class="berita-acara" style="page-break-after: always;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">BERITA ACARA KULIAH MAHASISWA
         </h2>
-        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">{{ $semester->semester }} Tahun Akademik
+        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik
             {{ $semester->tahun_ajaran }}</h2>
 
         <div style="margin-top: 1rem;">
@@ -135,8 +136,10 @@
                         <tr>
                             <td style="text-align: left; padding: 2px;">{{ $item->created_at }}</td>
                             <td style="text-align: left; padding: 2px;">{{ $item->created_at }}</td>
-                            <td style="text-align: left; padding: 2px;">{{ $item->mahasiswa()->where('status', 'H')->count() }}</td>
-                            <td style="text-align: left; padding: 2px;">{{ $item->mahasiswa()->where('status', '!=', 'H')->count() }}</td>
+                            <td style="text-align: left; padding: 2px;">
+                                {{ $item->mahasiswa()->where('status', 'H')->count() }}</td>
+                            <td style="text-align: left; padding: 2px;">
+                                {{ $item->mahasiswa()->where('status', '!=', 'H')->count() }}</td>
                             <td style="text-align: left; padding: 2px;">{{ $item->materi }}</td>
                         </tr>
                     @endforeach
@@ -160,7 +163,7 @@
     <div class="nilai" style="page-break-after: never;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">DAFTAR NILAI
         </h2>
-        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">{{ $semester->semester }} Tahun Akademik
+        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik
             {{ $semester->tahun_ajaran }}</h2>
 
         <div style="margin-top: 1rem;">
