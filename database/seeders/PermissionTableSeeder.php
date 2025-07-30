@@ -155,6 +155,11 @@ class PermissionTableSeeder extends Seeder
             'edit_kelola_kalender_akademik',
             'delete_kelola_kalender_akademik',
 
+            'view_kelola_sifat_ujian',
+            'add_kelola_sifat_ujian',
+            'edit_kelola_sifat_ujian',
+            'delete_kelola_sifat_ujian',
+
             'view_krs',
             'add_krs',
             'edit_krs',

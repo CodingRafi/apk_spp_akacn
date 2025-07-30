@@ -38,6 +38,7 @@ use App\Http\Controllers\{
     JenisKelasController,
     KrsController as ControllersKrsController,
     ProfileController,
+    SifatUjianController,
     TemplateSuratController as ControllersTemplateSuratController,
     WhitelistIPController,
     WilayahController
@@ -269,6 +270,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Jenis Kelas
         Route::get('jenis-kelas/data', [JenisKelasController::class, 'data'])->name('jenis-kelas.data');
         Route::resource('jenis-kelas', JenisKelasController::class);
+
+        //? Sifat Ujian
+        Route::get('sifat-ujian/data', [SifatUjianController::class, 'data'])->name('sifat-ujian.data');
+        Route::resource('sifat-ujian', SifatUjianController::class);
 
         //? Template Surat
         Route::get('template-surat/data', [TemplateSuratController::class, 'data'])->name('template-surat.data');
