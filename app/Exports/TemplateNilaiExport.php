@@ -26,6 +26,7 @@ class TemplateNilaiExport implements FromView
             ->where('profile_mahasiswas.rombel_id', request('rombel_id'))
             ->where('profile_mahasiswas.tahun_masuk_id', request('tahun_ajaran_id'))
             ->where('krs.tahun_semester_id', request('tahun_semester_id'))
+            ->orderBy('users.login_key', 'asc')
             ->get();
             
         return view('kelola.krs.template', compact('datas'));

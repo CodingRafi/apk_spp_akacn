@@ -239,6 +239,7 @@ class NilaiController extends Controller
             ->where('profile_mahasiswas.rombel_id', $rombel_id)
             ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
             ->where('krs.tahun_semester_id', $tahun_semester_id)
+            ->orderBy('users.login_key', 'asc')
             ->get();
 
         foreach ($datas as $data) {
@@ -340,7 +341,6 @@ class NilaiController extends Controller
                 'message' => 'Berhasil disimpan'
             ], 200);
         } catch (\Throwable $th) {
-            dd($th);
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);

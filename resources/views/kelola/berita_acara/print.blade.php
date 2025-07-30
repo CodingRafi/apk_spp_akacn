@@ -193,32 +193,38 @@
                 <table aria-label="table-nilai" style="width: 100%;text-align:center" class="bordered">
                     <thead>
                         <tr>
-                            <th style="padding: 11px;" rowspan="2">No</th>
-                            <th style="padding: 11px;" rowspan="2">NIM</th>
-                            <th style="padding: 11px;" rowspan="2">Nama</th>
-                            <th style="padding: 11px;" rowspan="2">Kehadiran</th>
-                            <th style="padding: 11px;" rowspan="2">Tugas</th>
-                            <th style="padding: 11px;" rowspan="2">UTS</th>
-                            <th style="padding: 11px;" rowspan="2">UAS</th>
-                            <th style="padding: 11px;" colspan="2">Nilai Akhir</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">No</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">NIM</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Nama</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kehadiran</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Aktivitas Partisipatif</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Hasil Proyek</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Quiz</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Tugas</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Ujian Tengah Semester</th>
+                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Ujian Akhir Semester</th>
+                            <th style="padding: 2px;font-size: 6px;" colspan="2">Nilai Akhir</th>
                         </tr>
                         <tr>
-                            <th style="padding: 11px;">Angka</th>
-                            <th style="padding: 11px;">Huruf</th>
+                            <th style="padding: 2px;font-size: 6px;">Angka</th>
+                            <th style="padding: 2px;font-size: 6px;">Huruf</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($nilai as $item)
                             <tr>
-                                <td style="text-align: left; padding: 2px;">{{ $loop->iteration }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->login_key }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->name }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->presensi }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->tugas }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->uts }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->uas }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->nilai_akhir }}</td>
-                                <td style="text-align: left; padding: 2px;">{{ $item->mutu }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $loop->iteration }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->login_key }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->name }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->presensi }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->aktivitas_partisipatif }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->hasil_proyek }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->quizz }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->tugas }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->uts }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->uas }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->nilai_akhir }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->mutu }}</td>
                             </tr>
                         @endforeach
                     </tbody>
