@@ -210,7 +210,6 @@ class NilaiController extends Controller
                 'users.id',
                 'users.name',
                 'users.login_key',
-                'mhs_nilai.presensi',
                 'mhs_nilai.aktivitas_partisipatif',
                 'mhs_nilai.hasil_proyek',
                 'mhs_nilai.quizz',
@@ -292,7 +291,6 @@ class NilaiController extends Controller
                 'tahun_semester_id' => $tahun_semester_id,
                 'tahun_matkul_id' => $tahun_matkul_id,
             ], [
-                'presensi' => $request->presensi,
                 'aktivitas_partisipatif' => $request->aktivitas_partisipatif,
                 'hasil_proyek' => $request->hasil_proyek,
                 'quizz' => $request->quizz,

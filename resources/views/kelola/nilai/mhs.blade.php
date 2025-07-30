@@ -121,7 +121,6 @@
                                     <th>NIM</th>
                                     <th>Angka</th>
                                     <th>Huruf</th>
-                                    <th>Presensi</th>
                                     <th>Aktivitas Partisipatif</th>
                                     <th>Hasil Proyek</th>
                                     <th>Kognitif/Pengetahuan Quiz</th>
@@ -171,11 +170,6 @@
                                     <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="presensi" class="form-label">Presensi</label>
-                            <input class="form-control" type="number" id="presensi" name="presensi" min="0"
-                                step="0.01" />
                         </div>
                         <div class="mb-3">
                             <label for="aktivitas_partisipatif" class="form-label">Aktivitas Partisipatif</label>
@@ -276,9 +270,6 @@
                     },
                     {
                         "data": "mutu"
-                    },
-                    {
-                        "data": "presensi"
                     },
                     {
                         "data": "aktivitas_partisipatif"
