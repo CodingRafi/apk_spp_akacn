@@ -49,7 +49,7 @@
     <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
     <script src="{{ asset('assets/js/config.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('assets/css/jquery.dataTables.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/jquery.dataTables.min.css') }}">
     <script src="{{ asset('/assets/vendor/libs/jquery/jquery.js') }}"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -326,7 +326,7 @@
     </script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script src="{{ asset('js/fstdropdown.js') }}"></script>
-    <script src="{{ asset('assets/css/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/modal-crud.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
