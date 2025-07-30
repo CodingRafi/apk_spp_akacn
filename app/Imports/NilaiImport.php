@@ -31,16 +31,6 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
         return [
             '0' => 'required',
             '1' => 'required|numeric',
-            '2' => 'required|numeric',
-            '3' => 'required',
-            '4' => 'required|numeric',
-            '5' => 'required|numeric',
-            '6' => 'required|numeric',
-            '7' => 'required|numeric',
-            '8' => 'required|numeric',
-            '9' => 'required|numeric',
-            '10' => 'required|numeric',
-            '11' => 'required|in:0,1'
         ];
     }
 
@@ -55,31 +45,37 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             ->where('login_key', $row[1])
             ->first();
 
-        $nilai = $this->mutu->filter(function ($item) use ($row) {
-            return trim(strtolower($item->nama)) == trim(strtolower($row[3]));
-        })->first();
-        
-        if ($user && $nilai) {
-            DB::table('mhs_nilai')
-                ->updateOrInsert([
-                    'mhs_id' => $user->id,
-                    'tahun_semester_id' => $this->tahunSemesterId,
-                    'tahun_matkul_id' => $this->tahunMatkulId,
-                ], [
-                    'mutu_id' => $nilai->id,
-                    'nilai_mutu' => $nilai->nilai,
-                    'nilai_akhir' => $row[2],
-                    'presensi' => $row[4],
-                    'aktivitas_partisipatif' => $row[5],
-                    'hasil_proyek' => $row[6],
-                    'quizz' => $row[7],
-                    'tugas' => $row[8],
-                    'uts' => $row[9],
-                    'uas' => $row[10],
-                    'publish' => (string) $row[11],
-                    'jml_sks' => $this->matkul->sks_mata_kuliah,
-                    'updated_at' => now()
-                ]);
+        if (!$user) {
+            return;
         }
+
+        $namaNilai = isset($row[3]) ? trim(strtolower($row[3])) : null;
+        $nilai = $namaNilai
+            ? $this->mutu->first(function ($item) use ($namaNilai) {
+                return trim(strtolower($item->nama)) === $namaNilai;
+            })
+            : null;
+
+        DB::table('mhs_nilai')->updateOrInsert(
+            [
+                'mhs_id' => $user->id,
+                'tahun_semester_id' => $this->tahunSemesterId,
+                'tahun_matkul_id' => $this->tahunMatkulId,
+            ],
+            [
+                'mutu_id' => $nilai->id ?? null,
+                'nilai_mutu' => $nilai->nilai ?? null,
+                'nilai_akhir' => $row[2] ?? null,
+                'aktivitas_partisipatif' => $row[4] ?? null,
+                'hasil_proyek' => $row[5] ?? null,
+                'quizz' => $row[6] ?? null,
+                'tugas' => $row[7] ?? null,
+                'uts' => $row[8] ?? null,
+                'uas' => $row[9] ?? null,
+                'publish' => (string) $row[10] ?? 0,
+                'jml_sks' => $this->matkul->sks_mata_kuliah,
+                'updated_at' => now(),
+            ]
+        );
     }
 }
