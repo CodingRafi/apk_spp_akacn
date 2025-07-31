@@ -139,7 +139,7 @@
                                 {{ $item->mahasiswa()->where('status', 'H')->count() }}</td>
                             <td style="text-align: left; padding: 2px;">
                                 {{ $item->mahasiswa()->where('status', '!=', 'H')->count() }}</td>
-                            <td style="text-align: left; padding: 2px;">{{ $item->materi }}</td>
+                            <td style="text-align: left; padding: 2px;">{{ $item->ket }}</td>
                         </tr>
                     @endforeach
                 </tbody>
