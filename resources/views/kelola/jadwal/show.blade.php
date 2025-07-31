@@ -14,7 +14,7 @@
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
                             @if ($data->pengajar_id == Auth::user()->id)
-                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Detail @if ($data->type == 'pertemuan') Materi @else Rincian @endif</button>
+                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail @if ($data->type == 'pertemuan') Materi @else Situasi @endif</button>
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
                                         action="{{ route('kelola-presensi.jadwal.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
@@ -170,6 +170,15 @@
                                 <textarea class="form-control" disabled>{{ $data->ket }}</textarea>
                             </div>
                         </div>
+                        @if ($data->type == 'ujian')
+                        <div class="col-md-12">
+                            <div class="mt-3">
+                                <label for="ket" class="form-label">Status Ujian
+                                </label>
+                                <textarea class="form-control" disabled>{{ $data->status_ujian }}</textarea>
+                            </div>
+                        </div>
+                        @endif
                         <hr class="mt-3">
                         <div class="col-md-12">
                             <div class="alert alert-info">
@@ -262,7 +271,7 @@
                     <form action="{{ route('kelola-presensi.jadwal.updateJadwalMengajar', ['jadwal_id' => $data->id]) }}">
                         @method('put')
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit @if ($data->type == 'pertemuan') Materi @else Rincian @endif</h1>
+                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit @if ($data->type == 'pertemuan') Materi @else Situasi @endif</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
@@ -283,7 +292,7 @@
                             </div>
                             @endif
                             <div class="mb-3">
-                                <label for="ket" class="form-label">Detail Materi</label>
+                                <label for="ket" class="form-label">Detail @if ($data->type == 'pertemuan') Materi @else Situasi @endif</label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket">{{ $data->ket }}</textarea>
                             </div>
                             @if ($data->type == 'ujian')
