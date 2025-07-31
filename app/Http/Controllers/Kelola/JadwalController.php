@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Kelola;
 
 use App\Http\Controllers\Controller;
+use App\Models\Ruang;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -231,11 +232,11 @@ class JadwalController extends Controller
             ->where('tgl', $tgl)
             ->count();
 
-        if ($cekJadwalHari > 0) {
-            return response()->json([
-                'message' => 'Sudah ada jadwal hari ini'
-            ], 400);
-        }
+        // if ($cekJadwalHari > 0) {
+        //     return response()->json([
+        //         'message' => 'Sudah ada jadwal pada tanggal ini'
+        //     ], 400);
+        // }
 
         //? Validasi IP
         if ($roleUser->name == 'dosen') {
@@ -299,7 +300,9 @@ class JadwalController extends Controller
                 'materi_id' => null,
                 'materi' => null,
                 'type' => 'ujian',
-                'jenis_ujian' => $request->jenis
+                'jenis_ujian' => $request->jenis,
+                'ruang_id' => $request->ruang_id,
+                'tingkat' => $request->tingkat
             ];
         }
 
@@ -462,6 +465,15 @@ class JadwalController extends Controller
         ], 200);
     }
 
+    public function getRuang()
+    {
+        $data = Ruang::all();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
     public function getTotalPelajaran($tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
@@ -520,10 +532,11 @@ class JadwalController extends Controller
     public function show($tahun_matkul_id, $jadwal_id)
     {
         $data = DB::table('jadwal')
-            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar')
+            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar', 'ruangs.nama as ruang')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->join('users', 'jadwal.pengajar_id', '=', 'users.id')
+            ->leftJoin('ruangs', 'ruangs.id', '=', 'jadwal.ruang_id')
             ->where('jadwal.id', $jadwal_id)
             ->first();
 
@@ -693,6 +706,8 @@ class JadwalController extends Controller
                 'j.tahun_semester_id',
                 'tahun_matkul.prodi_id',
                 'tahun_matkul.tahun_ajaran_id',
+                'j.ruang_id',
+                'j.tingkat'
             )
             ->join('tahun_matkul', 'tahun_matkul.id', '=', 'j.tahun_matkul_id')
             ->where('j.id', $jadwal_id)
@@ -739,7 +754,9 @@ class JadwalController extends Controller
                 'materi_id' => null,
                 'materi' => null,
                 'type' => 'ujian',
-                'jenis_ujian' => $request->jenis
+                'jenis_ujian' => $request->jenis,
+                'tingkat' => $request->tingkat,
+                'ruang_id' => $request->ruang_id
             ];
         }
 
@@ -786,7 +803,8 @@ class JadwalController extends Controller
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'ket' => $request->ket
+                'ket' => $request->ket,
+                'status_ujian' => $request->status_ujian ?? null
             ]);
 
         return response()->json([

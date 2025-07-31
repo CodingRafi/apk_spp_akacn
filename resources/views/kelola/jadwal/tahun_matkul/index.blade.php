@@ -6,8 +6,7 @@
             <div class="card" id="card-list-jadwal">
                 <div class="card-header d-flex justify-content-between">
                     <div class="d-flex align-items-center">
-                        <a
-                            href="{{ route('kelola-presensi.jadwal.index') }}"><i
+                        <a href="{{ route('kelola-presensi.jadwal.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
                         <h5 class="text-capitalize mb-0">Mata Kuliah : {{ $matkul->matkul }}</h5>
                     </div>
@@ -100,7 +99,7 @@
         </div>
     </div>
 
-    <template id="select-ujian">
+    <template id="form-ujian">
         <div class="mb-3">
             <label for="jenis" class="form-label">Jenis Ujian</label>
             <select name="jenis" id="jenis" class="form-control">
@@ -113,6 +112,16 @@
         <div class="mb-3">
             <label for="pengajar_id" class="form-label"></label>
             <select name="pengajar_id" id="pengajar_id" class="form-control">
+                <option value="">Pilih</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="tingkat" class="form-label">Tingkat/Semester</label>
+            <input class="form-control" type="text" id="tingkat" name="tingkat" />
+        </div>
+        <div class="mb-3">
+            <label for="ruang_id" class="form-label">Ruang</label>
+            <select name="ruang_id" id="ruang_id" class="form-control">
                 <option value="">Pilih</option>
             </select>
         </div>
@@ -163,12 +172,12 @@
 
         // Modified get_materi to handle unbinding/rebinding
         function get_materi(data = {}) {
-            
+
             @if (getRole()->name == 'admin')
-            const check = $('#type').val() && $('#type')
-            .val() == 'pertemuan';
+                const check = $('#type').val() && $('#type')
+                    .val() == 'pertemuan';
             @endif
-            
+
             if (check) {
                 $.ajax({
                     url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getMateri', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}",
@@ -245,6 +254,28 @@
             })
         }
 
+        function getRuang(data = {}) {
+            $('#ruang_id').empty().append(`<option value="">Pilih Ruang</option>`);
+            $.ajax({
+                url: '{{ route('kelola-presensi.jadwal.getRuang') }}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#ruang_id').append(
+                            `<option value="${e.id}">${e.nama}</option>`)
+                    })
+
+                    if (data.ruang_id) {
+                        $('#ruang_id').val(data.ruang_id).trigger('change'); // Trigger for Select2
+                    }
+                },
+                error: function(err) {
+                    alert('Gagal get ruang');
+                }
+            })
+        }
+
         $('#type').on('change', function() {
             get_materi();
         })
@@ -291,9 +322,11 @@
 
                 if (type == 'ujian') {
                     $('label[for="pengajar_id"]').text('Pengawas');
-                    $('.div-ujian').html($('#select-ujian').html());
+                    $('.div-ujian').html($('#form-ujian').html());
+                    $('#tingkat').val(data.tingkat);
                     getPengawas(data); // Pass data for pre-selection
                     getJenisUjian(data); // Pass data for pre-selection
+                    getRuang(data);
                 } else { // type == 'pertemuan'
                     $('label[for="pengajar_id"]').text('Pengajar');
                     $('.div-pengajar').append($('#select-materi').html());

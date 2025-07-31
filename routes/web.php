@@ -475,6 +475,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 '/get-pengawas',
                 [JadwalController::class, 'getPengawas']
             )->name('getPengawas');
+            Route::get(
+                '/get-ruang',
+                [JadwalController::class, 'getRuang']
+            )->name('getRuang');
 
             Route::prefix('{tahun_matkul_id}')->name('tahun_matkul.')->group(function () {
                 Route::get(

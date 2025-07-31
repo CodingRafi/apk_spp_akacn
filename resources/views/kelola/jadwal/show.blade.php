@@ -14,10 +14,7 @@
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
                             @if ($data->pengajar_id == Auth::user()->id)
-                                @if ($data->type == 'pertemuan')
-                                    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit
-                                        Materi</button>
-                                @endif
+                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Detail @if ($data->type == 'pertemuan') Materi @else Rincian @endif</button>
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
                                         action="{{ route('kelola-presensi.jadwal.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
@@ -153,12 +150,23 @@
                                         <td class="col-6">Materi</td>
                                         <td class="col-6">{{ $data->materi }}</td>
                                     </tr>
+                                @else
+                                    <tr>
+                                        <td class="col-6">Ruang</td>
+                                        <td class="col-6">{{ $data->ruang }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="col-6">Tingkat</td>
+                                        <td class="col-6">{{ $data->tingkat }}</td>
+                                    </tr>
                                 @endif
                             </table>
                         </div>
                         <div class="col-md-12">
                             <div class="mt-3">
-                                <label for="ket" class="form-label">Detail Materi</label>
+                                <label for="ket" class="form-label">Detail
+                                    @if ($data->type == 'pertemuan') Materi @else Situasi @endif
+                                </label>
                                 <textarea class="form-control" disabled>{{ $data->ket }}</textarea>
                             </div>
                         </div>
@@ -175,14 +183,14 @@
                                     @endforeach
                                 </select>
                                 @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
-                                <select id="status_presensi" class="form-control" style="width: 10rem;">
-                                    <option value="">Pilih Status</option>
-                                    @foreach (config('services.statusPresensi') as $key => $status)
-                                        <option value="{{ $key }}">{{ $status }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="button" class="btn btn-primary"
-                                    onclick="update_presensi_many_mhs()">Simpan</button>
+                                    <select id="status_presensi" class="form-control" style="width: 10rem;">
+                                        <option value="">Pilih Status</option>
+                                        @foreach (config('services.statusPresensi') as $key => $status)
+                                            <option value="{{ $key }}">{{ $status }}</option>
+                                        @endforeach
+                                    </select>
+                                    <button type="button" class="btn btn-primary"
+                                        onclick="update_presensi_many_mhs()">Simpan</button>
                                 @endif
                             </div>
                             <div class="table-responsive mt-3">
@@ -190,8 +198,8 @@
                                     <thead>
                                         <tr>
                                             @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
-                                            <td style="width: 15px;"><input type="checkbox" onchange="checkAll(this)"
-                                                    id="checkAll"></td>
+                                                <td style="width: 15px;"><input type="checkbox" onchange="checkAll(this)"
+                                                        id="checkAll"></td>
                                             @endif
                                             <td>Nama</td>
                                             <td>Nim</td>
@@ -254,11 +262,12 @@
                     <form action="{{ route('kelola-presensi.jadwal.updateJadwalMengajar', ['jadwal_id' => $data->id]) }}">
                         @method('put')
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit Materi</h1>
+                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit @if ($data->type == 'pertemuan') Materi @else Rincian @endif</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            @if ($data->type == 'pertemuan')
                             <div class="mb-3">
                                 <label for="materi_id" class="form-label">Materi</label>
                                 <select name="materi_id" id="materi_id" class="form-control"
@@ -272,10 +281,17 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @endif
                             <div class="mb-3">
                                 <label for="ket" class="form-label">Detail Materi</label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket">{{ $data->ket }}</textarea>
                             </div>
+                            @if ($data->type == 'ujian')
+                            <div class="mb-3">
+                                <label for="status_ujian" class="form-label">Status Ujian</label>
+                                <textarea cols="30" rows="10" class="form-control" name="status_ujian">{{ $data->status_ujian }}</textarea>
+                            </div>
+                            @endif
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-primary"
@@ -378,12 +394,12 @@
                     mhs_ids: mhs_ids,
                     status: status
                 },
-                success: function (response) {
+                success: function(response) {
                     showAlert(response.message, 'success');
                     get_presensi();
                     $('#status_presensi').val('');
                 },
-                error: function (err) {
+                error: function(err) {
                     console.error('Gagal:', err);
                 }
             });
