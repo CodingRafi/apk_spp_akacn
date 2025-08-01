@@ -83,9 +83,9 @@ class BeritaAcaraController extends Controller
     public function print($tahun_ajaran_id, $tahun_matkul_id, $tahun_semester_id)
     {
         $jadwal = Jadwal::where('jadwal.tahun_matkul_id', $tahun_matkul_id)
-            ->where('jadwal.type', 'pertemuan')
             ->where('jadwal.tahun_semester_id', $tahun_semester_id)
             ->with('mahasiswa')
+            ->orderBy('jadwal.id', 'asc')
             ->get();
 
         $matkul = DB::table('tahun_matkul')
