@@ -125,6 +125,12 @@
                 <option value="">Pilih</option>
             </select>
         </div>
+        <div class="mb-3">
+            <label for="sifat_ujian_id" class="form-label">Sifat Ujian</label>
+            <select name="sifat_ujian_id" id="sifat_ujian_id" class="form-control">
+                <option value="">Pilih</option>
+            </select>
+        </div>
     </template>
 
     <template id="select-materi">
@@ -276,6 +282,28 @@
             })
         }
 
+        function getSifatUjian(data = {}) {
+            $('#sifat_ujian_id').empty().append(`<option value="">Pilih Sifat Ujian</option>`);
+            $.ajax({
+                url: '{{ route('kelola-presensi.jadwal.getSifatUjian') }}',
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    $.each(res.data, function(i, e) {
+                        $('#sifat_ujian_id').append(
+                            `<option value="${e.id}">${e.nama}</option>`)
+                    })
+
+                    if (data.sifat_ujian_id) {
+                        $('#sifat_ujian_id').val(data.sifat_ujian_id).trigger('change'); // Trigger for Select2
+                    }
+                },
+                error: function(err) {
+                    alert('Gagal get ruang');
+                }
+            })
+        }
+
         $('#type').on('change', function() {
             get_materi();
         })
@@ -327,6 +355,7 @@
                     getPengawas(data); // Pass data for pre-selection
                     getJenisUjian(data); // Pass data for pre-selection
                     getRuang(data);
+                    getSifatUjian(data);
                 } else { // type == 'pertemuan'
                     $('label[for="pengajar_id"]').text('Pengajar');
                     $('.div-pengajar').append($('#select-materi').html());

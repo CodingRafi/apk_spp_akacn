@@ -106,6 +106,16 @@ if (!function_exists('encryptString')) {
     }
 }
 
+if (!function_exists('getHari')) {
+
+    function getHari($timestamp)
+    {
+        $carbonDate = Carbon::parse($timestamp);
+        Carbon::setLocale('id');
+        return $carbonDate->translatedFormat('l');
+    }
+}
+
 if (!function_exists('getDataNeoFeeder')) {
 
     function getDataNeoFeeder($raw)

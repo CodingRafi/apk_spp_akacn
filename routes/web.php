@@ -479,6 +479,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 '/get-ruang',
                 [JadwalController::class, 'getRuang']
             )->name('getRuang');
+            Route::get(
+                '/get-sifat-ujian',
+                [JadwalController::class, 'getSifatUjian']
+            )->name('getSifatUjian');
 
             Route::prefix('{tahun_matkul_id}')->name('tahun_matkul.')->group(function () {
                 Route::get(
@@ -515,6 +519,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                         '/',
                         [JadwalController::class, 'show']
                     )->name('show');
+                    Route::get(
+                        '/berita-acara',
+                        [JadwalController::class, 'exportBeritaAcara']
+                    )->name('berita-acara');
                     Route::put(
                         '/edit',
                         [JadwalController::class, 'update']
@@ -527,22 +535,21 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                         '/',
                         [JadwalController::class, 'delete']
                     )->name('delete');
-                    
                     //? Mahasiswa
                     Route::post(
                         '/',
                         [JadwalController::class, 'updatePresensiManyMhs']
                     )->name('updatePresensiManyMhs');
                     Route::get(
-                        '/{rombel_id}/get-presensi',
+                        '/get-presensi',
                         [JadwalController::class, 'getPresensi']
                     )->name('getPresensi');
                     Route::get(
-                        '/{rombel_id}/{mhs_id}',
+                        '/{mhs_id}',
                         [JadwalController::class, 'getPresensiMhs']
                     )->name('getPresensiMhs');
                     Route::put(
-                        '/{rombel_id}/{mhs_id}',
+                        '/{mhs_id}',
                         [JadwalController::class, 'updatePresensiMhs']
                     )->name('updatePresensiMhs');
                 });

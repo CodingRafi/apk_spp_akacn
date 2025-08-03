@@ -14,7 +14,13 @@
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
                             @if ($data->pengajar_id == Auth::user()->id)
-                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail @if ($data->type == 'pertemuan') Materi @else Situasi @endif</button>
+                                <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail
+                                    @if ($data->type == 'pertemuan')
+                                        Materi
+                                    @else
+                                        Situasi
+                                    @endif
+                                </button>
                                 @if ($data->presensi_mulai && !$data->presensi_selesai)
                                     <form
                                         action="{{ route('kelola-presensi.jadwal.selesaiJadwal', ['jadwal_id' => $data->id]) }}"
@@ -32,63 +38,69 @@
                                         <button class="btn btn-primary" type="submit">Mulai</button>
                                     </form>
                                 @endif
+                                @if ($data->type == 'ujian' && $data->presensi_selesai  )
+                                    <a href="{{ route('kelola-presensi.jadwal.tahun_matkul.berita-acara', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => $data->id]) }}"
+                                        class="btn btn-primary">Berita Acara</a>
+                                @endif
                             @endif
                         </div>
                     @else
                         @can('jadwal_approval')
-                            @if ($data->approved == null)
-                                <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
-                                    method="post" id="form-approval">
-                                    @csrf
-                                    <input type="hidden" name="status">
-                                    <input type="hidden" name="ket_approved">
-                                    <div class="d-flex gap-2">
-                                        <button type="button" class="btn btn-success" data-value="2"
-                                            onclick="submitFormApproval(this)">Setujui</button>
-                                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#ModalApproval">
-                                            Tolak
-                                        </button>
-                                    </div>
-                                </form>
-                                <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
-                                    aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header pb-0">
-                                                <h1 class="modal-title fs-5" id="ModalApprovalLabel">Jadwal Ditolak</h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <label for="ket_approval" class="form-label">Keterangan</label>
-                                                <textarea class="form-control" id="ket_approval" rows="3" name="ket_approval"></textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Tutup</button>
-                                                <button type="button" class="btn btn-primary"
-                                                    onclick="submitFormApproval(this)" data-value="3">Simpan</button>
+                            @if ($data->presensi_mulai)
+                                @if ($data->approved == null)
+                                    <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
+                                        method="post" id="form-approval">
+                                        @csrf
+                                        <input type="hidden" name="status">
+                                        <input type="hidden" name="ket_approved">
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-success" data-value="2"
+                                                onclick="submitFormApproval(this)">Setujui</button>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                data-bs-target="#ModalApproval">
+                                                Tolak
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
+                                        aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header pb-0">
+                                                    <h1 class="modal-title fs-5" id="ModalApprovalLabel">Jadwal Ditolak</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <label for="ket_approval" class="form-label">Keterangan</label>
+                                                    <textarea class="form-control" id="ket_approval" rows="3" name="ket_approval"></textarea>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Tutup</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                        onclick="submitFormApproval(this)" data-value="3">Simpan</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <script>
-                                    function submitFormApproval(el) {
-                                        const status = el.getAttribute('data-value');
-                                        const ket_approved = document.getElementById('ket_approval').value;
-                                        document.querySelector('input[name=status]').value = status;
-                                        document.querySelector('input[name=ket_approved]').value = ket_approved;
-                                        document.querySelector('#form-approval').submit();
-                                    }
-                                </script>
-                            @else
-                                <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}"
-                                    method="post">
-                                    @csrf
-                                    <button class="btn btn-warning" type="submit"
-                                        onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
-                                </form>
+                                    <script>
+                                        function submitFormApproval(el) {
+                                            const status = el.getAttribute('data-value');
+                                            const ket_approved = document.getElementById('ket_approval').value;
+                                            document.querySelector('input[name=status]').value = status;
+                                            document.querySelector('input[name=ket_approved]').value = ket_approved;
+                                            document.querySelector('#form-approval').submit();
+                                        }
+                                    </script>
+                                @else
+                                    <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}"
+                                        method="post">
+                                        @csrf
+                                        <button class="btn btn-warning" type="submit"
+                                            onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
+                                    </form>
+                                @endif
                             @endif
                         @endcan
                     @endif
@@ -165,32 +177,29 @@
                         <div class="col-md-12">
                             <div class="mt-3">
                                 <label for="ket" class="form-label">Detail
-                                    @if ($data->type == 'pertemuan') Materi @else Situasi @endif
+                                    @if ($data->type == 'pertemuan')
+                                        Materi
+                                    @else
+                                        Situasi
+                                    @endif
                                 </label>
                                 <textarea class="form-control" disabled>{{ $data->ket }}</textarea>
                             </div>
                         </div>
                         @if ($data->type == 'ujian')
-                        <div class="col-md-12">
-                            <div class="mt-3">
-                                <label for="ket" class="form-label">Status Ujian
-                                </label>
-                                <textarea class="form-control" disabled>{{ $data->status_ujian }}</textarea>
+                            <div class="col-md-12">
+                                <div class="mt-3">
+                                    <label for="ket" class="form-label">Status Ujian
+                                    </label>
+                                    <textarea class="form-control" disabled>{{ $data->status_ujian }}</textarea>
+                                </div>
                             </div>
-                        </div>
                         @endif
                         <hr class="mt-3">
                         <div class="col-md-12">
-                            <div class="alert alert-info">
-                                Harap pilih rombel untuk melihat presensi
-                            </div>
                             <div class="d-flex gap-3">
-                                <select id="rombel_id" class="form-control" onchange="get_presensi()">
-                                    <option value="">Pilih Rombel</option>
-                                    @foreach ($rombel as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" id="searchInput" class="form-control"
+                                    placeholder="Cari berdasarkan Nama, NIM, atau Rombel...">
                                 @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
                                     <select id="status_presensi" class="form-control" style="width: 10rem;">
                                         <option value="">Pilih Status</option>
@@ -212,6 +221,7 @@
                                             @endif
                                             <td>Nama</td>
                                             <td>Nim</td>
+                                            <td>Rombel</td>
                                             <td>Status</td>
                                         </tr>
                                     </thead>
@@ -271,35 +281,45 @@
                     <form action="{{ route('kelola-presensi.jadwal.updateJadwalMengajar', ['jadwal_id' => $data->id]) }}">
                         @method('put')
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit @if ($data->type == 'pertemuan') Materi @else Situasi @endif</h1>
+                            <h1 class="modal-title fs-5" id="jadwalLabel">Edit @if ($data->type == 'pertemuan')
+                                    Materi
+                                @else
+                                    Situasi
+                                @endif
+                            </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             @if ($data->type == 'pertemuan')
-                            <div class="mb-3">
-                                <label for="materi_id" class="form-label">Materi</label>
-                                <select name="materi_id" id="materi_id" class="form-control"
-                                    {{ $data->presensi_selesai ? 'readonly' : '' }} disabled>
-                                    <option value="">Pilih Materi</option>
-                                    @foreach ($materi as $row)
-                                        <option value="{{ $row->id }}"
-                                            {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }}
-                                            ({{ $row->type }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="materi_id" class="form-label">Materi</label>
+                                    <select name="materi_id" id="materi_id" class="form-control"
+                                        {{ $data->presensi_selesai ? 'readonly' : '' }} disabled>
+                                        <option value="">Pilih Materi</option>
+                                        @foreach ($materi as $row)
+                                            <option value="{{ $row->id }}"
+                                                {{ $data->materi_id == $row->id ? 'selected' : '' }}>{{ $row->materi }}
+                                                ({{ $row->type }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             @endif
                             <div class="mb-3">
-                                <label for="ket" class="form-label">Detail @if ($data->type == 'pertemuan') Materi @else Situasi @endif</label>
+                                <label for="ket" class="form-label">Detail @if ($data->type == 'pertemuan')
+                                        Materi
+                                    @else
+                                        Situasi
+                                    @endif
+                                </label>
                                 <textarea cols="30" rows="10" class="form-control" name="ket">{{ $data->ket }}</textarea>
                             </div>
                             @if ($data->type == 'ujian')
-                            <div class="mb-3">
-                                <label for="status_ujian" class="form-label">Status Ujian</label>
-                                <textarea cols="30" rows="10" class="form-control" name="status_ujian">{{ $data->status_ujian }}</textarea>
-                            </div>
+                                <div class="mb-3">
+                                    <label for="status_ujian" class="form-label">Status Ujian</label>
+                                    <textarea cols="30" rows="10" class="form-control" name="status_ujian">{{ $data->status_ujian }}</textarea>
+                                </div>
                             @endif
                         </div>
                         <div class="modal-footer">
@@ -316,14 +336,25 @@
 @push('js')
     <script>
         const url_edit_presensi =
-            "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensiMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id', 'mhs_id' => ':mhs_id']) }}";
+            "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensiMhs', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'mhs_id' => ':mhs_id']) }}";
 
+        function syncCheckAll() {
+            const allCheckboxes = $('input[name="mhs_id[]"]');
+            const checkedCheckboxes = $('input[name="mhs_id[]"]:checked');
+            $('#checkAll').prop('checked', allCheckboxes.length > 0 && allCheckboxes.length === checkedCheckboxes.length);
+        }
+
+        // Fungsi untuk pasang event listener pada checkbox mahasiswa
+        function attachCheckboxListeners() {
+            $(document).off('change', 'input[name="mhs_id[]"]').on('change', 'input[name="mhs_id[]"]', function () {
+                syncCheckAll();
+            });
+        }
+
+        // Fungsi checkAll yang sudah diperbaiki
         function checkAll(e) {
-            if (e.checked) {
-                $('input[name="mhs_id[]"]').prop('checked', true);
-            } else {
-                $('input[name="mhs_id[]"]').prop('checked', false);
-            }
+            const isChecked = e.checked;
+            $('input[name="mhs_id[]"]').prop('checked', isChecked);
         }
 
         function generate_table(data) {
@@ -331,14 +362,15 @@
 
             data.forEach(e => {
                 table +=
-                    `<tr>
+                    `<tr data-login-key="${e.login_key}" data-name="${e.name}" data-rombel="${e.rombel}">
                         @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
-                        <td style="width: 15px;"><input type="checkbox" name="mhs_id[]" id="mhs_id" value="${e.id}"></td>
+                        <td style="width: 15px;"><input type="checkbox" name="mhs_id[]" id="mhs_id" value="${e.id}" class="mhs-checkbox"></td>
                         @endif
                         <td>${e.name}</td>
                         <td>${e.login_key}</td>
+                        <td>${e.rombel}</td>
                         @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
-                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id).replace(':rombel_id', e.rombel_id)}', 'Edit Presensi', '#presensi')">${e.status ?? ''}</button></td>
+                        <td><button class="bg-transparen border-none" onclick="editForm('${url_edit_presensi.replace(':mhs_id', e.id)}', 'Edit Presensi', '#presensi')">${e.status ?? ''}</button></td>
                         @else
                         <td>${e.status ?? '-'}</td>
                         @endif
@@ -346,36 +378,37 @@
             });
 
             $('.table-presensi tbody').html(table);
+
+            syncCheckAll();
+            attachCheckboxListeners();
         }
 
         function get_presensi() {
             $('.table-presensi tbody').empty();
-            if ($('#rombel_id').val() != '') {
-                $('.table-presensi tbody').append(`<tr>
-                                                        @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
-                                                        <td colspan="4" class="text-center py-4">
-                                                        @else
-                                                        <td colspan="3" class="text-center py-4">
-                                                        @endif
-                                                            <div class="spinner-border" role="status">
-                                                                <span class="visually-hidden">Loading...</span>
-                                                            </div>
-                                                        </td>
-                                                    </tr>`);
-                $.ajax({
-                    url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensi', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id'), 'rombel_id' => ':rombel_id']) }}"
-                        .replace(':rombel_id', $('#rombel_id').val()),
-                    type: 'GET',
-                    dataType: "json",
-                    success: function(res) {
-                        $('#checkAll').prop('checked', false);
-                        generate_table(res.data)
-                    },
-                    error: function() {
-                        alert('Gagal get presensi')
-                    }
-                })
-            }
+            $('.table-presensi tbody').append(`<tr>
+                                                    @if (($data->presensi_mulai && !$data->presensi_selesai) || Auth::user()->hasRole('admin'))
+                                                    <td colspan="5" class="text-center py-4">
+                                                    @else
+                                                    <td colspan="4" class="text-center py-4">
+                                                    @endif
+                                                        <div class="spinner-border" role="status">
+                                                            <span class="visually-hidden">Loading...</span>
+                                                        </div>
+                                                    </td>
+                                                </tr>`);
+            $.ajax({
+                url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getPresensi', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => request('jadwal_id')]) }}",
+                type: 'GET',
+                dataType: "json",
+                success: function(res) {
+                    $('#checkAll').prop('checked', false);
+                    generate_table(res.data)
+                    $('#searchInput').trigger('keyup');
+                },
+                error: function() {
+                    alert('Gagal get presensi')
+                }
+            })
         }
 
         function update_presensi_many_mhs() {
@@ -413,5 +446,25 @@
                 }
             });
         }
+
+        $(document).ready(function() {
+            get_presensi();
+
+            $('#searchInput').on('keyup', function() {
+                const filter = $(this).val().toLowerCase();
+                $('.table-presensi tbody tr').each(function() {
+                    const name = this.getAttribute('data-name').toLowerCase() || '';
+                    const loginKey = this.getAttribute('data-login-key')?.toLowerCase() || '';
+                    const rombel = this.getAttribute('data-rombel')?.toLowerCase() || '';
+
+                    if (name.includes(filter) || loginKey.includes(filter) || rombel.includes(
+                            filter)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            });
+        });
     </script>
 @endpush
