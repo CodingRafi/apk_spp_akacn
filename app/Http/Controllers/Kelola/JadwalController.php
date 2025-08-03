@@ -545,11 +545,12 @@ class JadwalController extends Controller
     public function show($tahun_matkul_id, $jadwal_id)
     {
         $data = DB::table('jadwal')
-            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar', 'ruangs.nama as ruang')
+            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar', 'ruangs.nama as ruang', 'sifat_ujians.nama as sifat_ujian')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->join('users', 'jadwal.pengajar_id', '=', 'users.id')
             ->leftJoin('ruangs', 'ruangs.id', '=', 'jadwal.ruang_id')
+            ->leftJoin('sifat_ujians', 'sifat_ujians.id', '=', 'jadwal.sifat_ujian_id')
             ->where('jadwal.id', $jadwal_id)
             ->first();
 
@@ -927,7 +928,7 @@ class JadwalController extends Controller
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'approved' => null,
+                'approved' => 1,
                 'ket_approved' => null
             ]);
 

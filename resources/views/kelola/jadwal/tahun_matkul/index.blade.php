@@ -106,15 +106,6 @@
                 <option value="">Pilih Jenis Ujian</option>
             </select>
         </div>
-    </template>
-
-    <template id="select-pengajar">
-        <div class="mb-3">
-            <label for="pengajar_id" class="form-label"></label>
-            <select name="pengajar_id" id="pengajar_id" class="form-control">
-                <option value="">Pilih</option>
-            </select>
-        </div>
         <div class="mb-3">
             <label for="tingkat" class="form-label">Tingkat/Semester</label>
             <input class="form-control" type="text" id="tingkat" name="tingkat" />
@@ -128,6 +119,15 @@
         <div class="mb-3">
             <label for="sifat_ujian_id" class="form-label">Sifat Ujian</label>
             <select name="sifat_ujian_id" id="sifat_ujian_id" class="form-control">
+                <option value="">Pilih</option>
+            </select>
+        </div>
+    </template>
+
+    <template id="select-pengajar">
+        <div class="mb-3">
+            <label for="pengajar_id" class="form-label"></label>
+            <select name="pengajar_id" id="pengajar_id" class="form-control">
                 <option value="">Pilih</option>
             </select>
         </div>

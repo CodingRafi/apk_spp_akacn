@@ -484,6 +484,28 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                 [JadwalController::class, 'getSifatUjian']
             )->name('getSifatUjian');
 
+            Route::put(
+                '/{jadwal_id}/mulai',
+                [JadwalController::class, 'mulaiJadwal']
+            )->name('mulaiJadwal');
+            Route::put(
+                '/{jadwal_id}/selesai',
+                [JadwalController::class, 'selesaiJadwal']
+            )->name('selesaiJadwal');
+            Route::put(
+                '/{jadwal_id}/jadwal',
+                [JadwalController::class, 'updateJadwalMengajar']
+            )->name('updateJadwalMengajar');
+
+            Route::post(
+                '{jadwal_id}/approval',
+                [JadwalController::class, 'storeApproval']
+            )->name('storeApproval');
+            Route::post(
+                '{jadwal_id}/revisi-approval',
+                [JadwalController::class, 'RevisiApproval']
+            )->name('revisiApproval');
+
             Route::prefix('{tahun_matkul_id}')->name('tahun_matkul.')->group(function () {
                 Route::get(
                     '/',
@@ -554,28 +576,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                     )->name('updatePresensiMhs');
                 });
             });
-
-            Route::put(
-                '/{jadwal_id}/mulai',
-                [JadwalController::class, 'mulaiJadwal']
-            )->name('mulaiJadwal');
-            Route::put(
-                '/{jadwal_id}/selesai',
-                [JadwalController::class, 'selesaiJadwal']
-            )->name('selesaiJadwal');
-            Route::put(
-                '/{jadwal_id}/jadwal',
-                [JadwalController::class, 'updateJadwalMengajar']
-            )->name('updateJadwalMengajar');
-
-            Route::post(
-                '{jadwal_id}/approval',
-                [JadwalController::class, 'storeApproval']
-            )->name('storeApproval');
-            Route::post(
-                '{jadwal_id}/revisi-approval',
-                [JadwalController::class, 'RevisiApproval']
-            )->name('revisiApproval');
         });
 
         //? Rekap Presensi

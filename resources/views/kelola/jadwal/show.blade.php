@@ -38,7 +38,7 @@
                                         <button class="btn btn-primary" type="submit">Mulai</button>
                                     </form>
                                 @endif
-                                @if ($data->type == 'ujian' && $data->presensi_selesai  )
+                                @if ($data->type == 'ujian' && $data->presensi_selesai)
                                     <a href="{{ route('kelola-presensi.jadwal.tahun_matkul.berita-acara', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => $data->id]) }}"
                                         class="btn btn-primary">Berita Acara</a>
                                 @endif
@@ -47,8 +47,9 @@
                     @else
                         @can('jadwal_approval')
                             @if ($data->presensi_mulai)
-                                @if ($data->approved == null)
-                                    <form action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
+                                @if ($data->approved == '1')
+                                    <form
+                                        action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
                                         method="post" id="form-approval">
                                         @csrf
                                         <input type="hidden" name="status">
@@ -62,8 +63,8 @@
                                             </button>
                                         </div>
                                     </form>
-                                    <div class="modal fade" id="ModalApproval" tabindex="-1" aria-labelledby="ModalApprovalLabel"
-                                        aria-hidden="true">
+                                    <div class="modal fade" id="ModalApproval" tabindex="-1"
+                                        aria-labelledby="ModalApprovalLabel" aria-hidden="true">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
                                                 <div class="modal-header pb-0">
@@ -94,7 +95,8 @@
                                         }
                                     </script>
                                 @else
-                                    <form action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}"
+                                    <form
+                                        action="{{ route('kelola-presensi.jadwal.revisiApproval', ['jadwal_id' => $data->id]) }}"
                                         method="post">
                                         @csrf
                                         <button class="btn btn-warning" type="submit"
@@ -145,14 +147,14 @@
                                     <td class="col-6">Presensi Pulang {{ $typeUser }}</td>
                                     <td class="col-6">{{ $data->presensi_selesai }}</td>
                                 </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <table class="table" aria-hidden="true">
                                 <tr>
                                     <td class="col-6">Tanggal</td>
                                     <td class="col-6">{{ parseDate($data->tgl) }}</td>
                                 </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table" aria-hidden="true">
                                 <tr>
                                     <td class="col-6">Matkul</td>
                                     <td class="col-6">{{ $data->matkul }}</td>
@@ -164,12 +166,16 @@
                                     </tr>
                                 @else
                                     <tr>
+                                        <td class="col-6">Tingkat</td>
+                                        <td class="col-6">{{ $data->tingkat }}</td>
+                                    </tr>
+                                    <tr>
                                         <td class="col-6">Ruang</td>
                                         <td class="col-6">{{ $data->ruang }}</td>
                                     </tr>
                                     <tr>
-                                        <td class="col-6">Tingkat</td>
-                                        <td class="col-6">{{ $data->tingkat }}</td>
+                                        <td class="col-6">Sifat Ujian</td>
+                                        <td class="col-6">{{ $data->sifat_ujian }}</td>
                                     </tr>
                                 @endif
                             </table>
@@ -346,7 +352,7 @@
 
         // Fungsi untuk pasang event listener pada checkbox mahasiswa
         function attachCheckboxListeners() {
-            $(document).off('change', 'input[name="mhs_id[]"]').on('change', 'input[name="mhs_id[]"]', function () {
+            $(document).off('change', 'input[name="mhs_id[]"]').on('change', 'input[name="mhs_id[]"]', function() {
                 syncCheckAll();
             });
         }
