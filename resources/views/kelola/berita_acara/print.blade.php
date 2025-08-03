@@ -93,8 +93,7 @@
     <div class="berita-acara" style="page-break-after: always;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">BERITA ACARA KULIAH MAHASISWA
         </h2>
-        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik
-            {{ $semester->tahun_ajaran }}</h2>
+        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik {{ $semester->semester }}</h2>
 
         <div style="margin-top: 1rem;">
             <table aria-hidden="true" style="width: 100%">
@@ -140,7 +139,7 @@
                                 {{ $item->mahasiswa()->where('status', 'H')->count() }}</td>
                             <td style="text-align: left; padding: 2px;">
                                 {{ $item->mahasiswa()->where('status', '!=', 'H')->count() }}</td>
-                            <td style="text-align: left; padding: 2px;">{{ $item->materi }}</td>
+                            <td style="text-align: left; padding: 2px;">{{ $item->ket }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -163,8 +162,7 @@
     <div class="nilai" style="page-break-after: never;">
         <h2 style="text-align: center;margin-top: 1.3rem;font-size: 1.1rem;margin-bottom: 0;">DAFTAR NILAI
         </h2>
-        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik
-            {{ $semester->tahun_ajaran }}</h2>
+        <h2 style="text-align: center;font-size: 1.1rem;margin-top: 10px;">Tahun Akademik {{ $semester->semester }}</h2>
 
         <div style="margin-top: 1rem;">
             <table aria-hidden="true" style="width: 100%">
@@ -193,38 +191,36 @@
                 <table aria-label="table-nilai" style="width: 100%;text-align:center" class="bordered">
                     <thead>
                         <tr>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">No</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">NIM</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Nama</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kehadiran</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Aktivitas Partisipatif</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Hasil Proyek</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Quiz</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Tugas</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Ujian Tengah Semester</th>
-                            <th style="padding: 2px;font-size: 6px;" rowspan="2">Kognitif/Pengetahuan Ujian Akhir Semester</th>
-                            <th style="padding: 2px;font-size: 6px;" colspan="2">Nilai Akhir</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">No</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">NIM</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Nama</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Aktivitas Partisipatif</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Hasil Proyek</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Kognitif/Pengetahuan <br> Quiz</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Kognitif/Pengetahuan <br> Tugas</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Kognitif/Pengetahuan <br> Ujian Tengah Semester</th>
+                            <th style="padding: 2px;font-size: 10px;" rowspan="2">Kognitif/Pengetahuan <br> Ujian Akhir Semester</th>
+                            <th style="padding: 2px;font-size: 10px;" colspan="2">Nilai Akhir</th>
                         </tr>
                         <tr>
-                            <th style="padding: 2px;font-size: 6px;">Angka</th>
-                            <th style="padding: 2px;font-size: 6px;">Huruf</th>
+                            <th style="padding: 2px;font-size: 10px;">Angka</th>
+                            <th style="padding: 2px;font-size: 10px;">Huruf</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($nilai as $item)
                             <tr>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $loop->iteration }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->login_key }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->name }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->presensi }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->aktivitas_partisipatif }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->hasil_proyek }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->quizz }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->tugas }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->uts }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->uas }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->nilai_akhir }}</td>
-                                <td style="text-align: left; padding: 2px; font-size: 6px;">{{ $item->mutu }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $loop->iteration }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->login_key }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->name }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->aktivitas_partisipatif }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->hasil_proyek }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->quizz }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->tugas }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->uts }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->uas }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->nilai_akhir }}</td>
+                                <td style="text-align: left; padding: 2px; font-size: 10px;">{{ $item->mutu }}</td>
                             </tr>
                         @endforeach
                     </tbody>
