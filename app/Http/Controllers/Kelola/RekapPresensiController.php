@@ -34,19 +34,6 @@ class RekapPresensiController extends Controller
         ], 200);
     }
 
-    public function getSemester($tahun_ajaran_id){
-        $tahunSemester = DB::table('tahun_semester')
-                ->select('tahun_semester.id', 'semesters.nama')
-                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-                ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-                ->where('tahun_semester.prodi_id', request('prodi_id'))
-                ->get();
-
-        return response()->json([
-            'data' => $tahunSemester
-        ], 200);
-    }
-
     public function getPresensi()
     {
         $mahasiswas = DB::table('krs')
