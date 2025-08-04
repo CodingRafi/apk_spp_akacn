@@ -38,7 +38,7 @@ class BeritaAcaraController extends Controller
 
     public function data()
     {
-        if (request('prodi_id') && request('tahun_semester_id') && request('tahun_ajaran_id')) {
+        if (request('prodi_id') && request('tahun_ajaran_id') && request('tahun_semester_id')) {
             $datas = DB::table('tahun_matkul')
                 ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
                 ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')

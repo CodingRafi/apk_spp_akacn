@@ -124,7 +124,6 @@ class PresensiController extends Controller
                 $sliceData = array_slice($presensi, $jenis['indexStart'], (7 * ($key + 1)));
                 $sliceData[] = [
                     'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
-                    'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
                     'status' => $presensiCheck ? $presensiCheck->status : null,
                     'jenis' => $jenis['key']
                 ];

@@ -581,7 +581,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         //? Rekap Presensi
         Route::prefix('rekap')->name('rekap.')->group(function () {
             Route::get('/', [RekapPresensiController::class, 'index'])->name('index');
-            Route::get('/get-rombel', [RekapPresensiController::class, 'getRombel'])->name('getRombel');
             Route::prefix('{tahun_ajaran_id}')->group(function () {
                 Route::get('/get-presensi', [RekapPresensiController::class, 'getPresensi'])->name('getPresensi');
                 Route::get('/get-matkul', [RekapPresensiController::class, 'getMatkul'])->name('getMatkul');

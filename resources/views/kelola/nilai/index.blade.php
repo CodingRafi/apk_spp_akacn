@@ -13,7 +13,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama</th>
+                                    <th>Angkatan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
