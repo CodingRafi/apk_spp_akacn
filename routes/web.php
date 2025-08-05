@@ -593,7 +593,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::prefix('berita-acara')->name('berita-acara.')->group(function () {
             Route::get('/', [BeritaAcaraController::class, 'index'])->name('index');
             Route::get('/data', [BeritaAcaraController::class, 'data'])->name('data');
-            Route::get('{tahun_ajaran_id}/{tahun_matkul_id}/{tahun_semester_id}/print', [BeritaAcaraController::class, 'print'])
+            Route::get('{tahun_matkul_id}/{semester_id}/print', [BeritaAcaraController::class, 'print'])
                 ->name('print');
         });
     });

@@ -27,11 +27,6 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <select id="tahun_semester_id" class="form-control mb-3">
-                                <option value="">Pilih Semester</option>
-                            </select>
-                        </div>
                     </div>
                     <small class="text-danger">*Harap pilih semua filter untuk melihat mata kuliah</small>
                     <div class="table-responsive mt-3">
@@ -55,31 +50,6 @@
 
 @push('js')
     <script>
-        function get_semester() {
-            const tahun_ajaran_id = $('#tahun_ajaran_id').val();
-            const prodi_id = $('#prodi_id').val();
-
-            if (tahun_ajaran_id != '' && prodi_id != '') {
-                $('#tahun_semester_id').empty().append(`<option value="">Pilih Semester</option>`);
-                $.ajax({
-                    url: "{{ route('kelola-presensi.rekap.getSemester', ['tahun_ajaran_id' => ':tahun_ajaran_id']) }}".replace(':tahun_ajaran_id', tahun_ajaran_id),
-                    type: 'GET',
-                    dataType: "json",
-                    data: {
-                        prodi_id: prodi_id
-                    },
-                    success: function(res) {
-                        res.data.forEach(e => {
-                            $('#tahun_semester_id').append(`<option value="${e.id}">${e.nama}</option>`)
-                        })
-                    },
-                    error: function() {
-                        alert('Gagal get semester')
-                    }
-                })
-            }
-        }
-
         let table;
         $(document).ready(function() {
             table = $('.table').DataTable({
@@ -90,7 +60,6 @@
                     url: '{{ route('kelola-presensi.berita-acara.data') }}',
                     data: function(p) {
                         p.prodi_id = $('#prodi_id').val();
-                        p.tahun_semester_id = $('#tahun_semester_id').val();
                         p.tahun_ajaran_id = $('#tahun_ajaran_id').val();
                     }
                 },
@@ -110,7 +79,7 @@
             });
         });
 
-        $('#prodi_id, #tahun_semester_id, #tahun_ajaran_id').on('change', function() {
+        $('#prodi_id, #tahun_ajaran_id').on('change', function() {
             table.ajax.reload();
         });
     </script>

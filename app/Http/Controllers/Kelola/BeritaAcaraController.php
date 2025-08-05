@@ -22,32 +22,22 @@ class BeritaAcaraController extends Controller
         return view('kelola.berita_acara.index', compact('prodis', 'tahunAjarans'));
     }
 
-    public function getSemester($tahun_ajaran_id)
-    {
-        $tahunSemester = DB::table('tahun_semester')
-            ->select('tahun_semester.id', 'semesters.nama')
-            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-            ->where('tahun_semester.prodi_id', request('prodi_id'))
-            ->get();
-
-        return response()->json([
-            'data' => $tahunSemester
-        ], 200);
-    }
-
     public function data()
     {
-        if (request('prodi_id') && request('tahun_ajaran_id') && request('tahun_semester_id')) {
-            $datas = DB::table('tahun_matkul')
-                ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
+        if (request('prodi_id') && request('tahun_ajaran_id')) {
+            $datas = DB::table('krs')
+                ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama', 'tahun_semester.semester_id')
+                ->join('krs_matkul', 'krs_matkul.krs_id', '=', 'krs.id')
+                ->join('tahun_matkul', 'tahun_matkul.id', '=', 'krs_matkul.tahun_matkul_id')
                 ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                ->join('tahun_semester', 'tahun_semester.id', '=', 'krs.tahun_semester_id')
                 ->join('tahun_matkul_dosen', function($q){
                     $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
-                        ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                    ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
                 })
                 ->where('tahun_matkul.prodi_id', request('prodi_id'))
                 ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran_id'))
+                ->distinct('tahun_matkul.id')
                 ->get();
         } else {
             $datas = [];
@@ -57,9 +47,8 @@ class BeritaAcaraController extends Controller
             $data->options = '<a href="' . route(
                 'kelola-presensi.berita-acara.print',
                 [
-                    'tahun_ajaran_id' => request('tahun_ajaran_id'),
                     'tahun_matkul_id' => $data->id,
-                    'tahun_semester_id' => request('tahun_semester_id')
+                    'semester_id' => $data->semester_id,
                 ]
             ) . '" class="btn btn-primary">Download</a>';
         }
@@ -80,10 +69,9 @@ class BeritaAcaraController extends Controller
             ->make(true);
     }
 
-    public function print($tahun_ajaran_id, $tahun_matkul_id, $tahun_semester_id)
+    public function print($tahun_matkul_id, $semester_id)
     {
         $jadwal = Jadwal::where('jadwal.tahun_matkul_id', $tahun_matkul_id)
-            ->where('jadwal.tahun_semester_id', $tahun_semester_id)
             ->with('mahasiswa')
             ->orderBy('jadwal.id', 'asc')
             ->get();
@@ -100,18 +88,15 @@ class BeritaAcaraController extends Controller
             ->where('tahun_matkul.id', $tahun_matkul_id)
             ->first();
 
-        $semester = DB::table('tahun_semester')
-            ->select('semesters.nama as semester', 'tahun_ajarans.nama as tahun_ajaran')
-            ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-            ->join('tahun_ajarans', 'tahun_ajarans.id', 'tahun_semester.tahun_ajaran_id')
-            ->where('tahun_semester.id', $tahun_semester_id)
-            ->first();
+        $semester = DB::table('semesters')
+                ->select('semesters.nama as semester')
+                ->where('id', $semester_id)
+                ->first();
 
         $nilai = DB::table('mhs_nilai')
                     ->select('users.name', 'users.login_key', 'mhs_nilai.*', 'mutu.nama as mutu')
                     ->join('users', 'users.id', 'mhs_nilai.mhs_id')
                     ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-                    ->where('tahun_semester_id', $tahun_semester_id)
                     ->where('tahun_matkul_id', $tahun_matkul_id)
                     ->get();
 
