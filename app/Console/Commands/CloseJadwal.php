@@ -31,6 +31,7 @@ class CloseJadwal extends Command
     {
         DB::table('jadwal')
         ->whereNotNull('presensi_mulai')
+        ->whereNull('presensi_selesai')
         ->update([
             'presensi_selesai' => now(),
             'status_close' => '2',
