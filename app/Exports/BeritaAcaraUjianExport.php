@@ -47,7 +47,8 @@ class BeritaAcaraUjianExport implements FromView
                 'jadwal.status_ujian',
                 'sifat_ujians.nama',
                 'jadwal.id',
-                'jadwal.tahun_matkul_id'
+                'jadwal.tahun_matkul_id',
+                'jadwal.tgl'
             ])
             ->first();
 
