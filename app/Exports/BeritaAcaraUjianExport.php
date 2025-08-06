@@ -37,7 +37,7 @@ class BeritaAcaraUjianExport implements FromView
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->leftJoin('ruangs', 'ruangs.id', '=', 'jadwal.ruang_id')
             ->leftJoin('sifat_ujians', 'sifat_ujians.id', '=', 'jadwal.sifat_ujian_id')
-            ->where('jadwal.id', 479)
+            ->where('jadwal.id', $this->jadwalId)
             ->groupBy([
                 'jadwal.presensi_mulai',
                 'ruangs.nama',
