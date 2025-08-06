@@ -34,38 +34,16 @@ class RekapPresensiController extends Controller
         ], 200);
     }
 
-    public function getSemester($tahun_ajaran_id){
-        $tahunSemester = DB::table('tahun_semester')
-                ->select('tahun_semester.id', 'semesters.nama')
-                ->join('semesters', 'semesters.id', 'tahun_semester.semester_id')
-                ->where('tahun_semester.tahun_ajaran_id', $tahun_ajaran_id)
-                ->where('tahun_semester.prodi_id', request('prodi_id'))
-                ->get();
-
-        return response()->json([
-            'data' => $tahunSemester
-        ], 200);
-    }
-
-    public function getRombel(){
-        $rombel = DB::table('tahun_matkul_rombel')
-                    ->select('rombels.id', 'rombels.nama')
-                    ->join('rombels', 'rombels.id', '=', 'tahun_matkul_rombel.rombel_id')
-                    ->where('tahun_matkul_rombel.tahun_matkul_id', request('tahun_matkul_id'))
-                    ->get();
-
-        return response()->json([
-            'data' => $rombel
-        ], 200);
-    }
-
-    public function getPresensi($tahun_ajaran_id)
+    public function getPresensi()
     {
-        $mahasiswas = DB::table('users')
+        $mahasiswas = DB::table('krs')
             ->select('users.name', 'users.login_key', 'users.id')
-            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', '=', 'users.id')
-            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-            ->where('profile_mahasiswas.rombel_id', request('rombel_id'))
+            ->join('krs_matkul', function($q){
+                $q->on('krs_matkul.krs_id', '=', 'krs.id')
+                    ->where('krs_matkul.tahun_matkul_id', request('tahun_matkul_id'));
+            })
+            ->join('users', 'krs.mhs_id', '=', 'users.id')
+            ->distinct('users.id')
             ->get()
             ->map(function ($mahasiswa) {
                 $getPresensi = DB::table('jadwal')
@@ -75,17 +53,16 @@ class RekapPresensiController extends Controller
                             ->where('jadwal_presensi.mhs_id', '=', $mahasiswa->id);
                     })
                     ->where('jadwal.tahun_matkul_id', request('tahun_matkul_id'))
-                    ->where('jadwal.tahun_semester_id', request('tahun_semester_id'))
-                    ->orderBy('jadwal.created_at', 'ASC')
+                    ->orderBy('jadwal.tgl', 'ASC')
                     ->get();
 
                 $presensiPertemuan = $getPresensi->filter(function ($data) {
                     return $data->type == 'pertemuan';
-                });
+                })->values();
 
                 $presensi = [];
 
-                for ($i = 0; $i <= config('services.max_pertemuan'); $i++) {
+                for ($i = 0; $i < config('services.max_pertemuan'); $i++) {
                     $presensi[$i] = [
                         'jadwal_id' => $presensiPertemuan->get($i)->jadwal_id ?? null,
                         'status' => $presensiPertemuan->get($i)->status ?? null
@@ -94,7 +71,7 @@ class RekapPresensiController extends Controller
 
                 $presensiUjian = $getPresensi->filter(function ($data) {
                     return $data->type == 'ujian';
-                });
+                })->values();
 
                 $resPresensi = [];
 
@@ -102,7 +79,6 @@ class RekapPresensiController extends Controller
                     $presensiCheck = $presensiUjian->firstWhere('jenis_ujian', $jenis['key']);
                     $sliceData = array_slice($presensi, $jenis['indexStart'], (7 * ($key + 1)));
                     $sliceData[] = [
-                        'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
                         'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
                         'status' => $presensiCheck ? $presensiCheck->status : null,
                         'jenis' => $jenis['key']

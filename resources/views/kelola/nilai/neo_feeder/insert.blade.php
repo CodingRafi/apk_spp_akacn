@@ -10,7 +10,7 @@
     async function getData() {
         try {
             const res = await $.ajax({
-                url: '{{ route('kelola-nilai.getDataNilai', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'rombel_id' => request('rombel_id'), 'tahun_semester_id' => request('tahun_semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) }}',
+                url: '{{ route('kelola-nilai.getDataNilai', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
                 type: 'GET',
                 dataType: 'json'
             });
@@ -23,7 +23,7 @@
 
     function updateData() {
         $.ajax({
-            url: '{{ route('kelola-nilai.updateNeoFeeder', ['tahun_ajaran_id' => request('tahun_ajaran_id'), 'rombel_id' => request('rombel_id'), 'tahun_semester_id' => request('tahun_semester_id'), 'tahun_matkul_id' => request('tahun_matkul_id')]) }}',
+            url: '{{ route('kelola-nilai.updateNeoFeeder', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
             type: 'PATCH',
             data: {
                 data: JSON.stringify(dataSuccess)

@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('mhs_nilai', function (Blueprint $table) {
-            //
+        Schema::table('jadwal', function (Blueprint $table) {
+            $table->foreignId('sifat_ujian_id')->nullable()->constrained('sifat_ujians');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('mhs_nilai', function (Blueprint $table) {
-            //
+        Schema::table('jadwal', function (Blueprint $table) {
+             $table->dropColumn('sifat_ujian_id');
         });
     }
 };

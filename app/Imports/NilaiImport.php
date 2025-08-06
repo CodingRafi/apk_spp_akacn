@@ -11,19 +11,19 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
 {
     protected $matkul;
     protected $mutu;
-    protected $tahunSemesterId;
     protected $tahunMatkulId;
+    protected $krs;
 
     public function __construct(
         $matkul,
         $mutu,
-        $tahunSemesterId,
         $tahunMatkulId,
+        $krs,
     ) {
         $this->matkul = $matkul;
         $this->mutu = $mutu;
-        $this->tahunSemesterId = $tahunSemesterId;
         $this->tahunMatkulId = $tahunMatkulId;
+        $this->krs = $krs;
     }
 
     public function rules(): array
@@ -49,6 +49,14 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             return;
         }
 
+        $tahun_semester = $this->krs->filter(function ($item) use ($user) {
+            return $item->mhs_id === $user->id;
+        });
+
+        if (!$tahun_semester) {
+            return;
+        }
+
         $namaNilai = isset($row[3]) ? trim(strtolower($row[3])) : null;
         $nilai = $namaNilai
             ? $this->mutu->first(function ($item) use ($namaNilai) {
@@ -56,10 +64,11 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
             })
             : null;
 
+
         DB::table('mhs_nilai')->updateOrInsert(
             [
                 'mhs_id' => $user->id,
-                'tahun_semester_id' => $this->tahunSemesterId,
+                'tahun_semester_id' => $tahun_semester->first()->tahun_semester_id,
                 'tahun_matkul_id' => $this->tahunMatkulId,
             ],
             [
@@ -72,7 +81,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                 'tugas' => $row[7] ?? null,
                 'uts' => $row[8] ?? null,
                 'uas' => $row[9] ?? null,
-                'publish' => (string) $row[10] ?? 0,
+                'publish' => $row[10] ? ((string) $row[10] ?? '0') : '0',
                 'jml_sks' => $this->matkul->sks_mata_kuliah,
                 'updated_at' => now(),
             ]

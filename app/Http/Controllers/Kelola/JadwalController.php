@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers\Kelola;
 
+use App\Exports\BeritaAcaraUjianExport;
 use App\Http\Controllers\Controller;
+use App\Models\Ruang;
+use App\Models\SifatUjian;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Maatwebsite\Excel\Facades\Excel;
 
 class JadwalController extends Controller
 {
@@ -233,7 +237,7 @@ class JadwalController extends Controller
 
         if ($cekJadwalHari > 0) {
             return response()->json([
-                'message' => 'Sudah ada jadwal hari ini'
+                'message' => 'Sudah ada jadwal pada tanggal ini'
             ], 400);
         }
 
@@ -299,7 +303,10 @@ class JadwalController extends Controller
                 'materi_id' => null,
                 'materi' => null,
                 'type' => 'ujian',
-                'jenis_ujian' => $request->jenis
+                'jenis_ujian' => $request->jenis,
+                'ruang_id' => $request->ruang_id,
+                'sifat_ujian_id' => $request->sifat_ujian_id,
+                'tingkat' => $request->tingkat
             ];
         }
 
@@ -462,6 +469,24 @@ class JadwalController extends Controller
         ], 200);
     }
 
+    public function getRuang()
+    {
+        $data = Ruang::all();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
+    public function getSifatUjian()
+    {
+        $data = SifatUjian::all();
+
+        return response()->json([
+            'data' => $data
+        ], 200);
+    }
+
     public function getTotalPelajaran($tahun_matkul_id)
     {
         $tahun_matkul = DB::table('tahun_matkul')
@@ -520,22 +545,18 @@ class JadwalController extends Controller
     public function show($tahun_matkul_id, $jadwal_id)
     {
         $data = DB::table('jadwal')
-            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar')
+            ->select('jadwal.*', 'matkuls.nama as matkul', 'users.name as pengajar', 'ruangs.nama as ruang', 'sifat_ujians.nama as sifat_ujian')
             ->join('tahun_matkul', 'jadwal.tahun_matkul_id', '=', 'tahun_matkul.id')
             ->join('matkuls', 'tahun_matkul.matkul_id', '=', 'matkuls.id')
             ->join('users', 'jadwal.pengajar_id', '=', 'users.id')
+            ->leftJoin('ruangs', 'ruangs.id', '=', 'jadwal.ruang_id')
+            ->leftJoin('sifat_ujians', 'sifat_ujians.id', '=', 'jadwal.sifat_ujian_id')
             ->where('jadwal.id', $jadwal_id)
             ->first();
 
         if (!$data) {
             abort(404);
         }
-
-        $rombel = DB::table('tahun_matkul_rombel')
-            ->select('rombels.id', 'rombels.nama')
-            ->join('rombels', 'rombels.id', '=', 'tahun_matkul_rombel.rombel_id')
-            ->where('tahun_matkul_rombel.tahun_matkul_id', $tahun_matkul_id)
-            ->get();
 
         $materi = DB::table('tahun_matkul')
             ->select('matkul_materi.*')
@@ -552,33 +573,32 @@ class JadwalController extends Controller
             ->where('tahun_matkul.id', $tahun_matkul_id)
             ->get();
 
-        return view('kelola.jadwal.show', compact('data', 'rombel', 'materi'));
+        return view('kelola.jadwal.show', compact('data', 'materi'));
     }
 
-    public function getPresensi($tahun_matkul_id, $jadwal_id, $rombel_id)
+    public function getPresensi($tahun_matkul_id, $jadwal_id)
     {
-        $tahun_matkul = DB::table('tahun_matkul')
-            ->select('tahun_ajaran_id')
-            ->where('id', $tahun_matkul_id)
-            ->first();
-
-        $presensi = DB::table('users')
-            ->select('users.id', 'users.name', 'users.login_key', 'jadwal_presensi.status', 'profile_mahasiswas.rombel_id')
-            ->join('profile_mahasiswas', 'users.id', '=', 'profile_mahasiswas.user_id')
-            ->leftJoin('jadwal_presensi', function ($join) use ($jadwal_id) {
-                $join->on('jadwal_presensi.mhs_id', 'users.id')
-                    ->where('jadwal_presensi.jadwal_id', $jadwal_id);
-            })
-            ->where('profile_mahasiswas.rombel_id', $rombel_id)
-            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_matkul->tahun_ajaran_id)
-            ->get();
+        $presensi = DB::table('krs')
+                    ->select('users.id', 'users.name', 'users.login_key', 'jadwal_presensi.status', 'rombels.nama as rombel')
+                    ->join('krs_matkul', function($q) use ($tahun_matkul_id) {
+                        $q->on('krs.id', '=', 'krs_matkul.krs_id')
+                            ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
+                    })
+                    ->join('users', 'krs.mhs_id', '=', 'users.id')
+                    ->join('profile_mahasiswas', 'users.id', '=', 'profile_mahasiswas.user_id')
+                    ->join('rombels', 'rombels.id', '=', 'profile_mahasiswas.rombel_id')
+                    ->leftJoin('jadwal_presensi', function ($join) use ($jadwal_id) {
+                        $join->on('jadwal_presensi.mhs_id', 'users.id')
+                            ->where('jadwal_presensi.jadwal_id', $jadwal_id);
+                    })
+                    ->get();
 
         return response()->json([
             'data' => $presensi
         ], 200);
     }
 
-    public function getPresensiMhs($tahun_matkul_id, $jadwal_id, $rombel_id, $mhs_id)
+    public function getPresensiMhs($tahun_matkul_id, $jadwal_id, $mhs_id)
     {
         $presensi = DB::table('users')
             ->select('users.id', 'users.name', 'users.login_key', 'jadwal_presensi.status')
@@ -587,7 +607,6 @@ class JadwalController extends Controller
                 $join->on('jadwal_presensi.mhs_id', 'users.id')
                     ->where('jadwal_presensi.jadwal_id', $jadwal_id);
             })
-            ->where('profile_mahasiswas.rombel_id', $rombel_id)
             ->where('users.id', $mhs_id)
             ->first();
 
@@ -596,7 +615,7 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function updatePresensiMhs(Request $request, $tahun_matkul_id, $jadwal_id, $rombel_id, $mhs_id)
+    public function updatePresensiMhs(Request $request, $tahun_matkul_id, $jadwal_id, $mhs_id)
     {
         $request->validate([
             'status' => 'required'
@@ -693,6 +712,9 @@ class JadwalController extends Controller
                 'j.tahun_semester_id',
                 'tahun_matkul.prodi_id',
                 'tahun_matkul.tahun_ajaran_id',
+                'j.ruang_id',
+                'j.sifat_ujian_id',
+                'j.tingkat'
             )
             ->join('tahun_matkul', 'tahun_matkul.id', '=', 'j.tahun_matkul_id')
             ->where('j.id', $jadwal_id)
@@ -739,7 +761,10 @@ class JadwalController extends Controller
                 'materi_id' => null,
                 'materi' => null,
                 'type' => 'ujian',
-                'jenis_ujian' => $request->jenis
+                'jenis_ujian' => $request->jenis,
+                'tingkat' => $request->tingkat,
+                'ruang_id' => $request->ruang_id,
+                'sifat_ujian_id' => $request->sifat_ujian_id,
             ];
         }
 
@@ -781,12 +806,17 @@ class JadwalController extends Controller
         }
     }
 
+    public function exportBeritaAcara($tahun_matkul_id, $jadwal_id){
+        return Excel::download(new BeritaAcaraUjianExport($jadwal_id), 'berita_acara_ujian.xlsx');
+    }
+
     public function updateJadwalMengajar(Request $request, $jadwal_id)
     {
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'ket' => $request->ket
+                'ket' => $request->ket,
+                'status_ujian' => $request->status_ujian ?? null
             ]);
 
         return response()->json([
@@ -898,7 +928,7 @@ class JadwalController extends Controller
         DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->update([
-                'approved' => null,
+                'approved' => 1,
                 'ket_approved' => null
             ]);
 

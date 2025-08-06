@@ -89,7 +89,6 @@ class PresensiController extends Controller
                 $join->on('jadwal.id', 'jadwal_presensi.jadwal_id')
                     ->where('jadwal_presensi.mhs_id', $user->id);
             })
-            ->where('jadwal.tahun_semester_id', $tahunSemesterId)
             ->whereIn('jadwal.tahun_matkul_id', $tahunMatkulId)
             ->orderBy('jadwal.tgl', 'asc')
             ->get();
@@ -124,7 +123,6 @@ class PresensiController extends Controller
                 $presensiCheck = $presensiUjian->firstWhere('jenis_ujian', $jenis['key']);
                 $sliceData = array_slice($presensi, $jenis['indexStart'], (7 * ($key + 1)));
                 $sliceData[] = [
-                    'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
                     'jadwal_id' => $presensiCheck ? $presensiCheck->jadwal_id : null,
                     'status' => $presensiCheck ? $presensiCheck->status : null,
                     'jenis' => $jenis['key']
@@ -194,7 +192,12 @@ class PresensiController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-        if ($tahunSemesterAktif->id != $data->tahun_semester_id) {
+        $checkMhsUlang = DB::table('tahun_matkul_mhs')
+                            ->where('tahun_matkul_id', $data->tahun_matkul_id)
+                            ->where('mhs_id', $mhs->user_id)
+                            ->first();
+
+        if ($tahunSemesterAktif->id != $data->tahun_semester_id && !$checkMhsUlang) {
             return response()->json([
                 'message' => 'Kode tidak valid!'
             ], 400);
@@ -205,6 +208,7 @@ class PresensiController extends Controller
             ->where('mhs_id', Auth::user()->id)
             ->where('tahun_semester_id', $tahunSemesterAktif->id)
             ->first();
+            
         if (!$krs || ($krs && $krs->status != 'diterima')) {
             return response()->json([
                 'message' => 'Anda harus mengambil KRS terlebih dahulu'
