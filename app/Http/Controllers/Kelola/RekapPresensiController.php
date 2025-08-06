@@ -38,8 +38,12 @@ class RekapPresensiController extends Controller
     {
         $mahasiswas = DB::table('krs')
             ->select('users.name', 'users.login_key', 'users.id')
-            ->join('krs_matkul', 'krs_matkul.krs_id', '=', 'krs.id')
+            ->join('krs_matkul', function($q){
+                $q->on('krs_matkul.krs_id', '=', 'krs.id')
+                    ->where('krs_matkul.tahun_matkul_id', request('tahun_matkul_id'));
+            })
             ->join('users', 'krs.mhs_id', '=', 'users.id')
+            ->distinct('users.id')
             ->get()
             ->map(function ($mahasiswa) {
                 $getPresensi = DB::table('jadwal')
