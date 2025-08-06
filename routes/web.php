@@ -604,19 +604,34 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             [NilaiController::class, 'index']
         )->name('index');
         Route::get(
-            '/dataTahunAjaran',
-            [NilaiController::class, 'dataTahunAjaran']
-        )->name('dataTahunAjaran');
+            '/data',
+            [NilaiController::class, 'data']
+        )->name('data');
         Route::get(
-            '/{tahun_ajaran_id}',
+            '/{tahun_matkul_id}',
             [NilaiController::class, 'show']
         )->name('show');
         Route::get(
-            '/{tahun_ajaran_id}/get-matkul',
-            [NilaiController::class, 'getMatkul']
-        )->name('getMatkul');
+            '{tahun_matkul_id}/mhs',
+            [NilaiController::class, 'dataMhs']
+        )->name('dataMhs');
+        Route::get(
+            '{tahun_matkul_id}/download-template',
+            [NilaiController::class, 'downloadTemplate']
+        )->name('downloadTemplate');
+        Route::post(
+            '{tahun_matkul_id}/download-template',
+            [NilaiController::class, 'importNilai']
+        )->name('importNilai');
+               Route::get(
+            '{tahun_matkul_id}/get-data',
+            [NilaiController::class, 'getDataNilai']
+        )->name('getDataNilai');
+        Route::patch(
+            '{tahun_matkul_id}/update-neo-feeder',
+            [NilaiController::class, 'updateNeoFeeder']
+        )->name('updateNeoFeeder');
         Route::post('/neo-feeder', [NilaiController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
-        Route::get('/{tahun_ajaran_id}/getRombel', [NilaiController::class, 'getRombel'])->name('getRombel');
         Route::get(
             '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
             [NilaiController::class, 'getNilai']
@@ -625,30 +640,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
             [NilaiController::class, 'store']
         )->name('store');
-        Route::get(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}',
-            [NilaiController::class, 'detailRombel']
-        )->name('detailRombel');
-        Route::get(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/mhs',
-            [NilaiController::class, 'dataMhs']
-        )->name('dataMhs');
-        Route::get(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/get-data',
-            [NilaiController::class, 'getDataNilai']
-        )->name('getDataNilai');
-        Route::patch(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/update-neo-feeder',
-            [NilaiController::class, 'updateNeoFeeder']
-        )->name('updateNeoFeeder');
-        Route::get(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/download-template',
-            [NilaiController::class, 'downloadTemplate']
-        )->name('downloadTemplate');
-        Route::post(
-            '/{tahun_ajaran_id}/{rombel_id}/{tahun_semester_id}/{tahun_matkul_id}/download-template',
-            [NilaiController::class, 'importNilai']
-        )->name('importNilai');
     });
 
     Route::prefix('kelola-pembayaran')->name('kelola-pembayaran.')->group(function () {

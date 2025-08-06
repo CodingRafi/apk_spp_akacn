@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Kelola;
 use App\Exports\TemplateNilaiExport;
 use App\Http\Controllers\Controller;
 use App\Imports\NilaiImport;
-use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,23 +15,48 @@ class NilaiController extends Controller
 {
     public function index()
     {
-        return view('kelola.nilai.index');
+        $tahunAjarans = DB::table('tahun_ajarans')->get();
+        $prodis = DB::table('prodi')->get();
+
+        return view('kelola.nilai.index', compact('prodis', 'tahunAjarans'));
     }
 
-    public function dataTahunAjaran()
+    public function data()
     {
-        $datas = TahunAjaran::all();
+        if (request('prodi_id') && request('tahun_ajaran_id')) {
+            $datas = DB::table('krs')
+                ->select('tahun_matkul.id', 'matkuls.kode', 'matkuls.nama')
+                ->join('krs_matkul', 'krs_matkul.krs_id', '=', 'krs.id')
+                ->join('tahun_matkul', 'tahun_matkul.id', '=', 'krs_matkul.tahun_matkul_id')
+                ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+                ->when(Auth::user()->hasRole('dosen'), function ($q) {
+                    $q->join('tahun_matkul_dosen', function($q){
+                        $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
+                        ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                    });
+                })
+                ->where('tahun_matkul.prodi_id', request('prodi_id'))
+                ->where('tahun_matkul.tahun_ajaran_id', request('tahun_ajaran_id'))
+                ->distinct('tahun_matkul.id')
+                ->get();
+        } else {
+            $datas = [];
+        }
 
         foreach ($datas as $data) {
-            $data->options = "<a href='" .
-                route(
-                    'kelola-nilai.show',
-                    ['tahun_ajaran_id' => $data->id]
-                ) . "' class='btn btn-info mx-2'>Detail</a>";
+            $data->options = '<a href="' . route(
+                'kelola-nilai.show',
+                [
+                    'tahun_matkul_id' => $data->id,
+                ]
+            ) . '" class="btn btn-primary">Detail</a>';
         }
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->addColumn('matkul', function ($data) {
+                return $data->kode . ' - ' . $data->nama;
+            })
             ->rawColumns(['options'])
             ->make(true);
     }
@@ -109,81 +134,10 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function show($tahun_ajaran_id)
+    public function show()
     {
-        $prodis = DB::table('prodi')->get();
-        return view('kelola.nilai.show', compact('prodis'));
-    }
-
-    public function getMatkul($tahun_ajaran_id)
-    {
-        $matkuls = DB::table('tahun_matkul')
-            ->select('tahun_matkul.id', 'matkuls.nama', 'matkuls.kode')
-            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
-            ->where('tahun_matkul.tahun_ajaran_id', $tahun_ajaran_id)
-            ->where('tahun_matkul.prodi_id', request('prodi_id'))
-            ->get();
-
-        return response()->json([
-            'data' => $matkuls
-        ], 200);
-    }
-
-    public function getRombel($tahun_ajaran_id)
-    {
-        if (request('tahun_matkul_id') && request('tahun_semester_id')) {
-            $rombelMhs = DB::table('users')
-                ->select('profile_mahasiswas.rombel_id')
-                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-                ->join('krs', 'krs.mhs_id', 'users.id')
-                ->join('krs_matkul', function ($join) {
-                    $join->on('krs_matkul.krs_id', 'krs.id')
-                        ->where('krs_matkul.tahun_matkul_id', request('tahun_matkul_id'));
-                })
-                ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-                ->where('krs.tahun_semester_id', request('tahun_semester_id'))
-                ->distinct('profile_mahasiswas.rombel_id')
-                ->get()
-                ->pluck('rombel_id')
-                ->toArray();
-
-            $datas = DB::table('rombels')
-                ->whereIn('rombels.id', $rombelMhs)
-                ->get();
-        } else {
-            $datas = [];
-        }
-
-        foreach ($datas as $data) {
-            $data->options = "<a href='" . route(
-                'kelola-nilai.detailRombel',
-                [
-                    'tahun_ajaran_id' => $tahun_ajaran_id,
-                    'rombel_id' => $data->id,
-                    'tahun_semester_id' => request('tahun_semester_id'),
-                    'tahun_matkul_id' => request('tahun_matkul_id')
-                ]
-            ) . "' class='btn btn-info mx-2'>Detail</a>";
-        }
-
-        return DataTables::of($datas)
-            ->addIndexColumn()
-            ->rawColumns(['options'])
-            ->make(true);
-    }
-
-    public function detailRombel($tahun_ajaran_id, $rombel_id)
-    {
-        $rombel = DB::table('rombels')
-            ->where('id', $rombel_id)
-            ->first();
-
-        $mutu = DB::table('mutu')
-            ->where('status', '1')
-            ->where('prodi_id', $rombel->prodi_id)
-            ->get();
-
-        return view('kelola.nilai.mhs', compact('mutu'));
+        $mutu = DB::table('mutu')->get();
+        return view('kelola.nilai.show', compact('mutu'));
     }
 
     public function getNilai($tahun_semester_id, $tahun_matkul_id, $mhs_id)
@@ -203,7 +157,7 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function dataMhs($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
+    public function dataMhs($tahun_matkul_id)
     {
         $datas = DB::table('users')
             ->select(
@@ -221,7 +175,8 @@ class NilaiController extends Controller
                 'mutu.nama as mutu',
                 'mhs_nilai.publish',
                 'mhs_nilai.jml_sks',
-                'mhs_nilai.send_neo_feeder'
+                'mhs_nilai.send_neo_feeder',
+                'krs.tahun_semester_id'
             )
             ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
             ->join('krs', 'krs.mhs_id', 'users.id')
@@ -229,15 +184,11 @@ class NilaiController extends Controller
                 $join->on('krs_matkul.krs_id', 'krs.id')
                     ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
             })
-            ->leftJoin('mhs_nilai', function ($q) use ($tahun_semester_id, $tahun_matkul_id) {
+            ->leftJoin('mhs_nilai', function ($q) use ($tahun_matkul_id) {
                 $q->on('users.id', 'mhs_nilai.mhs_id')
-                    ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id)
                     ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id);
             })
             ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-            ->where('profile_mahasiswas.rombel_id', $rombel_id)
-            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-            ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->orderBy('users.login_key', 'asc')
             ->get();
 
@@ -247,7 +198,7 @@ class NilaiController extends Controller
                 route(
                     'kelola-nilai.getNilai',
                     [
-                        'tahun_semester_id' => $tahun_semester_id,
+                        'tahun_semester_id' => $data->tahun_semester_id,
                         'tahun_matkul_id' => $tahun_matkul_id,
                         'mhs_id' => $data->id
                     ]
@@ -315,7 +266,7 @@ class NilaiController extends Controller
         return Excel::download(new TemplateNilaiExport, 'template.xlsx');
     }
 
-    public function importNilai($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
+    public function importNilai($tahun_matkul_id)
     {
         $matkul = DB::table('tahun_matkul')
             ->select('matkuls.sks_mata_kuliah')
@@ -327,12 +278,20 @@ class NilaiController extends Controller
             ->where('status', '1')
             ->get();
 
+        $krs = DB::table('krs')
+            ->select('krs.mhs_id', 'krs.id', 'krs.tahun_semester_id')
+            ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
+                $join->on('krs_matkul.krs_id', 'krs.id')
+                    ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
+            })
+            ->get();
+
         try {
             Excel::import(new NilaiImport(
                 $matkul,
                 $mutu,
-                $tahun_semester_id,
-                $tahun_matkul_id
+                $tahun_matkul_id,
+                $krs
             ), request()->file('file'));
 
             return response()->json([
@@ -345,7 +304,7 @@ class NilaiController extends Controller
         }
     }
 
-    public function getDataNilai($tahun_ajaran_id, $rombel_id, $tahun_semester_id, $tahun_matkul_id)
+    public function getDataNilai($tahun_matkul_id)
     {
         $datas = DB::table('users')
             ->select(
@@ -363,17 +322,15 @@ class NilaiController extends Controller
                 $join->on('krs_matkul.krs_id', 'krs.id')
                     ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
             })
-            ->leftJoin('mhs_nilai', function ($q) use ($tahun_semester_id, $tahun_matkul_id) {
+            ->leftJoin('mhs_nilai', function ($q) use ($tahun_matkul_id) {
                 $q->on('users.id', 'mhs_nilai.mhs_id')
-                    ->where('mhs_nilai.tahun_semester_id', $tahun_semester_id)
                     ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id);
             })
             ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-            ->where('profile_mahasiswas.rombel_id', $rombel_id)
-            ->where('profile_mahasiswas.tahun_masuk_id', $tahun_ajaran_id)
-            ->where('krs.tahun_semester_id', $tahun_semester_id)
             ->where('mhs_nilai.publish', '1')
             ->get();
+
+        dd($datas);
 
         return response()->json($datas, 200);
     }
