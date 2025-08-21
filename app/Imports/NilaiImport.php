@@ -81,7 +81,7 @@ class NilaiImport implements ToModel, WithValidation, WithStartRow
                 'tugas' => $row[7] ?? null,
                 'uts' => $row[8] ?? null,
                 'uas' => $row[9] ?? null,
-                'publish' => $row[10] ? ((string) $row[10] ?? '0') : '0',
+                'publish' => ($row[10] == 'Y' ? '1' : '0'),
                 'jml_sks' => $this->matkul->sks_mata_kuliah,
                 'updated_at' => now(),
             ]

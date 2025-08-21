@@ -94,8 +94,7 @@
                                     </div>
                                 </li>
                                 <li class="mb-2">
-                                    Publish diisi dengan angka 1 jika ingin menampilkan data, dan 0 jika ingin
-                                    menyembunyikan.
+                                    Publish diisi dengan "Y" jika ingin publish data, dan "N" jika tidak ingin publish.
                                 </li>
                                 <li class="mb-2">
                                     Klik tombol "Import Nilai", dan pilih file template yang telah diisi.
