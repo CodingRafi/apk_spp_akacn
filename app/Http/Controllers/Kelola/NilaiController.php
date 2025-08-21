@@ -157,6 +157,18 @@ class NilaiController extends Controller
         ], 200);
     }
 
+    public function publish($tahun_matkul_id){
+        DB::table('mhs_nilai')
+                ->where('tahun_matkul_id', $tahun_matkul_id)
+                ->update([
+                    'publish' => '1'
+                ]);
+
+        return response()->json([
+            'message' => 'Berhasil di publish'
+        ], 200);
+    }
+
     public function dataMhs($tahun_matkul_id)
     {
         $datas = DB::table('users')

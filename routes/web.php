@@ -611,6 +611,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '/{tahun_matkul_id}',
             [NilaiController::class, 'show']
         )->name('show');
+        Route::patch(
+            '/{tahun_matkul_id}/publish',
+            [NilaiController::class, 'publish']
+        )->name('publish');
         Route::get(
             '{tahun_matkul_id}/mhs',
             [NilaiController::class, 'dataMhs']

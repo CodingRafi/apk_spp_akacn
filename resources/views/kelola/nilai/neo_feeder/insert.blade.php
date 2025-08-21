@@ -35,7 +35,7 @@
             },
             error: function() {
                 $.LoadingOverlay("hide");
-                showAlert(`Berhasil ${countSuccess}, GAGAL ${countError}`, 'success');
+                showAlert(`Berhasil ${countSuccess}, GAGAL ${countError}`, 'error');
             }
         })
     }

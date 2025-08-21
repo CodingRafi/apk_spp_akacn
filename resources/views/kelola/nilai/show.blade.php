@@ -26,6 +26,9 @@
                             Import Nilai
                         </button>
                         @if (Auth::user()->hasRole('admin'))
+                            <button class="btn btn-primary" type="button" onclick="publishNilai()">
+                                Publish Semua Nilai
+                            </button>
                             <button class="btn btn-primary" type="button" onclick="sendNeoFeeder()">
                                 Send Neo Feeder
                             </button>
@@ -238,6 +241,28 @@
 @push('js')
     @if (Auth::user()->hasRole('admin'))
         @include('kelola.nilai.neo_feeder.insert')
+        <script>
+            function publishNilai() {
+                if (confirm('Apakah anda yakin? semua data akan di publish')) {
+                    $.LoadingOverlay("show");
+                    $.ajax({
+                        url: '{{ route('kelola-nilai.publish', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}',
+                        type: 'PATCH',
+                        dataType: 'json',
+                        success: function() {
+                            $.LoadingOverlay("hide");
+                            showAlert(`Berhasil dipublish!`, 'success');
+                            table.ajax.reload();
+                        },
+                        error: function() {
+                            $.LoadingOverlay("hide");
+                            showAlert(`Gagal dipublish`, 'error');
+                            table.ajax.reload();
+                        }
+                    })
+                }
+            }
+        </script>
     @endif
     <script>
         let table;
