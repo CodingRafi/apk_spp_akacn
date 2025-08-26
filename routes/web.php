@@ -72,7 +72,6 @@ use App\Http\Controllers\Kelola\UserController;
 use App\Http\Controllers\Mahasiswa\BimbinganController;
 use App\Http\Controllers\Mahasiswa\KhsController;
 use App\Http\Controllers\Mahasiswa\KrsController;
-use App\Http\Controllers\Mahasiswa\KuesionerController as MahasiswaKuesionerController;
 use App\Http\Controllers\Mahasiswa\MBKMController as MahasiswaMBKMController;
 use App\Http\Controllers\Mahasiswa\PembayaranController as MahasiswaPembayaranController;
 use App\Http\Controllers\Mahasiswa\PresensiController as MahasiswaPresensiController;
@@ -96,7 +95,7 @@ Route::get('/', function () {
 })->name('index');
 
 Route::group(['middleware' => ['auth', 'check.status']], function () {
-    Route::post('/kuesioner/store', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
+    Route::post('/kuesioner/storeMhs', [KuesionerController::class, 'storeMhs'])->name('kuesioner.storeMhs');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
