@@ -96,6 +96,8 @@ Route::get('/', function () {
 })->name('index');
 
 Route::group(['middleware' => ['auth', 'check.status']], function () {
+    Route::post('/submit-kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
+
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
         Route::patch('/', [ProfileController::class, 'update'])->name('update');
@@ -788,8 +790,6 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             [BimbinganController::class, 'storeOrUpdate']
         )->name('storeOrUpdate');
     });
-
-    Route::post('/submit-kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
 
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 
