@@ -96,7 +96,7 @@ Route::get('/', function () {
 })->name('index');
 
 Route::group(['middleware' => ['auth', 'check.status']], function () {
-    Route::post('/submit-kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
+    Route::post('/kuesioner/store', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
 
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('index');
