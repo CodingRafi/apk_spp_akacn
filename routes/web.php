@@ -789,7 +789,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         )->name('storeOrUpdate');
     });
 
-    Route::post('/kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
+    Route::post('/submit-kuesioner', [MahasiswaKuesionerController::class, 'store'])->name('kuesioner.store');
 
     Route::get('template-surat', [ControllersTemplateSuratController::class, 'index'])->name('template-surat.index');
 
