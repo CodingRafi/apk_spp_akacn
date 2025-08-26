@@ -28,6 +28,8 @@ class KuesionerController extends Controller
             'mhs_id' => auth()->user()->id,
             'tahun_semester_id' => $request->input('tahun_semester_id'),
             'tahun_matkul_id' => $request->input('tahun_matkul_id'),
+            'created_at' => now(),
+            'updated_at' => now()
         ]);
 
         foreach ($cek as $key => $value) {
