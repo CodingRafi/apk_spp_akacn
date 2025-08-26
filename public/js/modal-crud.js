@@ -38,13 +38,14 @@ function submitForm(originalForm, selector = "", func) {
         }
     });
 
-    $.post({
+    $.ajax({
         url: form.attr("action"),
+        method: "POST",
         data: data,
         dataType: "json",
         contentType: false,
-        cache: false,
         processData: false,
+        cache: false,
     })
         .done((response) => {
             $(selector).html(oldValue).attr("disabled", false);

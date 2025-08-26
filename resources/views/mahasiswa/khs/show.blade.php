@@ -51,7 +51,7 @@
 
         <div class="modal fade" id="Kuesioner" tabindex="-1" aria-labelledby="KuesionerLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
-                <form action="{{ route('kuesioner.store') }}">
+                <form action="{{ route('kuesioner.store') }}" method="post">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5" id="KuesionerLabel">Kuesioner</h1>
