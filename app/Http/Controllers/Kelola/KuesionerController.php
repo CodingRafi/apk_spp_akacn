@@ -179,14 +179,10 @@ class KuesionerController extends Controller
             DB::table('t_kuesioners_answer')->insert($answers);
             DB::commit();
 
-            return response()->json([
-                'message' => 'Berhasil disimpan'
-            ], 200);
+            return redirect()->back()->with('success', 'Data Berhasil Di simpan');
         } catch (\Throwable $th) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Terjadi kesalahan'
-            ], 400);
+            return redirect()->back()->with('error', 'Terjadi Kesalahan');
         }
     }
 }

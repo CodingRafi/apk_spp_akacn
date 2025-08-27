@@ -90,8 +90,7 @@
                             @endforeach
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary"
-                                onclick="submitForm(this.form, this, loadData)">Kirim</button>
+                            <button type="submit" class="btn btn-primary">Kirim</button>
                         </div>
                     </div>
                 </form>
