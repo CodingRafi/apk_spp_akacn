@@ -128,56 +128,65 @@ class KuesionerController extends Controller
     }
 
     public function storeMhs(Request $request){
-        //? Cek udh pernah ngisi belom
-        $checkSudahIsi = DB::table('t_kuesioners')
-        ->where('mhs_id', auth()->user()->id)
-        ->where('tahun_semester_id', $request->input('tahun_semester_id'))
-        ->where('tahun_matkul_id', $request->input('tahun_matkul_id'))
-        ->first();
+        DB::beginTransaction();
+        try {
+            //? Cek udh pernah ngisi belom
+            $checkSudahIsi = DB::table('t_kuesioners')
+            ->where('mhs_id', auth()->user()->id)
+            ->where('tahun_semester_id', $request->input('tahun_semester_id'))
+            ->where('tahun_matkul_id', $request->input('tahun_matkul_id'))
+            ->first();
 
-        if ($checkSudahIsi) {
-            return response()->json([
-                'message' => 'Anda sudah mengisi kuesioner ini'
-            ], 400);
-        }
-        
-        $cek = $request->except(['_token', 'tahun_matkul_id', 'tahun_semester_id']);
+            if ($checkSudahIsi) {
+                return response()->json([
+                    'message' => 'Anda sudah mengisi kuesioner ini'
+                ], 400);
+            }
+            
+            $cek = $request->except(['_token', 'tahun_matkul_id', 'tahun_semester_id']);
 
-        $kuesioner = DB::table('kuesioners')
-        ->select('kuesioners.id')
-        ->where('status', '1')
-        ->get()
-        ->pluck('id')
-        ->toArray();
-        
-        if (in_array(null, $cek) || count(array_diff($kuesioner, array_keys($cek))) > 0) {
-            return response()->json([
-                'message' => 'Semua kolom harus diisi'
-            ], 400);
-        }
+            $kuesioner = DB::table('kuesioners')
+            ->select('kuesioners.id')
+            ->where('status', '1')
+            ->get()
+            ->pluck('id')
+            ->toArray();
+            
+            if (in_array(null, $cek) || count(array_diff($kuesioner, array_keys($cek))) > 0) {
+                return response()->json([
+                    'message' => 'Semua kolom harus diisi'
+                ], 400);
+            }
 
-        $tKuesioner = DB::table('t_kuesioners')->insertGetId([
-            'mhs_id' => auth()->user()->id,
-            'tahun_semester_id' => $request->input('tahun_semester_id'),
-            'tahun_matkul_id' => $request->input('tahun_matkul_id'),
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-
-        $answers = [];
-        foreach ($cek as $key => $value) {
-            $answers[] = [
-                't_kuesioner_id' => $tKuesioner,
-                'kuesioner_id' => $key,
-                'answer' => $value,
+            $tKuesioner = DB::table('t_kuesioners')->insertGetId([
+                'mhs_id' => auth()->user()->id,
+                'tahun_semester_id' => $request->input('tahun_semester_id'),
+                'tahun_matkul_id' => $request->input('tahun_matkul_id'),
                 'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        }
-        DB::table('t_kuesioners_answer')->insert($answers);
+                'updated_at' => now()
+            ]);
 
-        return response()->json([
-            'message' => 'Berhasil disimpan'
-        ], 200);
+            $answers = [];
+            foreach ($cek as $key => $value) {
+                $answers[] = [
+                    't_kuesioner_id' => $tKuesioner,
+                    'kuesioner_id' => $key,
+                    'answer' => $value,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+            DB::table('t_kuesioners_answer')->insert($answers);
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Berhasil disimpan'
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Terjadi kesalahan'
+            ], 400);
+        }
     }
 }
