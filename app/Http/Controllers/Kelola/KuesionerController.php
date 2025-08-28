@@ -143,7 +143,7 @@ class KuesionerController extends Controller
                 ], 400);
             }
             
-            $cek = $request->except(['_token', 'tahun_matkul_id', 'tahun_semester_id']);
+            $cek = $request->except(['_token', 'tahun_matkul_id', 'tahun_semester_id', '_method']);
 
             $kuesioner = DB::table('kuesioners')
             ->select('kuesioners.id')
@@ -181,6 +181,7 @@ class KuesionerController extends Controller
 
             return redirect()->back()->with('success', 'Data Berhasil Di simpan');
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi Kesalahan');
         }
