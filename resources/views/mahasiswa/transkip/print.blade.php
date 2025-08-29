@@ -178,7 +178,7 @@
                     <td style="height: 7rem"></td>
                 </tr>
                 <tr>
-                    <td>Yuyun Lusini, M.Si</td>
+                    <td>Dewi Rukmana, M.Si</td>
                 </tr>
             </table>
     </main>

@@ -95,7 +95,7 @@
                 <br>
                 <div style="height: 5rem"></div>
                 <br>
-                Yuyun Lusini, M.Si
+                Dewi Rukmana, M.Si
             </td>
             <td>
                 <table aria-hidden="true">
