@@ -2,21 +2,32 @@
 
 <head>
     <style>
+    
+
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
         @page {
-            margin: 285px 35px 30px;
+            margin: 130px 35px 55px;
         }
 
         header {
             position: fixed;
-            top: -17.4rem;
+            top: -6.2rem;
             left: 0px;
             right: 0px;
-            height: 7rem;
-            font-size: 13px !important;
+            height: 5.8rem;
+            font-size: 20px !important;
         }
 
-        * {
-            font-family: Arial, Helvetica, sans-serif;
+        footer {
+            position: fixed;
+            bottom: -1.8rem;
+            left: 0px;
+            right: 0px;
+            height: 50px;
+            text-align: center;
         }
 
         .content tr>td:first-child {
@@ -67,72 +78,82 @@
 </head>
 
 <body>
+     <header>
+        <img src="{{ public_path() . '/image/logo-pdf.png' }}" style="width: 30rem">
+    </header>
+
+    <footer>
+        <p style="text-align: center;margin-bottom: 0;font-size: 13px;">Komplek Timah, Kelapa Dua Cimanggis Depok - 16951 Telp : (021)
+            8710001 Fax : (021)
+            8728523 <br> email : akacaraka@yahoo.com.id, Info@akacn.ac.id Home page : www.akacn.ac.id</p>
+    </footer>
+
     @php
         setlocale(LC_TIME, 'id_ID.utf8');
     @endphp
-    <header>
-        <h3 style="text-align: center">TRANSKIP AKADEMIK MAHASISWA</h3>
-        <table aria-hidden="true" style="margin:auto;font-size: 13px">
-            <tr>
-                <td>Nomor Seri Transkip Akademik</td>
-                <td>:</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Nomor Ijazah Nasional</td>
-                <td>:</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Program Pendidikan</td>
-                <td>:</td>
-                <td>{{ $data->jenjang }}</td>
-            </tr>
-            <tr>
-                <td>Program Studi</td>
-                <td>:</td>
-                <td>{{ $data->prodi }}</td>
-            </tr>
-            <tr>
-                <td>Nama</td>
-                <td>:</td>
-                <td>{{ $data->name }}</td>
-            </tr>
-            <tr>
-                <td>Tempat dan Tanggal Lahir</td>
-                <td>:</td>
-                <td>{{ $data->tempat_lahir }},
-                    {{ \Carbon\Carbon::parse($data->tgl_lahir)->locale('id')->isoFormat('D MMMM Y') }}</td>
-            </tr>
-            <tr>
-                <td>Nomor Induk Mahasiswa (NIM)</td>
-                <td>:</td>
-                <td>{{ $data->nim }}</td>
-            </tr>
-            <tr>
-                <td>Tanggal, Bulan, dan Tahun Kelulusan</td>
-                <td>:</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>Jumlah SKS</td>
-                <td>:</td>
-                <td>{{ $totalSKS }}</td>
-            </tr>
-            <tr>
-                <td>Index Prestasi Komulatif</td>
-                <td>:</td>
-                <td>{{ number_format(end($ipk)['ipk'], 2) }}</td>
-            </tr>
-            <tr>
-                <td>Predikat Kelulusan</td>
-                <td>:</td>
-                <td></td>
-            </tr>
-        </table>
-    </header>
-
     <main>
+        <div>
+            <h3 style="text-align: center">TRANSKIP AKADEMIK MAHASISWA</h3>
+            <table aria-hidden="true" style="margin:auto;font-size: 13px">
+                <tr>
+                    <td>Nomor Seri Transkip Akademik</td>
+                    <td>:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Nomor Ijazah Nasional</td>
+                    <td>:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Program Pendidikan</td>
+                    <td>:</td>
+                    <td>{{ $data->jenjang }}</td>
+                </tr>
+                <tr>
+                    <td>Program Studi</td>
+                    <td>:</td>
+                    <td>{{ $data->prodi }}</td>
+                </tr>
+                <tr>
+                    <td>Nama</td>
+                    <td>:</td>
+                    <td>{{ $data->name }}</td>
+                </tr>
+                <tr>
+                    <td>Tempat dan Tanggal Lahir</td>
+                    <td>:</td>
+                    <td>{{ $data->tempat_lahir }},
+                        {{ \Carbon\Carbon::parse($data->tgl_lahir)->locale('id')->isoFormat('D MMMM Y') }}</td>
+                </tr>
+                <tr>
+                    <td>Nomor Induk Mahasiswa (NIM)</td>
+                    <td>:</td>
+                    <td>{{ $data->nim }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal, Bulan, dan Tahun Kelulusan</td>
+                    <td>:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Jumlah SKS</td>
+                    <td>:</td>
+                    <td>{{ $totalSKS }}</td>
+                </tr>
+                <tr>
+                    <td>Index Prestasi Komulatif</td>
+                    <td>:</td>
+                    <td>{{ number_format(end($ipk)['ipk'], 2) }}</td>
+                </tr>
+                <tr>
+                    <td>Predikat Kelulusan</td>
+                    <td>:</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    
         <div>
             <table aria-label="table-matkul" class="table bordered" style="width: 100%;text-align:center;font-size: 13px">
                 <thead>
@@ -181,7 +202,8 @@
                     <td>Dewi Rukmana, M.Si</td>
                 </tr>
             </table>
-    </main>
+        </div>
+    </div>
 </body>
 
 </html>
