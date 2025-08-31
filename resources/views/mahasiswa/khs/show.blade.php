@@ -68,18 +68,18 @@
                                         {!! $item->pertanyaan !!}
                                     </div>
                                     @if ($item->type == 'input')
-                                        <input class="form-control" type="text" id="{{ $item->id }}"
-                                            name="{{ $item->id }}" required />
+                                        <input class="form-control" type="text" id="question_{{ $item->id }}"
+                                            name="question_{{ $item->id }}" required />
                                     @else
                                         <div class="d-flex" style="gap: 1rem;">
                                             @foreach (config('services.choice_kuesioner') as $i => $choice)
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio"
-                                                    name="{{ $item->id }}"
-                                                    id="{{ $item->id }}{{ $i }}" required
+                                                    name="question_{{ $item->id }}"
+                                                    id="question_{{ $item->id }}{{ $i }}" required
                                                     value="{{ $i }}">
                                                 <label class="form-check-label"
-                                                    for="{{ $item->id }}{{ $i }}">
+                                                    for="question_{{ $item->id }}{{ $i }}">
                                                     {{ $choice }}
                                                 </label>
                                             </div>

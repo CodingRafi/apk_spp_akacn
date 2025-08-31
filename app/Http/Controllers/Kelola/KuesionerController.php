@@ -146,18 +146,18 @@ class KuesionerController extends Controller
             $cek = $request->except(['_token', 'tahun_matkul_id', 'tahun_semester_id', '_method']);
 
             $kuesioner = DB::table('kuesioners')
-            ->select('kuesioners.id')
+            ->select(DB::raw("CONCAT('question_', id) as id"))
             ->where('status', '1')
             ->get()
             ->pluck('id')
             ->toArray();
-            
+
             if (in_array(null, $cek) || count(array_diff($kuesioner, array_keys($cek))) > 0) {
                 return response()->json([
                     'message' => 'Semua kolom harus diisi'
                 ], 400);
             }
-
+            
             $tKuesioner = DB::table('t_kuesioners')->insertGetId([
                 'mhs_id' => auth()->user()->id,
                 'tahun_semester_id' => $request->input('tahun_semester_id'),
@@ -170,7 +170,7 @@ class KuesionerController extends Controller
             foreach ($cek as $key => $value) {
                 $answers[] = [
                     't_kuesioner_id' => $tKuesioner,
-                    'kuesioner_id' => $key,
+                    'kuesioner_id' => explode('question_', $key)[1],
                     'answer' => $value,
                     'created_at' => now(),
                     'updated_at' => now(),
