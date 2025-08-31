@@ -8,7 +8,7 @@
                     <div class="d-flex align-items-center">
                         <a href="{{ route('kelola-nilai.index') }}"><i
                                 class="menu-icon tf-icons bx bx-chevron-left"></i></a>
-                        <h5 class="text-capitalize mb-0">Nilai</h5>
+                        <h5 class="text-capitalize mb-0">Nilai {{ $matkul->nama }}</h5>
                     </div>
                     <div class="d-flex flex-wrap mt-3" style="gap: 1rem">
                         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#petunjuk"

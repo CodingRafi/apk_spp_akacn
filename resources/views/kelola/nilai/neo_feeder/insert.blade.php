@@ -103,6 +103,12 @@
                     nilai_angka: e.nilai_angka,
                     nilai_indeks: e.nilai_indeks,
                     nilai_huruf: e.nilai_huruf,
+                    nilai_aktivitas_partisipatif: e.nilai_aktivitas_partisipatif,
+                    nilai_hasil_proyek: e.nilai_hasil_proyek,
+                    nilai_quiz: e.nilai_quiz,
+                    nilai_tugas: e.nilai_tugas,
+                    nilai_ujian_tengah_semester: e.nilai_ujian_tengah_semester,
+                    nilai_ujian_akhir_semester: e.nilai_ujian_akhir_semester
                 }
             ];
         })

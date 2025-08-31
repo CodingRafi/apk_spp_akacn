@@ -134,10 +134,15 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function show()
+    public function show($tahun_matkul_id)
     {
         $mutu = DB::table('mutu')->get();
-        return view('kelola.nilai.show', compact('mutu'));
+        $matkul = DB::table('tahun_matkul')
+            ->select('matkuls.nama')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->first();
+        return view('kelola.nilai.show', compact('mutu', 'matkul'));
     }
 
     public function getNilai($tahun_semester_id, $tahun_matkul_id, $mhs_id)
@@ -273,9 +278,15 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function downloadTemplate()
+    public function downloadTemplate($tahun_matkul_id)
     {
-        return Excel::download(new TemplateNilaiExport, 'template.xlsx');
+        $matkul = DB::table('tahun_matkul')
+            ->select('matkuls.nama')
+            ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
+            ->where('tahun_matkul.id', $tahun_matkul_id)
+            ->first();
+
+        return Excel::download(new TemplateNilaiExport, $matkul->nama.'.xlsx');
     }
 
     public function importNilai($tahun_matkul_id)
@@ -324,6 +335,12 @@ class NilaiController extends Controller
                 'krs_matkul.id_kelas_kuliah_neo_feeder',
                 'mhs_nilai.nilai_akhir as nilai_angka',
                 'mhs_nilai.nilai_mutu as nilai_indeks',
+                'mhs_nilai.aktivitas_partisipatif as nilai_aktivitas_partisipatif',
+                'mhs_nilai.hasil_proyek as nilai_hasil_proyek',
+                'mhs_nilai.quizz as nilai_quiz',
+                'mhs_nilai.tugas as nilai_tugas',
+                'mhs_nilai.uts as nilai_ujian_tengah_semester',
+                'mhs_nilai.uas as nilai_ujian_akhir_semester',
                 'mutu.nama as nilai_huruf',
                 'users.id as mhs_id',
                 'krs_matkul.tahun_matkul_id'
@@ -341,8 +358,6 @@ class NilaiController extends Controller
             ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
             ->where('mhs_nilai.publish', '1')
             ->get();
-
-        dd($datas);
 
         return response()->json($datas, 200);
     }
