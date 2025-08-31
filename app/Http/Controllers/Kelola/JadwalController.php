@@ -113,7 +113,7 @@ class JadwalController extends Controller
                 $q->where('pengajar_id', Auth::user()->id);
             })
             ->where('jadwal.tahun_matkul_id', $tahun_matkul_id)
-            ->orderBy('id', 'desc')
+            ->orderBy('jadwal.tgl', 'asc')
             ->get();
 
         $datas = isset($jadwals) ? $jadwals : [];
@@ -143,6 +143,12 @@ class JadwalController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
+            ->addColumn('pertemuan', function($row) use (&$i) {
+                if ($row->type == 'ujian') {
+                    return strtoupper($row->jenis_ujian);
+                }
+                return ++$i;
+            })
             ->editColumn('tgl', function ($datas) {
                 return parseDate($datas->tgl);
             })
@@ -157,7 +163,7 @@ class JadwalController extends Controller
                     }
                 }
             })
-            ->rawColumns(['options', 'status'])
+            ->rawColumns(['options', 'status', 'pertemuan'])
             ->make(true);
     }
 

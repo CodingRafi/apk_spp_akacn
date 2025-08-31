@@ -22,11 +22,12 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>Pertemuan</th>
                                     <th>Kode Presensi</th>
                                     <th>Kode Matkul</th>
                                     <th>Tanggal</th>
                                     <th>Matkul</th>
+                                    <th>Materi</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -410,8 +411,10 @@
                         p.status = $('#filter-status').val();
                     }
                 },
-                columns: [{
-                        "data": "DT_RowIndex"
+                columns: [
+                    {
+                        "data": "pertemuan",
+                        "orderable": false
                     },
                     {
                         "data": "kode"
@@ -424,6 +427,9 @@
                     },
                     {
                         "data": "matkul"
+                    },
+                    {
+                        "data": "ket"
                     },
                     {
                         "data": "status"
