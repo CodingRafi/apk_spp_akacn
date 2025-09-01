@@ -95,7 +95,7 @@
                 <br>
                 <div style="height: 5rem"></div>
                 <br>
-                Dewi Rukmana, M.Si
+                Mutiara Dewi Rukmana, M.Si
             </td>
             <td>
                 <table aria-hidden="true">

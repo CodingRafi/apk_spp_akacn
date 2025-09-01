@@ -12,7 +12,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-                            <select id="prodi_id" class="form-control mb-3" onchange="get_semester()">
+                            <select id="prodi_id" class="form-control mb-3">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
@@ -20,7 +20,7 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <select id="tahun_ajaran_id" class="select2 mb-3" onchange="get_semester()">
+                            <select id="tahun_ajaran_id" class="select2 mb-3">
                                 <option value="">Pilih Angkatan</option>
                                 @foreach ($tahunAjarans as $tahun_ajaran)
                                     <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>

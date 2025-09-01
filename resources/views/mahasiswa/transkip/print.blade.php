@@ -199,7 +199,7 @@
                     <td style="height: 7rem"></td>
                 </tr>
                 <tr>
-                    <td>Dewi Rukmana, M.Si</td>
+                    <td>Mutiara Dewi Rukmana, M.Si</td>
                 </tr>
             </table>
         </div>
