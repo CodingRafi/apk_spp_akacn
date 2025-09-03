@@ -116,6 +116,20 @@ if (!function_exists('getHari')) {
     }
 }
 
+if (!function_exists('getTokenNeoFeeder')) {
+
+    function getTokenNeoFeeder()
+    {
+        $userId = config('services.neo_feeder.USER_ID');
+        $urlNeoFeeder = getUrlNeoFeeder();
+
+        $response = Http::post($urlNeoFeeder . '/ws/user/update_token', [
+            "userid" => $userId
+        ]);
+        return $response->json();
+    }
+}
+
 if (!function_exists('getDataNeoFeeder')) {
 
     function getDataNeoFeeder($raw)

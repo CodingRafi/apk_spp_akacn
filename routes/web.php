@@ -43,6 +43,7 @@ use App\Http\Controllers\{
     WhitelistIPController,
     WilayahController
 };
+use App\Http\Controllers\Kelola\Angkatan\EvaluasiNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulDosenController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulMhsController;
@@ -426,6 +427,11 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('rekap-perkuliahan')->name('rekap-perkuliahan.')->group(function () {
+        Route::prefix('evaluasi/{id_kelas_kuliah}')->name('evaluasi.')->group(function () {
+            Route::get('/', [EvaluasiNeoFeederController::class, 'index'])->name('index');
+            Route::get('/data', [EvaluasiNeoFeederController::class, 'data'])->name('data');
+        });
+
         Route::get('/', [MatkulRekapController::class, 'index'])->name('index');
         Route::get('/data', [MatkulRekapController::class, 'data'])->name('data');
         Route::post('/neo-feeder', [MatkulRekapController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
@@ -628,15 +634,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '{tahun_matkul_id}/download-template',
             [NilaiController::class, 'importNilai']
         )->name('importNilai');
-               Route::get(
-            '{tahun_matkul_id}/get-data',
-            [NilaiController::class, 'getDataNilai']
-        )->name('getDataNilai');
-        Route::patch(
-            '{tahun_matkul_id}/update-neo-feeder',
-            [NilaiController::class, 'updateNeoFeeder']
-        )->name('updateNeoFeeder');
-        Route::post('/neo-feeder', [NilaiController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+        Route::post(
+            '{tahun_matkul_id}/storeNeoFeeder',
+            [NilaiController::class, 'storeNeoFeeder']
+        )->name('storeNeoFeeder');
         Route::get(
             '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
             [NilaiController::class, 'getNilai']

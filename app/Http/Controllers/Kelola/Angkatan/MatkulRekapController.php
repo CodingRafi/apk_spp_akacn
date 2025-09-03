@@ -35,7 +35,6 @@ class MatkulRekapController extends Controller
                 ->select('tm.id', 'm.nama as matkul', 'm.kode as kode', 'ta.nama as tahun_ajaran', 'kk.id as kelas_kuliah')
                 ->get()
                 ->toArray();
-
         }
 
         foreach ($datas as $data) {
@@ -87,6 +86,8 @@ class MatkulRekapController extends Controller
         if (!$tahunMatkul || !$semester) {
             abort(404);
         }
+
+        $tahunMatkul->test = null;
 
         return view('rekap_perkuliahan.show', compact('prodis', 'tahunMatkul', 'semester'));
     }
