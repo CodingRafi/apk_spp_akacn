@@ -57,12 +57,12 @@ class EvaluasiNeoFeederController extends Controller
                 DB::table('kelas_kuliah_evaluasi')->updateOrInsert(
                     [
                         'id_kelas_kuliah' => $id_kelas_kuliah,
-                        'id_jns_eval' => $value['id_jns_eval']
+                        'id_jns_eval' => $value['id_jns_eval'],
+                        'komponen_evaluasi' => $this->convertKomponenEvaluasi($value['nama'])
                     ],
                     [
                         'id_komp_eval'      => $value['id_komp_eval'],
                         'nm_jns_eval'       => $value['nm_jns_eval'],
-                        'komponen_evaluasi' => $this->convertKomponenEvaluasi($value['nama']),
                         'nama_inggris'      => $value['nama_inggris'],
                         'bobot'             => $value['bobot'],
                         'updated_at'        => now(),
