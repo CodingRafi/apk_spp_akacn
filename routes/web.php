@@ -43,6 +43,7 @@ use App\Http\Controllers\{
     WhitelistIPController,
     WilayahController
 };
+use App\Http\Controllers\Kelola\Angkatan\EvaluasiNeoFeederController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulController as AngkatanMatkulController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulDosenController;
 use App\Http\Controllers\Kelola\Angkatan\MatkulMhsController;
@@ -426,6 +427,11 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('rekap-perkuliahan')->name('rekap-perkuliahan.')->group(function () {
+        Route::prefix('evaluasi/{id_kelas_kuliah}')->name('evaluasi.')->group(function () {
+            Route::get('/', [EvaluasiNeoFeederController::class, 'index'])->name('index');
+            Route::get('/data', [EvaluasiNeoFeederController::class, 'data'])->name('data');
+        });
+
         Route::get('/', [MatkulRekapController::class, 'index'])->name('index');
         Route::get('/data', [MatkulRekapController::class, 'data'])->name('data');
         Route::post('/neo-feeder', [MatkulRekapController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');

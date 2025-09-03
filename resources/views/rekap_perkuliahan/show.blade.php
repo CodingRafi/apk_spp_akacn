@@ -141,6 +141,10 @@
                             <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
                                 data-bs-target="#mahasiswa">Mahasiswa</button>
                         </li>
+                        <li class="nav-item" style="white-space: nowrap;">
+                            <button type="button" data-bs-toggle="tab" class="nav-link a-tab"
+                                data-bs-target="#evaluasi">Komponen Evaluasi</button>
+                        </li>
                     </ul>
                     <div class="tab-content py-4 px-1" id="profileContent">
                         <div class="tab-pane active" id="dosen" role="tabpanel">
@@ -181,6 +185,27 @@
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane" id="evaluasi" role="tabpanel">
+                            @if ($tahunMatkul->id_kelas_kuliah)
+                                <button type="button" class="btn btn-primary" onclick="getDataEvaluasi('{{ $tahunMatkul->id_kelas_kuliah }}')">Get Neo Feeder</button>
+                                <div class="table-responsive mt-4">
+                                    <table class="table table-evaluasi w-100" aria-label="table-evaluasi">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Basis Evaluasi</th>
+                                                <th class="text-center">Komponen Evaluasi</th>
+                                                <th class="text-center">Nama (Inggris)</th>
+                                                <th class="text-center">Bobot(%)</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="alert alert-info">
+                                    Kelas perkuliahan belum dikirim ke Neo Feeder
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -191,6 +216,9 @@
 @push('js')
     @if (Auth::user()->hasRole('admin'))
         @include('rekap_perkuliahan.neo_feeder')
+        @if ($tahunMatkul->id_kelas_kuliah)
+        @include('rekap_perkuliahan.neo_feeder_evaluasi')
+        @endif
     @endif
     <script>
         $(document).ready(function() {

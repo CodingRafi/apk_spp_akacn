@@ -89,7 +89,8 @@ return [
         'USERNAME' => env('USERNAME_NEO_FEEDER'),
         'PASSWORD' => env('PASSWORD_NEO_FEEDER'),
         'KEY_ENCRYPT' => env('KEY_ENCRYPT_NEO_FEEDER'),
-        'ID_PT' => env('ID_PT')
+        'ID_PT' => env('ID_PT'),
+        'USER_ID' => env('USER_ID_NEO_FEEDER'),
     ],
 
     'peran' => [
