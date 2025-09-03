@@ -9,17 +9,6 @@ use Yajra\DataTables\Facades\DataTables;
 
 class EvaluasiNeoFeederController extends Controller
 {
-    private function getToken()
-    {
-        $userId = config('services.neo_feeder.USER_ID');
-        $urlNeoFeeder = getUrlNeoFeeder();
-
-        $response = Http::post($urlNeoFeeder . '/ws/user/update_token', [
-            "userid" => $userId
-        ]);
-        return $response->json();
-    }
-
     private function convertKomponenEvaluasi($komponen_evaluasi)
     {
         switch ($komponen_evaluasi) {
@@ -42,7 +31,7 @@ class EvaluasiNeoFeederController extends Controller
 
     public function index($id_kelas_kuliah)
     {
-        $token = $this->getToken();
+        $token = getTokenNeoFeeder();
         $urlNeoFeeder = getUrlNeoFeeder();
 
         try {

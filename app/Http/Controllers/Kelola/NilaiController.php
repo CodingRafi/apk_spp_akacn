@@ -8,6 +8,7 @@ use App\Imports\NilaiImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -30,9 +31,9 @@ class NilaiController extends Controller
                 ->join('tahun_matkul', 'tahun_matkul.id', '=', 'krs_matkul.tahun_matkul_id')
                 ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
                 ->when(Auth::user()->hasRole('dosen'), function ($q) {
-                    $q->join('tahun_matkul_dosen', function($q){
+                    $q->join('tahun_matkul_dosen', function ($q) {
                         $q->on('tahun_matkul_dosen.tahun_matkul_id', '=', 'tahun_matkul.id')
-                        ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
+                            ->where('tahun_matkul_dosen.dosen_id', Auth::user()->id);
                     });
                 })
                 ->where('tahun_matkul.prodi_id', request('prodi_id'))
@@ -59,79 +60,6 @@ class NilaiController extends Controller
             })
             ->rawColumns(['options'])
             ->make(true);
-    }
-
-    public function storeNeoFeeder(Request $request)
-    {
-        $dataReq = json_decode($request->data);
-        foreach ($dataReq as $data) {
-            $mhs = DB::table('users')
-                ->select('users.id')
-                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-                ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $data->id_registrasi_mahasiswa)
-                ->where('users.id_neo_feeder', $data->id_mahasiswa)
-                ->first();
-
-            $tahunSemester = DB::table('tahun_semester')
-                ->where('prodi_id', $data->id_prodi)
-                ->where('tahun_ajaran_id', $data->angkatan)
-                ->where('semester_id', $data->id_semester)
-                ->first();
-
-            if (!$tahunSemester) {
-                return response()->json([
-                    'message' => 'Tahun semester tidak ditemukan'
-                ], 400);
-            }
-
-            $tahunMatkul = DB::table('tahun_matkul')
-                ->where('prodi_id', $data->id_prodi)
-                ->where('tahun_ajaran_id', $data->angkatan)
-                ->where('matkul_id', $data->id_matkul)
-                ->first();
-
-            if (!$tahunMatkul) {
-                return response()->json([
-                    'message' => 'Tahun matkul tidak ditemukan'
-                ], 400);
-            }
-
-            $mutu = DB::table('mutu')
-                ->where('nama', $data->nilai_huruf)
-                ->first();
-
-            if (!$mutu) {
-                return response()->json([
-                    'message' => 'Mutu tidak ditemukan'
-                ], 400);
-            }
-
-            $exists = DB::table('mhs_nilai')
-                ->where('mhs_id', $mhs->id)
-                ->where('tahun_semester_id', $tahunSemester->id)
-                ->where('tahun_matkul_id', $tahunMatkul->id)
-                ->exists();
-
-            if (!$exists) {
-                DB::table('mhs_nilai')
-                    ->insert([
-                        'mhs_id' => $mhs->id,
-                        'tahun_semester_id' => $tahunSemester->id,
-                        'tahun_matkul_id' => $tahunMatkul->id,
-                        'jml_sks' => (int) $data->sks_mata_kuliah,
-                        'mutu_id' => $mutu->id,
-                        'publish' => '1',
-                        'nilai_mutu' => $mutu->nilai,
-                        'send_neo_feeder' => '1',
-                        'created_at' => now(),
-                        'updated_at' => now()
-                    ]);
-            }
-        }
-
-        return response()->json([
-            'message' => 'Success'
-        ], 200);
     }
 
     public function show($tahun_matkul_id)
@@ -162,12 +90,13 @@ class NilaiController extends Controller
         ], 200);
     }
 
-    public function publish($tahun_matkul_id){
+    public function publish($tahun_matkul_id)
+    {
         DB::table('mhs_nilai')
-                ->where('tahun_matkul_id', $tahun_matkul_id)
-                ->update([
-                    'publish' => '1'
-                ]);
+            ->where('tahun_matkul_id', $tahun_matkul_id)
+            ->update([
+                'publish' => '1'
+            ]);
 
         return response()->json([
             'message' => 'Berhasil di publish'
@@ -286,7 +215,7 @@ class NilaiController extends Controller
             ->where('tahun_matkul.id', $tahun_matkul_id)
             ->first();
 
-        return Excel::download(new TemplateNilaiExport, $matkul->nama.'.xlsx');
+        return Excel::download(new TemplateNilaiExport, $matkul->nama . '.xlsx');
     }
 
     public function importNilai($tahun_matkul_id)
@@ -327,53 +256,104 @@ class NilaiController extends Controller
         }
     }
 
-    public function getDataNilai($tahun_matkul_id)
+    public function storeNeoFeeder($tahun_matkul_id)
     {
-        $datas = DB::table('users')
-            ->select(
-                'profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa',
-                'krs_matkul.id_kelas_kuliah_neo_feeder',
-                'mhs_nilai.nilai_akhir as nilai_angka',
-                'mhs_nilai.nilai_mutu as nilai_indeks',
-                'mhs_nilai.aktivitas_partisipatif as nilai_aktivitas_partisipatif',
-                'mhs_nilai.hasil_proyek as nilai_hasil_proyek',
-                'mhs_nilai.quizz as nilai_quiz',
-                'mhs_nilai.tugas as nilai_tugas',
-                'mhs_nilai.uts as nilai_ujian_tengah_semester',
-                'mhs_nilai.uas as nilai_ujian_akhir_semester',
-                'mutu.nama as nilai_huruf',
-                'users.id as mhs_id',
-                'krs_matkul.tahun_matkul_id'
-            )
-            ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
-            ->join('krs', 'krs.mhs_id', 'users.id')
-            ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
-                $join->on('krs_matkul.krs_id', 'krs.id')
-                    ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
-            })
-            ->leftJoin('mhs_nilai', function ($q) use ($tahun_matkul_id) {
-                $q->on('users.id', 'mhs_nilai.mhs_id')
-                    ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id);
-            })
-            ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
-            ->where('mhs_nilai.publish', '1')
-            ->get();
+        try {
+            $kelas_kuliah = DB::table('kelas_kuliah')
+                ->where('tahun_matkul_id', $tahun_matkul_id)
+                ->first();
 
-        return response()->json($datas, 200);
-    }
+            if (!$kelas_kuliah) {
+                return response()->json([
+                    'message' => 'Kelas kuliah belum dikirim ke Neo Feeder'
+                ], 400);
+            }
 
-    public function updateNeoFeeder(Request $request){
-        foreach (json_decode($request->data) as $data) {
-            DB::table('mhs_nilai')
-                ->where('mhs_id', $data->mhs_id)
-                ->where('tahun_matkul_id', $data->tahun_matkul_id)
-                ->update([
-                    'send_neo_feeder' => '1'
-                ]);
+            $kelas_kuliah_evaluasi = DB::table('kelas_kuliah_evaluasi')
+                ->where('id_kelas_kuliah', $kelas_kuliah->id_kelas_kuliah)
+                ->get();
+
+            if (count($kelas_kuliah_evaluasi) != 6) {
+                return response()->json([
+                    'message' => 'Harap get data evaluasi terlebih dahulu'
+                ], 400);
+            }
+
+            $datas = DB::table('users')
+                ->select(
+                    'profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa',
+                    'krs_matkul.id_kelas_kuliah_neo_feeder',
+                    'mhs_nilai.nilai_akhir as nilai_angka',
+                    'mhs_nilai.nilai_mutu as nilai_indeks',
+                    'mhs_nilai.aktivitas_partisipatif as nilai_aktivitas_partisipatif',
+                    'mhs_nilai.hasil_proyek as nilai_hasil_proyek',
+                    'mhs_nilai.quizz as nilai_quiz',
+                    'mhs_nilai.tugas as nilai_tugas',
+                    'mhs_nilai.uts as nilai_ujian_tengah_semester',
+                    'mhs_nilai.uas as nilai_ujian_akhir_semester',
+                    'mutu.nama as nilai_huruf',
+                    DB::raw("REPLACE(mutu.nilai, '.', ',') as nilai_mutu"),
+                    'users.id as mhs_id',
+                    'krs_matkul.tahun_matkul_id'
+                )
+                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                ->join('krs', 'krs.mhs_id', 'users.id')
+                ->join('krs_matkul', function ($join) use ($tahun_matkul_id) {
+                    $join->on('krs_matkul.krs_id', 'krs.id')
+                        ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
+                })
+                ->leftJoin('mhs_nilai', function ($q) use ($tahun_matkul_id) {
+                    $q->on('users.id', 'mhs_nilai.mhs_id')
+                        ->where('mhs_nilai.tahun_matkul_id', $tahun_matkul_id);
+                })
+                ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
+                ->where('mhs_nilai.publish', '1')
+                ->get()
+                ->map(function ($data) use ($kelas_kuliah_evaluasi, $kelas_kuliah) {
+                    return [
+                        'id_kls' => $kelas_kuliah->id_kelas_kuliah,
+                        'id_komp_eval_nilai_aktivitas_partisipatif' => $kelas_kuliah_evaluasi->firstWhere('nm_jns_eval', 'Aktivitas Partisipatif')->id_komp_eval,
+                        'id_komp_eval_nilai_hasil_proyek' => $kelas_kuliah_evaluasi->firstWhere('nm_jns_eval', 'Hasil Proyek')->id_komp_eval,
+                        'id_komp_eval_nilai_quiz' => $kelas_kuliah_evaluasi->firstWhere('komponen_evaluasi', 'Quiz')->id_komp_eval,
+                        'id_komp_eval_nilai_tugas' => $kelas_kuliah_evaluasi->firstWhere('komponen_evaluasi', 'Tugas')->id_komp_eval,
+                        'id_komp_eval_nilai_ujian_akhir_semester' => $kelas_kuliah_evaluasi->firstWhere('komponen_evaluasi', 'Ujian Akhir Semester')->id_komp_eval,
+                        'id_komp_eval_nilai_ujian_tengah_semester' => $kelas_kuliah_evaluasi->firstWhere('komponen_evaluasi', 'Ujian Tengah Semester')->id_komp_eval,
+                        'id_reg_pd' => $data->neo_feeder_id_registrasi_mahasiswa,
+                        'nilai_aktivitas_partisipatif' => $data->nilai_aktivitas_partisipatif ?? 0,
+                        'nilai_hasil_proyek' => $data->nilai_hasil_proyek ?? 0,
+                        'nilai_angka' => $data->nilai_angka ?? 0,
+                        'nilai_angka_masking' => $data->nilai_angka ?? 0,
+                        'filter_nilai_huruf' => [
+                            'column' => $data->nilai_huruf . " (" . $data->nilai_mutu . ")",
+                            'nilai_indeks' => $data->nilai_huruf . "#" . $data->nilai_mutu
+                        ],
+                        'nilai_huruf' => $data->nilai_huruf ?? 0,
+                        'nilai_indeks' => $data->nilai_indeks ?? 0,
+                        'nilai_quiz' => $data->nilai_quiz ?? 0,
+                        'nilai_tugas' => $data->nilai_tugas ?? 0,
+                        'nilai_ujian_akhir_semester' => $data->nilai_ujian_akhir_semester ?? 0,
+                        'nilai_ujian_tengah_semester' => $data->nilai_ujian_tengah_semester ?? 0
+                    ];
+                });
+
+            $datas = json_encode($datas);
+
+            $token = getTokenNeoFeeder();
+            $urlNeoFeeder = getUrlNeoFeeder();
+
+            Http::withHeaders([
+                'authorization' => 'Bearer ' . $token,
+            ])
+                ->withBody($datas, 'application/json')
+                ->post($urlNeoFeeder . '/ws/nilai/update');
+
+            return response()->json([
+                'message' => 'Berhasil dikirim'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Berhasil disimpan'
-        ], 200);
     }
 }

@@ -634,15 +634,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
             '{tahun_matkul_id}/download-template',
             [NilaiController::class, 'importNilai']
         )->name('importNilai');
-               Route::get(
-            '{tahun_matkul_id}/get-data',
-            [NilaiController::class, 'getDataNilai']
-        )->name('getDataNilai');
-        Route::patch(
-            '{tahun_matkul_id}/update-neo-feeder',
-            [NilaiController::class, 'updateNeoFeeder']
-        )->name('updateNeoFeeder');
-        Route::post('/neo-feeder', [NilaiController::class, 'storeNeoFeeder'])->name('storeNeoFeeder');
+        Route::post(
+            '{tahun_matkul_id}/storeNeoFeeder',
+            [NilaiController::class, 'storeNeoFeeder']
+        )->name('storeNeoFeeder');
         Route::get(
             '/{tahun_semester_id}/{tahun_matkul_id}/{mhs_id}/nilai',
             [NilaiController::class, 'getNilai']
