@@ -66,7 +66,7 @@ class NilaiController extends Controller
     {
         $mutu = DB::table('mutu')->get();
         $matkul = DB::table('tahun_matkul')
-            ->select('matkuls.nama')
+            ->select('matkuls.nama', 'tahun_matkul.tahun_ajaran_id')
             ->join('matkuls', 'matkuls.id', '=', 'tahun_matkul.matkul_id')
             ->where('tahun_matkul.id', $tahun_matkul_id)
             ->first();
@@ -355,5 +355,78 @@ class NilaiController extends Controller
                 'message' => $th->getMessage()
             ], 400);
         }
+    }
+
+    public function storeGetNeoFeeder(Request $request)
+    {
+        $dataReq = json_decode($request->data);
+        foreach ($dataReq as $data) {
+            $mhs = DB::table('users')
+                ->select('users.id')
+                ->join('profile_mahasiswas', 'profile_mahasiswas.user_id', 'users.id')
+                ->where('profile_mahasiswas.neo_feeder_id_registrasi_mahasiswa', $data->id_registrasi_mahasiswa)
+                ->where('users.id_neo_feeder', $data->id_mahasiswa)
+                ->first();
+
+            $tahunSemester = DB::table('tahun_semester')
+                ->where('prodi_id', $data->id_prodi)
+                ->where('tahun_ajaran_id', $data->angkatan)
+                ->where('semester_id', $data->id_semester)
+                ->first();
+
+            if (!$tahunSemester) {
+                return response()->json([
+                    'message' => 'Tahun semester tidak ditemukan'
+                ], 400);
+            }
+
+            $tahunMatkul = DB::table('tahun_matkul')
+                ->where('prodi_id', $data->id_prodi)
+                ->where('tahun_ajaran_id', $data->angkatan)
+                ->where('matkul_id', $data->id_matkul)
+                ->first();
+
+            if (!$tahunMatkul) {
+                return response()->json([
+                    'message' => 'Tahun matkul tidak ditemukan'
+                ], 400);
+            }
+
+            $mutu = DB::table('mutu')
+                ->where('nama', $data->nilai_huruf)
+                ->first();
+
+            if (!$mutu) {
+                return response()->json([
+                    'message' => 'Mutu tidak ditemukan'
+                ], 400);
+            }
+
+            $exists = DB::table('mhs_nilai')
+                ->where('mhs_id', $mhs->id)
+                ->where('tahun_semester_id', $tahunSemester->id)
+                ->where('tahun_matkul_id', $tahunMatkul->id)
+                ->exists();
+
+            if (!$exists) {
+                DB::table('mhs_nilai')
+                    ->insert([
+                        'mhs_id' => $mhs->id,
+                        'tahun_semester_id' => $tahunSemester->id,
+                        'tahun_matkul_id' => $tahunMatkul->id,
+                        'jml_sks' => (int) $data->sks_mata_kuliah,
+                        'mutu_id' => $mutu->id,
+                        'publish' => '1',
+                        'nilai_mutu' => $mutu->nilai,
+                        'send_neo_feeder' => '1',
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+            }
+        }
+
+        return response()->json([
+            'message' => 'Success'
+        ], 200);
     }
 }

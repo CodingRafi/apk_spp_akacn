@@ -606,6 +606,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     });
 
     Route::prefix('kelola-nilai')->name('kelola-nilai.')->group(function () {
+        Route::post(
+            'storeGetNeoFeeder',
+            [NilaiController::class, 'storeGetNeoFeeder']
+        )->name('storeGetNeoFeeder');
         Route::get(
             '/',
             [NilaiController::class, 'index']
