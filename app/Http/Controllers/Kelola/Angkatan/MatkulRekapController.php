@@ -461,15 +461,14 @@ class MatkulRekapController extends Controller
                 }
             }
             DB::commit();
+            return response()->json([
+                'message' => 'Berhasil disimpan'
+            ]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
                 'message' => $th->getMessage()
             ], 400);
         }
-
-        return response()->json([
-            'message' => 'Berhasil disimpan'
-        ]);
     }
 }

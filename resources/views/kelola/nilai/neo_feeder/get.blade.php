@@ -26,7 +26,7 @@
             try {
                 let raw = {
                     "act": "GetDetailNilaiPerkuliahanKelas",
-                    "filter": "angkatan='{{ request('tahun_ajaran_id') }}' and nilai_angka is not null and nilai_huruf is not null",
+                    "filter": "angkatan='{{ $matkul->tahun_ajaran_id }}' and nilai_angka is not null and nilai_huruf is not null",
                     "order": "",
                 };
 
@@ -98,7 +98,7 @@
 
             chunks.forEach((chunk, index) => {
                 $.ajax({
-                    url: '{{ route('kelola-nilai.storeNeoFeeder') }}',
+                    url: '{{ route('kelola-nilai.storeGetNeoFeeder') }}',
                     type: 'POST',
                     data: {
                         data: JSON.stringify(chunk)
