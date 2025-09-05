@@ -10,6 +10,16 @@
             $.LoadingOverlay("show");
             if (!url) {
                 showAlert('Url tidak ditemukan', 'error');
+                $.LoadingOverlay("hide");
+                return;
+            }
+
+            const tahun_ajaran_id = $('#tahun_ajaran_id').val()
+
+            if (!tahun_ajaran_id) {
+                showAlert('Tahun Ajaran tidak ditemukan', 'error');
+                $.LoadingOverlay("hide");
+                return;
             }
 
             dataNilai = [];
@@ -26,9 +36,11 @@
             try {
                 let raw = {
                     "act": "GetDetailNilaiPerkuliahanKelas",
-                    "filter": "angkatan='{{ $matkul->tahun_ajaran_id }}' and nilai_angka is not null and nilai_huruf is not null",
+                    "filter": `angkatan='${tahun_ajaran_id}' and nilai_angka is not null and nilai_huruf is not null`,
                     "order": "",
                 };
+
+                console.log(raw)
 
                 raw.token = token.data.token;
 
