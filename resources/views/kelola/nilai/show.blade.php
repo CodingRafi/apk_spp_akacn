@@ -32,9 +32,6 @@
                             <button class="btn btn-primary" type="button" onclick="sendNeoFeeder()">
                                 Send Neo Feeder
                             </button>
-                            <button class="btn btn-primary" type="button" onclick="getDataNeoFeeder()">
-                                Get Neo Feeder
-                            </button>
                         @endif
                     </div>
                 </div>
@@ -243,7 +240,6 @@
 
 @push('js')
     @if (Auth::user()->hasRole('admin'))
-        @include('kelola.nilai.neo_feeder.get')
         @include('kelola.nilai.neo_feeder.insert')
         <script>
             function publishNilai() {

@@ -11,21 +11,26 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3">
-                            <select id="prodi_id" class="form-control mb-3">
+                        <div class="col-md-3 mb-3">
+                            <select id="prodi_id" class="form-control">
                                 <option value="">Pilih Prodi</option>
                                 @foreach ($prodis as $prodi)
                                     <option value="{{ $prodi->id }}">{{ $prodi->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <select id="tahun_ajaran_id" class="select2 mb-3">
+                        <div class="col-md-3 mb-3">
+                            <select id="tahun_ajaran_id" class="select2">
                                 <option value="">Pilih Angkatan</option>
                                 @foreach ($tahunAjarans as $tahun_ajaran)
                                     <option value="{{ $tahun_ajaran->id }}">{{ $tahun_ajaran->nama }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <button class="btn btn-primary w-100" type="button" onclick="getDataNeoFeeder()">
+                                Get Neo Feeder
+                            </button>
                         </div>
                     </div>
                     <small class="text-danger">*Harap pilih semua filter untuk melihat mata kuliah</small>
@@ -48,6 +53,9 @@
 @endsection
 
 @push('js')
+    @if (Auth::user()->hasRole('admin'))
+        @include('kelola.nilai.neo_feeder.get')
+    @endif
     <script>
         let table;
         $(document).ready(function() {
