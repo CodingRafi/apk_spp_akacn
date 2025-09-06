@@ -308,7 +308,9 @@ class NilaiController extends Controller
                 })
                 ->leftJoin('mutu', 'mutu.id', 'mhs_nilai.mutu_id')
                 ->where('mhs_nilai.publish', '1')
-                ->get()
+                ->get();
+               
+            $dataSend = $datas
                 ->map(function ($data) use ($kelas_kuliah_evaluasi, $kelas_kuliah) {
                     return [
                         'id_kls' => $kelas_kuliah->id_kelas_kuliah,
@@ -336,7 +338,7 @@ class NilaiController extends Controller
                     ];
                 });
 
-            $datas = json_encode($datas);
+            $dataSend = json_encode($dataSend);
 
             $token = getTokenNeoFeeder();
             $urlNeoFeeder = getUrlNeoFeeder();
@@ -344,8 +346,15 @@ class NilaiController extends Controller
             Http::withHeaders([
                 'authorization' => 'Bearer ' . $token,
             ])
-                ->withBody($datas, 'application/json')
+                ->withBody($dataSend, 'application/json')
                 ->post($urlNeoFeeder . '/ws/nilai/update');
+
+            $mhs_id = $datas->pluck('mhs_id')->toArray();
+            DB::table('mhs_nilai')
+                ->whereIn('mhs_id', $mhs_id)
+                ->update([
+                    'send_neo_feeder' => '1'
+                ]);
 
             return response()->json([
                 'message' => 'Berhasil dikirim'
