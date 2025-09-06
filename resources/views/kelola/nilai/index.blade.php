@@ -27,11 +27,13 @@
                                 @endforeach
                             </select>
                         </div>
+                        @if (Auth::user()->hasRole('admin'))
                         <div class="col-md-2 mb-3">
                             <button class="btn btn-primary w-100" type="button" onclick="getDataNeoFeeder()">
                                 Get Neo Feeder
                             </button>
                         </div>
+                        @endif
                     </div>
                     <small class="text-danger">*Harap pilih semua filter untuk melihat mata kuliah</small>
                     <div class="table-responsive mt-3">
