@@ -13,7 +13,7 @@
                     </div>
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
-                            @if ($data->pengajar_id == Auth::user()->id and !is_null($data->approved))
+                            @if ($data->pengajar_id == Auth::user()->id and is_null($data->approved))
                                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail
                                     @if ($data->type == 'pertemuan')
                                         Materi
