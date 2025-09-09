@@ -46,7 +46,7 @@
                         </div>
                     @else
                         @can('jadwal_approval')
-                            @if ($data->presensi_mulai)
+                            @if ($data->presensi_mulai && $data->presensi_selesai)
                                 @if ($data->approved == '1')
                                     <form
                                         action="{{ route('kelola-presensi.jadwal.storeApproval', ['jadwal_id' => $data->id]) }}"
