@@ -71,6 +71,9 @@ class ProfileController extends Controller
                 ->join('profile_dosens as b', 'users.id', 'b.user_id')
                 ->where('b.status', '1')
                 ->get();
+
+            $data->dosen_id = $data->asdos_dosen->pluck('id')->toArray();
+            
             $return += [
                 'dosen' => $dosen
             ];
