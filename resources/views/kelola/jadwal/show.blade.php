@@ -13,7 +13,7 @@
                     </div>
                     @if (getRole()->name != 'admin')
                         <div class="d-flex align-items-center" style="gap: 1rem;">
-                            @if ($data->pengajar_id == Auth::user()->id and is_null($data->approved))
+                            @if ($data->pengajar_id == Auth::user()->id and $data->approved != '2')
                                 <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail
                                     @if ($data->type == 'pertemuan')
                                         Materi
@@ -280,7 +280,7 @@
             </div>
         </div>
     @endif
-    @if ($data->pengajar_id == Auth::user()->id)
+    @if ($data->pengajar_id == Auth::user()->id and $data->approved != '2')
         <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
