@@ -25,14 +25,9 @@ class AsdosRequest extends FormRequest
     {
         $validate = [
             'name' => 'required',
-            'tempat_lahir' => 'required',
-            'tgl_lahir' => 'required',
-            'agama_id' => 'required',
-            'rt' => 'digits:3',
-            'rw' => 'digits:3',
+            'rt' => 'nullable|digits:3',
+            'rw' => 'nullable|digits:3',
             'profile' => 'file|mimes:png,jpg,jpeg|max:1024',
-            'kewarganegaraan_id' => 'required',
-            'wilayah_id' => 'required',
         ];
 
         $role = getRole();
