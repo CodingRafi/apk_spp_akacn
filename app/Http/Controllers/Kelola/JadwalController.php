@@ -941,4 +941,28 @@ class JadwalController extends Controller
 
         return redirect()->back()->with('success', 'Berhasil direvisi!');
     }
+
+    public function updatePresensiPengajar(Request $request){
+        $request->validate([
+            'presensi_mulai' => 'required',
+        ]);
+
+        $data = [
+            'presensi_mulai' => $request->presensi_mulai,
+            'presensi_selesai' => $request->presensi_selesai ?? null,
+            'updated_at' => now()
+        ];
+
+        if ($request->presensi_selesai) {
+            $data['approved'] = 1;
+        }
+
+        DB::table('jadwal')
+            ->where('id', $request->jadwal_id)
+            ->update($data);
+
+        return response()->json([
+            'message' => 'Berhasil disimpan!',
+        ], 200);
+    }
 }
