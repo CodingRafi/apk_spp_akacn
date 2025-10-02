@@ -573,6 +573,10 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
                         '/get-presensi',
                         [JadwalController::class, 'getPresensi']
                     )->name('getPresensi');
+                    Route::put(
+                        '/',
+                        [JadwalController::class, 'updatePresensiPengajar']
+                    )->name('updatePresensiPengajar');
                     Route::get(
                         '/{mhs_id}',
                         [JadwalController::class, 'getPresensiMhs']

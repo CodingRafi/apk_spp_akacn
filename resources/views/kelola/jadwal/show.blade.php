@@ -103,6 +103,57 @@
                                             onclick="return confirm('Apakah anda yakin ingin merevisi ini?')">Revisi</button>
                                     </form>
                                 @endif
+                            @else
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#SetPresensi">
+                                    Set Presensi
+                                </button>
+                                <div class="modal fade" id="SetPresensi" tabindex="-1" aria-labelledby="SetPresensiLabel"
+                                    aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <form action="{{ route('kelola-presensi.jadwal.tahun_matkul.updatePresensiPengajar', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => $data->id]) }}" method="post">
+                                            @csrf
+                                            @method('put')
+                                            <div class="modal-content">
+                                                <div class="modal-header pb-0">
+                                                    <h1 class="modal-title fs-5" id="SetPresensiLabel">Set Presensi Mengajar
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="alert alert-info" role="alert">
+                                                        Catatan: Jika sudah disubmit, presensi tidak dapat diubah lagi.
+                                                        <br>
+                                                        <br>
+                                                        Jika mau memulai jadwal terlewat maka hanya edit <strong>"Presensi Mulai"</strong> saja.
+                                                        <br>
+                                                        <br>
+                                                        Jika mau membuat jadwal agar langsung bisa diverifikasi, Maka edit <strong>"Presensi Mulai"</strong> dan <strong>"Presensi Pulang"</strong>.
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="presensi_mulai" class="form-label">Presensi
+                                                            Mulai</label>
+                                                        <input class="form-control" type="datetime-local"
+                                                            id="presensi_mulai" name="presensi_mulai" />
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="presensi_selesai" class="form-label">Presensi
+                                                            Pulang</label>
+                                                        <input class="form-control" type="datetime-local"
+                                                            id="presensi_selesai" name="presensi_selesai" />
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Tutup</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                        onclick="submitForm(this.form, this, () => {window.location.reload()})" data-value="3">Simpan</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             @endif
                         @endcan
                     @endif
