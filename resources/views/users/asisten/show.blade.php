@@ -12,7 +12,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @include('users.asdos.form', [
+                    @include('users.asisten.form', [
                         'disabled' => true,
                         'role' == 'asisten',
                     ])
