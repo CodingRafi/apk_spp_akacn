@@ -858,13 +858,14 @@ class JadwalController extends Controller
             return redirect()->back()->with('error', 'Tanggal tidak valid');
         }
 
-        if ($jadwal->type == 'pertemuan') {
-            if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
-                ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
-            ) {
-                return redirect()->back()->with('error', 'Waktu tidak valid');
-            }
-        }
+        // Minta ga usah dipakai
+        // if ($jadwal->type == 'pertemuan') {
+        //     if (($today->format('H:i') < date("H:i", strtotime($jadwal->jam_mulai))) ||
+        //         ($today->format('H:i') > date("H:i", strtotime($jadwal->jam_akhir)))
+        //     ) {
+        //         return redirect()->back()->with('error', 'Waktu tidak valid');
+        //     }
+        // }
 
         DB::table('jadwal')
             ->where('id', $jadwal_id)
