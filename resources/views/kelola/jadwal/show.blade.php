@@ -46,6 +46,14 @@
                         </div>
                     @else
                         @can('jadwal_approval')
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#jadwal">Edit Detail
+                                @if ($data->type == 'pertemuan')
+                                    Materi
+                                @else
+                                    Situasi
+                                @endif
+                            </button>
                             @if ($data->presensi_mulai && $data->presensi_selesai)
                                 @if ($data->approved == '1')
                                     <form
@@ -111,7 +119,9 @@
                                 <div class="modal fade" id="SetPresensi" tabindex="-1" aria-labelledby="SetPresensiLabel"
                                     aria-hidden="true">
                                     <div class="modal-dialog">
-                                        <form action="{{ route('kelola-presensi.jadwal.tahun_matkul.updatePresensiPengajar', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => $data->id]) }}" method="post">
+                                        <form
+                                            action="{{ route('kelola-presensi.jadwal.tahun_matkul.updatePresensiPengajar', ['tahun_matkul_id' => request('tahun_matkul_id'), 'jadwal_id' => $data->id]) }}"
+                                            method="post">
                                             @csrf
                                             @method('put')
                                             <div class="modal-content">
@@ -126,16 +136,19 @@
                                                         Catatan: Jika sudah disubmit, presensi tidak dapat diubah lagi.
                                                         <br>
                                                         <br>
-                                                        Jika mau memulai jadwal terlewat maka hanya edit <strong>"Presensi Mulai"</strong> saja.
+                                                        Jika mau memulai jadwal terlewat maka hanya edit <strong>"Presensi
+                                                            Mulai"</strong> saja.
                                                         <br>
                                                         <br>
-                                                        Jika mau membuat jadwal agar langsung bisa diverifikasi, Maka edit <strong>"Presensi Mulai"</strong> dan <strong>"Presensi Pulang"</strong>.
+                                                        Jika mau membuat jadwal agar langsung bisa diverifikasi, Maka edit
+                                                        <strong>"Presensi Mulai"</strong> dan <strong>"Presensi
+                                                            Pulang"</strong>.
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="presensi_mulai" class="form-label">Presensi
                                                             Mulai</label>
-                                                        <input class="form-control" type="datetime-local"
-                                                            id="presensi_mulai" name="presensi_mulai" />
+                                                        <input class="form-control" type="datetime-local" id="presensi_mulai"
+                                                            name="presensi_mulai" />
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="presensi_selesai" class="form-label">Presensi
@@ -148,13 +161,15 @@
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Tutup</button>
                                                     <button type="button" class="btn btn-primary"
-                                                        onclick="submitForm(this.form, this, () => {window.location.reload()})" data-value="3">Simpan</button>
+                                                        onclick="submitForm(this.form, this, () => {window.location.reload()})"
+                                                        data-value="3">Simpan</button>
                                                 </div>
                                             </div>
                                         </form>
                                     </div>
                                 </div>
                             @endif
+                        </div>
                         @endcan
                     @endif
                 </div>
@@ -331,7 +346,7 @@
             </div>
         </div>
     @endif
-    @if ($data->pengajar_id == Auth::user()->id and $data->approved != '2')
+    @if (($data->pengajar_id == Auth::user()->id and $data->approved != '2') || Auth::user()->hasRole('admin'))
         <div class="modal fade" id="jadwal" tabindex="-1" aria-labelledby="jadwalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
