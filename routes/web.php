@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
         Route::get('{role}/create', [UserController::class, 'create'])->name('create');
         Route::get('{role}/{id}/edit', [UserController::class, 'edit'])->name('edit');
         Route::get('{role}/{id}', [UserController::class, 'show'])->name('show');
+        Route::post('{role}/{id}/change-status', [UserController::class, 'change_status'])->name('change_status');
         Route::resource('admin', AdminController::class)->only('update');
         Route::resource('mahasiswa', MahasiwaController::class)->except('index', 'create', 'edit');
         Route::resource('dosen', DosenController::class)->except('index', 'create', 'edit');
