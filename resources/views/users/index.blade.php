@@ -35,15 +35,15 @@
                                 </select>
                             </div>
                             @if (Auth::user()->hasRole('admin'))
-                            <div class="col-md-2 mb-3">
-                                <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}"
-                                    class="form-export">
-                                    <input type="hidden" name="rombel">
-                                    <input type="hidden" name="prodi">
-                                    <input type="hidden" name="tahun_ajaran">
-                                    <button type="button" class="btn btn-primary w-100">Export Pembayaran</button>
-                                </form>
-                            </div>
+                                <div class="col-md-2 mb-3">
+                                    <form action="{{ route('kelola-users.exportPembayaran', request('role')) }}"
+                                        class="form-export">
+                                        <input type="hidden" name="rombel">
+                                        <input type="hidden" name="prodi">
+                                        <input type="hidden" name="tahun_ajaran">
+                                        <button type="button" class="btn btn-primary w-100">Export Pembayaran</button>
+                                    </form>
+                                </div>
                             @endif
                         @endif
                         @can('add_users')
@@ -78,6 +78,9 @@
                                     @else
                                         <th class="col-2">Email</th>
                                     @endcan
+                                    @if (request('role') == 'dosen')
+                                        <th class="col-2">Status</th>
+                                    @endif
                                     @if (request('role') == 'mahasiswa')
                                         <th class="col-2">Kirim Neo Feeder</th>
                                     @endif
@@ -139,6 +142,11 @@
                     {
                         "data": "sync_neo_feeder"
                     },
+                @endif
+                @if (request('role') == 'dosen')
+                    {
+                        "data": "status"
+                    },
                 @endif {
                     "data": "options"
                 }
@@ -159,6 +167,33 @@
             $('.form-export input[name="tahun_ajaran"]').val($('#filter-tahun-ajaran').val());
             $('.form-export').submit();
         })
+    </script>
+@endif
+@if (request('role') == 'dosen')
+    <script>
+        function change_status(el, user_id) {
+            console.log('oke')
+            const form = new FormData();
+            form.append('status',  el.checked ? 1 : 0);
+            $.ajax({
+                url: '{{ route('kelola-users.change_status', ['role' => 'dosen', 'id' => ':user_id']) }}'.replace(':user_id', user_id),
+                type: 'POST',
+                data: form,
+                processData: false,       
+                contentType: false,        
+                success: function(res) {
+                    $.LoadingOverlay("hide");
+                    showAlert(`Berhasil ubah status!`, 'success');
+                    table.ajax.reload();
+                },
+                error: function() {
+                    $.LoadingOverlay("hide");
+                    $(el).attr('checked', !el.checked);
+                    showAlert(`Gagal ubah status`, 'error');
+                    table.ajax.reload();
+                }
+            })
+        }
     </script>
 @endif
 @endpush

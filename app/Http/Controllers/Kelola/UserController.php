@@ -111,7 +111,17 @@ class UserController extends Controller
 
                 return '';
             })
-            ->rawColumns(['options', 'sync_neo_feeder'])
+            ->addColumn('status', function ($data) {
+                if (request('role') == 'dosen') {
+                    return "<div class='form-check form-switch'>
+                                <input class='form-check-input' type='checkbox' role='switch' name='status' value='1' " . ($data->dosen->status ? 'checked' : '') . "
+                                    id='status' onclick='change_status(this, `". $data->id ."`)'>
+                            </div>";
+                }
+
+                return '';
+            })
+            ->rawColumns(['options', 'sync_neo_feeder', 'status'])
             ->make(true);
     }
 
@@ -434,5 +444,13 @@ class UserController extends Controller
         }
 
         return view('users.' . $role . '.show', $return);
+    }
+
+    public function change_status(Request $request, $role, $id){
+        $data = User::findOrFail($id);
+        $data->{$role}()->update(['status' => $request->status]);
+        return response()->json([
+            'message' => 'Berhasil diupdate!'
+        ], 200);
     }
 }
