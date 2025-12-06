@@ -35,8 +35,11 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('permission:view_users', ['only' => [
-            'index', 'data', 'store',
-            'exportPembayaran', 'printPembayaran',
+            'index',
+            'data',
+            'store',
+            'exportPembayaran',
+            'printPembayaran',
             'show'
         ]]);
         $this->middleware('permission:add_users', ['only' => ['create', 'store', 'import', 'saveImport']]);
@@ -70,13 +73,13 @@ class UserController extends Controller
                             $q->where('b.prodi_id', request('prodi'))
                                 ->where('b.tahun_masuk_id', request('tahun_ajaran'));
                         })
-                        ->when(request('rombel'), function($q){
+                        ->when(request('rombel'), function ($q) {
                             $q->where('b.rombel_id', request('rombel'));
                         });
                 })
                 ->role($role)
                 ->get();
-        }else{
+        } else {
             $datas = [];
         }
 
@@ -84,7 +87,7 @@ class UserController extends Controller
             $options = '';
 
             if (auth()->user()->can('edit_users') && $role == 'mahasiswa' && $data->mahasiswa->sync_neo_feeder == 0) {
-                $options .= '<button class="btn btn-info m-1" type="button" onclick="sendDataMhsToNeoFeeder(' . $data->id . ', `'. $data->id_neo_feeder .'`)">Kirim Neo Feeder</button>';
+                $options .= '<button class="btn btn-info m-1" type="button" onclick="sendDataMhsToNeoFeeder(' . $data->id . ', `' . $data->id_neo_feeder . '`)">Kirim Neo Feeder</button>';
             }
 
             $options = $options . "<a href='" . route('kelola-users.show', ['role' => $role, 'id' => $data->id]) . "' class='btn btn-primary m-1'>Detail</a>";
@@ -115,7 +118,7 @@ class UserController extends Controller
                 if (request('role') == 'dosen') {
                     return "<div class='form-check form-switch'>
                                 <input class='form-check-input' type='checkbox' role='switch' name='status' value='1' " . ($data->dosen->status ? 'checked' : '') . "
-                                    id='status' onclick='change_status(this, `". $data->id ."`)'>
+                                    id='status' onclick='change_status(this, `" . $data->id . "`)'>
                             </div>";
                 }
 
@@ -127,6 +130,10 @@ class UserController extends Controller
 
     public function create($role)
     {
+        if ($role == 'dosen') {
+            abort(404);
+        }
+
         $agamas = Agama::all();
         $kewarganegaraan = Kewarganegaraan::all();
         $return = [
@@ -187,6 +194,10 @@ class UserController extends Controller
 
     public function edit($role, $id)
     {
+        if ($role == 'dosen') {
+            abort(404);
+        }
+
         $data = User::findOrFail($id);
         if (!$data->hasRole($role)) {
             abort(404);
@@ -251,7 +262,7 @@ class UserController extends Controller
                 ->get();
 
             $data->dosen_id = $data->asdos_dosen->pluck('id')->toArray();
-            
+
             $return += [
                 'dosen' => $dosen,
             ];
@@ -428,7 +439,7 @@ class UserController extends Controller
                 ->get();
 
             $data->dosen_id = $data->asdos_dosen->pluck('id')->toArray();
-                
+
             $return += [
                 'dosen' => $dosen
             ];
@@ -446,7 +457,8 @@ class UserController extends Controller
         return view('users.' . $role . '.show', $return);
     }
 
-    public function change_status(Request $request, $role, $id){
+    public function change_status(Request $request, $role, $id)
+    {
         $data = User::findOrFail($id);
         $data->{$role}()->update(['status' => $request->status]);
         return response()->json([
