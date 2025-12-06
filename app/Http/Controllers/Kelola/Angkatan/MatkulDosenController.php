@@ -20,9 +20,13 @@ class MatkulDosenController extends Controller
             $dosens = User::role('dosen')
                 ->select('users.*')
                 ->join('profile_dosens', 'profile_dosens.user_id', 'users.id')
-                ->join('penugasan_dosens', function ($q) use ($tahunAjaranAktif) {
-                    $q->on('users.id_neo_feeder', 'penugasan_dosens.id_dosen')
+                ->leftJoin('penugasan_dosens', function ($q) use ($tahunAjaranAktif) {
+                    $q->on('users.id_neo_feeder', '=', 'penugasan_dosens.id_dosen')
                         ->where('penugasan_dosens.tahun_ajaran_id', $tahunAjaranAktif->id);
+                })
+                ->where(function ($q) {
+                    $q->where('profile_dosens.status', '1')
+                        ->orWhereNotNull('penugasan_dosens.id');
                 })
                 ->get();
         }
@@ -105,7 +109,8 @@ class MatkulDosenController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, $tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id){
+    public function update(Request $request, $tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id)
+    {
         $request->validate([
             'sks_substansi_total' => 'required',
             'rencana_tatap_muka' => 'required',
@@ -128,23 +133,24 @@ class MatkulDosenController extends Controller
         ], 200);
     }
 
-    public function destroy($tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id){
+    public function destroy($tahun_ajaran_id, $matkul_id, $tahun_matkul_dosen_id)
+    {
         $get = DB::table('tahun_matkul_dosen')
-                ->where('id', $tahun_matkul_dosen_id)
-                ->first();
+            ->where('id', $tahun_matkul_dosen_id)
+            ->first();
 
         //? Validation jika sudah buat jadwal
         $check = DB::table('jadwal')
-                    ->where('tahun_matkul_id', $matkul_id)
-                    ->where('pengajar_id', $get->dosen_id)
-                    ->count();
+            ->where('tahun_matkul_id', $matkul_id)
+            ->where('pengajar_id', $get->dosen_id)
+            ->count();
 
         if ($check > 0) {
             return response()->json([
                 'message' => 'Tidak bisa dihapus karena sudah ada jadwal'
             ], 400);
         }
-        
+
         DB::table('tahun_matkul_dosen')
             ->where('id', $tahun_matkul_dosen_id)
             ->delete();
