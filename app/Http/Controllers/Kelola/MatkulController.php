@@ -33,10 +33,6 @@ class MatkulController extends Controller
                         Detail
                     </button>";
 
-            // $options = $options . "<button class='btn btn-danger mx-2' onclick='deleteDataAjax(`" . route('data-master.mata-kuliah.destroy', $data->id) . "`, () => {tableMatkul.ajax.reload()})' type='button'>
-            //                                     Hapus
-            //                                 </button>";
-
             $data->options = $options;
         }
 
@@ -82,7 +78,7 @@ class MatkulController extends Controller
     public function update(MatkulRequest $request, $id)
     {
         $matkul = Matkul::find($id);
-        
+
         DB::beginTransaction();
         try {
             $requestParse = $request->except('_method', '_token');
