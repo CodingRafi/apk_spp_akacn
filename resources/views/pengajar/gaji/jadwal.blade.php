@@ -5,20 +5,20 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="text-capitalize">Gaji</h5>
+                    <h5 class="text-capitalize">Rekap Jadwal ({{ parseDate($gaji->tgl_awal) }} - {{ parseDate($gaji->tgl_akhir) }})</h5>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
+                                    <th>Type</th>
+                                    <th>Mata Kuliah</th>
+                                    <th>Presensi Mulai</th>
+                                    <th>Presensi Selesai</th>
                                     <th>Tanggal</th>
-                                    <th>Tunjangan</th>
-                                    <th>Total Kehadiran</th>
-                                    <th>Uang Transport</th>
-                                    <th>Total Uang Transport</th>
-                                    <th>Total Gaji</th>
-                                    <th>Aksi</th>
+                                    <th>Materi</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                         </table>
@@ -36,29 +36,29 @@
             table = $('.table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('gaji.data') }}',
+                ajax: '{{ route('gaji.rekap_jadwal_data', ['gaji_id' => request('gaji_id')]) }}',
                 columns: [
                     {
-                        "data": "nama"
+                        "data": "type"
                     },
                     {
-                        "data": "tunjangan"
+                        "data": "matkul"
                     },
                     {
-                        "data": "total_kehadiran"
+                        "data": "presensi_mulai"
                     },
                     {
-                        "data": "fee_transport"
+                        "data": "presensi_selesai"
                     },
                     {
-                        "data": "total_fee_transport"
+                        "data": "tgl"
                     },
                     {
-                        "data": "total"
+                        "data": "materi"
                     },
                     {
-                        "data": "options"
-                    }
+                        "data": "status"
+                    },
                 ],
                 pageLength: 25,
             });

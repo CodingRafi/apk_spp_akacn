@@ -696,6 +696,8 @@ Route::group(['middleware' => ['auth', 'check.status']], function () {
     Route::prefix('gaji')->name('gaji.')->group(function () {
         Route::get('/', [PengajarGajiController::class, 'index'])->name('index');
         Route::get('data', [PengajarGajiController::class, 'data'])->name('data');
+        Route::get('{gaji_id}/rekap-jadwal', [PengajarGajiController::class, 'rekap_jadwal'])->name('rekap_jadwal');
+        Route::get('{gaji_id}/rekap-jadwal-data', [PengajarGajiController::class, 'rekap_jadwal_data'])->name('rekap_jadwal_data');
     });
 
     Route::get('setting/data', [SettingController::class, 'data'])->name('setting.data');

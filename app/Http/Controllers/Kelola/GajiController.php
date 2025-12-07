@@ -80,6 +80,7 @@ class GajiController extends Controller
             ->get();
 
         foreach ($pengajar as $item) {
+            
             $feeTeoriSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksTeoriDosen : $defaultFeeSksTeoriAsdos;
             $feePraktekSks = ($item->roles[0]->name == 'dosen') ? $defaultFeeSksPraktekDosen : $defaultFeeSksPraktekAsdos;
             $feeTransportasi = ($item->roles[0]->name == 'dosen') ? $defaultFeeTransportDosen : $defaultFeeTransportAsdos;
@@ -195,6 +196,9 @@ class GajiController extends Controller
             ->editColumn('fee_sks', function ($data) {
                 return formatRupiah($data->fee_sks);
             })
+            ->editColumn('total', function ($data) {
+                return formatRupiah($data->total);
+            })
             ->addIndexColumn()
             ->rawColumns(['options'])
             ->make(true);
@@ -285,6 +289,9 @@ class GajiController extends Controller
             })
             ->editColumn('total_fee_sks_praktek', function ($data) {
                 return formatRupiah($data->total_fee_sks_praktek);
+            })
+            ->editColumn('total', function ($data) {
+                return formatRupiah($data->total);
             })
             ->addIndexColumn()
             ->make(true);

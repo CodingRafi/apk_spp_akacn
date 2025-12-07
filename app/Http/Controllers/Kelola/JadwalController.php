@@ -143,7 +143,7 @@ class JadwalController extends Controller
 
         return DataTables::of($datas)
             ->addIndexColumn()
-            ->addColumn('pertemuan', function($row) use (&$i) {
+            ->addColumn('pertemuan', function ($row) use (&$i) {
                 if ($row->type == 'ujian') {
                     return strtoupper($row->jenis_ujian);
                 }
@@ -175,17 +175,18 @@ class JadwalController extends Controller
             'kode' => 'required|max:6|min:6',
             'type' => 'required',
             'pengajar_id' => 'required',
+            'materi_id' => 'required',
         ];
-
-        if ($request->type == 'pertemuan') {
-            $validate += [
-                'materi_id' => 'required',
-            ];
-        }
 
         if ($roleUser->name == 'admin') {
             $validate += [
                 'tgl' => 'required',
+            ];
+        }
+
+        if ($request->type == 'ujian') {
+            $validate += [
+                'jenis' => 'required',
             ];
         }
 
@@ -283,6 +284,10 @@ class JadwalController extends Controller
             }
         }
 
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
+
         $data = [
             'tgl' => $tgl,
             'tahun_matkul_id' => $tahun_matkul_id,
@@ -290,26 +295,15 @@ class JadwalController extends Controller
             'ket' => $request->ket,
             'kode' => $request->kode,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
+            'materi_id' => $request->materi_id,
+            'materi' => $materi->materi,
+            'type' => $request->type,
+            'jenis_ujian' => $request->jenis ?? null
         ];
 
-        if ($request->type == 'pertemuan') {
-            $materi = DB::table('matkul_materi')
-                ->where('id', $request->materi_id)
-                ->first();
-
+        if ($request->type == 'ujian') {
             $data += [
-                'materi_id' => $request->materi_id,
-                'materi' => $materi->materi,
-                'type' => 'pertemuan',
-                'jenis_ujian' => null
-            ];
-        } else {
-            $data += [
-                'materi_id' => null,
-                'materi' => null,
-                'type' => 'ujian',
-                'jenis_ujian' => $request->jenis,
                 'ruang_id' => $request->ruang_id,
                 'sifat_ujian_id' => $request->sifat_ujian_id,
                 'tingkat' => $request->tingkat
@@ -429,7 +423,7 @@ class JadwalController extends Controller
             })
             ->distinct()
             ->get();
-            
+
         return response()->json([
             'data' => $data
         ], 200);
@@ -521,16 +515,9 @@ class JadwalController extends Controller
 
     public function getJenisUjian($tahun_matkul_id)
     {
-        $tahun_matkul = DB::table('tahun_matkul')
-            ->select('prodi_id', 'tahun_ajaran_id')
-            ->where('id', $tahun_matkul_id)
-            ->first();
-
-        $getTahunSemesterAktif = $this->getSemesterAktif($tahun_matkul->tahun_ajaran_id, $tahun_matkul->prodi_id);
         $jadwalUjian = DB::table('jadwal')
             ->select('jenis_ujian')
             ->where('type', 'ujian')
-            ->where('tahun_semester_id', $getTahunSemesterAktif->id)
             ->where('tahun_matkul_id', $tahun_matkul_id)
             ->get()
             ->pluck('jenis_ujian');
@@ -585,19 +572,19 @@ class JadwalController extends Controller
     public function getPresensi($tahun_matkul_id, $jadwal_id)
     {
         $presensi = DB::table('krs')
-                    ->select('users.id', 'users.name', 'users.login_key', 'jadwal_presensi.status', 'rombels.nama as rombel')
-                    ->join('krs_matkul', function($q) use ($tahun_matkul_id) {
-                        $q->on('krs.id', '=', 'krs_matkul.krs_id')
-                            ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
-                    })
-                    ->join('users', 'krs.mhs_id', '=', 'users.id')
-                    ->join('profile_mahasiswas', 'users.id', '=', 'profile_mahasiswas.user_id')
-                    ->join('rombels', 'rombels.id', '=', 'profile_mahasiswas.rombel_id')
-                    ->leftJoin('jadwal_presensi', function ($join) use ($jadwal_id) {
-                        $join->on('jadwal_presensi.mhs_id', 'users.id')
-                            ->where('jadwal_presensi.jadwal_id', $jadwal_id);
-                    })
-                    ->get();
+            ->select('users.id', 'users.name', 'users.login_key', 'jadwal_presensi.status', 'rombels.nama as rombel')
+            ->join('krs_matkul', function ($q) use ($tahun_matkul_id) {
+                $q->on('krs.id', '=', 'krs_matkul.krs_id')
+                    ->where('krs_matkul.tahun_matkul_id', $tahun_matkul_id);
+            })
+            ->join('users', 'krs.mhs_id', '=', 'users.id')
+            ->join('profile_mahasiswas', 'users.id', '=', 'profile_mahasiswas.user_id')
+            ->join('rombels', 'rombels.id', '=', 'profile_mahasiswas.rombel_id')
+            ->leftJoin('jadwal_presensi', function ($join) use ($jadwal_id) {
+                $join->on('jadwal_presensi.mhs_id', 'users.id')
+                    ->where('jadwal_presensi.jadwal_id', $jadwal_id);
+            })
+            ->get();
 
         return response()->json([
             'data' => $presensi
@@ -677,7 +664,8 @@ class JadwalController extends Controller
         ], 200);
     }
 
-    public function updatePresensiManyMhs(Request $request, $tahun_matkul_id, $jadwal_id){
+    public function updatePresensiManyMhs(Request $request, $tahun_matkul_id, $jadwal_id)
+    {
         $request->validate([
             'status' => 'required',
         ]);
@@ -733,6 +721,29 @@ class JadwalController extends Controller
 
     public function update(Request $request, $tahun_ajaran_id, $jadwal_id)
     {
+        $roleUser = getRole();
+
+        $validate = [
+            'kode' => 'required|max:6|min:6',
+            'type' => 'required',
+            'pengajar_id' => 'required',
+            'materi_id' => 'required',
+        ];
+
+        if ($roleUser->name == 'admin') {
+            $validate += [
+                'tgl' => 'required',
+            ];
+        }
+
+        if ($request->type == 'ujian') {
+            $validate += [
+                'jenis' => 'required',
+            ];
+        }
+
+        $request->validate($validate);
+
         $jadwal = DB::table('jadwal')
             ->where('id', $jadwal_id)
             ->first();
@@ -743,31 +754,24 @@ class JadwalController extends Controller
             ], 400);
         }
 
+        $materi = DB::table('matkul_materi')
+            ->where('id', $request->materi_id)
+            ->first();
+
         $data = [
             'tgl' => $request->tgl,
             'tahun_matkul_id' => $request->tahun_matkul_id,
             'ket' => $request->ket,
             'kode' => $request->kode,
-            'updated_at' => now()
+            'updated_at' => now(),
+            'materi_id' => $request->materi_id,
+            'materi' => $materi->materi,
+            'type' => $request->type,
+            'jenis_ujian' => $request->jenis ?? null,
         ];
 
-        if ($request->type == 'pertemuan') {
-            $materi = DB::table('matkul_materi')
-                ->where('id', $request->materi_id)
-                ->first();
-
+        if ($request->type == 'ujian') {
             $data += [
-                'materi_id' => $request->materi_id,
-                'materi' => $materi->materi,
-                'type' => 'pertemuan',
-                'jenis_ujian' => null
-            ];
-        } else {
-            $data += [
-                'materi_id' => null,
-                'materi' => null,
-                'type' => 'ujian',
-                'jenis_ujian' => $request->jenis,
                 'tingkat' => $request->tingkat,
                 'ruang_id' => $request->ruang_id,
                 'sifat_ujian_id' => $request->sifat_ujian_id,
@@ -812,7 +816,8 @@ class JadwalController extends Controller
         }
     }
 
-    public function exportBeritaAcara($tahun_matkul_id, $jadwal_id){
+    public function exportBeritaAcara($tahun_matkul_id, $jadwal_id)
+    {
         return Excel::download(new BeritaAcaraUjianExport($jadwal_id), 'berita_acara_ujian.xlsx');
     }
 
@@ -942,7 +947,8 @@ class JadwalController extends Controller
         return redirect()->back()->with('success', 'Berhasil direvisi!');
     }
 
-    public function updatePresensiPengajar(Request $request){
+    public function updatePresensiPengajar(Request $request)
+    {
         $request->validate([
             'presensi_mulai' => 'required',
         ]);

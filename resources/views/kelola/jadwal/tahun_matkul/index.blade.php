@@ -103,7 +103,7 @@
     <template id="form-ujian">
         <div class="mb-3">
             <label for="jenis" class="form-label">Jenis Ujian</label>
-            <select name="jenis" id="jenis" class="form-control">
+            <select name="jenis" id="jenis" class="form-control" required>
                 <option value="">Pilih Jenis Ujian</option>
             </select>
         </div>
@@ -179,42 +179,34 @@
 
         // Modified get_materi to handle unbinding/rebinding
         function get_materi(data = {}) {
+            $.ajax({
+                url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getMateri', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}",
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    except: data.materi_id
+                },
+                success: function(res) {
+                    $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
 
-            @if (getRole()->name == 'admin')
-                const check = $('#type').val() && $('#type')
-                    .val() == 'pertemuan';
-            @endif
+                    $.each(res.data, function(i, e) {
+                        $('#materi_id').append(
+                            `<option value="${e.id}">${e.materi} (${e.type})</option>`)
+                    })
 
-            if (check) {
-                $.ajax({
-                    url: "{{ route('kelola-presensi.jadwal.tahun_matkul.getMateri', ['tahun_matkul_id' => request('tahun_matkul_id')]) }}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        except: data.materi_id
-                    },
-                    success: function(res) {
-                        $('#materi_id').empty().append(`<option value="">Pilih Materi</option>`);
-
-                        $.each(res.data, function(i, e) {
-                            $('#materi_id').append(
-                                `<option value="${e.id}">${e.materi} (${e.type})</option>`)
-                        })
-
-                        if (data.materi_id) {
-                            // Temporarily unbind the main change listener
-                            $('#type').off('change', handleTypeMatkulChange);
-                            // Set value and trigger change for Select2
-                            $('#materi_id').val(data.materi_id).trigger('change');
-                            // Rebind the main change listener
-                            $('#type').on('change', handleTypeMatkulChange);
-                        }
-                    },
-                    error: function(err) {
-                        alert('Gagal get materi');
+                    if (data.materi_id) {
+                        // Temporarily unbind the main change listener
+                        $('#type').off('change', handleTypeMatkulChange);
+                        // Set value and trigger change for Select2
+                        $('#materi_id').val(data.materi_id).trigger('change');
+                        // Rebind the main change listener
+                        $('#type').on('change', handleTypeMatkulChange);
                     }
-                })
-            }
+                },
+                error: function(err) {
+                    alert('Gagal get materi');
+                }
+            })
         }
 
         function getPengajar(data = {}) {
@@ -349,28 +341,21 @@
                 $('.div-pengajar').html($('#select-pengajar').html());
                 // $('#pengajar_id').empty(); // This will be handled by getPengajar/getPengawas
 
+                 $('.div-pengajar').append($('#select-materi').html());
+                 get_materi(data);
+
                 if (type == 'ujian') {
                     $('label[for="pengajar_id"]').text('Pengawas');
                     $('.div-ujian').html($('#form-ujian').html());
                     $('#tingkat').val(data.tingkat);
-                    getPengawas(data); // Pass data for pre-selection
-                    getJenisUjian(data); // Pass data for pre-selection
+                    getPengawas(data);
+                    getJenisUjian(data);
                     getRuang(data);
                     getSifatUjian(data);
                 } else { // type == 'pertemuan'
                     $('label[for="pengajar_id"]').text('Pengajar');
-                    $('.div-pengajar').append($('#select-materi').html());
-
-                    // Only call get_materi if it's a meeting AND a materi_id is provided,
-                    // or if the select2 for materi is present and needs to be populated on add.
-                    // This prevents unnecessary calls or issues if type is ujian.
-                    if (data.materi_id || ($('#jadwal').data('bs.modal') && $('#jadwal').data('bs.modal')._element.id ===
-                            'jadwal' && type === 'pertemuan')) {
-                        get_materi(data); // Pass data for pre-selection
-                    }
-
-                    getTotal(data); // Always get total for 'pertemuan'
-                    getPengajar(data); // Pass data for pre-selection
+                    getTotal(data);
+                    getPengajar(data);
                 }
             }
         }
@@ -388,7 +373,6 @@
                     $.each(res.data, function(i, e) {
                         $('#jenis').append(`<option value="${e}">${e.toUpperCase()}</option>`)
                     })
-
                     if (data.jenis_ujian) {
                         $('#jenis').val(data.jenis_ujian).trigger('change'); // Trigger for Select2
                     }
