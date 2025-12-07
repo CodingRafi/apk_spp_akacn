@@ -225,12 +225,11 @@
                                     <td class="col-6">Matkul</td>
                                     <td class="col-6">{{ $data->matkul }}</td>
                                 </tr>
-                                @if ($data->type == 'pertemuan')
-                                    <tr>
-                                        <td class="col-6">Materi</td>
-                                        <td class="col-6">{{ $data->materi }}</td>
-                                    </tr>
-                                @else
+                                <tr>
+                                    <td class="col-6">Materi</td>
+                                    <td class="col-6">{{ $data->materi }}</td>
+                                </tr>
+                                @if ($data->type == 'ujian')
                                     <tr>
                                         <td class="col-6">Tingkat</td>
                                         <td class="col-6">{{ $data->tingkat }}</td>
