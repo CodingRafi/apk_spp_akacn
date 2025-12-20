@@ -297,10 +297,6 @@
             })
         }
 
-        $('#type').on('change', function() {
-            get_materi();
-        })
-
         function clearForm() {
             // Clear all relevant form fields and trigger change for Select2 to update its display
             $('#jadwal form')[0].reset(); // Resets all form elements
