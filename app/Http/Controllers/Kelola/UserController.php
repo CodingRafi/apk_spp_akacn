@@ -130,10 +130,6 @@ class UserController extends Controller
 
     public function create($role)
     {
-        if ($role == 'dosen') {
-            abort(404);
-        }
-
         $agamas = Agama::all();
         $kewarganegaraan = Kewarganegaraan::all();
         $return = [
@@ -194,10 +190,6 @@ class UserController extends Controller
 
     public function edit($role, $id)
     {
-        if ($role == 'dosen') {
-            abort(404);
-        }
-
         $data = User::findOrFail($id);
         if (!$data->hasRole($role)) {
             abort(404);
