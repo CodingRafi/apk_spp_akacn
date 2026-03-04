@@ -47,12 +47,10 @@
                             @endif
                         @endif
                         @can('add_users')
-                            @if (request('role') != 'dosen')
                             <div class="col-md-2 mb-3">
                                 <a href="{{ route('kelola-users.create', ['role' => request('role')]) }}"
                                     class="btn btn-primary d-block text-capitalize">Tambah</a>
                             </div>
-                            @endif
                         @endcan
                         @if (Auth::user()->hasRole('admin'))
                             @if (request('role') == 'dosen' || request('role') == 'mahasiswa')
