@@ -768,6 +768,7 @@ class JadwalController extends Controller
             'materi' => $materi->materi,
             'type' => $request->type,
             'jenis_ujian' => $request->jenis ?? null,
+            'pengajar_id' => $request->pengajar_id
         ];
 
         if ($request->type == 'ujian') {
