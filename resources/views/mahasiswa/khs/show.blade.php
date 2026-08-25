@@ -158,7 +158,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
-                    <td colspan="3" class="fw-bold">Index Prestasi Semester</td>
+                    <td colspan="3" class="fw-bold">Index Prestasi Semester (IPS)</td>
                     <td colspan="2">${(bobot_x_sks > 0 || total_sks > 0 ? (bobot_x_sks / total_sks).toFixed(2) : 0)}</td>
                 </tr>
                 <tr>
@@ -168,7 +168,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
-                    <td colspan="3" class="fw-bold">Index Prestasi Kumulatif</td>
+                    <td colspan="3" class="fw-bold">Index Prestasi Kumulatif (IPK)</td>
                     <td colspan="2">${(ipk_bobot_x_sks > 0 || ipk_total_sks > 0 ? (ipk_bobot_x_sks / ipk_total_sks).toFixed(2) : 0)}</td>
                 </tr>
                 <tr>
