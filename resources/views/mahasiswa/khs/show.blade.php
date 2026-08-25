@@ -173,7 +173,7 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
-                    <td colspan="3" class="fw-bold">Total SKS</td>
+                    <td colspan="3" class="fw-bold">Jumlah Total SKS</td>
                     <td colspan="2">${ipk_total_sks}</td>
                 </tr>
                 `

@@ -142,7 +142,7 @@
                     <td>{{ $totalSKS }}</td>
                 </tr>
                 <tr>
-                    <td>Index Prestasi Komulatif</td>
+                    <td>Index Prestasi Komulatif (IPK)</td>
                     <td>:</td>
                     <td>{{ number_format(end($ipk)['ipk'], 2) }}</td>
                 </tr>
@@ -183,7 +183,7 @@
                             </tr>
                         @endforeach
                         <tr>
-                            <td colspan="2" style="text-align: center">Jumlah SKS dan IP {{ $semester }}</td>
+                            <td colspan="2" style="text-align: center">Jumlah SKS dan Index Prestasi Semester (IPS) {{ $semester }}</td>
                             <td>{{ $ipk[$semester]['sks'] }}</td>
                             <td>{{ number_format($ipk[$semester]['ips'], 2) }}</td>
                         </tr>
