@@ -185,7 +185,7 @@
                         <tr>
                             <td colspan="2" style="text-align: center">Jumlah SKS dan IP {{ $semester }}</td>
                             <td>{{ $ipk[$semester]['sks'] }}</td>
-                            <td>{{ number_format($ipk[$semester]['ipk'], 2) }}</td>
+                            <td>{{ number_format($ipk[$semester]['ips'], 2) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

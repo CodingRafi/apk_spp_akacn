@@ -163,13 +163,18 @@
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
+                    <td colspan="3" class="fw-bold">Total SKS Semester</td>
+                    <td colspan="2">${total_sks}</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="border-bottom:0;"></td>
                     <td colspan="3" class="fw-bold">Index Prestasi Kumulatif</td>
                     <td colspan="2">${(ipk_bobot_x_sks > 0 || ipk_total_sks > 0 ? (ipk_bobot_x_sks / ipk_total_sks).toFixed(2) : 0)}</td>
                 </tr>
                 <tr>
                     <td colspan="2" style="border-bottom:0;"></td>
                     <td colspan="3" class="fw-bold">Total SKS</td>
-                    <td colspan="2">${total_sks}</td>
+                    <td colspan="2">${ipk_total_sks}</td>
                 </tr>
                 `
 

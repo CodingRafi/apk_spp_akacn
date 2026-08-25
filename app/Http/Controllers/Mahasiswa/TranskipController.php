@@ -83,12 +83,16 @@ class TranskipController extends Controller
         $result = [];
 
         foreach ($datas as $key => $data) {
+            $mutu_x_sks_ips = [];
+            $sks_ips = [];
             $jml_sks_semester = 0;
             foreach ($data as $row) {
                 if ($row->status == 1 && $row->kuesioner != null) {
                     $mutu_x_sks[] = $row->bobot_x_sks;
                     $sks[] = $row->jml_sks;
                     $jml_sks_semester += $row->jml_sks;
+                    $mutu_x_sks_ips[] = $row->bobot_x_sks;
+                    $sks_ips[] = $row->jml_sks;
                 } else {
                     $mutu_x_sks[] = 0;
                     $sks[] = 0;
@@ -101,8 +105,15 @@ class TranskipController extends Controller
                 $ipk = 0;
             }
 
+            try {
+                $ips = array_sum($mutu_x_sks_ips) / array_sum($sks_ips);
+            } catch (\Throwable $th) {
+                $ips = 0;
+            }
+
             $result[$key] = [
                 'ipk' => $ipk,
+                'ips' => $ips,
                 'sks' => $jml_sks_semester
             ];
         }
@@ -114,7 +125,7 @@ class TranskipController extends Controller
         $user = Auth::user();
         $rekap = $this->getTranskip($user);
         $ipk = $this->generateIPK($rekap);
-
+        
         $data = DB::table('users')
             ->select(
                 'users.name',
